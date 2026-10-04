@@ -38,6 +38,9 @@ nav.tabs { display: flex; gap: 4px; flex-wrap: wrap }
 .btn:focus-visible, .tab:focus-visible, .chip:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
 .btn:disabled { opacity: .55; cursor: progress }
 .note { color: var(--muted); font-style: italic; margin-left: auto }
+input[type=range] { accent-color: var(--accent); width: 130px; max-width: 40vw }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0) }
+.dica { flex-basis: 100%; font-weight: 400; font-size: 11.5px; color: var(--muted) }
 .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 10px }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 6px }
 .card h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; text-wrap: balance }
@@ -117,7 +120,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 
   <section class="pane" id="pane-analise">
     <div class="bar">
-      <div class="grp"><span>Eixo das curvas:</span><button type="button" class="btn" data-eixo="tempo">tempo real</button><button type="button" class="btn on" data-eixo="alinhado">alinhado por traço</button><button type="button" class="btn" data-eixo="caminho">caminho percorrido</button></div>
+      <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn" data-eixo="tempo" title="Cada assinatura no próprio relógio: mostra o ritmo e a duração; os traços podem não coincidir.">tempo real</button><button type="button" class="btn on" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
       <div class="grp hl"><span>Grandeza:</span><button type="button" class="btn" data-g="x">X</button><button type="button" class="btn" data-g="y">Y</button><button type="button" class="btn on" data-g="r">resultante</button></div>
       <div class="grp"><span id="trecho-txt">Trecho: arraste sobre o desenho</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button></div>
       <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
@@ -125,7 +128,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <span class="note">dados não saem do sistema</span>
     </div>
     <div class="grid">
-      <div class="card span2" id="card-sig"><h3 id="t-sig">Desenho</h3><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho.</p></div>
+      <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="5000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. Na animação: a espessura do traço segue a pressão, o ponto vermelho é a caneta no papel e os números marcam a ordem dos traços.</p></div>
       <div class="card" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas></div>
       <div class="card rows2"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
@@ -851,7 +854,7 @@ function curveData(sigf, shiftKey) {
     gx = idx.map(i => 100 * i / (NU - 1));
     rows = D.PP.map((p, k) => { const v = TH.interp(idx.map(i => D.A.W[k][i]), p._ix, sigf(p)); return v; });
     const ys = sigf(D.Q); qx = []; qy = []; for (let i = 0; i < ys.length; i++) if (selq[i] && D.Q.u[i] >= 0 && D.Q.u[i] <= 100) { qx.push(D.Q.u[i]); qy.push(ys[i]); }
-    xr = [ua, ub]; xlabel = 'alinhado por traço (% da assinatura)'; tol = 0.4 * (ub - ua) / 100 + 0.05;
+    xr = [ua, ub]; xlabel = 'traço a traço (% da assinatura)'; tol = 0.4 * (ub - ua) / 100 + 0.05;
   } else if (mode === 'tempo') {
     const durs = D.PP.map((p, k) => { const [a, b] = selRange(sels[k]); return [a, b]; }), maxd = Math.max(...durs.map(([a, b]) => (b - a) / FS));
     const n = Math.max(50, Math.round(maxd * FS)); gx = Array.from({ length: n }, (_, i) => i / FS);
@@ -864,7 +867,7 @@ function curveData(sigf, shiftKey) {
     const n = 500; gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
     rows = D.PP.map(p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) if (p.C[i]) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); });
     const qp = pathPct(D.Q), ys = sigf(D.Q); qx = []; qy = []; for (let i = D.Q.i0; i <= D.Q.i1; i++) if (D.Q.C[i] && selq[i]) { qx.push(qp[i]); qy.push(ys[i]); }
-    xr = [PA, PB]; xlabel = 'posição no caminho (%)'; tol = 0.6 * (PB - PA) / 100 + 0.05;
+    xr = [PA, PB]; xlabel = 'posição no traçado (%)'; tol = 0.6 * (PB - PA) / 100 + 0.05;
   }
   const n = gx.length, m = new Float64Array(n), s = new Float64Array(n);
   for (let i = 0; i < n; i++) { const v = rows.map(r => r[i]).filter(Number.isFinite); m[i] = v.length >= 3 ? TH.mean(v) : NaN; s[i] = v.length >= 3 ? TH.std(v) : NaN; }
@@ -899,11 +902,61 @@ function drawSignature(cv) {
     for (let i = 0; i < RX.length; i++) { const on = air ? !C[i] : C[i]; if (!on) { pen = false; continue; } if (pen) c.lineTo(X(RX[i]), Y(RY[i])); else { c.moveTo(X(RX[i]), Y(RY[i])); pen = true; } }
     c.stroke(); c.globalAlpha = 1;
   };
+  if (ANIM.upto !== null) { drawSigAnim(c, X, Y, P, R); return; }
   D.PP.forEach((p, k) => stroke(R[k][0], R[k][1], p.C, P.band, 0.7, 0.45));
   c.setLineDash([1.5, 2.5]); stroke(R[20][0], R[20][1], D.Q.C, P.acc, 0.9, 0.9, true); c.setLineDash([]);
   stroke(R[20][0], R[20][1], D.Q.C, P.acc, 1.4, 1);
   if (dragRect) { c.strokeStyle = P.amb; c.setLineDash([4, 3]); c.lineWidth = 1.2; c.strokeRect(Math.min(dragRect[0], dragRect[2]), Math.min(dragRect[1], dragRect[3]), Math.abs(dragRect[2] - dragRect[0]), Math.abs(dragRect[3] - dragRect[1])); c.setLineDash([]); }
 }
+/* ---------------- animação da construção da assinatura ---------------- */
+const ANIM = { k: 20, upto: null, raf: 0 };
+function drawSigAnim(c, X, Y, P, R) {
+  const k = ANIM.k, p = k < 20 ? D.PP[k] : D.Q, [RX, RY] = R[k], n = Math.min(ANIM.upto, RX.length - 1), col = k < 20 ? P.fg : P.acc;
+  // fundo: todas as assinaturas bem claras, para dar a referência da forma
+  R.forEach(([AX, AY], j) => { const q = j < 20 ? D.PP[j] : D.Q; c.strokeStyle = P.band; c.globalAlpha = 0.16; c.lineWidth = 0.7; c.beginPath(); let pen = false;
+    for (let i = 0; i < AX.length; i += 2) { if (!q.C[i]) { pen = false; continue; } if (pen) c.lineTo(X(AX[i]), Y(AY[i])); else { c.moveTo(X(AX[i]), Y(AY[i])); pen = true; } } c.stroke(); });
+  c.globalAlpha = 1;
+  // caminho no ar até agora (pontilhado)
+  c.strokeStyle = col; c.globalAlpha = 0.55; c.lineWidth = 0.9; c.setLineDash([1.5, 2.5]); c.beginPath(); let pen = false;
+  for (let i = 0; i <= n; i++) { if (p.C[i]) { pen = false; continue; } if (pen) c.lineTo(X(RX[i]), Y(RY[i])); else { c.moveTo(X(RX[i]), Y(RY[i])); pen = true; } }
+  c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+  // tinta até agora: espessura pela pressão
+  c.strokeStyle = col; c.lineCap = 'round';
+  for (let i = 1; i <= n; i++) if (p.C[i] && p.C[i - 1]) { c.lineWidth = 0.6 + 2.6 * Math.min(1, p.gf[i] / 600); c.beginPath(); c.moveTo(X(RX[i - 1]), Y(RY[i - 1])); c.lineTo(X(RX[i]), Y(RY[i])); c.stroke(); }
+  // número de cada traço no ponto em que a caneta pousou
+  const narrow = (c.canvas.clientWidth || 600) < 500, br_ = narrow ? 5 : 7;
+  let nt = 0; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); c.textAlign = 'center';
+  for (const [s] of p.segs) { if (s > n) break; nt++; const x = X(RX[s]), y = Y(RY[s]) - br_ - 4; c.fillStyle = P.panel; c.beginPath(); c.arc(x, y, br_, 0, 7); c.fill(); c.strokeStyle = col; c.lineWidth = 1; c.stroke(); c.fillStyle = col; c.fillText(String(nt), x, y + (narrow ? 3 : 3.5)); }
+  // ponta da caneta
+  const tip = [X(RX[n]), Y(RY[n])], down = !!p.C[n];
+  c.fillStyle = down ? P.red : P.panel; c.strokeStyle = down ? P.red : col; c.lineWidth = 1.5; c.beginPath(); c.arc(tip[0], tip[1], down ? 4 : 5, 0, 7); c.fill(); c.stroke();
+  // relógio
+  const T = p.t[p.t.length - 1], tt = p.t[n];
+  c.textAlign = 'left'; c.fillStyle = P.fg; c.font = (narrow ? '11px ' : '12px ') + css('--mono');
+  const l1 = `${k < 20 ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · ${br(tt, 2)} s de ${br(T, 2)} s · traço ${nt} de ${p.segs.length}`, l2 = down ? `caneta no papel · ${br(p.gf[n], 0)} gf` : 'caneta no ar';
+  if (narrow) { c.fillText(l1, 8, 15); c.fillText(l2, 8, 30); } else c.fillText(l1 + ' · ' + l2, 8, 16);
+}
+function stopAnim(redraw = true) { cancelAnimationFrame(ANIM.raf); ANIM.raf = 0; ANIM.upto = null; $('#an-play').textContent = '▶ animar'; if (redraw && D) drawSignature($('#cv-sig')); }
+function playAnim() {
+  if (ANIM.raf) { stopAnim(); return; }
+  const k = +$('#an-sel').value, p = k < 20 ? D.PP[k] : D.Q, dur = +$('#an-ms').value, T = p.t[p.t.length - 1], n = p.t.length - 1;
+  ANIM.k = k; ANIM.upto = 0; $('#an-play').textContent = '■ parar';
+  log('animou a assinatura', `${k < 20 ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} em ${dur} ms`);
+  const t0 = performance.now(), cv = $('#cv-sig');
+  const step = now => {
+    const f = Math.min(1, (now - t0) / dur), tt = f * T; let i = Math.min(n, Math.floor(tt * TH.FS));
+    ANIM.upto = i; drawSignature(cv);
+    if (f < 1) ANIM.raf = requestAnimationFrame(step); else { ANIM.raf = 0; $('#an-play').textContent = '▶ de novo'; }
+  };
+  ANIM.raf = requestAnimationFrame(step);
+}
+function animUI() {
+  const sel = $('#an-sel'), cur = sel.value || '20';
+  sel.innerHTML = '<option value="20">questionada</option>' + D.PP.map((_, i) => `<option value="${i}">padrão P${String(i + 1).padStart(2, '0')}</option>`).join('');
+  sel.value = cur; const k = +sel.value, p = k < 20 ? D.PP[k] : D.Q, T = p.t[p.t.length - 1], ms = +$('#an-ms').value;
+  $('#an-ms-o').textContent = `${ms} ms · duração real ${br(T, 2)} s (${T * 1000 >= ms ? br(T * 1000 / ms, 1) + '× mais rápido' : br(ms / (T * 1000), 1) + '× mais lento'})`;
+}
+
 function drawZoom(cv) {
   const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), R = D.REG; let mx = 0, my = 0, n = 0;
   D.PP.forEach((p, k) => { const s = V.sels[k]; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { mx += R[k][0][i]; my += R[k][1][i]; n++; } }); mx /= n; my /= n;
@@ -952,13 +1005,13 @@ function drawPressure(cv) {
   const { gx, rows, q, PA, PB } = byPathRows(p => p.gf), sh = (S.shifts.pres || 0) * (PB - PA) / 100;
   const m = gx.map((_, i) => TH.mean(rows.map(r => r[i]))), s = gx.map((_, i) => TH.std(rows.map(r => r[i])));
   const lo = m.map((v, i) => v - 2 * s[i]), hi = m.map((v, i) => v + 2 * s[i]);
-  const F = frame(cv, [PA, PB], extent([lo, hi, q]), { xlabel: 'posição no caminho (%)', ylabel: 'gf' });
+  const F = frame(cv, [PA, PB], extent([lo, hi, q]), { xlabel: 'posição no traçado (%)', ylabel: 'gf' });
   const gs = gx.map(v => v + sh); bandFill(F, gs, lo, hi, F.P.band); polyline(F, gs, m, F.P.band); polyline(F, gx, q, F.P.acc, 1.1); F.done();
 }
 function drawDeform(cv) {
   const { gx, rows, q, PA, PB } = byPathRows(p => p.t), sh = (S.shifts.def || 0) * (PB - PA) / 100;
   const st = (p, s) => p.t[selRange(s)[0]], R = rows.map((r, k) => r.map(v => v - st(D.PP[k], V.sels[k]))), qq = q.map(v => v - st(D.Q, V.selq));
-  const F = frame(cv, [PA, PB], [Math.min(0, ...R.map(r => Math.min(...r))), Math.max(...qq, ...R.map(r => Math.max(...r))) * 1.05], { xlabel: 'posição no caminho (%)', ylabel: 'tempo real (s)' });
+  const F = frame(cv, [PA, PB], [Math.min(0, ...R.map(r => Math.min(...r))), Math.max(...qq, ...R.map(r => Math.max(...r))) * 1.05], { xlabel: 'posição no traçado (%)', ylabel: 'tempo real (s)' });
   R.forEach(r => polyline(F, gx.map(v => v + sh), r, F.P.band, 0.6)); polyline(F, gx, qq, F.P.acc, 1.4); F.done();
 }
 function segsIn(p, s) { const o = []; let st = -1; for (let i = 0; i <= s.length; i++) { const c = i < s.length && s[i] && p.C[i]; if (c && st < 0) st = i; else if (!c && st >= 0) { if (i - st > 3) o.push([st, i]); st = -1; } } return o; }
@@ -1096,6 +1149,7 @@ function renderMeasures() {
 function renderAnalise() {
   const g = S.g, [v, a, pw, nm] = SYM[g], z = S.trecho ? ' · trecho' : '';
   $$('[data-eixo]').forEach(b => b.classList.toggle('on', b.dataset.eixo === S.eixo));
+  $('#eixo-dica').textContent = { tempo: 'Tempo real: cada assinatura no próprio relógio. Mostra o ritmo e a duração; os traços podem não coincidir.', alinhado: 'Traço a traço: o início e o fim de cada traço coincidem com os dos padrões. Compara a forma do movimento em cada traço, mesmo que a pessoa tenha escrito mais devagar.', caminho: 'Posição no traçado: o mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.' }[S.eixo];
   $$('[data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === g));
   $('#btn-inteira').classList.toggle('on', !S.trecho);
   $('#trecho-txt').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : 'Trecho: arraste sobre o desenho';
@@ -1109,7 +1163,7 @@ function renderAnalise() {
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
   renderMeasures();
   requestAnimationFrame(() => {
-    drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom')); drawCompass($('#cv-comp'));
+    animUI(); drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom')); drawCompass($('#cv-comp'));
     drawHist($('#cv-hist')); drawPressure($('#cv-pres')); drawImpulse($('#cv-imp')); drawDeform($('#cv-def'));
     drawCurve($('#cv-acc'), p => TH.comp(p, g, 2), 'acc', 'm/s²', D.NF[2], 1e-3);
     drawCurve($('#cv-pow'), p => TH.power(p, g), 'pow', 'W/kg');
@@ -1219,7 +1273,7 @@ function params() {
   return [['Derivadas', `Savitzky-Golay · janela ${TH.SGW} (70 ms) · grau ${TH.SGO} · corte ~24,5 Hz`], ['Ruído (caneta parada)', `σ velocidade ${br(D.NF[1])} mm/s · σ 5ª derivada ${br(D.NF[5] / 1e7, 1)}×10⁷ mm/s⁵`],
     ['Alinhamento', 'marcos (levantamentos casados primeiro) + DTW limitado, banda de 10%'], ['Padrão médio', `DBA dos 20 padrões · referência P${String(D.ri + 1).padStart(2, '0')}`],
     ['Mahalanobis', `${V.MH.keys.length} medidas: ${V.MH.keys.join(', ')}`], ['Covariância', `Ledoit-Wolf (encolhimento ${br(V.MH.shrink)}) · limite de Hotelling (n = 20)`],
-    ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'], ['Grandeza', SYM[S.g][3]], ['Eixo das curvas', { alinhado: 'alinhado por traço', tempo: 'tempo real', caminho: 'caminho percorrido' }[S.eixo]],
+    ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'], ['Grandeza', SYM[S.g][3]], ['Comparação das curvas (normalização do tempo)', { alinhado: 'traço a traço (marcos + DTW limitado)', tempo: 'tempo real (sem normalização)', caminho: 'posição no traçado (normalização pelo caminho percorrido)' }[S.eixo]],
     ['Deslocamentos dos padrões', Object.keys(S.shifts).filter(k => S.shifts[k]).map(k => `${k} ${br(S.shifts[k], 1)}%`).join(' · ') || 'todos +0,0%'], ['Questionada (simulação)', S.mode === 'imitação' ? 'imitação por terceiro' : 'assinatura verdadeira da pessoa']];
 }
 function renderInteg() {
@@ -1299,6 +1353,7 @@ function render() {
   if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else renderInteg();
 }
 async function loadCase() {
+  if (ANIM.upto !== null) stopAnim(false);
   $('#loading').hidden = false; await tick();
   D = await build(S.name, S.mode); S.trecho = null; S.shifts = {}; S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 }; view();
   $('#loading').hidden = true; log('abriu o caso', `${S.name} · questionada: ${S.mode}`); render();
@@ -1310,7 +1365,7 @@ function watermark() {
 }
 function bind() {
   $$('.tab').forEach(t => t.addEventListener('click', () => { S.tab = t.dataset.tab; log('mudou de aba', t.textContent.trim()); render(); }));
-  $$('[data-eixo]').forEach(b => b.addEventListener('click', () => { S.eixo = b.dataset.eixo; log('eixo das curvas', b.textContent); renderAnalise(); }));
+  $$('[data-eixo]').forEach(b => b.addEventListener('click', () => { S.eixo = b.dataset.eixo; log('comparar as curvas por', b.textContent); renderAnalise(); }));
   $$('[data-g]').forEach(b => b.addEventListener('click', () => { S.g = b.dataset.g; log('mudou grandeza', SYM[S.g][3]); renderAnalise(); }));
   $('#btn-inteira').addEventListener('click', () => { if (!S.trecho) return; S.trecho = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
   $('#btn-zero').addEventListener('click', () => { S.shifts = {}; renderAnalise(); });
@@ -1320,7 +1375,7 @@ function bind() {
   $('#btn-anim').addEventListener('click', () => playMaha(true));
   const cv = $('#cv-sig'); let start = null;
   const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-  cv.addEventListener('pointerdown', e => { start = pos(e); dragRect = [...start, ...start]; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointerdown', e => { if (ANIM.upto !== null) stopAnim(false); start = pos(e); dragRect = [...start, ...start]; cv.setPointerCapture(e.pointerId); });
   cv.addEventListener('pointermove', e => { if (!start) return; const p = pos(e); dragRect = [...start, ...p]; drawSignature(cv); });
   cv.addEventListener('pointerup', e => {
     if (!start) return; const p = pos(e), r0 = dragRect; start = null; dragRect = null;
@@ -1342,6 +1397,9 @@ function bind() {
   $('#hip-h').addEventListener('change', e => { S.hip.h = e.target.value; });
   $('#hip-c').addEventListener('change', e => { S.hip.c = e.target.value; });
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
+  $('#an-play').addEventListener('click', playAnim);
+  $('#an-ms').addEventListener('input', animUI);
+  $('#an-sel').addEventListener('change', () => { stopAnim(false); animUI(); drawSignature($('#cv-sig')); });
   $('#btn-next').addEventListener('click', () => { S.name = NAMES[(NAMES.indexOf(S.name) + 1) % NAMES.length]; S.mode = MODE0(S.name); loadCase(); });
   $('#btn-mode').addEventListener('click', () => { S.mode = S.mode === 'imitação' ? 'verdadeira' : 'imitação'; loadCase(); });
   document.addEventListener('keydown', e => { if (S.tab === 'crus' && (e.ctrlKey || e.metaKey) && 'cpas'.includes(e.key.toLowerCase())) e.preventDefault(); });
