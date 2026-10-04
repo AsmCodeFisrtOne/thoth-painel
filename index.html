@@ -93,6 +93,11 @@ textarea { width: 100%; min-height: 90px; font: 13px var(--sans); background: va
 .laudo { background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px }
 .primary { background: var(--accent); color: var(--panel); border: 0; border-radius: 6px; padding: 7px 14px; font: 600 13px var(--sans); cursor: pointer; align-self: flex-start }
 #wm { position: absolute; inset: 0; pointer-events: none; opacity: .055; background-repeat: repeat; z-index: 3 }
+#bigview { position: fixed; inset: 0; z-index: 8; background: color-mix(in srgb, var(--bg) 70%, transparent); display: grid; place-items: center; padding: 12px }
+.bigbox { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; width: min(1500px, 100%); height: min(860px, 100%); display: flex; flex-direction: column; padding: 10px 12px; gap: 6px }
+.bighead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap } .bighead .btn { margin-left: auto }
+.bigcv { position: relative; flex: 1 1 auto; min-height: 0 } .bigcv canvas { position: absolute; inset: 0; width: 100%; height: 100% }
+.card canvas { cursor: zoom-in } #cv-sig { cursor: crosshair }
 #loading { position: fixed; inset: 0; background: color-mix(in srgb, var(--bg) 88%, transparent); display: grid; place-items: center; z-index: 9 }
 #loading .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; width: min(420px, 90vw); display: grid; gap: 10px }
 #loading .track { height: 6px; background: var(--grid); border-radius: 3px; overflow: hidden } #loadbar { height: 100%; width: 0; background: var(--accent); transition: width .2s }
@@ -126,7 +131,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="grp"><span id="trecho-txt">Trecho: arraste sobre o desenho</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button></div>
       <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
       <div class="grp"><span>Deslocar padrões:</span><button type="button" class="btn" id="btn-zero">zerar todos</button></div>
-      <span class="note">dados não saem do sistema</span>
+      <span class="note">duplo clique num gráfico para ampliar · dados não saem do sistema</span>
     </div>
     <div class="grid">
       <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. Na animação: a espessura do traço segue a pressão, o ponto vermelho é a caneta no papel e os números marcam a ordem dos traços.</p></div>
@@ -173,6 +178,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   </section>
   <footer class="f">Simulação: assinaturas sintéticas em letra cursiva, com instrumentação do Thoth 1 (mesa 300 Hz · 0,005 mm · pressão 0–8191; clip 400 Hz). Todos os números são calculados no navegador a partir dos dados crus. O painel mede e mostra; a conclusão é do perito.</footer>
 </div>
+<div id="bigview" hidden role="dialog" aria-modal="true" aria-labelledby="big-title"><div class="bigbox"><div class="bighead"><b id="big-title"></b><span class="fine">duplo clique ou Esc para fechar</span><button type="button" class="btn" id="big-close" aria-label="Fechar">✕ fechar</button></div><div class="bigcv"><canvas id="cv-big"></canvas></div></div></div>
 <div id="loading"><div class="box"><b>Preparando o caso</b><span id="loadtxt" class="fine">Simulando as colheitas</span><div class="track"><div id="loadbar"></div></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -878,7 +884,7 @@ function curveData(sigf, shiftKey) {
     gx = idx.map(i => 100 * i / (NU - 1));
     rows = D.PP.map((p, k) => { const v = TH.interp(idx.map(i => D.A.W[k][i]), p._ix, sigf(p)); return v; });
     const ys = sigf(D.Q); qx = []; qy = []; for (let i = 0; i < ys.length; i++) if (selq[i] && D.Q.u[i] >= 0 && D.Q.u[i] <= 100) { qx.push(D.Q.u[i]); qy.push(ys[i]); }
-    xr = [ua, ub]; xlabel = 'traço a traço (% da assinatura)'; tol = 0.4 * (ub - ua) / 100 + 0.05;
+    xr = [ua, ub]; xlabel = 'traço a traço (% da assinatura)'; tol = 1.0;
   } else if (mode === 'tempo') {
     const durs = D.PP.map((p, k) => { const [a, b] = selRange(sels[k]); return [a, b]; }), maxd = Math.max(...durs.map(([a, b]) => (b - a) / FS));
     const n = Math.max(50, Math.round(maxd * FS)); gx = Array.from({ length: n }, (_, i) => i / FS);
@@ -891,7 +897,7 @@ function curveData(sigf, shiftKey) {
     const n = 500; gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
     rows = D.PP.map(p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) if (p.C[i]) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); });
     const qp = pathPct(D.Q), ys = sigf(D.Q); qx = []; qy = []; for (let i = D.Q.i0; i <= D.Q.i1; i++) if (D.Q.C[i] && selq[i]) { qx.push(qp[i]); qy.push(ys[i]); }
-    xr = [PA, PB]; xlabel = 'posição no traçado (%)'; tol = 0.6 * (PB - PA) / 100 + 0.05;
+    xr = [PA, PB]; xlabel = 'posição no traçado (%)'; tol = 1.0;
   }
   const n = gx.length, m = new Float64Array(n), s = new Float64Array(n);
   for (let i = 0; i < n; i++) { const v = rows.map(r => r[i]).filter(Number.isFinite); m[i] = v.length >= 3 ? TH.mean(v) : NaN; s[i] = v.length >= 3 ? TH.std(v) : NaN; }
@@ -1186,17 +1192,35 @@ function renderAnalise() {
   $('#t-maha').textContent = `Mahalanobis${z} · ${V.MH.keys.length} medidas`;
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
   renderMeasures();
+  DRAW = {
+    'cv-sig': cv => drawSignature(cv), 'cv-zoom': cv => drawZoom(cv), 'cv-comp': cv => drawCompass(cv), 'cv-hist': cv => drawHist(cv),
+    'cv-pres': cv => drawPressure(cv), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
+    'cv-acc': cv => drawCurve(cv, p => TH.comp(p, g, 2), 'acc', 'm/s²', D.NF[2], 1e-3),
+    'cv-pow': cv => drawCurve(cv, p => TH.power(p, g), 'pow', 'W/kg'),
+    'cv-en': cv => drawEnergy(cv), 'cv-fft': cv => drawFFT(cv),
+    'cv-d4': cv => drawCurve(cv, p => TH.comp(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4], 1e-6),
+    'cv-d5': cv => drawCurve(cv, p => TH.comp(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5], 1e-8),
+    'cv-maha': cv => drawMaha(cv, 1),
+  };
   requestAnimationFrame(() => {
-    animUI(); drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom')); drawCompass($('#cv-comp'));
-    drawHist($('#cv-hist')); drawPressure($('#cv-pres')); drawImpulse($('#cv-imp')); drawDeform($('#cv-def'));
-    drawCurve($('#cv-acc'), p => TH.comp(p, g, 2), 'acc', 'm/s²', D.NF[2], 1e-3);
-    drawCurve($('#cv-pow'), p => TH.power(p, g), 'pow', 'W/kg');
-    drawEnergy($('#cv-en')); drawFFT($('#cv-fft'));
-    drawCurve($('#cv-d4'), p => TH.comp(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4], 1e-6);
-    drawCurve($('#cv-d5'), p => TH.comp(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5], 1e-8);
+    animUI(); drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom'));
+    for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id));
     playMaha(false);
+    if (BIG) DRAW[BIG]($('#cv-big'));
   });
 }
+
+/* ---------------- ampliar um gráfico (duplo clique ou toque duplo) ---------------- */
+let DRAW = {}, BIG = null;
+function openBig(id) {
+  if (!DRAW[id]) return;
+  BIG = id; const card = $('#' + id).closest('.card'), h = card.querySelector('h3');
+  $('#big-title').textContent = (h ? h.textContent : '').replace(/eixo X.*$/, '').trim();
+  $('#bigview').hidden = false; document.body.style.overflow = 'hidden';
+  log('ampliou gráfico', $('#big-title').textContent);
+  requestAnimationFrame(() => DRAW[id]($('#cv-big')));
+}
+function closeBig() { if (!BIG) return; const id = BIG; BIG = null; $('#bigview').hidden = true; document.body.style.overflow = ''; if (id === 'cv-sig') drawSignature($('#cv-sig')); }
 
 /* ---------------- aba Dados crus ---------------- */
 const PG = 10;
@@ -1423,6 +1447,20 @@ function bind() {
   $('#hip-c').addEventListener('change', e => { S.hip.c = e.target.value; });
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
+  let lastTap = { t: 0, id: '', x: 0, y: 0 };
+  $$('.card canvas').forEach(cv => {
+    cv.addEventListener('dblclick', e => { e.preventDefault(); openBig(cv.id); });
+    cv.addEventListener('pointerup', e => {
+      if (e.pointerType !== 'touch') return;
+      const now = performance.now();
+      if (lastTap.id === cv.id && now - lastTap.t < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) { lastTap.t = 0; openBig(cv.id); }
+      else lastTap = { t: now, id: cv.id, x: e.clientX, y: e.clientY };
+    });
+  });
+  $('#big-close').addEventListener('click', closeBig);
+  $('#bigview').addEventListener('click', e => { if (e.target.id === 'bigview') closeBig(); });
+  $('#cv-big').addEventListener('dblclick', closeBig);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBig(); });
   $('#an-ms').addEventListener('input', animUI);
   $('#an-sel').addEventListener('change', () => { stopAnim(false); animUI(); drawSignature($('#cv-sig')); });
   $('#btn-next').addEventListener('click', () => { S.name = NAMES[(NAMES.indexOf(S.name) + 1) % NAMES.length]; S.mode = MODE0(S.name); loadCase(); });
