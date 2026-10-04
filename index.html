@@ -777,6 +777,7 @@ return { FS, NU, SGW, SGO, NOISE, RES, rngOf, hashStr, interp, mean, std, median
 (() => {
 const NAMES = Object.keys(GLYPHS);
 const KEYS = TH.KEYS, FS = TH.FS, NU = TH.NU;
+const LBL = k => (k === 'rotação média (°)' ? 'rotação no eixo (°) · a validar' : k);
 const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
 const tick = () => new Promise(r => setTimeout(r, 0));
 const br = (v, d = 2) => (Number.isFinite(v) ? v.toFixed(d).replace('.', ',').replace('-', '−') : '—');
@@ -1094,14 +1095,14 @@ const ph = (t, a, b) => ease((t - a) / (b - a));
 function drawMaha(cv, t = 1) {
   const MH = V.MH, pr = mahaPair(), kx = S.mx, ky = S.my;
   const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), atip = MH.d2 > MH.lim99;
-  if (!pr.ok) { const F = frame(cv, [0, 1], [0, 1], { xlabel: kx, ylabel: ky, ml: 52 }); F.done(); F.c.fillStyle = F.P.mut; F.c.textAlign = 'center'; F.c.font = '12px ' + css('--sans'); F.c.fillText('Uma das medidas não varia nos padrões: escolha outro par.', F.w / 2, F.h / 2); return; }
+  if (!pr.ok) { const F = frame(cv, [0, 1], [0, 1], { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52 }); F.done(); F.c.fillStyle = F.P.mut; F.c.textAlign = 'center'; F.c.font = '12px ' + css('--sans'); F.c.fillText('Uma das medidas não varia nos padrões: escolha outro par.', F.w / 2, F.h / 2); return; }
   const { A, mu, S2, q, dq, r } = pr, rmax = 1.7 * Math.sqrt(l99);
   const pt = r <= rmax ? q : [mu[0] + dq[0] * rmax / r, mu[1] + dq[1] * rmax / r];
   const e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
   const xs = [...e99.map(p => p[0]), pt[0], ...A.map(a => a[0])], ys = [...e99.map(p => p[1]), pt[1], ...A.map(a => a[1])];
   const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
   const narrow = (cv.clientWidth || 600) < 560, MT = narrow ? 74 : 50;
-  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.12), { xlabel: kx, ylabel: ky, ml: 52, mt: MT }), { c, X, Y, P } = F;
+  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.12), { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52, mt: MT }), { c, X, Y, P } = F;
   const halo = (txt, x, y) => { c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.globalAlpha *= 0.9; c.strokeText(txt, x, y); c.restore(); c.fillText(txt, x, y); };
   // 1) padrões aparecem um a um
   A.forEach((a, k) => { const al = ph(t, 0.02 + k * 0.012, 0.1 + k * 0.012); if (al <= 0) return; c.globalAlpha = al; c.fillStyle = P.fg; c.beginPath(); c.arc(X(a[0]), Y(a[1]), 3 * (0.6 + 0.4 * al), 0, 7); c.fill(); });
@@ -1167,7 +1168,7 @@ function renderMeasures() {
   const { M, MQ, MH, dtwP, dtwQ } = V; let h = `<table class="mt"><thead><tr><th></th><th>padrões</th><th>quest.</th><th>z</th></tr></thead><tbody>`;
   for (const [g, ix] of GROUPS) {
     h += `<tr class="g"><td colspan="4">${g}</td></tr>`;
-    for (const k of ix.map(i => KEYS[i])) { const a = M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k), z = sd > 1e-9 ? (MQ[k] - mu) / sd : NaN, lbl = S.trecho && k.startsWith('tempo') ? 'tempo do trecho (s)' : k;
+    for (const k of ix.map(i => KEYS[i])) { const a = M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k), z = sd > 1e-9 ? (MQ[k] - mu) / sd : NaN, lbl = S.trecho && k.startsWith('tempo') ? 'tempo do trecho (s)' : LBL(k);
       h += `<tr><td>${lbl}</td><td>${br(mu, d)} ± ${br(sd, d)}</td><td class="q">${br(MQ[k], d)}</td><td class="${Math.abs(z) > 3 ? 'hz' : ''}">${Number.isFinite(z) ? (z > 0 ? '+' : '') + br(z, 1) : '—'}</td></tr>`; }
   }
   const atip = MH.d2 > MH.lim99;
@@ -1177,9 +1178,9 @@ function renderMeasures() {
   <tr><td>valor p</td><td>${br(Math.min(...MH.looP), 2)}–${br(Math.max(...MH.looP), 2)}</td><td class="q">${MH.p < 1e-4 ? '&lt; 0,0001' : br(MH.p, 4)}</td><td></td></tr>
   <tr><td>fora da elipse de 99%</td><td>${MH.looOut} de 20</td><td class="q">${atip ? 'sim' : 'não'}</td><td></td></tr>
   <tr><td>DTW dos perfis</td><td>${br(Math.min(...dtwP))}–${br(Math.max(...dtwP))}</td><td class="q">${br(dtwQ)}</td><td></td></tr></tbody></table>
-  <p class="fine">Ledoit-Wolf: encolhimento ${br(MH.shrink)}. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
+  <p class="fine">Ledoit-Wolf: encolhimento ${br(MH.shrink)}. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício. A rotação no eixo vem do clip (direção da gravidade em volta do eixo da caneta, válida com inclinação ≥ 10°); ainda não foi validada em bancada e fica fora do Mahalanobis.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
   $('#measures').innerHTML = h;
-  const opt = sel => KEYS.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${k}${MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
+  const opt = sel => KEYS.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
   $('#mh-x').innerHTML = opt(S.mx); $('#mh-y').innerHTML = opt(S.my);
 }
 
@@ -1376,7 +1377,7 @@ async function makePDF() {
   y = T(`Análise: ${S.trecho ? `trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'} · grandeza ${SYM[S.g][3]} · eixo ${params()[8][1]}.`, L, y);
   y = T(`Mahalanobis com ${MH.keys.length} medidas (${MH.keys.join(', ')}): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}; limite de 99% (Hotelling, n = 20) = ${br(MH.lim99, 1)}; valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}. Leitura do painel: ${atip ? 'ATÍPICA' : 'TÍPICA'} para a pessoa. Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
   y = T('O valor p mede só o quanto a questionada é atípica para a pessoa; não é a probabilidade de falsificação.', L, y, { i: true, s: 8.5, c: [93, 104, 120], gap: 3 });
-  const rows = [['Medida', 'Padrões (média ± dp)', 'Questionada', 'z']].concat(KEYS.map(k => { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k); return [k, `${br(mu, d)} ± ${br(sd, d)}`, br(V.MQ[k], d), sd > 1e-9 ? br((V.MQ[k] - mu) / sd, 1) : '—']; }));
+  const rows = [['Medida', 'Padrões (média ± dp)', 'Questionada', 'z']].concat(KEYS.map(k => { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k); return [LBL(k), `${br(mu, d)} ± ${br(sd, d)}`, br(V.MQ[k], d), sd > 1e-9 ? br((V.MQ[k] - mu) / sd, 1) : '—']; }));
   table(rows, [70, 50, 35, 19], { head: true });
   H2('3. Gráficos');
   const imgs = [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
