@@ -847,7 +847,7 @@ function nice(lo, hi, n = 5) {
 }
 function fmtTick(v, st) { const d = st >= 1 ? 0 : Math.min(4, Math.ceil(-Math.log10(st))); return Math.abs(v) >= 1e4 || (Math.abs(v) > 0 && Math.abs(v) < 1e-3) ? v.toExponential(1).replace('.', ',') : v.toFixed(d).replace('.', ',').replace('-', '−'); }
 function frame(cv, xr, yr, o = {}) {
-  const P = pal(), { c, w, h } = setup(cv, o.h), m = { l: o.ml ?? 46, r: 10, t: 8, b: o.xlabel ? 32 : 20 };
+  const P = pal(), { c, w, h } = setup(cv, o.h), m = { l: o.ml ?? 46, r: 10, t: o.mt ?? 8, b: o.xlabel ? 32 : 20 };
   const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (w - m.l - m.r), Y = v => h - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (h - m.t - m.b);
   c.font = '10px ' + css('--mono'); c.fillStyle = P.mut; c.strokeStyle = P.grid; c.lineWidth = 1;
   const tx = nice(xr[0], xr[1], Math.max(3, Math.floor((w - 60) / 70))), ty = nice(yr[0], yr[1], 4);
@@ -1100,7 +1100,9 @@ function drawMaha(cv, t = 1) {
   const e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
   const xs = [...e99.map(p => p[0]), pt[0], ...A.map(a => a[0])], ys = [...e99.map(p => p[1]), pt[1], ...A.map(a => a[1])];
   const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
-  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.16), { xlabel: kx, ylabel: ky, ml: 52 }), { c, X, Y, P } = F;
+  const narrow = (cv.clientWidth || 600) < 560, MT = narrow ? 74 : 50;
+  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.12), { xlabel: kx, ylabel: ky, ml: 52, mt: MT }), { c, X, Y, P } = F;
+  const halo = (txt, x, y) => { c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.globalAlpha *= 0.9; c.strokeText(txt, x, y); c.restore(); c.fillText(txt, x, y); };
   // 1) padrões aparecem um a um
   A.forEach((a, k) => { const al = ph(t, 0.02 + k * 0.012, 0.1 + k * 0.012); if (al <= 0) return; c.globalAlpha = al; c.fillStyle = P.fg; c.beginPath(); c.arc(X(a[0]), Y(a[1]), 3 * (0.6 + 0.4 * al), 0, 7); c.fill(); });
   c.globalAlpha = 1;
@@ -1110,7 +1112,7 @@ function drawMaha(cv, t = 1) {
     for (const [lim, dsh, lab] of [[l99, [2, 3], '99%'], [l95, [6, 4], '95%']]) {
       const E = ellipsePts(mu, S2, lim * g * g); c.fillStyle = P.acc; c.globalAlpha = 0.08 * g; c.beginPath(); E.forEach(([x, y]) => c.lineTo(X(x), Y(y))); c.fill();
       c.globalAlpha = g; c.strokeStyle = P.acc; c.setLineDash(dsh); c.lineWidth = 1.3; c.stroke(); c.setLineDash([]);
-      if (g > 0.95) { c.fillStyle = P.acc; c.font = 'bold 11px ' + css('--sans'); c.textAlign = 'center'; c.fillText(lab, X(mu[0]), Y(Math.max(...E.map(p => p[1]))) - 4); }
+      if (g > 0.95) { const top = E.reduce((a, p) => (p[1] > a[1] ? p : a)), bot = E.reduce((a, p) => (p[1] < a[1] ? p : a)), pp = lab === '99%' ? top : bot; c.fillStyle = P.acc; c.font = 'bold 11px ' + css('--sans'); c.textAlign = 'center'; halo(lab, X(pp[0]), Y(pp[1]) + (lab === '99%' ? -5 : 13)); }
     }
     c.globalAlpha = 1; c.fillStyle = P.acc; c.beginPath(); c.arc(X(mu[0]), Y(mu[1]), 2.5, 0, 7); c.fill();
   }
@@ -1128,17 +1130,23 @@ function drawMaha(cv, t = 1) {
     if (pu > 0) { c.strokeStyle = col; c.globalAlpha = 0.5 * pu; c.lineWidth = 2; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 6 + 14 * pu, 0, 7); c.stroke(); c.globalAlpha = 1; }
     c.fillStyle = col; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 5.5 * D, 0, 7); c.fill();
     c.globalAlpha = D; c.font = 'bold 11px ' + css('--sans'); c.textAlign = X(pt[0]) > F.w * 0.7 ? 'right' : 'left';
-    c.fillText(`questionada: ${br(q[0], dec(kx))} · ${br(q[1], dec(ky))}`, X(pt[0]) + (c.textAlign === 'right' ? -9 : 9), Y(pt[1]) - 9); c.globalAlpha = 1;
+    const up = Y(pt[1]) > F.m.t + 34, qx = X(pt[0]) + (c.textAlign === 'right' ? 4 : -4), qy = up ? Y(pt[1]) - 24 : Y(pt[1]) + 20; halo('questionada', qx, qy); halo(`${br(q[0], dec(kx))} · ${br(q[1], dec(ky))}`, qx, qy + 13); c.globalAlpha = 1;
   }
   F.done();
-  // 5) veredito (sempre do modelo de 4 medidas) e D² do par desenhado
+  // 5) veredito (sempre do modelo de 4 medidas) e D² do par desenhado — na faixa acima do gráfico, sem cobrir o desenho
   const V5 = ph(t, 0.88, 1);
   if (V5 > 0) {
-    c.globalAlpha = V5; c.textAlign = 'right'; c.fillStyle = col; c.font = 'bold 22px ' + css('--sans'); c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.w - 16, 34);
-    c.font = '11px ' + css('--sans'); c.fillText('para a pessoa', F.w - 16, 50);
-    c.fillText(`modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, F.w - 16, 64);
-    c.fillStyle = P.mut; c.fillText(`só este par: D² = ${br(pr.d2, pr.d2 > 100 ? 0 : 1)} · correlação r = ${br(pr.corr, 2)}`, F.w - 16, 79);
-    if (r > rmax) { c.textAlign = 'left'; c.font = '10px ' + css('--sans'); c.fillText('// distância encurtada no desenho; valores reais no rótulo', F.m.l + 6, F.h - F.m.b - 6); }
+    const sans = css('--sans'), L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, L2 = `só este par: D² = ${br(pr.d2, pr.d2 > 100 ? 0 : 1)} · correlação r = ${br(pr.corr, 2)}`;
+    c.globalAlpha = V5; c.fillStyle = col;
+    if (narrow) {
+      c.textAlign = 'left'; c.font = 'bold 20px ' + sans; const wd = atip ? 'ATÍPICA' : 'TÍPICA'; c.fillText(wd, F.m.l, 22);
+      const ww = c.measureText(wd).width; c.font = '11px ' + sans; c.fillText('para a pessoa', F.m.l + ww + 8, 22);
+      c.fillText(L1, F.m.l, 42); c.fillStyle = P.mut; c.fillText(L2, F.m.l, 58);
+    } else {
+      c.textAlign = 'left'; c.font = 'bold 22px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.m.l, 30);
+      c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, F.w - F.m.r, 20); c.fillStyle = P.mut; c.fillText(L2, F.w - F.m.r, 36);
+    }
+    if (r > rmax) { c.fillStyle = P.mut; c.textAlign = 'left'; c.font = '10px ' + sans; halo('// distância encurtada no desenho; valores reais no rótulo', F.m.l + 6, F.h - F.m.b - 6); }
     c.globalAlpha = 1;
   }
 }
