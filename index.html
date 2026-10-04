@@ -46,7 +46,14 @@ input[type=range] { accent-color: var(--accent); width: 130px; max-width: 40vw }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 6px }
 .card h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; text-wrap: balance }
 .card h3.var { color: var(--amber) }
-.span2 { grid-column: span 2 } .m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
+.span2 { grid-column: span 2 } .tvsum { margin: 0 0 6px; font-size: 13px } .tvsum span { color: var(--muted) }
+table.tv { font-size: 12.5px } table.tv th { text-align: left; color: var(--muted); font-weight: 600; padding: 3px 8px; border-bottom: 1px solid var(--accent) }
+table.tv td { padding: 4px 8px; border-bottom: 1px solid var(--grid) } table.tv tr.g td { font-weight: 600; padding-top: 9px; border: 0; color: var(--muted) }
+table.tv tr[data-tv] { cursor: pointer } table.tv tr[data-tv]:hover td, table.tv tr[data-tv]:focus td { background: var(--soft) } table.tv tr.main td { font-weight: 600 }
+.chip-r { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 1px 8px; border-radius: 999px; color: var(--panel) }
+.chip-r.r-at { background: var(--red) } .chip-r.r-ty { background: var(--green) } .chip-r.r-in { background: var(--amber) }
+b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(--amber) }
+.m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
 .cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
@@ -148,8 +155,9 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card span2 c-full"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
-      <div class="card span2 c-left"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. A palavra TÍPICA/ATÍPICA, o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado.</p></div>
+      <div class="card span2 c-left"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Mahalanobis 3D · elipsoide de 3 medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = elipsoide de 95% da pessoa (zᵀR⁻¹z = limite de Hotelling com p = 3); contorno tracejado = 95%, pontilhado = 99%. O alongamento e a inclinação mostram como as três medidas variam juntas (matriz de correlação R); as linhas tracejadas internas são os eixos principais (autovetores de R). As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
+      <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">clique numa linha para vê-la no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os 20 padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos 20 padrões sai quando testado contra os outros 19). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Só a linha do veredito decide; as demais mostram onde a assinatura se afasta. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
     </div>
   </section>
 
@@ -350,7 +358,7 @@ function smoothNoise(n, rng, sigma, amp) {
 }
 
 /* ---------- trajetória da caneta: lei de potência 2/3, rampas, movimento no ar ---------- */
-function trajectory(base, rng, q) {
+function trajectory(base, rng, q, nat) {
   const sc = rng.n(1, 0.02), sh = rng.n(0, 0.025), ang = rng.n(0, 1) * Math.PI / 180, ca = Math.cos(ang), sa = Math.sin(ang);
   const amp = q ? 0.5 : 0.25;
   let S = base.map(s => {
@@ -366,6 +374,9 @@ function trajectory(base, rng, q) {
       else out.push(s);
     }
     S = out;
+  } else if (nat && nat.length) {   // pessoa real: às vezes levanta a caneta uma vez a mais num traço longo [SIMULAÇÃO]
+    const longIdx = S.map((s, i) => (len(s) > 25 ? i : -1)).filter(i => i >= 0), cut = new Set(nat.map(u => longIdx[Math.floor(u * longIdx.length) % Math.max(longIdx.length, 1)]));
+    const out = []; S.forEach((s, i) => { if (cut.has(i)) { const c = Math.floor(s.length * 0.5); out.push(s.slice(0, c + 1), s.slice(c)); } else out.push(s); }); S = out;
   }
   const K = rng.n(1, 0.025) * (q ? 0.9 : 1) * 100;
   const T = [], X = [], Y = [], C = [];
@@ -401,17 +412,23 @@ function trajectory(base, rng, q) {
   for (let i = 1; i <= 300; i++) { T.push(tc + i / 2000); X.push(pos[0]); Y.push(pos[1] + 2 * (i / 300)); C.push(0); }
   // garante tempos crescentes
   for (let i = 1; i < T.length; i++) if (T[i] <= T[i - 1]) T[i] = T[i - 1] + 1e-7;
-  return { T: Float64Array.from(T), X: Float64Array.from(X), Y: Float64Array.from(Y), C: Float64Array.from(C) };
+  return { T: Float64Array.from(T), X: Float64Array.from(X), Y: Float64Array.from(Y), C: Float64Array.from(C), K: K / 100 };
 }
 
+function trSpeed(tr) { let L = 0, Tc = 0; for (let i = 1; i < tr.T.length; i++) if (tr.C[i] && tr.C[i - 1]) { L += Math.hypot(tr.X[i] - tr.X[i - 1], tr.Y[i] - tr.Y[i - 1]); Tc += tr.T[i] - tr.T[i - 1]; } return L / (Tc || 1); }
 /* ---------- instrumentação: mesa 300 Hz e clip 400 Hz, com a resposta verdadeira do aparelho ---------- */
-function instrument(tr, rng, ap, pBase, tilt, rot, trem, gap) {
+function instrument(tr, rng, ap, pBase, tilt, rot, trem, gap, pessoa) {
   const n = Math.floor(tr.T[tr.T.length - 1] * FS), t = F64(n); for (let i = 0; i < n; i++) t[i] = i / FS;
   const x = interp(t, tr.T, tr.X), y = interp(t, tr.T, tr.Y), cf = interp(t, tr.T, tr.C), contact = new Uint8Array(n);
   for (let i = 0; i < n; i++) contact[i] = cf[i] > 0.5 ? 1 : 0;
   const f1 = rng.uni(8.5, 11.5), f2 = rng.uni(8.5, 11.5), ph1 = rng.uni(0, 6.3), ph2 = rng.uni(0, 6.3);
   const pa = rng.uni(0, 6), pb = rng.uni(0, 6);
-  const gf = F64(n); for (let i = 0; i < n; i++) gf[i] = pBase + 45 * Math.sin(2 * Math.PI * 1.3 * t[i] + pa) + 25 * Math.sin(2 * Math.PI * 3.7 * t[i] + pb);
+  // acoplamento velocidade–pressão da pessoa [SIMULAÇÃO]: entre assinaturas (kb: mais lenta → pressão média maior)
+  // e dentro da assinatura (kw: trechos mais lentos → mais pressão). Determinístico: não consome o gerador aleatório.
+  const pe = pessoa || { kb: 0, kw: 0 }, pB = pBase * (1 + (pe.vref ? pe.kb * (pe.vref / trSpeed(tr) - 1) : 0));
+  const vs = F64(n); { const w = 15; for (let i = 0; i < n; i++) { const a = Math.max(0, i - w), b = Math.min(n - 1, i + w); vs[i] = Math.hypot(x[b] - x[a], y[b] - y[a]) / ((b - a) / FS || 1); } }
+  let vm = 0, nv = 0; for (let i = 0; i < n; i++) if (contact[i]) { vm += vs[i]; nv++; } vm = vm / Math.max(nv, 1) || 1;
+  const gf = F64(n); for (let i = 0; i < n; i++) gf[i] = pB * (1 + Math.max(-0.4, Math.min(0.6, pe.kw * (vm - vs[i]) / vm))) + 45 * Math.sin(2 * Math.PI * 1.3 * t[i] + pa) + 25 * Math.sin(2 * Math.PI * 3.7 * t[i] + pb);
   const ex = ap.mesa.escala_x, ey = ap.mesa.escala_y, nz = ap.mesa.ruido_mm;
   const Xc = new Int32Array(n), Yc = new Int32Array(n), P = new Int32Array(n), tus = new Int32Array(n);
   for (let i = 0; i < n; i++) { x[i] = x[i] + trem * Math.sin(2 * Math.PI * f1 * t[i] + ph1); y[i] = y[i] + trem * Math.sin(2 * Math.PI * f2 * t[i] + ph2); }
@@ -451,12 +468,13 @@ function construcaoDiferente(base) {
   const curto = s => len(s) < 6;
   return [...base.filter(curto), ...base.filter(s => !curto(s))].map(s => s.slice().reverse());
 }
-function capture(base, seed, kind, ap, gap) {
-  const rng = rngOf(seed);
-  if (kind === 'q') return instrument(trajectory(base, rng, true), rng, ap, 325, 47.2, 78.9, 0.02);
-  if (kind === 'c') { const tr = trajectory(construcaoDiferente(base), rng, false); return instrument(tr, rng, ap, 372 + rng.n(0, 12), 51.8 + rng.n(0, 1.8), 37.6 + rng.n(0, 3), 0.012, null); }
-  const tr = trajectory(base, rng, false);
-  return instrument(tr, rng, ap, 372 + rng.n(0, 12), 51.8 + rng.n(0, 1.8), 37.6 + rng.n(0, 3), 0.012, gap);
+function capture(base, seed, kind, ap, gap, pessoa) {
+  const rng = rngOf(seed), r2 = rngOf((Math.imul(seed, 2654435761) ^ 0x9e3779b9) >>> 0), nat = [];
+  if (r2.uni(0, 1) < 0.35) nat.push(r2.uni(0, 1)); if (r2.uni(0, 1) < 0.12) nat.push(r2.uni(0, 1));
+  if (kind === 'q') return instrument(trajectory(base, rng, true), rng, ap, 325, 47.2, 78.9, 0.02, undefined, { kb: 0, kw: 0.04 });
+  if (kind === 'c') { const tr = trajectory(construcaoDiferente(base), rng, false, nat); return instrument(tr, rng, ap, 372 + rng.n(0, 12), 51.8 + rng.n(0, 1.8), 37.6 + rng.n(0, 3), 0.012, null, pessoa); }
+  const tr = trajectory(base, rng, false, nat);
+  return instrument(tr, rng, ap, 372 + rng.n(0, 12), 51.8 + rng.n(0, 1.8), 37.6 + rng.n(0, 3), 0.012, gap, pessoa);
 }
 
 /* ---------- processamento (Apêndice C.4) ---------- */
@@ -513,13 +531,14 @@ const noiseFloor = reg => { const o = {}; for (let k = 1; k <= 5; k++) o[k] = re
 function signChanges(sig, thr) { let st = 0, c = 0; for (const v of sig) { if (v > thr && st <= 0) { if (st < 0) c++; st = 1; } else if (v < -thr && st >= 0) { if (st > 0) c++; st = -1; } } return c; }
 
 const KEYS = ['tempo total (s)', 'velocidade média (mm/s)', 'energia de aceleração (J/kg)', 'levantamentos', 'pressão média (gf)', 'impulso total (kgf·s)', 'caminho total (mm)',
-  'inclinação média (°)', 'rotação média (°)', 'trocas de aceleração / traço', 'trocas de jerk / traço', '% do espectro em 5–8 Hz'];
+  'inclinação média (°)', 'rotação média (°)', 'trocas de aceleração / traço', 'trocas de jerk / traço', '% do espectro em 5–8 Hz', 'aceleração RMS (m/s²)'];
 function measures(p, NF, sel) {
   const n = p.t.length; let a0 = -1, a1 = -1; for (let i = 0; i < n; i++) if (sel[i]) { if (a0 < 0) a0 = i; a1 = i; }
   const C = i => p.C[i] && sel[i];
   const T = (a1 - a0) / FS; let path = 0, Ea = 0, pm = 0, np_ = 0, imp = 0, ti = 0, ro = 0;
   const pw = power(p, 'r');
-  for (let i = a0; i <= a1; i++) { imp += p.gf[i] / FS; if (C(i)) { path += p.vabs[i] / FS; if (pw[i] > 0) Ea += pw[i] / FS; pm += p.gf[i]; ti += p.tilt[i]; ro += p.rot[i]; np_++; } }
+  const [ax2, ay2] = p.D[2]; let a2 = 0;
+  for (let i = a0; i <= a1; i++) { imp += p.gf[i] / FS; if (C(i)) { path += p.vabs[i] / FS; if (pw[i] > 0) Ea += pw[i] / FS; pm += p.gf[i]; ti += p.tilt[i]; ro += p.rot[i]; a2 += ax2[i] * ax2[i] + ay2[i] * ay2[i]; np_++; } }
   const cs = []; let st = -1; for (let i = a0; i <= a1 + 1; i++) { const c = i <= a1 && C(i); if (c && st < 0) st = i; else if (!c && st >= 0) { cs.push([st, i]); st = -1; } }
   const bounds = [...new Set([a0, a1, ...p.mins.filter(m => m > a0 && m < a1), ...cs.flat()])].sort((u, v) => u - v);
   if (!p._at) { p._at = savgol(p.vabs, SGW, SGO, 1, 1 / FS); p._jt = savgol(p.vabs, SGW, SGO, 2, 1 / FS); }
@@ -529,7 +548,7 @@ function measures(p, NF, sel) {
   for (let i = 1; i < fr.length; i++) { const P2 = A[i] ** 2; if (fr[i] <= 20) e20 += P2; if (fr[i] >= 5 && fr[i] < 8) e58 += P2; }
   return { 'tempo total (s)': T, 'velocidade média (mm/s)': path / T, 'energia de aceleração (J/kg)': Ea, 'levantamentos': Math.max(cs.length - 1, 0),
     'pressão média (gf)': pm / Math.max(np_, 1), 'impulso total (kgf·s)': imp / 1000, 'caminho total (mm)': path, 'inclinação média (°)': ti / Math.max(np_, 1),
-    'rotação média (°)': ro / Math.max(np_, 1), 'trocas de aceleração / traço': na / Math.max(ns, 1), 'trocas de jerk / traço': nj / Math.max(ns, 1), '% do espectro em 5–8 Hz': 100 * e58 / e20 };
+    'rotação média (°)': ro / Math.max(np_, 1), 'trocas de aceleração / traço': na / Math.max(ns, 1), 'trocas de jerk / traço': nj / Math.max(ns, 1), '% do espectro em 5–8 Hz': 100 * e58 / e20, 'aceleração RMS (m/s²)': Math.sqrt(a2 / Math.max(np_, 1)) / 1000 };
 }
 
 /* ---------- alinhamento por marcos (levantamentos casados primeiro) + DTW limitado ---------- */
@@ -737,10 +756,11 @@ async function nonceDe(nome, contador, modo) { return (await sha256(te.encode(`T
 /* ---------- caso completo: captura → registro → pacote → servidor abre → painel calcula ---------- */
 async function montarCaso(nome, modo, base, DADOS, prog = () => {}) {
   const tick = () => new Promise(r => setTimeout(r, 0)), ap = DADOS.aparelho, cal = DADOS.calibracao, s0 = hashStr(nome);
-  const calSha = await sha256regCal(cal), RR = [];
-  for (let i = 0; i < 20; i++) { prog(`Simulando a colheita P${String(i + 1).padStart(2, '0')} de 20`, i / 30); await tick(); RR.push(capture(base, (s0 + 101 + i) >>> 0, 'p', ap, i === 12 ? [1.6, 4] : null)); }
+  const calSha = await sha256regCal(cal), RR = [], pr = rngOf((s0 + 4242) >>> 0), pessoa = { kb: pr.uni(1.2, 3.5), kw: pr.uni(0.1, 0.3) };
+  { let sv = 0; for (let i = 0; i < 20; i++) sv += trSpeed(trajectory(base, rngOf((s0 + 101 + i) >>> 0), false)); pessoa.vref = sv / 20; }
+  for (let i = 0; i < 20; i++) { prog(`Simulando a colheita P${String(i + 1).padStart(2, '0')} de 20`, i / 30); await tick(); RR.push(capture(base, (s0 + 101 + i) >>> 0, 'p', ap, i === 12 ? [1.6, 4] : null, pessoa)); }
   prog('Simulando a assinatura questionada', 20 / 30); await tick();
-  const RQ = modo === 'imitação' ? capture(base, (s0 + 999) >>> 0, 'q', ap) : modo === 'construção' ? capture(base, (s0 + 555) >>> 0, 'c', ap) : capture(base, (s0 + 777) >>> 0, 'p', ap);
+  const RQ = modo === 'imitação' ? capture(base, (s0 + 999) >>> 0, 'q', ap) : modo === 'construção' ? capture(base, (s0 + 555) >>> 0, 'c', ap, null, pessoa) : capture(base, (s0 + 777) >>> 0, 'p', ap, null, pessoa);
   prog('Montando, cifrando e assinando os 21 pacotes', 22 / 30); await tick();
   const ef = DADOS.efemeras[nome], packs = [];
   const emp = async (r, cnt, ant, dh, md) => {
@@ -789,7 +809,7 @@ const PERITO = 'Nome do Perito', CPFP = '***.456.789-**';
 
 const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira' : n.startsWith('João') ? 'construção' : 'imitação');
 const DADOS_ = null;
-const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'tempo total (s)', my: 'impulso total (kgf·s)', m3: ['tempo total (s)', 'velocidade média (mm/s)', 'impulso total (kgf·s)'],
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['tempo total (s)', 'velocidade média (mm/s)', 'impulso total (kgf·s)'],
   crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false };
 let D = null, V = null;
 const cache = {};
@@ -1093,6 +1113,72 @@ function mahaPair() {
 }
 const ease = x => 1 - (1 - Math.min(1, Math.max(0, x))) ** 3;
 const ph = (t, a, b) => ease((t - a) / (b - a));
+/* ---------------- veredito com três saídas e tabela verdade ---------------- */
+const TV_SIX = ['tempo total (s)', 'pressão média (gf)', 'inclinação média (°)', 'trocas de jerk / traço', 'levantamentos', '% do espectro em 5–8 Hz'];
+const TV_EXTRA = ['velocidade média (mm/s)', 'aceleração RMS (m/s²)'];
+const TV_SET = [TV_SIX[0], TV_EXTRA[0], TV_EXTRA[1], ...TV_SIX.slice(1)];
+const tvForbidden = ks => ks.includes('tempo total (s)') && ks.includes('velocidade média (mm/s)'); // velocidade = caminho / tempo: a conta, não a pessoa
+function tvCombos() {
+  const C = (a, k) => (k === 0 ? [[]] : a.flatMap((x, i) => C(a.slice(i + 1), k - 1).map(r => [x, ...r])));
+  const out = [...C(TV_SIX, 3).map(ks => ({ ks, grp: 'Trios das 6 medidas' })), ...C(TV_SIX, 2).map(ks => ({ ks, grp: 'Pares das 6 medidas' }))];
+  for (const e of TV_EXTRA) for (const m of TV_SIX) if (!tvForbidden([e, m])) out.push({ ks: [e, m], grp: 'Pares com velocidade e aceleração' });
+  out.push({ ks: TV_EXTRA.slice(), grp: 'Pares com velocidade e aceleração' });
+  return out;
+}
+const TV_K = () => tvCombos().length + 1; // linhas testadas, incluindo o veredito
+function corrInv(R) { // inversa e menor autovalor de uma matriz de correlação 2×2 ou 3×3
+  const k = R.length;
+  if (k === 2) { const r = R[0][1], d = 1 - r * r; return { inv: [[1 / d, -r / d], [-r / d, 1 / d]], lmin: 1 - Math.abs(r) }; }
+  const eg = jacobi3(R); return { inv: [0, 1, 2].map(i => [0, 1, 2].map(j => eg.vec.reduce((s, v, m) => s + v[i] * v[j] / eg.val[m], 0))), lmin: Math.min(...eg.val) };
+}
+function mahaPlain(A, q) { // covariância amostral simples, a mesma das elipses
+  const n = A.length, k = q.length, mu = [...Array(k)].map((_, j) => A.reduce((s, a) => s + a[j], 0) / n);
+  const sd = mu.map((m, j) => Math.sqrt(A.reduce((s, a) => s + (a[j] - m) ** 2, 0) / (n - 1)));
+  if (sd.some(v => !(v > 1e-9))) return { semVar: true };
+  const Z = A.map(a => a.map((v, j) => (v - mu[j]) / sd[j])), R = [...Array(k)].map((_, i) => [...Array(k)].map((_, j) => Z.reduce((s, z) => s + z[i] * z[j], 0) / (n - 1)));
+  const { inv, lmin } = corrInv(R); if (lmin < 0.02) return { redund: true };
+  const z = q.map((v, j) => (v - mu[j]) / sd[j]); let d2 = 0; for (let i = 0; i < k; i++) for (let j = 0; j < k; j++) d2 += z[i] * inv[i][j] * z[j];
+  return { d2, d2diag: z.reduce((s, v) => s + v * v, 0) };
+}
+function tvLinha(ks) {
+  const A = V.M.map(m => ks.map(k => m[k])), q = ks.map(k => V.MQ[k]), n = A.length, p = ks.length, K = TV_K();
+  const base = { ks, p, n, lim95: TH.hotLim(0.95, n, p), lim99: TH.hotLim(0.99, n, p), limC: TH.hotLim(1 - 0.01 / K, n, p) };
+  if (ks.includes('% do espectro em 5–8 Hz') && TH.mean(V.M.map(m => m['tempo total (s)'])) < 1.0) return { ...base, res: 'INCONCLUSIVA', why: 'trecho curto para o espectro' };
+  const r = mahaPlain(A, q);
+  if (r.semVar) return { ...base, res: 'INCONCLUSIVA', why: 'medida não varia nos padrões' };
+  if (r.redund) return { ...base, res: 'INCONCLUSIVA', why: 'medidas redundantes nos padrões' };
+  let out = 0; const l19 = TH.hotLim(0.99, n - 1, p);
+  for (let j = 0; j < n; j++) { const rr = mahaPlain(A.filter((_, i) => i !== j), A[j]); if (rr.d2 > l19) out++; }
+  const L = { ...base, d2: r.d2, d2diag: r.d2diag, pval: TH.hotP(r.d2, n, p), out };
+  if (r.d2 <= L.lim95) return { ...L, res: 'TÍPICA', why: 'dentro da variação da pessoa' };
+  if (r.d2 > L.limC && r.d2diag <= L.limC) return { ...L, res: 'INCONCLUSIVA', why: 'cada medida está normal; só a relação entre elas destoa (com 20 padrões, pode ser acaso)' };
+  if (r.d2 > L.limC) return out >= 2 ? { ...L, res: 'INCONCLUSIVA', why: `régua instável: ${out} padrões da própria pessoa também saem` } : { ...L, res: 'ATÍPICA', why: 'fora com folga, mesmo após a correção' };
+  return { ...L, res: 'INCONCLUSIVA', why: 'na borda: pode ser acaso' };
+}
+function mainVerdict() { // modelo de 4 medidas ★ (Ledoit-Wolf), sem correção: é o teste definido antes
+  const MH = V.MH, base = { ks: MH.keys, d2: MH.d2, pval: MH.p, lim95: MH.lim95, lim99: MH.lim99, out: MH.looOut, p: MH.keys.length };
+  if (MH.d2 <= MH.lim95) return { ...base, res: 'TÍPICA', why: 'dentro da variação da pessoa' };
+  if (MH.d2 > MH.lim99) return MH.looOut >= 2 ? { ...base, res: 'INCONCLUSIVA', why: `régua instável: ${MH.looOut} padrões da própria pessoa também saem` } : { ...base, res: 'ATÍPICA', why: 'fora com folga' };
+  return { ...base, res: 'INCONCLUSIVA', why: 'na borda: pode ser acaso' };
+}
+const vCol = (res, P) => (res === 'ATÍPICA' ? P.red : res === 'TÍPICA' ? P.grn : P.amb);
+let TVROWS = [];
+function renderTV() {
+  const VD = mainVerdict(); TVROWS = [{ ks: VD.ks, grp: 'Veredito', L: VD, main: true }, ...tvCombos().map(c => ({ ...c, L: tvLinha(c.ks) }))];
+  const cnt = r => TVROWS.slice(1).filter(x => x.L.res === r).length, cls = r => (r === 'ATÍPICA' ? 'r-at' : r === 'TÍPICA' ? 'r-ty' : 'r-in');
+  const nome = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
+  let h = `<p class="tvsum"><b class="${cls(VD.res)}">Veredito (4 medidas ★): ${VD.res}</b> — ${VD.why}. <span>Combinações: <b class="r-at">${cnt('ATÍPICA')} atípicas</b> · <b class="r-ty">${cnt('TÍPICA')} típicas</b> · <b class="r-in">${cnt('INCONCLUSIVA')} inconclusivas</b> de ${TVROWS.length - 1}.</span></p>`;
+  h += '<div class="tw"><table class="tv"><thead><tr><th>Combinação</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody>';
+  let g = ''; TVROWS.forEach((r, i) => { if (r.grp !== g) { g = r.grp; h += `<tr class="g"><td colspan="3">${g}${g === 'Veredito' ? ' · modelo de 4 medidas ★, o único que decide' : ''}</td></tr>`; }
+    h += `<tr data-tv="${i}" class="${r.main ? 'main' : ''}" tabindex="0"><td>${nome(r.ks)}</td><td><span class="chip-r ${cls(r.L.res)}">${r.L.res}</span></td><td>${r.L.why}</td></tr>`; });
+  h += '</tbody></table></div>';
+  $('#tv').innerHTML = h;
+}
+function tvOpen(i) {
+  const r = TVROWS[i]; if (!r) return; const ks = r.ks;
+  if (ks.length === 2) { S.mx = ks[0]; S.my = ks[1]; log('Tabela verdade: abriu par', ks.map(LBL).join(' × ')); renderAnalise(); $('#cv-maha').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  else { S.m3 = ks.slice(0, 3); S.m3user = true; m3Selects(); m3Record('perito (tabela verdade)'); m3Play(); $('#cv-m3').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+}
 // Seta na borda para um valor fora da escala: parte de (sx,sy) na direção de (tx,ty) e para na borda do retângulo.
 function offArrow(c, sx, sy, tx, ty, R, L, D, col, P, lines) {
   const dx = tx - sx, dy = ty - sy, pad = 12; let s = Infinity;
@@ -1112,7 +1198,7 @@ function offArrow(c, sx, sy, tx, ty, R, L, D, col, P, lines) {
 }
 function drawMaha(cv, t = 1) {
   const MH = V.MH, pr = mahaPair(), kx = S.mx, ky = S.my;
-  const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), atip = MH.d2 > MH.lim99;
+  const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), VD = mainVerdict();
   if (!pr.ok) { const F = frame(cv, [0, 1], [0, 1], { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52 }); F.done(); F.c.fillStyle = F.P.mut; F.c.textAlign = 'center'; F.c.font = '12px ' + css('--sans'); F.c.fillText('Uma das medidas não varia nos padrões: escolha outro par.', F.w / 2, F.h / 2); return; }
   const { A, mu, S2, q, r } = pr, rmax = 1.7 * Math.sqrt(l99);
   // Regra: a questionada só é desenhada como ponto na posição verdadeira. Se não couber na escala da pessoa,
@@ -1121,7 +1207,7 @@ function drawMaha(cv, t = 1) {
   const e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
   const xs = [...e99.map(p => p[0]), ...A.map(a => a[0]), ...(fora ? [] : [q[0]])], ys = [...e99.map(p => p[1]), ...A.map(a => a[1]), ...(fora ? [] : [q[1]])];
   const pt = q;
-  const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
+  const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') || k.includes('RMS') ? 2 : 1);
   const narrow = (cv.clientWidth || 600) < 560, MT = narrow ? 74 : 50;
   const F = frame(cv, extent([xs], 0.12), extent([ys], 0.12), { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52, mt: MT }), { c, X, Y, P } = F;
   const halo = (txt, x, y) => { c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.globalAlpha *= 0.9; c.strokeText(txt, x, y); c.restore(); c.fillText(txt, x, y); };
@@ -1139,7 +1225,7 @@ function drawMaha(cv, t = 1) {
     c.globalAlpha = 1; c.fillStyle = P.acc; c.beginPath(); c.arc(X(mu[0]), Y(mu[1]), 2.5, 0, 7); c.fill();
   }
   // 3) linha da média até a questionada
-  const L = ph(t, 0.62, 0.82), col = atip ? P.red : P.grn;
+  const L = ph(t, 0.62, 0.82), col = vCol(VD.res, P);
   { const qx0 = X(q[0]), qy0 = Y(q[1]); if (!fora && !(qx0 >= F.m.l - 0.5 && qx0 <= F.w - F.m.r + 0.5 && qy0 >= F.m.t - 0.5 && qy0 <= F.h - F.m.b + 0.5)) fora = true; }
   if (fora) offArrow(c, X(mu[0]), Y(mu[1]), X(q[0]), Y(q[1]), { l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b }, L, ph(t, 0.8, 0.9), col, P, [`${LBL(kx)}: ${br(q[0], dec(kx))}`, `${LBL(ky)}: ${br(q[1], dec(ky))}`]);
   if (L > 0 && !fora) {
@@ -1162,11 +1248,11 @@ function drawMaha(cv, t = 1) {
     const sans = css('--sans'), L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, L2 = `só este par: D² = ${br(pr.d2, pr.d2 > 100 ? 0 : 1)} · correlação r = ${br(pr.corr, 2)}`;
     c.globalAlpha = V5; c.fillStyle = col;
     if (narrow) {
-      c.textAlign = 'left'; c.font = 'bold 20px ' + sans; const wd = atip ? 'ATÍPICA' : 'TÍPICA'; c.fillText(wd, F.m.l, 22);
+      c.textAlign = 'left'; c.font = 'bold 20px ' + sans; const wd = VD.res; c.fillText(wd, F.m.l, 22);
       const ww = c.measureText(wd).width; c.font = '11px ' + sans; c.fillText('para a pessoa', F.m.l + ww + 8, 22);
       c.fillText(L1, F.m.l, 42); c.fillStyle = P.mut; c.fillText(L2, F.m.l, 58);
     } else {
-      c.textAlign = 'left'; c.font = 'bold 22px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.m.l, 30);
+      c.textAlign = 'left'; c.font = 'bold 22px ' + sans; c.fillText(VD.res, F.m.l, 30);
       c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, F.w - F.m.r, 20); c.fillStyle = P.mut; c.fillText(L2, F.w - F.m.r, 36);
     }
     c.fillStyle = P.mut; c.textAlign = 'left'; c.font = '10px ' + sans;
@@ -1214,7 +1300,7 @@ function maha3() {
   return { ok: true, ks, A, Z, mu, sd, R, eg, zq, d2, r: Math.sqrt(d2), l95: TH.hotLim(0.95, n, 3), l99: TH.hotLim(0.99, n, 3), n };
 }
 function drawM3(cv, t = 1) {
-  const P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), mono = css('--mono'), MH = V.MH, atip = MH.d2 > MH.lim99, col = atip ? P.red : P.grn;
+  const P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), mono = css('--mono'), MH = V.MH, VD = mainVerdict(), col = vCol(VD.res, P);
   const M = maha3(), narrow = w < 560, top = narrow ? 70 : 46;
   if (!M.ok) { c.fillStyle = P.mut; c.font = '12px ' + sans; c.textAlign = 'center'; c.fillText('Uma das medidas não varia nos padrões ou duas são iguais: escolha outro trio.', w / 2, h / 2); return M; }
   const { eg, Z, zq, r, l95, l99 } = M, rmax = 1.3 * Math.sqrt(l99), clip = !S.mahaReal && r > rmax, q = zq; // nunca desloca a questionada: fora da escala vira seta
@@ -1289,7 +1375,7 @@ function drawM3(cv, t = 1) {
   if (g > 0.6) { c.strokeStyle = P.acc; c.globalAlpha = 0.45 * g; c.setLineDash([3, 3]); c.lineWidth = 1; for (const a of ax) { const p0 = S2(a.map(x => -x)), p1 = S2(a); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.stroke(); } c.setLineDash([]); c.globalAlpha = 1; }
   const m0 = S2([0, 0, 0]); c.fillStyle = P.acc; c.beginPath(); c.arc(m0[0], m0[1], 3, 0, 7); c.fill();
   // questionada: linha da média, haste até o chão e ponto
-  const dec3 = k => (k.includes('impulso') || k.includes('energia') ? 3 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
+  const dec3 = k => (k.includes('impulso') || k.includes('energia') ? 3 : k.includes('tempo') || k.includes('trocas') || k.includes('RMS') ? 2 : 1);
   if (qa > 0 && clip) {
     // fora da escala: seta da média até a face da caixa, na direção verdadeira; sem ponto, sem haste
     const f = 0.98 * B / Math.max(...q.map(Math.abs)), e = q.map(v => v * f * qa), se = S2(e);
@@ -1320,8 +1406,8 @@ function drawM3(cv, t = 1) {
     c.globalAlpha = hd; const L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`;
     const L2 = `este trio: D² = ${br(M.d2, M.d2 > 100 ? 0 : 1)} · limite 99% (p = 3) = ${br(l99, 1)}`, L3 = `correlações: r(X,Y) = ${br(M.R[0][1], 2)} · r(X,Z) = ${br(M.R[0][2], 2)} · r(Y,Z) = ${br(M.R[1][2], 2)}`;
     c.fillStyle = col; c.textAlign = 'left';
-    if (narrow) { c.font = 'bold 20px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', 10, 22); c.font = '11px ' + sans; c.fillText(L1, 10, 40); c.fillStyle = P.mut; c.fillText(L2, 10, 54); c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
-    else { c.font = 'bold 22px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', 10, 30); c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, w - 10, 18); c.fillStyle = P.mut; c.fillText(L2, w - 10, 33); c.textAlign = 'left'; c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
+    if (narrow) { c.font = 'bold 20px ' + sans; c.fillText(VD.res, 10, 22); c.font = '11px ' + sans; c.fillText(L1, 10, 40); c.fillStyle = P.mut; c.fillText(L2, 10, 54); c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
+    else { c.font = 'bold 22px ' + sans; c.fillText(VD.res, 10, 30); c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, w - 10, 18); c.fillStyle = P.mut; c.fillText(L2, w - 10, 33); c.textAlign = 'left'; c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
     c.textAlign = 'right'; c.font = '10px ' + sans; c.fillStyle = P.mut; if (!narrow) c.fillText(clip ? 'seta = só direção · arraste para girar' : S.mahaReal ? 'escala real · arraste para girar' : 'arraste para girar', w - 10, h - 8);
     c.globalAlpha = 1;
   }
@@ -1352,16 +1438,18 @@ function m3Init() {
   m3Bind($('#cv-m3')); m3Bind($('#cv-big'));
   $('#m3-spin').addEventListener('click', () => m3Auto(!M3.auto)); $('#m3-anim').addEventListener('click', m3Play);
   ['x', 'y', 'z'].forEach((a, j) => $('#m3-' + a).addEventListener('change', e => {
-    const v = e.target.value, o = S.m3.indexOf(v); if (o >= 0 && o !== j) S.m3[o] = S.m3[j]; S.m3[j] = v; S.m3user = true; m3Selects(); m3Record('perito'); m3Play();
+    const v = e.target.value, o = S.m3.indexOf(v); if (o >= 0 && o !== j) S.m3[o] = S.m3[j]; S.m3[j] = v;
+    for (let t = 0; t < 3; t++) if (t !== j && tvForbidden([S.m3[t], v])) { S.m3[t] = TV_SET.find(k => !S.m3.includes(k) && !tvForbidden([k, ...S.m3.filter((_, u) => u !== t)])); } S.m3user = true; m3Selects(); m3Record('perito'); m3Play();
   }));
   new IntersectionObserver(es => { M3.vis = es[0].isIntersecting; if (M3.vis) m3Kick(); }, { threshold: 0.05 }).observe($('#cv-m3'));
   m3Auto(M3.auto);
 }
 function m3Best() {
-  const K = KEYS.filter(k => !k.startsWith('rotação')), n = V.M.length, Zs = {};
+  const K = TV_SET.slice(), n = V.M.length, Zs = {};
   for (const k of K) { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = Math.sqrt(a.reduce((s, x) => s + (x - mu) ** 2, 0) / (n - 1)); if (sd > 1e-12) Zs[k] = a.map(x => (x - mu) / sd); }
   const ks = Object.keys(Zs), r = (a, b) => Zs[a].reduce((s, x, i) => s + x * Zs[b][i], 0) / (n - 1); let best = null, bv = -1;
   for (let i = 0; i < ks.length; i++) for (let j = i + 1; j < ks.length; j++) for (let k = j + 1; k < ks.length; k++) {
+    if (tvForbidden([ks[i], ks[j], ks[k]])) continue;
     const v = Math.abs(r(ks[i], ks[j])) + Math.abs(r(ks[i], ks[k])) + Math.abs(r(ks[j], ks[k]));
     const R = [[1, r(ks[i], ks[j]), r(ks[i], ks[k])], [0, 1, r(ks[j], ks[k])], [0, 0, 1]]; R[1][0] = R[0][1]; R[2][0] = R[0][2]; R[2][1] = R[1][2];
     if (Math.min(...jacobi3(R).val) < 0.02) continue; // evita trio quase degenerado (duas medidas que são quase a mesma coisa)
@@ -1378,13 +1466,13 @@ function m3Record(origem) {
   $('#m3-warn').hidden = !rot;
 }
 function m3Selects() {
-  const opt = sel => KEYS.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${V.MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
+  const opt = sel => TV_SET.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${V.MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
   ['x', 'y', 'z'].forEach((a, j) => ($('#m3-' + a).innerHTML = opt(S.m3[j])));
 }
 
 /* ---------------- medidas ---------------- */
-const DEC = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
-const GROUPS = [['Lentidão', [0, 1, 2]], ['Segmentação', [3]], ['Pressão', [4, 5]], ['Forma', [6]], ['Postura da caneta', [7, 8]], ['Fluência (Phillips et al. 1991)', [9, 10, 11]]];
+const DEC = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') || k.includes('RMS') ? 2 : 1);
+const GROUPS = [['Lentidão', [0, 1, 2, 12]], ['Segmentação', [3]], ['Pressão', [4, 5]], ['Forma', [6]], ['Postura da caneta', [7, 8]], ['Fluência (Phillips et al. 1991)', [9, 10, 11]]];
 function renderMeasures() {
   const { M, MQ, MH, dtwP, dtwQ } = V; let h = `<table class="mt"><thead><tr><th></th><th>padrões</th><th>quest.</th><th>z</th></tr></thead><tbody>`;
   for (const [g, ix] of GROUPS) {
@@ -1401,7 +1489,7 @@ function renderMeasures() {
   <tr><td>DTW dos perfis</td><td>${br(Math.min(...dtwP))}–${br(Math.max(...dtwP))}</td><td class="q">${br(dtwQ)}</td><td></td></tr></tbody></table>
   <p class="fine">Ledoit-Wolf: encolhimento ${br(MH.shrink)}. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício. A rotação no eixo vem do clip (direção da gravidade em volta do eixo da caneta, válida com inclinação ≥ 10°); ainda não foi validada em bancada e fica fora do Mahalanobis.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
   $('#measures').innerHTML = h;
-  const opt = sel => KEYS.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
+  const opt = sel => TV_SET.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
   $('#mh-x').innerHTML = opt(S.mx); $('#mh-y').innerHTML = opt(S.my);
 }
 
@@ -1421,7 +1509,7 @@ function renderAnalise() {
   $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}%` : 'Medidas globais';
   $('#t-maha').textContent = `Mahalanobis${z} · ${V.MH.keys.length} medidas`;
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
-  renderMeasures();
+  renderMeasures(); renderTV();
   DRAW = {
     'cv-sig': cv => drawSignature(cv), 'cv-zoom': cv => drawZoom(cv), 'cv-comp': cv => drawCompass(cv), 'cv-hist': cv => drawHist(cv),
     'cv-pres': cv => drawPressure(cv), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
@@ -1597,7 +1685,7 @@ async function makePDF() {
   y = T('Fundamentação: ' + ($('#fund').value.trim() || '(não preenchida)'), L, y, { gap: 3 });
   H2('2. Resultado estatístico');
   y = T(`Análise: ${S.trecho ? `trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'} · grandeza ${SYM[S.g][3]} · eixo ${params()[8][1]}.`, L, y);
-  y = T(`Mahalanobis com ${MH.keys.length} medidas (${MH.keys.join(', ')}): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}; limite de 99% (Hotelling, n = 20) = ${br(MH.lim99, 1)}; valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}. Leitura do painel: ${atip ? 'ATÍPICA' : 'TÍPICA'} para a pessoa. Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
+  y = T(`Mahalanobis com ${MH.keys.length} medidas (${MH.keys.join(', ')}): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}; limite de 99% (Hotelling, n = 20) = ${br(MH.lim99, 1)}; valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}. Leitura do painel: ${mainVerdict().res} para a pessoa (${mainVerdict().why}; regra de três saídas: típica abaixo do limite de 95%, atípica acima do de 99% com régua estável, inconclusiva no meio ou com régua instável). Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
   y = T('O valor p mede só o quanto a questionada é atípica para a pessoa; não é a probabilidade de falsificação.', L, y, { i: true, s: 8.5, c: [93, 104, 120], gap: 3 });
   const H3 = S.m3hist || [], last = H3[H3.length - 1];
   if (last) {
@@ -1612,6 +1700,9 @@ async function makePDF() {
   for (const [cap, fn, wmm, hmm] of imgs) { need(hmm + 8); y = T(cap, L, y, { b: true, s: 8.5 }); const url = await chartImg(fn, wmm * 4, hmm * 4); doc.addImage(url, 'PNG', L, y, wmm, hmm); y += hmm + 3; }
   if (H3.length) { y = T('Trios do Mahalanobis 3D consultados (todos, na ordem; exploratórios, não entram no veredito)', L, y, { b: true, s: 8.5 });
     table([['Hora', 'Caso', 'Origem', 'X · Y · Z', 'D² / limite 99%']].concat(H3.map(h => [h.ts, h.caso, h.origem === 'auto' ? 'automático (só padrões)' : h.origem, h.ks.map(LBL).join(' · '), `${br(h.d2, h.d2 > 100 ? 0 : 1)} / ${br(h.l99, 1)}`])), [16, 34, 30, 70, 24], { head: true, s: 7 }); }
+  if (TVROWS.length) { need(20); y = T('Tabela verdade (todas as combinações; só a linha do veredito decide; números no Anexo A)', L, y, { b: true, s: 8.5 });
+    const nm = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
+    table([['Combinação', 'Resultado', 'Motivo']].concat(TVROWS.map(r => [(r.main ? 'VEREDITO: ' : '') + nm(r.ks), r.L.res, r.L.why])), [78, 26, 70], { head: true, s: 7 }); }
   H2('4. Verificação de integridade');
   table([['Verificação', 'Resultado', 'Detalhe']].concat(integrity().map(([a, s, b, c]) => [a, ({ ok: 'OK ', bad: 'FALHA ', warn: 'ATENÇÃO ', sim: '', na: '' }[s]) + b, c])), [55, 35, 84], { head: true });
   H2('5. Parâmetros de cálculo'); table(params(), [50, 124]);
@@ -1620,6 +1711,10 @@ async function makePDF() {
   y = T('O laudo não contém amostras cruas: elas não saem do sistema (6.10.3). Quem precisar conferir recebe acesso próprio ao caso.', L, y, { i: true, s: 8, c: [93, 104, 120], gap: 3 });
   H2('7. Registro de acessos (encadeado por hash)');
   table([['Data/hora', 'Ação', 'Detalhe', 'Hash']].concat(S.log.map(l => [l.ts, l.acao, l.det, l.h.slice(0, 16)])), [32, 36, 76, 30], { head: true, s: 7 });
+  if (TVROWS.length) { H2('Anexo A. Números da tabela verdade');
+    y = T('D² com a covariância simples dos 20 padrões (a mesma das elipses); D² diag = soma dos z² (sem correlação). Limite corrigido = Hotelling a 1 − 0,01/k, com k = ' + TV_K() + ' linhas. Padrões fora = quantos dos 20 saem do limite de 99% quando testados contra os outros 19. A linha do veredito usa o modelo de 4 medidas (Ledoit-Wolf) sem correção.', L, y, { s: 7.5, c: [93, 104, 120], gap: 2 });
+    const f = (v, d = 1) => (Number.isFinite(v) ? br(v, v > 100 ? 0 : d) : '—'), nm = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
+    table([['Combinação', 'D²', 'D² diag', 'lim. 95%', 'lim. corrigido', 'p', 'padrões fora', 'Resultado']].concat(TVROWS.map(r => [nm(r.ks), f(r.L.d2), f(r.L.d2diag), f(r.L.lim95), r.main ? f(r.L.lim99) + ' (99%)' : f(r.L.limC), Number.isFinite(r.L.pval) ? (r.L.pval < 1e-4 ? '< 0,0001' : br(r.L.pval, 4)) : '—', Number.isFinite(r.L.out) ? String(r.L.out) : '—', r.L.res])), [58, 15, 15, 14, 18, 16, 14, 24], { head: true, s: 6.5 }); }
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(93, 104, 120); doc.text(latin(`Assinado digitalmente (simulado, ECDSA P-256 da sessão ${SES}) · código de verificação ${code}`), L, 287); doc.text(latin(`SHA-256 do conteúdo ${hh.slice(0, 32)}… · assinatura ${sig.slice(0, 24)}…`), L, 290.5); doc.text(`${i}/${n}`, R, 290.5, { align: 'right' }); }
   const blob = doc.output('blob'), fname = `laudo_thoth_${D.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
@@ -1656,8 +1751,9 @@ function bind() {
   $('#btn-inteira').addEventListener('click', () => { if (!S.trecho) return; S.trecho = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
   $('#btn-zero').addEventListener('click', () => { S.shifts = {}; renderAnalise(); });
   $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); renderAnalise(); }));
-  $('#mh-x').addEventListener('change', e => { S.mx = e.target.value; if (S.my === S.mx) S.my = KEYS[(KEYS.indexOf(S.mx) + 1) % KEYS.length]; renderAnalise(); });
-  $('#mh-y').addEventListener('change', e => { S.my = e.target.value; if (S.my === S.mx) S.mx = KEYS[(KEYS.indexOf(S.my) + 1) % KEYS.length]; renderAnalise(); });
+  const fixPair = moved => { const other = moved === 'x' ? 'my' : 'mx', me = moved === 'x' ? 'mx' : 'my'; let i = TV_SET.indexOf(S[other]); while (S[other] === S[me] || tvForbidden([S[other], S[me]])) { i = (i + 1) % TV_SET.length; S[other] = TV_SET[i]; } };
+  $('#mh-x').addEventListener('change', e => { S.mx = e.target.value; fixPair('x'); renderAnalise(); });
+  $('#mh-y').addEventListener('change', e => { S.my = e.target.value; fixPair('y'); renderAnalise(); });
   $('#btn-anim').addEventListener('click', () => playMaha(true));
   const cv = $('#cv-sig'); let start = null;
   const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
@@ -1685,6 +1781,8 @@ function bind() {
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
+  $('#tv').addEventListener('click', e => { const tr = e.target.closest('tr[data-tv]'); if (tr) tvOpen(+tr.dataset.tv); });
+  $('#tv').addEventListener('keydown', e => { const tr = e.target.closest('tr[data-tv]'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tvOpen(+tr.dataset.tv); } });
   const realUI = () => { for (const id of ['#mh-real', '#m3-real']) { const b = $(id); b.classList.toggle('on', !!S.mahaReal); b.textContent = S.mahaReal ? '⤡ escala da pessoa' : '⤢ escala real'; } };
   for (const id of ['#mh-real', '#m3-real']) $(id).addEventListener('click', () => { S.mahaReal = !S.mahaReal; realUI(); log('Mahalanobis: escala', S.mahaReal ? 'real (eixos até a questionada)' : 'da pessoa (questionada fora da escala vira seta)'); drawMaha($('#cv-maha'), 1); drawM3($('#cv-m3'), M3.tAnim); if (BIG === 'cv-maha') drawMaha($('#cv-big'), 1); });
   realUI();
