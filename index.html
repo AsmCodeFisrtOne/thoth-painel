@@ -46,7 +46,22 @@ input[type=range] { accent-color: var(--accent); width: 130px; max-width: 40vw }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 6px }
 .card h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; text-wrap: balance }
 .card h3.var { color: var(--amber) }
-.span2 { grid-column: span 2 } .tvsum { margin: 0 0 6px; font-size: 13px } .tvsum span { color: var(--muted) }
+.span2 { grid-column: span 2 } .tvsum { margin: 0 0 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center } .tvsum .mut, .tvdet .mut { color: var(--muted) } .tvsum .btn { margin-left: auto }
+.chip-r.big { font-size: 12.5px; padding: 2px 10px }
+.tvgrid { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-start } .tvgrid h4 { margin: 0 0 6px; color: var(--muted) }
+table.tvm { border-collapse: separate; border-spacing: 3px; width: auto !important; table-layout: fixed; font-size: 11px }
+table.tvm td { width: 34px; min-width: 34px; max-width: 34px; height: 26px; text-align: center; font-weight: 700; border-radius: 5px; color: var(--panel); cursor: pointer; padding: 0 }
+table.tvm td.r-at { background: var(--red) } table.tvm td.r-ty { background: var(--green) } table.tvm td.r-in { background: var(--amber) }
+table.tvm td.nx { background: var(--grid); color: var(--muted); cursor: help } table.tvm td.empty { background: none; cursor: default }
+table.tvm td.sel, .pill.sel { outline: 2px solid var(--ink); outline-offset: 1px }
+table.tvm th { font-weight: 500; color: var(--muted); text-align: right; padding-right: 4px; white-space: nowrap }
+table.tvm th.colh { vertical-align: top; padding: 4px 0 0; text-align: center } table.tvm th.colh span { writing-mode: vertical-rl; transform: rotate(180deg); white-space: nowrap; display: inline-block }
+.pills { display: grid; grid-template-columns: repeat(2, minmax(0, max-content)); gap: 4px 6px; max-width: 520px }
+.pill { font: 11.5px var(--sans); text-align: left; border: 0; border-radius: 6px; padding: 3px 8px; color: var(--panel); cursor: pointer; white-space: nowrap }
+.pill.r-at { background: var(--red) } .pill.r-ty { background: var(--green) } .pill.r-in { background: var(--amber) }
+.tvdet { margin-top: 10px; font-size: 12.5px; min-height: 26px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center }
+table.tv tr.sel td { background: var(--soft) }
+@media (max-width: 680px) { .pills { grid-template-columns: repeat(2, minmax(0, 1fr)) } .pill { white-space: normal; font-size: 10.5px; padding: 3px 6px } table.tvm td { width: 28px; min-width: 28px; max-width: 28px; height: 24px } .tvgrid > div { max-width: 100%; overflow-x: auto } }
 table.tv { font-size: 12.5px } table.tv th { text-align: left; color: var(--muted); font-weight: 600; padding: 3px 8px; border-bottom: 1px solid var(--accent) }
 table.tv td { padding: 4px 8px; border-bottom: 1px solid var(--grid) } table.tv tr.g td { font-weight: 600; padding-top: 9px; border: 0; color: var(--muted) }
 table.tv tr[data-tv] { cursor: pointer } table.tv tr[data-tv]:hover td, table.tv tr[data-tv]:focus td { background: var(--soft) } table.tv tr.main td { font-weight: 600 }
@@ -157,7 +172,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Mahalanobis 3D · elipsoide de 3 medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = elipsoide de 95% da pessoa (zᵀR⁻¹z = limite de Hotelling com p = 3); contorno tracejado = 95%, pontilhado = 99%. O alongamento e a inclinação mostram como as três medidas variam juntas (matriz de correlação R); as linhas tracejadas internas são os eixos principais (autovetores de R). As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
-      <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">clique numa linha para vê-la no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os 20 padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos 20 padrões sai quando testado contra os outros 19). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Só a linha do veredito decide; as demais mostram onde a assinatura se afasta. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
+      <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os 20 padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos 20 padrões sai quando testado contra os outros 19). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Só a linha do veredito decide; as demais mostram onde a assinatura se afasta. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
     </div>
   </section>
 
@@ -1163,17 +1178,44 @@ function mainVerdict() { // modelo de 4 medidas ★ (Ledoit-Wolf), sem correçã
 }
 const vCol = (res, P) => (res === 'ATÍPICA' ? P.red : res === 'TÍPICA' ? P.grn : P.amb);
 let TVROWS = [];
+const TV_AB = { 'tempo total (s)': 'tempo', 'velocidade média (mm/s)': 'veloc.', 'aceleração RMS (m/s²)': 'acel.', 'pressão média (gf)': 'pressão', 'inclinação média (°)': 'inclin.', 'trocas de jerk / traço': 'jerk', 'levantamentos': 'levant.', '% do espectro em 5–8 Hz': '5–8 Hz' };
+const tvNome = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
+const tvCls = r => (r === 'ATÍPICA' ? 'r-at' : r === 'TÍPICA' ? 'r-ty' : 'r-in'), tvLet = r => (r === 'ATÍPICA' ? 'A' : r === 'TÍPICA' ? 'T' : 'I');
+let TVSEL = -1, TVLIST = false;
 function renderTV() {
   const VD = mainVerdict(); TVROWS = [{ ks: VD.ks, grp: 'Veredito', L: VD, main: true }, ...tvCombos().map(c => ({ ...c, L: tvLinha(c.ks) }))];
-  const cnt = r => TVROWS.slice(1).filter(x => x.L.res === r).length, cls = r => (r === 'ATÍPICA' ? 'r-at' : r === 'TÍPICA' ? 'r-ty' : 'r-in');
-  const nome = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
-  let h = `<p class="tvsum"><b class="${cls(VD.res)}">Veredito (4 medidas ★): ${VD.res}</b> — ${VD.why}. <span>Combinações: <b class="r-at">${cnt('ATÍPICA')} atípicas</b> · <b class="r-ty">${cnt('TÍPICA')} típicas</b> · <b class="r-in">${cnt('INCONCLUSIVA')} inconclusivas</b> de ${TVROWS.length - 1}.</span></p>`;
-  h += '<div class="tw"><table class="tv"><thead><tr><th>Combinação</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody>';
-  let g = ''; TVROWS.forEach((r, i) => { if (r.grp !== g) { g = r.grp; h += `<tr class="g"><td colspan="3">${g}${g === 'Veredito' ? ' · modelo de 4 medidas ★, o único que decide' : ''}</td></tr>`; }
-    h += `<tr data-tv="${i}" class="${r.main ? 'main' : ''}" tabindex="0"><td>${nome(r.ks)}</td><td><span class="chip-r ${cls(r.L.res)}">${r.L.res}</span></td><td>${r.L.why}</td></tr>`; });
-  h += '</tbody></table></div>';
+  const cnt = r => TVROWS.slice(1).filter(x => x.L.res === r).length;
+  let h = `<div class="tvsum"><span class="chip-r big ${tvCls(VD.res)}">${VD.res}</span> <b>Veredito (4 medidas ★)</b> — ${VD.why}. <span class="mut">Combinações: <b class="r-at">${cnt('ATÍPICA')} atípicas</b> · <b class="r-ty">${cnt('TÍPICA')} típicas</b> · <b class="r-in">${cnt('INCONCLUSIVA')} inconclusivas</b> de ${TVROWS.length - 1}.</span> <button type="button" class="btn" id="tv-list">${TVLIST ? 'ver em matriz' : 'ver em lista'}</button></div>`;
+  if (TVLIST) {
+    h += '<div class="tw"><table class="tv"><thead><tr><th>Combinação</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody>';
+    let g = ''; TVROWS.forEach((r, i) => { if (r.grp !== g) { g = r.grp; h += `<tr class="g"><td colspan="3">${g}${g === 'Veredito' ? ' · modelo de 4 medidas ★, o único que decide' : ''}</td></tr>`; }
+      h += `<tr data-tv="${i}" class="${r.main ? 'main' : ''}${i === TVSEL ? ' sel' : ''}" tabindex="0"><td>${tvNome(r.ks)}</td><td><span class="chip-r ${tvCls(r.L.res)}">${r.L.res}</span></td><td>${r.L.why}</td></tr>`; });
+    h += '</tbody></table></div>';
+  } else {
+    const idx = {}; TVROWS.forEach((r, i) => { if (!r.main) idx[r.ks.slice().sort().join('|')] = i; });
+    const M = TV_SET; let mx = '<table class="tvm" aria-label="Pares de medidas"><tbody>';
+    for (let a = 1; a < M.length; a++) {
+      mx += `<tr><th scope="row">${TV_AB[M[a]]}</th>`;
+      for (let b = 0; b < a; b++) {
+        const key = [M[a], M[b]].sort().join('|'), i = idx[key];
+        if (i === undefined) mx += `<td class="nx" title="tempo × velocidade: não se compara (a velocidade é o caminho dividido pelo tempo)">—</td>`;
+        else { const r = TVROWS[i]; mx += `<td data-tv="${i}" tabindex="0" class="${tvCls(r.L.res)}${i === TVSEL ? ' sel' : ''}" title="${tvNome(r.ks)}: ${r.L.res} — ${r.L.why}">${tvLet(r.L.res)}</td>`; }
+      }
+      mx += '<td class="empty" colspan="' + (M.length - 1 - a) + '"></td></tr>';
+    }
+    mx += '<tr><th></th>' + M.slice(0, -1).map(k => `<th scope="col" class="colh"><span>${TV_AB[k]}</span></th>`).join('') + '</tr></tbody></table>';
+    const trios = TVROWS.map((r, i) => [r, i]).filter(([r]) => !r.main && r.ks.length === 3)
+      .map(([r, i]) => `<button type="button" data-tv="${i}" class="pill ${tvCls(r.L.res)}${i === TVSEL ? ' sel' : ''}" title="${tvNome(r.ks)}: ${r.L.res} — ${r.L.why}"><b>${tvLet(r.L.res)}</b> ${r.ks.map(k => TV_AB[k]).join(' · ')}</button>`).join('');
+    const sel = TVROWS[TVSEL];
+    h += `<div class="tvgrid"><div><h4>Pares</h4>${mx}</div><div><h4>Trios das 6 medidas</h4><div class="pills">${trios}</div></div></div>
+      <div class="tvdet" aria-live="polite">${sel && !sel.main ? `<span class="chip-r ${tvCls(sel.L.res)}">${sel.L.res}</span> <b>${tvNome(sel.ks)}</b> — ${sel.L.why}. <button type="button" class="btn" id="tv-open">abrir no gráfico ↗</button>` : '<span class="mut">Toque ou passe o mouse num quadrado ou num trio para ver o motivo.</span>'}</div>
+      <p class="fine tvleg"><span class="chip-r r-ty">T</span> típica · <span class="chip-r r-at">A</span> atípica · <span class="chip-r r-in">I</span> inconclusiva · — não se compara</p>`;
+  }
   $('#tv').innerHTML = h;
 }
+function tvShow(i) { const r = TVROWS[i]; if (!r || r.main) return; TVSEL = i; const d = $('#tv .tvdet'); if (!d) return renderTV();
+  d.innerHTML = `<span class="chip-r ${tvCls(r.L.res)}">${r.L.res}</span> <b>${tvNome(r.ks)}</b> — ${r.L.why}. <button type="button" class="btn" id="tv-open">abrir no gráfico ↗</button>`;
+  $$('#tv [data-tv]').forEach(e => e.classList.toggle('sel', +e.dataset.tv === i)); }
 function tvOpen(i) {
   const r = TVROWS[i]; if (!r) return; const ks = r.ks;
   if (ks.length === 2) { S.mx = ks[0]; S.my = ks[1]; log('Tabela verdade: abriu par', ks.map(LBL).join(' × ')); renderAnalise(); $('#cv-maha').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
@@ -1781,8 +1823,15 @@ function bind() {
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
-  $('#tv').addEventListener('click', e => { const tr = e.target.closest('tr[data-tv]'); if (tr) tvOpen(+tr.dataset.tv); });
-  $('#tv').addEventListener('keydown', e => { const tr = e.target.closest('tr[data-tv]'); if (tr && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); tvOpen(+tr.dataset.tv); } });
+  $('#tv').addEventListener('click', e => {
+    if (e.target.closest('#tv-list')) { TVLIST = !TVLIST; renderTV(); return; }
+    if (e.target.closest('#tv-open')) { tvOpen(TVSEL); return; }
+    const el = e.target.closest('[data-tv]'); if (!el) return; const i = +el.dataset.tv;
+    if (TVLIST || TVROWS[i].main) tvOpen(i); else if (TVSEL === i) tvOpen(i); else tvShow(i);
+  });
+  $('#tv').addEventListener('mouseover', e => { const el = e.target.closest('[data-tv]'); if (el && !TVLIST && e.pointerType !== 'touch') tvShow(+el.dataset.tv); });
+  $('#tv').addEventListener('focusin', e => { const el = e.target.closest('[data-tv]'); if (el && !TVLIST) tvShow(+el.dataset.tv); });
+  $('#tv').addEventListener('keydown', e => { const el = e.target.closest('[data-tv]'); if (el && (e.key === 'Enter' || e.key === ' ') && el.tagName !== 'BUTTON') { e.preventDefault(); tvOpen(+el.dataset.tv); } });
   const realUI = () => { for (const id of ['#mh-real', '#m3-real']) { const b = $(id); b.classList.toggle('on', !!S.mahaReal); b.textContent = S.mahaReal ? '⤡ escala da pessoa' : '⤢ escala real'; } };
   for (const id of ['#mh-real', '#m3-real']) $(id).addEventListener('click', () => { S.mahaReal = !S.mahaReal; realUI(); log('Mahalanobis: escala', S.mahaReal ? 'real (eixos até a questionada)' : 'da pessoa (questionada fora da escala vira seta)'); drawMaha($('#cv-maha'), 1); drawM3($('#cv-m3'), M3.tAnim); if (BIG === 'cv-maha') drawMaha($('#cv-big'), 1); });
   realUI();
