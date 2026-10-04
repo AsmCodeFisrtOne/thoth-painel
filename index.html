@@ -1,0 +1,1308 @@
+<title>Thoth · Painel do perito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: cabeçalho do aparelho em azul-noite; abas; barra de controles; grade de painéis 4 → 2 → 1 coluna. */
+:root {
+  --bg: #eef1f5; --panel: #ffffff; --ink: #1b2230; --muted: #5d6878; --line: #d9dee7; --grid: #e9ecf2;
+  --navy: #172133; --navy-ink: #f2f5fa; --navy-mut: #9aa6ba; --accent: #2f6fd6; --q: #2f6fd6; --band: #8a919c;
+  --red: #c8372d; --amber: #c47a0a; --green: #1f7a35; --sel: #f5c542; --noise: #c47a0a; --soft: #e8eefb; --warnbg: #fff4dc;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f141c; --panel: #171e29; --ink: #e4e8ef; --muted: #9aa5b5; --line: #2a3342; --grid: #222a37; --navy: #0a0e15; --navy-ink: #eef2f8; --navy-mut: #8b97ab;
+  --accent: #6ea1ff; --q: #6ea1ff; --band: #a2abb8; --red: #ff6b5e; --amber: #f0a83a; --green: #4cc07a; --sel: #e0b53a; --noise: #f0a83a; --soft: #1d2a40; --warnbg: #3a2c12; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #0f141c; --panel: #171e29; --ink: #e4e8ef; --muted: #9aa5b5; --line: #2a3342; --grid: #222a37; --navy: #0a0e15; --navy-ink: #eef2f8; --navy-mut: #8b97ab;
+  --accent: #6ea1ff; --q: #6ea1ff; --band: #a2abb8; --red: #ff6b5e; --amber: #f0a83a; --green: #4cc07a; --sel: #e0b53a; --noise: #f0a83a; --soft: #1d2a40; --warnbg: #3a2c12; color-scheme: dark }
+* { box-sizing: border-box }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 var(--sans); padding-inline: 16px; padding-block: 12px 32px; }
+.wrap { max-width: 1680px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; position: relative }
+header.dev { background: var(--navy); color: var(--navy-ink); border-radius: 10px; padding: 12px 16px; display: flex; flex-wrap: wrap; gap: 6px 24px; justify-content: space-between; position: relative }
+header.dev h1 { font-size: 17px; margin: 0; font-weight: 600; letter-spacing: .01em }
+header.dev .sub { color: var(--navy-mut); font-size: 12px; font-family: var(--mono) }
+header.dev .r { text-align: right; font-size: 12px; font-family: var(--mono); min-width: 0 }
+.ghost { position: absolute; right: 6px; bottom: 3px; display: flex; gap: 4px }
+.ghost button { background: none; border: 0; color: var(--navy-mut); opacity: .28; font: 10px var(--mono); padding: 2px 4px; cursor: pointer }
+.ghost button:hover, .ghost button:focus-visible { opacity: .9 }
+nav.tabs { display: flex; gap: 4px; flex-wrap: wrap }
+.tab { font: 500 13px var(--sans); padding: 7px 14px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 8px 8px 0 0; cursor: pointer }
+.tab.on { color: var(--ink); border-color: var(--accent); box-shadow: inset 0 -2px 0 var(--accent) }
+.bar { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; font-size: 12.5px }
+.grp { display: flex; flex-wrap: wrap; gap: 4px; align-items: center }
+.grp > span { font-weight: 600; margin-right: 2px }
+.grp.hl { background: var(--warnbg); border: 1px solid var(--amber); border-radius: 7px; padding: 3px 6px }
+.btn { font: 12px var(--sans); border: 1px solid var(--accent); color: var(--accent); background: var(--panel); border-radius: 6px; padding: 4px 9px; cursor: pointer; white-space: nowrap }
+.btn.on { background: var(--accent); color: var(--panel); font-weight: 600 }
+.btn:focus-visible, .tab:focus-visible, .chip:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px }
+.btn:disabled { opacity: .55; cursor: progress }
+.note { color: var(--muted); font-style: italic; margin-left: auto }
+.grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); grid-auto-flow: row dense; gap: 10px }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 6px }
+.card h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; text-wrap: balance }
+.card h3.var { color: var(--amber) }
+.span2 { grid-column: span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
+canvas { width: 100%; display: block; touch-action: pan-y }
+.cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
+.cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
+.ch-s { height: 120px }
+#cv-sig { touch-action: none; cursor: crosshair }
+.shift { display: flex; gap: 4px; align-items: center; justify-content: flex-end; font: 11px var(--mono); color: var(--accent) }
+.shift button { border: 1px solid var(--accent); background: none; color: var(--accent); border-radius: 4px; font-size: 10px; padding: 0 5px; cursor: pointer }
+table { border-collapse: collapse; width: 100% }
+.mt { font-size: 12px; font-variant-numeric: tabular-nums }
+.mt th { text-align: left; color: var(--muted); font-weight: 600; padding: 2px 4px; border-bottom: 1px solid var(--accent) }
+.mt td { padding: 2px 4px; border-bottom: 1px solid var(--grid) }
+.mt tr.g td { font-weight: 600; padding-top: 7px; border: 0 }
+.mt td.q { color: var(--accent); font-weight: 600 } .mt td.hz { color: var(--red); font-weight: 600 }
+.fine { font-size: 11px; color: var(--muted); margin: 4px 0 0 }
+select { font: 12px var(--sans); background: var(--panel); color: var(--ink); border: 1px solid var(--accent); border-radius: 6px; padding: 2px 4px; max-width: 160px }
+.mono { font-family: var(--mono); font-size: 11.5px; word-break: break-all }
+.ok { color: var(--green); font-weight: 600 } .bad { color: var(--red); font-weight: 600 } .warn { color: var(--amber); font-weight: 600 } .sim { color: var(--muted) }
+.banner { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; background: var(--warnbg); border: 1px solid var(--amber); border-radius: 8px; padding: 8px 12px; font-size: 12.5px }
+.banner b.tag { background: var(--amber); color: var(--panel); padding: 2px 8px; border-radius: 4px; font-size: 11px; letter-spacing: .04em }
+.qbox { border: 1.5px solid var(--red); border-radius: 8px; background: var(--panel); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px }
+.qhead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; color: var(--red) }
+.qtag { background: var(--red); color: var(--panel); font-weight: 600; padding: 2px 10px; border-radius: 4px; font-size: 12px; letter-spacing: .04em }
+.qgrid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr) minmax(0, 1fr); gap: 14px }
+.min0 { min-width: 0 }
+h4 { margin: 4px 0; font-size: 12px; font-weight: 600 }
+dl.kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 10px; margin: 0; font-size: 12px }
+dl.kv dt { color: var(--muted) } dl.kv dd { margin: 0; min-width: 0 }
+.tw { overflow-x: auto }
+table.raw { font: 11.5px var(--mono); font-variant-numeric: tabular-nums; user-select: none; -webkit-user-select: none }
+table.raw th { text-align: left; font-family: var(--sans); font-weight: 600; color: var(--muted); padding: 3px 6px; border-bottom: 1px solid var(--line); white-space: nowrap }
+table.raw td { padding: 2px 6px; border-bottom: 1px solid var(--grid); white-space: nowrap }
+table.raw tr.air td { color: var(--amber) } table.raw td.calc { font-style: italic; color: var(--muted) }
+table.raw tr.gap td { background: var(--warnbg); color: var(--amber); font-weight: 600; font-family: var(--sans); white-space: normal }
+table.list tr { cursor: pointer } table.list tr:hover td { background: var(--soft) } table.list tr.cur td { background: var(--soft); box-shadow: inset 0 1px 0 var(--accent), inset 0 -1px 0 var(--accent) }
+.pager { display: flex; gap: 8px; align-items: center; font: 11.5px var(--sans); color: var(--accent); margin: 4px 0 8px }
+.pager button { border: 1px solid var(--accent); background: none; color: var(--accent); border-radius: 4px; cursor: pointer; padding: 1px 8px }
+.two { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 10px; align-items: start }
+.it td { padding: 4px 6px; border-bottom: 1px solid var(--grid); font-size: 12.5px; vertical-align: top }
+.it td:first-child { min-width: 9em } .it td:nth-child(2) { white-space: nowrap }
+.chip { font: 12px var(--sans); border: 1px solid var(--accent); color: var(--accent); background: none; border-radius: 999px; padding: 3px 11px; cursor: pointer }
+.chip.on { background: var(--accent); color: var(--panel) }
+.hyp { display: grid; gap: 6px; font-size: 12.5px } .hyp b { display: block } .hyp span { color: var(--muted); font-size: 12px }
+textarea { width: 100%; min-height: 90px; font: 13px var(--sans); background: var(--panel); color: var(--ink); border: 1px solid var(--line); border-radius: 6px; padding: 8px }
+.laudo { background: var(--soft); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px }
+.primary { background: var(--accent); color: var(--panel); border: 0; border-radius: 6px; padding: 7px 14px; font: 600 13px var(--sans); cursor: pointer; align-self: flex-start }
+#wm { position: absolute; inset: 0; pointer-events: none; opacity: .055; background-repeat: repeat; z-index: 3 }
+#loading { position: fixed; inset: 0; background: color-mix(in srgb, var(--bg) 88%, transparent); display: grid; place-items: center; z-index: 9 }
+#loading .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; width: min(420px, 90vw); display: grid; gap: 10px }
+#loading .track { height: 6px; background: var(--grid); border-radius: 3px; overflow: hidden } #loadbar { height: 100%; width: 0; background: var(--accent); transition: width .2s }
+footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
+@media (max-width: 1150px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)) } .rows3 { grid-row: auto } .qgrid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) } .qgrid > :last-child { grid-column: span 2 } }
+@media (max-width: 680px) {
+  .grid { grid-template-columns: minmax(0, 1fr) } .span2 { grid-column: auto } .rows2 { grid-row: auto }
+  .qgrid, .two { grid-template-columns: minmax(0, 1fr) } .qgrid > :last-child { grid-column: auto }
+  header.dev .r { text-align: left } .cw.m { min-height: 340px } .note { margin-left: 0 }
+}
+@media (prefers-reduced-motion: reduce) { #loadbar { transition: none } }
+</style>
+
+<div class="wrap">
+  <div id="wm" aria-hidden="true"></div>
+  <header class="dev">
+    <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
+    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div class="sub">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
+    <div class="ghost"><button type="button" id="btn-mode" title="Alternar a questionada entre imitação e assinatura verdadeira">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
+  </header>
+  <nav class="tabs" aria-label="Abas do painel">
+    <button type="button" class="tab on" data-tab="analise">Análise</button>
+    <button type="button" class="tab" data-tab="crus">Dados crus (somente leitura)</button>
+    <button type="button" class="tab" data-tab="integ">Integridade e laudo</button>
+  </nav>
+
+  <section class="pane" id="pane-analise">
+    <div class="bar">
+      <div class="grp"><span>Eixo das curvas:</span><button type="button" class="btn" data-eixo="tempo">tempo real</button><button type="button" class="btn on" data-eixo="alinhado">alinhado por traço</button><button type="button" class="btn" data-eixo="caminho">caminho percorrido</button></div>
+      <div class="grp hl"><span>Grandeza:</span><button type="button" class="btn" data-g="x">X</button><button type="button" class="btn" data-g="y">Y</button><button type="button" class="btn on" data-g="r">resultante</button></div>
+      <div class="grp"><span id="trecho-txt">Trecho: arraste sobre o desenho</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button></div>
+      <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
+      <div class="grp"><span>Deslocar padrões:</span><button type="button" class="btn" id="btn-zero">zerar todos</button></div>
+      <span class="note">dados não saem do sistema</span>
+    </div>
+    <div class="grid">
+      <div class="card span2" id="card-sig"><h3 id="t-sig">Desenho</h3><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho.</p></div>
+      <div class="card" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
+      <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas></div>
+      <div class="card rows2"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
+      <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas></div>
+      <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3>Impulso por traço (∫ pressão dt)</h3><canvas id="cv-imp" class="ch"></canvas></div>
+      <div class="card"><h3>Curva de deformação: tempo × caminho</h3><canvas id="cv-def" class="ch"></canvas><div class="shift" data-k="def">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas></div>
+      <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
+      <div class="card span2 rows3"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling). O D² e o valor p usam todas as medidas do modelo, qualquer que seja o par desenhado.</p></div>
+      <div class="card span2"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
+    </div>
+  </section>
+
+  <section class="pane" id="pane-crus" hidden>
+    <div class="banner"><b class="tag">SOMENTE LEITURA</b><span>Dados exatamente como recebidos, sem filtro nem alinhamento. Sem edição, seleção, cópia, impressão ou exportação. Cada página aberta fica no registro de acessos.</span><button type="button" class="btn" id="btn-verify">Verificar hashes agora</button></div>
+    <div class="qbox" id="crus-q"></div>
+    <div class="two">
+      <div class="card"><h3>Padrões · 20 colheitas do perito <span class="fine">toque numa linha para ver as amostras</span></h3><div id="crus-p"></div></div>
+      <div class="card" id="crus-d"></div>
+    </div>
+  </section>
+
+  <section class="pane" id="pane-integ" hidden>
+    <div class="two">
+      <div class="card"><h3>Verificação de integridade <button type="button" class="btn" id="btn-verify2">Verificar agora</button></h3><div class="tw"><table class="it"><tbody id="integ"></tbody></table></div>
+        <h3 style="margin-top:8px">Parâmetros de cálculo (vão para o laudo)</h3><div class="tw"><table class="it"><tbody id="params"></tbody></table></div></div>
+      <div class="card"><h3>Hipóteses e conclusão</h3><p class="fine" style="margin:0">O painel não sugere conclusão: nenhum campo vem marcado.</p>
+        <div class="hyp"><div><b>Variação natural</b><span>medidas dentro da faixa dos padrões</span></div><div><b>Condição motora (idade, doença, medicação)</b><span>lentidão e mais trocas de aceleração e jerk, sem padrão de cópia</span></div><div><b>Disfarce pelo próprio autor</b><span>forma alterada, com traços motores residuais do autor</span></div><div><b>Imitação por terceiro</b><span>forma copiada, dinâmica de outro motor</span></div></div>
+        <div class="grp"><label for="hip-h"><b>Hipótese</b></label><select id="hip-h"></select><label for="hip-c"><b>contra</b></label><select id="hip-c"></select></div>
+        <div><b style="font-size:12.5px">Grau de suporte (escala verbal ENFSI / SWGDOC)</b><div class="grp" id="grau" style="margin-top:4px"></div></div>
+        <label for="fund" class="fine">Fundamentação do perito</label><textarea id="fund" placeholder="Ex.: a questionada preserva a forma, mas leva quase o dobro do tempo, com mais levantamentos e menos energia na faixa de 5–8 Hz…"></textarea>
+        <div class="laudo"><b>Laudo</b><span>Leva gráficos, medidas, parâmetros, os hashes dos 21 pacotes, a verificação de integridade, a conclusão e o registro de acessos. Não leva amostras cruas.</span>
+          <button type="button" class="primary" id="btn-pdf">Gerar laudo em PDF</button><span class="fine" id="pdf-status" role="status"></span></div>
+      </div>
+    </div>
+    <div class="card"><h3>Registro de acessos · encadeado por hash (ninguém apaga nem altera)</h3><div class="tw"><table class="raw"><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Detalhe</th><th>Hash</th></tr></thead><tbody id="log"></tbody></table></div></div>
+  </section>
+  <footer class="f">Simulação: assinaturas sintéticas em letra cursiva, com instrumentação do Thoth 1 (mesa 300 Hz · 0,005 mm · pressão 0–8191; clip 400 Hz). Todos os números são calculados no navegador a partir dos dados crus. O painel mede e mostra; a conclusão é do perito.</footer>
+</div>
+<div id="loading"><div class="box"><b>Preparando o caso</b><span id="loadtxt" class="fine">Simulando as colheitas</span><div class="track"><div id="loadbar"></div></div></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+const GLYPHS = {"Michel Mora Bautista":[[[0.98,4.6],[0.39,4.93],[0.2,5.58],[0.27,5.91],[0.74,6.57],[1.47,6.9],[1.79,6.9],[2.38,6.57],[2.57,5.91],[2.43,5.25],[1.75,3.61],[1.15,2.3],[0.0,0.0]],[[1.15,2.3],[2.69,4.93],[3.62,6.24],[4.02,6.57],[4.75,6.9],[5.08,6.9],[5.66,6.57],[5.85,5.91],[5.71,5.25],[5.04,3.61],[4.43,2.3],[3.28,0.0]],[[4.43,2.3],[5.97,4.93],[6.91,6.24],[7.31,6.57],[8.03,6.9],[8.36,6.9],[8.95,6.57],[9.14,5.91],[9.0,5.25],[8.32,3.61],[7.18,1.31],[6.97,0.33],[7.22,0.0],[7.55,0.0],[8.28,0.33],[8.68,0.66],[9.54,1.64]],[[11.16,4.6],[11.09,4.27],[11.42,4.27],[11.49,4.6],[11.16,4.6]],[[9.54,1.64],[10.48,2.96],[9.4,0.99],[9.26,0.33],[9.52,0.0],[9.85,0.0],[10.58,0.33],[10.98,0.66],[11.84,1.64]],[[14.28,2.3],[14.35,2.63],[14.09,2.96],[13.44,2.96],[12.71,2.63],[12.31,2.3],[11.84,1.64],[11.7,0.99],[11.89,0.33],[12.48,0.0],[13.46,0.0],[14.59,0.66],[15.45,1.64],[16.32,2.63],[17.65,4.27],[18.12,4.93],[18.66,5.91],[18.8,6.57],[18.54,6.9],[17.82,6.57],[17.35,5.91],[16.74,4.6],[15.99,2.63],[15.11,0.0],[15.64,0.99],[16.11,1.64],[16.98,2.63],[17.7,2.96],[18.36,2.96],[18.62,2.63],[18.48,1.97],[17.94,0.99],[17.8,0.33],[18.06,0.0],[18.39,0.0],[19.12,0.33],[19.51,0.66],[20.38,1.64]],[[20.5,0.66],[21.23,0.99],[21.62,1.31],[22.09,1.97],[22.23,2.63],[21.97,2.96],[21.64,2.96],[20.92,2.63],[20.45,1.97],[20.24,0.99],[20.43,0.33],[21.02,0.0],[21.67,0.0],[22.4,0.33],[22.8,0.66],[23.66,1.64],[24.53,2.63],[25.86,4.27],[26.33,4.93],[26.87,5.91],[27.01,6.57],[26.75,6.9],[26.02,6.57],[25.56,5.91],[24.95,4.6],[24.13,2.3],[23.71,0.33],[23.97,0.0],[24.3,0.0],[25.03,0.33],[25.42,0.66],[26.29,1.64]],[[31.7,4.6],[31.11,4.93],[30.92,5.58],[30.99,5.91],[31.46,6.57],[32.19,6.9],[32.51,6.9],[33.1,6.57],[33.29,5.91],[33.15,5.25],[32.47,3.61],[31.87,2.3],[30.72,0.0]],[[31.87,2.3],[33.41,4.93],[34.34,6.24],[34.74,6.57],[35.47,6.9],[35.8,6.9],[36.38,6.57],[36.57,5.91],[36.43,5.25],[35.76,3.61],[35.15,2.3],[34.0,0.0]],[[35.15,2.3],[36.69,4.93],[37.63,6.24],[38.03,6.57],[38.75,6.9],[39.08,6.9],[39.67,6.57],[39.86,5.91],[39.72,5.25],[39.04,3.61],[37.9,1.31],[37.69,0.33],[37.94,0.0],[38.27,0.0],[39.0,0.33],[39.4,0.66],[40.26,1.64]],[[42.51,2.96],[41.86,2.96],[41.13,2.63],[40.73,2.3],[40.26,1.64],[40.12,0.99],[40.31,0.33],[40.9,0.0],[41.56,0.0],[42.28,0.33],[42.68,0.66],[43.15,1.31],[43.29,1.97],[43.1,2.63],[42.51,2.96],[42.11,2.63],[41.98,1.97],[42.16,1.31],[42.75,0.99],[43.74,0.99],[44.46,1.31],[44.86,1.64],[45.73,2.63],[46.2,3.28],[46.06,2.63],[47.04,2.63],[47.3,2.3],[47.16,1.64],[46.62,0.66],[46.55,0.33],[46.81,0.0],[47.14,0.0],[47.87,0.33],[48.26,0.66],[49.13,1.64]],[[52.16,1.97],[51.97,2.63],[51.38,2.96],[50.72,2.96],[50.0,2.63],[49.6,2.3],[49.13,1.64],[48.99,0.99],[49.18,0.33],[49.77,0.0],[50.42,0.0],[51.15,0.33],[51.62,0.99],[52.69,2.96],[52.02,1.31],[51.81,0.33],[52.06,0.0],[52.39,0.0],[53.12,0.33],[53.52,0.66],[54.38,1.64]],[[62.44,6.24],[62.7,5.91],[62.49,4.93],[61.88,3.61],[61.34,2.63],[60.87,1.97],[60.01,0.99],[59.21,0.33],[58.48,0.0],[58.16,0.0],[57.9,0.33],[58.11,1.31],[58.78,2.96],[59.32,3.94],[59.79,4.6],[60.66,5.58],[61.45,6.24],[62.18,6.57],[63.23,6.9],[64.22,6.9],[64.81,6.57],[65.0,5.91],[64.86,5.25],[64.39,4.6],[63.99,4.27],[63.26,3.94],[62.21,3.61]],[[61.88,3.61],[62.21,3.61],[63.12,3.28],[63.38,2.96],[63.57,2.3],[63.36,1.31],[62.89,0.66],[62.49,0.33],[61.77,0.0],[60.78,0.0],[60.2,0.33],[60.01,0.99]],[[67.77,1.97],[67.58,2.63],[66.99,2.96],[66.34,2.96],[65.61,2.63],[65.21,2.3],[64.74,1.64],[64.6,0.99],[64.79,0.33],[65.38,0.0],[66.04,0.0],[66.76,0.33],[67.23,0.99],[68.31,2.96],[67.63,1.31],[67.42,0.33],[67.68,0.0],[68.01,0.0],[68.73,0.33],[69.13,0.66],[70.0,1.64],[70.93,2.96],[69.86,0.99],[69.72,0.33],[69.98,0.0],[70.63,0.0],[71.36,0.33],[72.16,0.99],[73.02,1.97]],[[73.56,2.96],[72.49,0.99],[72.35,0.33],[72.6,0.0],[72.93,0.0],[73.66,0.33],[74.06,0.66],[74.92,1.64],[75.79,2.63],[76.73,3.94]],[[78.34,6.9],[75.11,0.99],[74.97,0.33],[75.23,0.0],[75.89,0.0],[76.62,0.33],[77.01,0.66],[77.88,1.64]],[[75.81,4.27],[78.11,4.27]],[[79.49,4.6],[79.42,4.27],[79.75,4.27],[79.82,4.6],[79.49,4.6]],[[77.88,1.64],[78.82,2.96],[77.74,0.99],[77.6,0.33],[77.86,0.0],[78.19,0.0],[78.91,0.33],[79.31,0.66],[80.18,1.64],[81.04,2.63],[81.51,3.28],[81.37,2.63],[81.82,1.64],[82.01,0.99],[81.87,0.33],[81.14,0.0]],[[79.9,0.33],[80.49,0.0],[81.8,0.0],[82.53,0.33],[82.92,0.66],[83.79,1.64],[84.66,2.63],[85.59,3.94]],[[87.21,6.9],[83.98,0.99],[83.84,0.33],[84.1,0.0],[84.76,0.0],[85.48,0.33],[85.88,0.66],[86.75,1.64]],[[84.68,4.27],[86.98,4.27]],[[89.77,1.97],[89.58,2.63],[89.0,2.96],[88.34,2.96],[87.61,2.63],[87.21,2.3],[86.75,1.64],[86.61,0.99],[86.8,0.33],[87.38,0.0],[88.04,0.0],[88.77,0.33],[89.23,0.99],[90.31,2.96],[89.63,1.31],[89.42,0.33],[89.68,0.0],[90.01,0.0],[90.74,0.33],[91.13,0.66],[92.0,1.64]]],"Semíramis Pinheiro Marçal":[[[0.0,1.6],[0.56,1.85],[1.18,2.36],[2.16,3.38],[2.83,4.14],[3.56,5.16],[3.98,5.92],[4.14,6.69],[3.94,6.94],[3.68,6.94],[3.37,6.69],[3.01,6.18],[2.9,5.67],[3.05,5.16],[3.45,4.65],[4.11,4.14],[4.51,3.63],[4.65,3.12],[4.54,2.61],[4.18,2.11],[3.87,1.85],[3.06,1.6],[2.04,1.6],[1.33,1.85],[0.93,2.36],[0.78,2.87],[0.89,3.38]],[[5.45,2.11],[6.02,2.36],[6.33,2.61],[6.69,3.12],[6.8,3.63],[6.6,3.89],[6.34,3.89],[5.78,3.63],[5.42,3.12],[5.25,2.36],[5.4,1.85],[5.86,1.6],[6.37,1.6],[6.93,1.85],[7.24,2.11],[7.91,2.87],[8.58,3.63],[9.14,3.89],[9.34,3.63],[9.29,3.38],[8.82,2.36],[8.4,1.6]],[[8.82,2.36],[9.18,2.87],[9.85,3.63],[10.42,3.89],[10.93,3.89],[11.13,3.63],[11.07,3.38],[10.6,2.36],[10.18,1.6]],[[10.6,2.36],[10.96,2.87],[11.64,3.63],[12.2,3.89],[12.71,3.89],[12.91,3.63],[12.8,3.12],[12.38,2.36],[12.27,1.85],[12.48,1.6],[12.73,1.6],[13.29,1.85],[13.6,2.11],[14.27,2.87]],[[14.27,2.87],[15.0,3.89],[14.17,2.36],[14.06,1.85],[14.26,1.6],[14.51,1.6],[15.08,1.85],[15.38,2.11],[16.06,2.87],[16.73,3.63],[17.09,4.14],[16.98,3.63],[17.75,3.63],[17.95,3.38],[17.84,2.87],[17.42,2.11],[17.37,1.85],[17.57,1.6],[17.82,1.6],[18.39,1.85],[18.69,2.11],[19.37,2.87]],[[21.71,3.12],[21.56,3.63],[21.11,3.89],[20.6,3.89],[20.04,3.63],[19.73,3.38],[19.37,2.87],[19.26,2.36],[19.4,1.85],[19.86,1.6],[20.37,1.6],[20.93,1.85],[21.29,2.36],[22.13,3.89],[21.6,2.61],[21.44,1.85],[21.64,1.6],[21.9,1.6],[22.46,1.85],[22.77,2.11],[23.44,2.87],[24.11,3.63],[24.67,3.89],[24.87,3.63],[24.82,3.38],[24.35,2.36],[23.93,1.6]],[[24.35,2.36],[24.71,2.87],[25.38,3.63],[25.95,3.89],[26.46,3.89],[26.66,3.63],[26.6,3.38],[26.13,2.36],[25.71,1.6]],[[26.13,2.36],[26.49,2.87],[27.17,3.63],[27.73,3.89],[28.24,3.89],[28.44,3.63],[28.33,3.12],[27.91,2.36],[27.81,1.85],[28.01,1.6],[28.26,1.6],[28.82,1.85],[29.13,2.11],[29.8,2.87]],[[31.06,5.16],[31.0,4.91],[31.26,4.91],[31.31,5.16],[31.06,5.16]],[[29.8,2.87],[30.53,3.89],[29.7,2.36],[29.59,1.85],[29.79,1.6],[30.04,1.6],[30.61,1.85],[30.91,2.11],[31.59,2.87],[32.26,3.63],[32.62,4.14],[32.51,3.63],[32.86,2.87],[33.01,2.36],[32.9,1.85],[32.33,1.6]],[[31.37,1.85],[31.83,1.6],[32.84,1.6],[33.41,1.85],[33.72,2.11],[34.39,2.87]],[[15.36,4.98],[17.2,6.91]],[[40.63,6.43],[40.83,6.18],[40.67,5.42],[40.2,4.4],[39.78,3.63],[39.42,3.12],[38.75,2.36],[38.13,1.85],[37.57,1.6],[37.31,1.6],[37.11,1.85],[37.27,2.61],[37.8,3.89],[38.22,4.65],[38.58,5.16],[39.25,5.92],[39.87,6.43],[40.43,6.69],[41.25,6.94],[42.52,6.94],[42.98,6.69],[43.18,6.43],[43.32,5.92],[43.16,5.16],[42.8,4.65],[42.49,4.4],[41.93,4.14],[41.16,4.14],[40.71,4.4],[40.51,4.65]],[[44.18,5.16],[44.13,4.91],[44.38,4.91],[44.43,5.16],[44.18,5.16]],[[42.93,2.87],[43.65,3.89],[42.82,2.36],[42.71,1.85],[42.91,1.6],[43.17,1.6],[43.73,1.85],[44.04,2.11],[44.71,2.87],[45.38,3.63],[45.95,3.89],[46.15,3.63],[46.09,3.38],[45.62,2.36],[45.2,1.6]],[[45.62,2.36],[45.98,2.87],[46.66,3.63],[47.22,3.89],[47.73,3.89],[47.93,3.63],[47.82,3.12],[47.4,2.36],[47.3,1.85],[47.5,1.6],[47.75,1.6],[48.31,1.85],[48.62,2.11],[49.29,2.87],[49.97,3.63],[51.0,4.91],[51.36,5.42],[51.78,6.18],[51.89,6.69],[51.69,6.94],[51.12,6.69],[50.76,6.18],[50.29,5.16],[49.71,3.63],[49.02,1.6],[49.44,2.36],[49.8,2.87],[50.47,3.63],[51.04,3.89],[51.55,3.89],[51.75,3.63],[51.64,3.12],[51.22,2.36],[51.11,1.85],[51.31,1.6],[51.57,1.6],[52.13,1.85],[52.44,2.11],[53.11,2.87]],[[53.21,2.11],[53.77,2.36],[54.08,2.61],[54.44,3.12],[54.55,3.63],[54.35,3.89],[54.09,3.89],[53.53,3.63],[53.17,3.12],[53.0,2.36],[53.15,1.85],[53.61,1.6],[54.12,1.6],[54.68,1.85],[54.99,2.11],[55.66,2.87]],[[56.91,5.16],[56.86,4.91],[57.11,4.91],[57.16,5.16],[56.91,5.16]],[[55.66,2.87],[56.38,3.89],[55.55,2.36],[55.44,1.85],[55.64,1.6],[55.9,1.6],[56.46,1.85],[56.77,2.11],[57.44,2.87],[58.11,3.63],[58.48,4.14],[58.37,3.63],[59.13,3.63],[59.33,3.38],[59.22,2.87],[58.81,2.11],[58.75,1.85],[58.95,1.6],[59.21,1.6],[59.77,1.85],[60.08,2.11],[60.75,2.87]],[[62.49,3.89],[61.99,3.89],[61.42,3.63],[61.11,3.38],[60.75,2.87],[60.64,2.36],[60.79,1.85],[61.24,1.6],[61.75,1.6],[62.32,1.85],[62.63,2.11],[62.99,2.61],[63.1,3.12],[62.95,3.63],[62.49,3.89],[62.19,3.63],[62.08,3.12],[62.22,2.61],[62.68,2.36],[63.44,2.36],[64.01,2.61],[64.32,2.87]],[[68.51,5.16],[68.05,5.42],[67.91,5.92],[67.96,6.18],[68.32,6.69],[68.89,6.94],[69.14,6.94],[69.6,6.69],[69.74,6.18],[69.63,5.67],[69.11,4.4],[68.64,3.38],[67.75,1.6]],[[68.64,3.38],[69.83,5.42],[70.56,6.43],[70.87,6.69],[71.43,6.94],[71.69,6.94],[72.14,6.69],[72.29,6.18],[72.18,5.67],[71.65,4.4],[71.18,3.38],[70.3,1.6]],[[71.18,3.38],[72.38,5.42],[73.11,6.43],[73.41,6.69],[73.98,6.94],[74.23,6.94],[74.69,6.69],[74.83,6.18],[74.73,5.67],[74.2,4.4],[73.31,2.61],[73.15,1.85],[73.35,1.6],[73.6,1.6],[74.17,1.85],[74.48,2.11],[75.15,2.87]],[[77.49,3.12],[77.35,3.63],[76.89,3.89],[76.38,3.89],[75.82,3.63],[75.51,3.38],[75.15,2.87],[75.04,2.36],[75.19,1.85],[75.64,1.6],[76.15,1.6],[76.71,1.85],[77.08,2.36],[77.91,3.89],[77.39,2.61],[77.22,1.85],[77.42,1.6],[77.68,1.6],[78.24,1.85],[78.55,2.11],[79.22,2.87],[79.89,3.63],[80.26,4.14],[80.15,3.63],[80.91,3.63],[81.11,3.38],[81.0,2.87],[80.59,2.11],[80.53,1.85],[80.73,1.6],[80.99,1.6],[81.55,1.85],[81.86,2.11],[82.53,2.87]],[[84.42,3.38],[84.48,3.63],[84.28,3.89],[83.77,3.89],[83.2,3.63],[82.89,3.38],[82.53,2.87],[82.42,2.36],[82.57,1.85],[83.03,1.6],[83.79,1.6],[84.66,2.11],[85.33,2.87]],[[87.68,3.12],[87.53,3.63],[87.08,3.89],[86.57,3.89],[86.0,3.63],[85.7,3.38],[85.33,2.87],[85.22,2.36],[85.37,1.85],[85.83,1.6],[86.33,1.6],[86.9,1.85],[87.26,2.36],[88.09,3.89],[87.57,2.61],[87.41,1.85],[87.61,1.6],[87.86,1.6],[88.43,1.85],[88.73,2.11],[89.41,2.87],[90.08,3.63],[91.11,4.91],[91.47,5.42],[91.89,6.18],[92.0,6.69],[91.8,6.94],[91.24,6.69],[90.87,6.18],[90.4,5.16],[89.77,3.38],[89.44,1.85],[89.64,1.6],[89.9,1.6],[90.46,1.85],[90.77,2.11],[91.44,2.87]],[[83.01,1.51],[83.62,0.84],[82.89,0.17],[82.27,0.0]]],"Bruna Zanetti":[[[6.97,15.64],[7.37,15.13],[7.05,13.62],[6.12,11.6],[5.29,10.09],[4.57,9.08],[3.24,7.57],[2.02,6.56],[0.9,6.05],[0.4,6.05],[0.0,6.56],[0.32,8.07],[1.36,10.59],[2.19,12.11],[2.91,13.11],[4.24,14.63],[5.46,15.64],[6.58,16.14],[8.2,16.64],[9.71,16.64],[10.61,16.14],[10.9,15.13],[10.69,14.12],[9.97,13.11],[9.36,12.61],[8.24,12.11],[6.62,11.6]],[[6.12,11.6],[6.62,11.6],[8.03,11.1],[8.42,10.59],[8.71,9.58],[8.39,8.07],[7.67,7.06],[7.06,6.56],[5.95,6.05],[4.43,6.05],[3.53,6.56],[3.24,7.57]],[[10.52,8.57],[11.85,10.09],[12.57,11.1],[12.35,10.09],[13.86,10.09],[14.26,9.58],[14.05,8.57],[13.22,7.06],[13.11,6.56],[13.51,6.05],[14.02,6.05],[15.13,6.56],[15.74,7.06],[17.07,8.57],[18.51,10.59],[16.86,7.57],[16.64,6.56],[17.04,6.05],[18.05,6.05],[19.17,6.56],[20.39,7.57],[21.72,9.08]],[[22.55,10.59],[20.89,7.57],[20.68,6.56],[21.08,6.05],[21.58,6.05],[22.7,6.56],[23.31,7.06],[24.64,8.57],[25.97,10.09],[27.09,10.59],[27.48,10.09],[27.38,9.58],[26.44,7.57],[25.62,6.05]],[[26.44,7.57],[27.16,8.57],[28.49,10.09],[29.61,10.59],[30.62,10.59],[31.01,10.09],[30.8,9.08],[29.97,7.57],[29.76,6.56],[30.16,6.05],[30.66,6.05],[31.78,6.56],[32.39,7.06],[33.72,8.57]],[[38.36,9.08],[38.07,10.09],[37.17,10.59],[36.16,10.59],[35.05,10.09],[34.44,9.58],[33.72,8.57],[33.5,7.57],[33.79,6.56],[34.7,6.05],[35.7,6.05],[36.82,6.56],[37.54,7.57],[39.19,10.59],[38.15,8.07],[37.83,6.56],[38.23,6.05],[38.73,6.05],[39.85,6.56],[40.46,7.06],[41.79,8.57]],[[54.23,13.62],[53.52,12.61],[52.9,12.11],[51.79,11.6],[50.78,11.6],[50.49,12.61],[50.7,13.62],[51.53,15.13],[52.75,16.14],[54.37,16.64],[55.89,16.64],[56.79,16.14],[57.08,15.13],[56.65,13.11],[55.82,11.6],[54.39,9.58],[52.55,8.07],[50.21,6.56],[49.1,6.05],[47.58,6.05],[47.19,6.56],[47.4,7.57],[48.01,8.07],[49.52,8.07],[50.43,7.57],[50.82,7.06],[51.11,6.05],[50.79,4.54],[49.97,3.03],[49.25,2.02],[47.92,0.5],[46.8,0.0],[46.4,0.5],[46.62,1.51],[47.44,3.03],[48.77,4.54],[50.61,6.05],[52.34,7.06],[55.68,8.57]],[[61.84,9.08],[61.55,10.09],[60.65,10.59],[59.64,10.59],[58.53,10.09],[57.92,9.58],[57.2,8.57],[56.98,7.57],[57.27,6.56],[58.17,6.05],[59.18,6.05],[60.3,6.56],[61.02,7.57],[62.67,10.59],[61.63,8.07],[61.31,6.56],[61.71,6.05],[62.21,6.05],[63.33,6.56],[63.94,7.06],[65.27,8.57],[66.6,10.09],[67.71,10.59],[68.11,10.09],[68.0,9.58],[67.07,7.57],[66.24,6.05]],[[67.07,7.57],[67.79,8.57],[69.12,10.09],[70.24,10.59],[71.24,10.59],[71.64,10.09],[71.43,9.08],[70.6,7.57],[70.39,6.56],[70.78,6.05],[71.29,6.05],[72.4,6.56],[73.02,7.06],[74.35,8.57]],[[74.53,7.06],[75.65,7.57],[76.26,8.07],[76.98,9.08],[77.19,10.09],[76.79,10.59],[76.29,10.59],[75.17,10.09],[74.45,9.08],[74.13,7.57],[74.42,6.56],[75.32,6.05],[76.33,6.05],[77.45,6.56],[78.06,7.06],[79.39,8.57],[80.72,10.09],[82.16,12.11]],[[84.64,16.64],[79.68,7.57],[79.47,6.56],[79.86,6.05],[80.87,6.05],[81.99,6.56],[82.6,7.06],[83.93,8.57]],[[80.75,12.61],[84.28,12.61]],[[83.93,8.57],[85.26,10.09],[86.7,12.11]],[[89.18,16.64],[84.22,7.57],[84.01,6.56],[84.4,6.05],[85.41,6.05],[86.53,6.56],[87.14,7.06],[88.47,8.57]],[[85.29,12.61],[88.82,12.61]],[[90.95,13.11],[90.84,12.61],[91.34,12.61],[91.45,13.11],[90.95,13.11]],[[88.47,8.57],[89.91,10.59],[88.25,7.57],[88.04,6.56],[88.44,6.05],[88.94,6.05],[90.06,6.56],[90.67,7.06],[92.0,8.57]]],"Isis Pinheiro Marçal":[[[4.55,3.82],[4.01,4.49],[3.55,5.51],[3.36,6.19],[3.23,7.2],[3.45,8.22],[3.93,8.89],[4.34,9.23],[5.02,9.23],[5.29,8.89],[5.48,8.22],[5.27,7.2],[4.57,5.51],[3.53,3.82],[3.05,3.14],[2.23,2.46],[1.48,2.12],[0.8,2.12],[0.19,2.46],[0.0,3.14],[0.14,3.82],[0.55,4.15],[1.23,4.15],[1.84,3.82]],[[5.56,3.82],[6.45,4.83],[6.94,5.51],[6.79,4.83],[7.25,3.82],[7.45,3.14],[7.31,2.46],[6.56,2.12]],[[5.27,2.46],[5.88,2.12],[7.23,2.12],[7.98,2.46],[8.39,2.8],[9.29,3.82]],[[10.95,6.86],[10.88,6.52],[11.22,6.52],[11.29,6.86],[10.95,6.86]],[[9.29,3.82],[10.25,5.17],[9.14,3.14],[9.0,2.46],[9.26,2.12],[9.6,2.12],[10.35,2.46],[10.76,2.8],[11.66,3.82],[12.55,4.83],[13.03,5.51],[12.89,4.83],[13.35,3.82],[13.54,3.14],[13.4,2.46],[12.65,2.12]],[[11.37,2.46],[11.97,2.12],[13.33,2.12],[14.08,2.46],[14.49,2.8],[15.38,3.82]],[[23.68,8.56],[23.95,8.22],[23.74,7.2],[23.11,5.85],[22.55,4.83],[22.07,4.15],[21.18,3.14],[20.36,2.46],[19.61,2.12],[19.27,2.12],[19.0,2.46],[19.22,3.48],[19.92,5.17],[20.47,6.19],[20.95,6.86],[21.85,7.88],[22.67,8.56],[23.42,8.89],[24.51,9.23],[26.2,9.23],[26.8,8.89],[27.07,8.56],[27.27,7.88],[27.05,6.86],[26.57,6.19],[26.16,5.85],[25.41,5.51],[24.39,5.51],[23.79,5.85],[23.52,6.19]],[[28.4,6.86],[28.33,6.52],[28.67,6.52],[28.74,6.86],[28.4,6.86]],[[26.74,3.82],[27.71,5.17],[26.6,3.14],[26.45,2.46],[26.72,2.12],[27.06,2.12],[27.81,2.46],[28.22,2.8],[29.11,3.82],[30.0,4.83],[30.75,5.17],[31.02,4.83],[30.95,4.49],[30.32,3.14],[29.77,2.12]],[[30.32,3.14],[30.8,3.82],[31.7,4.83],[32.45,5.17],[33.12,5.17],[33.39,4.83],[33.25,4.15],[32.69,3.14],[32.55,2.46],[32.81,2.12],[33.15,2.12],[33.9,2.46],[34.31,2.8],[35.21,3.82],[36.1,4.83],[37.47,6.52],[37.96,7.2],[38.51,8.22],[38.65,8.89],[38.39,9.23],[37.64,8.89],[37.16,8.22],[36.53,6.86],[35.76,4.83],[34.85,2.12],[35.4,3.14],[35.88,3.82],[36.78,4.83],[37.52,5.17],[38.2,5.17],[38.47,4.83],[38.32,4.15],[37.77,3.14],[37.63,2.46],[37.89,2.12],[38.23,2.12],[38.98,2.46],[39.39,2.8],[40.28,3.82]],[[40.41,2.8],[41.16,3.14],[41.57,3.48],[42.05,4.15],[42.19,4.83],[41.93,5.17],[41.59,5.17],[40.84,4.83],[40.36,4.15],[40.14,3.14],[40.33,2.46],[40.94,2.12],[41.62,2.12],[42.37,2.46],[42.78,2.8],[43.67,3.82]],[[45.33,6.86],[45.26,6.52],[45.6,6.52],[45.67,6.86],[45.33,6.86]],[[43.67,3.82],[44.64,5.17],[43.53,3.14],[43.38,2.46],[43.65,2.12],[43.99,2.12],[44.74,2.46],[45.15,2.8],[46.04,3.82],[46.93,4.83],[47.42,5.51],[47.27,4.83],[48.29,4.83],[48.55,4.49],[48.41,3.82],[47.86,2.8],[47.78,2.46],[48.05,2.12],[48.39,2.12],[49.14,2.46],[49.55,2.8],[50.44,3.82]],[[52.76,5.17],[52.08,5.17],[51.33,4.83],[50.92,4.49],[50.44,3.82],[50.3,3.14],[50.49,2.46],[51.1,2.12],[51.77,2.12],[52.52,2.46],[52.93,2.8],[53.42,3.48],[53.56,4.15],[53.37,4.83],[52.76,5.17],[52.35,4.83],[52.21,4.15],[52.4,3.48],[53.01,3.14],[54.02,3.14],[54.77,3.48],[55.18,3.82]],[[60.76,6.86],[60.15,7.2],[59.96,7.88],[60.03,8.22],[60.51,8.89],[61.26,9.23],[61.6,9.23],[62.2,8.89],[62.4,8.22],[62.25,7.54],[61.56,5.85],[60.93,4.49],[59.75,2.12]],[[60.93,4.49],[62.52,7.2],[63.49,8.56],[63.9,8.89],[64.65,9.23],[64.98,9.23],[65.59,8.89],[65.78,8.22],[65.64,7.54],[64.94,5.85],[64.32,4.49],[63.13,2.12]],[[64.32,4.49],[65.91,7.2],[66.87,8.56],[67.28,8.89],[68.03,9.23],[68.37,9.23],[68.98,8.89],[69.17,8.22],[69.03,7.54],[68.33,5.85],[67.15,3.48],[66.93,2.46],[67.2,2.12],[67.54,2.12],[68.29,2.46],[68.7,2.8],[69.59,3.82]],[[72.71,4.15],[72.51,4.83],[71.91,5.17],[71.23,5.17],[70.48,4.83],[70.07,4.49],[69.59,3.82],[69.45,3.14],[69.64,2.46],[70.25,2.12],[70.92,2.12],[71.67,2.46],[72.15,3.14],[73.26,5.17],[72.56,3.48],[72.35,2.46],[72.62,2.12],[72.95,2.12],[73.7,2.46],[74.11,2.8],[75.01,3.82],[75.9,4.83],[76.38,5.51],[76.24,4.83],[77.25,4.83],[77.52,4.49],[77.38,3.82],[76.82,2.8],[76.75,2.46],[77.02,2.12],[77.36,2.12],[78.1,2.46],[78.52,2.8],[79.41,3.82]],[[81.92,4.49],[81.99,4.83],[81.73,5.17],[81.05,5.17],[80.3,4.83],[79.89,4.49],[79.41,3.82],[79.26,3.14],[79.46,2.46],[80.06,2.12],[81.08,2.12],[82.24,2.8],[83.13,3.82]],[[86.25,4.15],[86.06,4.83],[85.45,5.17],[84.78,5.17],[84.03,4.83],[83.62,4.49],[83.13,3.82],[82.99,3.14],[83.18,2.46],[83.79,2.12],[84.47,2.12],[85.22,2.46],[85.7,3.14],[86.81,5.17],[86.11,3.48],[85.89,2.46],[86.16,2.12],[86.5,2.12],[87.25,2.46],[87.66,2.8],[88.55,3.82],[89.44,4.83],[90.82,6.52],[91.3,7.2],[91.86,8.22],[92.0,8.89],[91.73,9.23],[90.98,8.89],[90.5,8.22],[89.88,6.86],[89.03,4.49],[88.6,2.46],[88.87,2.12],[89.21,2.12],[89.96,2.46],[90.37,2.8],[91.26,3.82]],[[80.04,2.01],[80.86,1.12],[79.88,0.22],[79.05,0.0]]],"José da Silva":[[[5.67,4.77],[4.95,6.36],[4.45,9.01],[4.6,12.2],[5.28,15.38],[6.15,16.97],[7.32,17.5],[8.38,17.5],[8.8,16.97],[8.99,15.38],[8.65,13.79],[7.56,11.14],[4.95,6.36],[3.21,3.18],[2.35,1.59],[1.59,0.53],[0.42,0.0],[0.0,0.53],[0.23,1.59],[1.09,3.18],[2.49,4.77],[3.78,5.83],[5.59,6.89],[7.94,7.95]],[[12.86,11.14],[11.8,11.14],[10.63,10.61],[9.98,10.07],[9.23,9.01],[9.0,7.95],[9.31,6.89],[10.25,6.36],[11.31,6.36],[12.49,6.89],[13.13,7.42],[13.89,8.48],[14.11,9.54],[13.81,10.61],[12.86,11.14],[12.22,10.61],[11.99,9.54],[12.3,8.48],[13.24,7.95],[14.83,7.95],[16.01,8.48],[16.65,9.01],[18.05,10.61],[18.8,11.67],[18.58,10.61],[19.3,9.01],[19.61,7.95],[19.38,6.89],[18.21,6.36]],[[16.2,6.89],[17.15,6.36],[19.27,6.36],[20.44,6.89],[21.08,7.42],[22.48,9.01]],[[22.68,7.42],[23.85,7.95],[24.49,8.48],[25.25,9.54],[25.47,10.61],[25.06,11.14],[24.52,11.14],[23.35,10.61],[22.6,9.54],[22.26,7.95],[22.56,6.89],[23.51,6.36],[24.57,6.36],[25.74,6.89],[26.39,7.42],[27.79,9.01]],[[25.54,13.41],[29.37,17.43]],[[38.8,9.54],[38.49,10.61],[37.54,11.14],[36.48,11.14],[35.31,10.61],[34.67,10.07],[33.91,9.01],[33.68,7.95],[33.99,6.89],[34.94,6.36],[36.0,6.36],[37.17,6.89],[37.93,7.95],[43.14,17.5]],[[39.66,11.14],[38.57,8.48],[38.23,6.89],[38.65,6.36],[39.18,6.36],[40.35,6.89],[41.0,7.42],[42.39,9.01]],[[47.28,9.54],[46.97,10.61],[46.03,11.14],[44.97,11.14],[43.79,10.61],[43.15,10.07],[42.39,9.01],[42.17,7.95],[42.47,6.89],[43.42,6.36],[44.48,6.36],[45.66,6.89],[46.41,7.95],[48.15,11.14],[47.05,8.48],[46.72,6.89],[47.13,6.36],[47.66,6.36],[48.84,6.89],[49.48,7.42],[50.88,9.01]],[[56.44,6.36],[57.61,6.89],[58.9,7.95],[60.94,10.07],[62.34,11.67],[63.85,13.79],[64.72,15.38],[65.06,16.97],[64.64,17.5],[64.11,17.5],[63.47,16.97],[62.71,15.91],[62.48,14.85],[62.79,13.79],[63.62,12.73],[64.99,11.67],[65.83,10.61],[66.13,9.54],[65.9,8.48],[65.15,7.42],[64.51,6.89],[62.8,6.36],[60.68,6.36],[59.2,6.89],[58.37,7.95],[58.06,9.01],[58.29,10.07]],[[70.21,13.79],[70.1,13.26],[70.63,13.26],[70.74,13.79],[70.21,13.79]],[[67.61,9.01],[69.12,11.14],[67.38,7.95],[67.16,6.89],[67.57,6.36],[68.11,6.36],[69.28,6.89],[69.92,7.42],[71.32,9.01],[72.72,10.61],[74.87,13.26],[75.63,14.32],[76.5,15.91],[76.72,16.97],[76.3,17.5],[75.13,16.97],[74.38,15.91],[73.39,13.79],[72.08,10.07],[71.4,6.89],[71.82,6.36],[72.35,6.36],[73.52,6.89],[74.16,7.42],[75.56,9.01],[77.07,11.14],[75.98,8.48],[75.64,6.89],[76.06,6.36],[76.59,6.36],[78.29,6.89],[79.58,7.95],[80.45,9.54],[80.79,11.14],[80.86,9.01],[81.28,8.48],[82.34,8.48],[83.52,9.01]],[[88.4,9.54],[88.1,10.61],[87.15,11.14],[86.09,11.14],[84.91,10.61],[84.27,10.07],[83.52,9.01],[83.29,7.95],[83.6,6.89],[84.54,6.36],[85.6,6.36],[86.78,6.89],[87.53,7.95],[89.27,11.14],[88.18,8.48],[87.84,6.89],[88.25,6.36],[88.79,6.36],[89.96,6.89],[90.6,7.42],[92.0,9.01]]]};
+const DADOS = {"calibracao":{"calibracao_id":"CAL-2026-09-30-01","data":"2026-09-30","aparelho_sn":"0123A1B2C3D4E5F6EE","mesa":{"modelo":"Huion Inspiroy H420X","lpi":5080,"afim_mm":[[0.005,0.0,0.0],[0.0,0.005,0.0]],"limiar_contato_nivel":0,"ruido_sg":{"1":0.20269572272119052,"2":17.608121788266505,"3":4179.373044556639,"4":202353.69642534168,"5":61467938.395481914}},"pressao":{"caneta":"Huion Scribo PW310","refil":"esferográfico 0,8 mm","papel":"A4 75 g/m²","pontos_nivel_gf":[[261,10.0],[430,20.0],[831,50.0],[1369,100.0],[1833,150.0],[2255,200.0],[3019,300.0],[3714,400.0],[4361,500.0],[5556,700.0],[7183,1000.0]]},"clip":{"R_montagem":[[0.978147601,-0.207840445,0.005442494],[0.207911691,0.977812414,-0.025604919],[0.0,0.026176948,0.999657325]],"acc_bias_ms2":[0.06,-0.04,0.08],"acc_escala":[1.004,0.997,1.002],"gyro_bias_dps":[0.3,-0.2,0.1]}},"aparelho":{"sn":"0123A1B2C3D4E5F6EE","pressao":{"ganho":1.0,"expoente":0.72,"fundo_gf":1200.0},"mesa":{"escala_x":1.0,"escala_y":1.0,"ruido_mm":0.004},"clip":{"incl_graus":1.5,"rot_graus":12.0,"acc_bias_ms2":[0.06,-0.04,0.08],"acc_escala":[1.004,0.997,1.002],"gyro_bias_dps":[0.3,-0.2,0.1]}},"servidor":{"kty":"EC","crv":"P-256","x":"0bKSUwQnXMDuWREqoeAKxYKMwScvUPKc8s6oVChqpB0","y":"l66oo1xgpbhiqrjI5ys5cdk3tedeHNJ9Cm7XLmkbQ08","ext":true,"d":"J1Fp3TtQ6LByX12N7_pLpI5Q0Pi-amhXUsCiYGlF1a4"},"aparelho_chave":{"kty":"EC","crv":"P-256","x":"yb9CR-RtZfTFzKOFesS001Hb2J1ipH8LNG9SwOMuj-A","y":"Kq1Bc5bRQ5kyxCmUTcYNkdYSfsdoWCqqe3JI8zsHYbg","ext":true,"d":"UAa-CId8KFETUo46PDGvxRLRj2bumiDsohR0pDXUoGo"},"kid":"srv-2026-01","efemeras":{"Michel Mora Bautista":{"184|imitação":{"kty":"EC","crv":"P-256","x":"-b_wod2VL37ilUJnmNVDLvT5iNoOfvYxCaj0sbj1cww","y":"k5apVFk8G5ERzHz7MAW80D19eK-vl6RVHOqT5-baoFU","ext":true,"d":"hGW6qgOVHs-vzVcZ79sgcna6qJvObR_1lEbw-xm0Jo0"},"184|verdadeira":{"kty":"EC","crv":"P-256","x":"WTn5spY5779F6r0WFRDDCEJRYO1Iev2Iplo9E5yo0PY","y":"kQYmrwecCRYsWRoTVEVsw2D8rtvuSaypmXfNw6t41hM","ext":true,"d":"mImjoQBIs-Io0FRosT2nXAgIQuMZFnD87DpZYM3V7aU"},"201|padrao":{"kty":"EC","crv":"P-256","x":"dXVxn3_diyn_jvfA9JUywUjwsP1MyIVBDsu_aKfLUDc","y":"QDV35EyASuuQTpj7b-EG1LAjOcqB1Ed2sLBxPBpI_34","ext":true,"d":"Fs_X2P8TbNGVr_tBhmaUoyt_rtL5uuK4o6oTG1ivrS0"},"202|padrao":{"kty":"EC","crv":"P-256","x":"ZnNjxnZsEZWUPAVUhxnxXIRznaIXVW-T9izX7o1L-IQ","y":"IdPFAHErt7QiJDfu6eFSrjhT77JiZU3xv97YOfoqlPk","ext":true,"d":"qstNbBjBlxBZlNlJfS9jbkxzTpEXTpRB7L43nb1V4SY"},"203|padrao":{"kty":"EC","crv":"P-256","x":"fTco51niiyPWOsVz9JwF3YZn2tFSFsIrUopSFBPo4_Q","y":"5WGCCCuLPCxpFhUj9d-SVURF4sC3nJ82aNOGpnDjE-k","ext":true,"d":"G1awtwgzekSKX-ZtJ_iGqBaXfiV2YC7XrBXs_6wG3Go"},"204|padrao":{"kty":"EC","crv":"P-256","x":"XOcO65yprHF9sB_nNBub4mvuRjQHtqFbWDIHnn3H2tI","y":"G1zI86SYtPOHxRS81X_ZdxF0NfaZU0eAr6fVD7lp8Oc","ext":true,"d":"nY1Wyr5bl6Zhdi2jfb1v8qvi14elbK_gqKK4eDpusco"},"205|padrao":{"kty":"EC","crv":"P-256","x":"fHekShAQbygfa0MPJq6dzK4uDyOcECOPNbFaGTt2qgQ","y":"OV4CoC9TjaA6JETMGeX5KvABdePQ3Moo8yOZha8NQ7k","ext":true,"d":"Uxg9ZxcdWTqbOtNKBLftCzVjfMgofnuTZgrzm9QS4W0"},"206|padrao":{"kty":"EC","crv":"P-256","x":"30RrEv0lwZbWOuMZscUVX29-uOy1CMjwguZOJnbQ99Q","y":"YGsWN0C1jCW12BlcoyZK83tZmqHqpu9lYrY-zlGG50E","ext":true,"d":"VgjA0V4d-J84Pb7EpbFOZ6eik5PNCUSN06OnvqwHu1o"},"207|padrao":{"kty":"EC","crv":"P-256","x":"X23qk4okjPLfINfyAQabA8C9x3FO2vaznCXGCIM9xoE","y":"MBC5i62PtXMjc33hZZQ6x5AczympYEkFKS4TmpKCoIA","ext":true,"d":"fDdvSeyLLcMdxDCao7hpbdr0JG95wvTFbOHSE7l7MyA"},"208|padrao":{"kty":"EC","crv":"P-256","x":"zMzlQySUPUqm5QkF8qq5L2vhMXqrqOaI88I5-M0Ngn8","y":"Ps4IbX8Lk0idkp7L4Ixln__4wrfu7h4LvbKyEv5UOnk","ext":true,"d":"c_gJH9ksqvoAgsTpbKdEP4r94UYExtafxHAqcy2EdJg"},"209|padrao":{"kty":"EC","crv":"P-256","x":"UBLv0OwBVuba0gX97TRWe2Lh7vYHU2M6qCcxBxgk0aE","y":"i-maieqOOwVh6ovCgERxM0vtVF8zsmtKgUTTGloHw9c","ext":true,"d":"Lxy_X3yKmX8Z0LTvauFmQ9IOk7Vaeaa9b2KxtXBU_Ag"},"210|padrao":{"kty":"EC","crv":"P-256","x":"8MpmaBhQsTD0yEYHpjgFLVo30mPKPK6a7jD3P56jtAA","y":"nNJ5Fiu0YgwN3Xq7JtUPnteDnqaNOmZWeST6t4SxHtY","ext":true,"d":"8bff_rrzIDh4mdhlxwPjuGEk93jFF1cSu1DCaHdfIhc"},"211|padrao":{"kty":"EC","crv":"P-256","x":"nJ44OBoqSW-0BKmk_DjX7dbcN-VMFpLGmISKNuJIiGU","y":"I9nf_YbsCtlabJd-VmqfXJcNeheJgF9sKif4Ofat-S8","ext":true,"d":"cnWvZPPKF4W4gpWTMom5Yvb8vzssyev6wO5qlhQBeSQ"},"212|padrao":{"kty":"EC","crv":"P-256","x":"od7pN7sCNvYdaKK7Z7YMbRJOIXVsiWBJ7CXt5w-1Tus","y":"3dINSn4CXkM6ndoSBB5ROr9CuAAn1CKUAi9FOmbwxIs","ext":true,"d":"V339Oo575sfnyARayX0moAOBgVG2WV-OjpZmEAYl-5w"},"213|padrao":{"kty":"EC","crv":"P-256","x":"-oF24qPbV9-hADcdepzY2Ja-CrZOVFvHSQTVIdB0ZfE","y":"hVjHUzdB_QU3TQiQ5InPbzDnl0SL6QDD1DClGz3vztU","ext":true,"d":"19eAPh1SkfsfMVWc06fotQ-jkyjc_XxqEZ4DcPlA63g"},"214|padrao":{"kty":"EC","crv":"P-256","x":"6-PhCuZUOH4DLW4eC9r2Dmvvt1SHPDintKszLWFbv50","y":"3fqIhXT2wkB65oqN1xZXq7DWn7nRnMOLyLJLij-nRSk","ext":true,"d":"JxOFNoI8AFOB1rozkTLFAWtxqxCvAzY8eolc8GVw1ho"},"215|padrao":{"kty":"EC","crv":"P-256","x":"LWI1xqblLbR1kwixbBY3TghIaXhnpbwFCzrDClvPgK8","y":"LgKqaFRSuMg-wZyD9yZVt_PwqQX1uFfaQw3FOuWm7Rk","ext":true,"d":"8utO-g6jsTIuiwCbgrs2cClhb3tO8uAqL3jQFLPX6zg"},"216|padrao":{"kty":"EC","crv":"P-256","x":"Ez7rArn417O-gt5HKmlbCv_sG9ZT1bYzTsf4Uq8_d64","y":"bqk2G291KjFFLdQSWtUSX6eTWH1gvfBORqG0D-nenvA","ext":true,"d":"GozOT50Po_LkLNZqJqDDAohEuZnDTaPI91-vPWR0OEM"},"217|padrao":{"kty":"EC","crv":"P-256","x":"2EpKWlM0BkASnkxmXQBqcTADi-8qyHZWtK4THCCc_pc","y":"w81_cD83lK16CsoqpWOMmLkwUR-rsuZm2_cInG6FcCY","ext":true,"d":"00g2shC_weI_fAoTGVlFvJYnOxkQY10ubRISpsgAZmA"},"218|padrao":{"kty":"EC","crv":"P-256","x":"D43zyxKwzKZCM8N2W8EZql3IH1oDTXQJ0E_I47aG3hc","y":"jBG-oZz6AXaXUXUVyJYp-dZ1Y2M5l1dGf5fTsqGuCmQ","ext":true,"d":"48M7GiWivfW3EIBe8Io-J3sHNCAco5zCfLGBbUtHtxs"},"219|padrao":{"kty":"EC","crv":"P-256","x":"VL2KGlkajYclciYK4re6O77WP-_Svz9i6GrABvAMKL8","y":"z4RzBHWhNxb67VwmkPIUp6n_GD4s4FK18RhhUH4uvyc","ext":true,"d":"zmpDJQdO8v-Hx2BK5XMZ5KM3M09mOZ3eBV4_mPJ3ocE"},"220|padrao":{"kty":"EC","crv":"P-256","x":"z7rKtm5Yf704NQd7_MdLGj3yEBw2GA_pwxrDmV8qR8U","y":"eeuEp070tnzR3TF2TEWBfpN0WuTtlW8vjGmSg_XFdLQ","ext":true,"d":"h9gVawyLEqF19C4tgMCZXRHPmXnNQ0vEvAXrhMrmT5A"}},"Semíramis Pinheiro Marçal":{"184|imitação":{"kty":"EC","crv":"P-256","x":"XwE6hrbV-RWvdeKyvH8tciFSr-A-d_EEjyudGs3EGSU","y":"kGFKly8GDvYVi4uD6S0JF7F_YPBf9FVF-Um3c7Ut-dI","ext":true,"d":"p0AvNb4OskpxZ_uGi1xArp5abMB_E37UsERrS6YggAU"},"184|verdadeira":{"kty":"EC","crv":"P-256","x":"OdBhVQ07jJNqm2AJgahR3vmTthQCnx6lCktuh3ymsjs","y":"WDEzuCuvvYwAFc1CdEFnFuQsnBDWFA6IkRbYAhvt_FY","ext":true,"d":"AbV43UwqFA85Sjq5kIeHzLvqTX7Eqi9Eb5RVh7VR9l0"},"201|padrao":{"kty":"EC","crv":"P-256","x":"8-s_HfzzSYdYqIGAM22WfJv4xNSEQUu3sB1OcVXYRRY","y":"AQNus7fYVFcYOfQMPbXKvFbW-nsnkEOr9rl5XgzoD-E","ext":true,"d":"9slMOOFrYdkhJQP7OISZc7tRrNiTyqKSV464dkMyVx0"},"202|padrao":{"kty":"EC","crv":"P-256","x":"DAQTheAE_lZu10wKDJrTH5Gr6gfgVfgFdSWwYS2U2hw","y":"dPpknWoZjNttDmtYeFyehw6z4Trhvpg76VSOiZtw2P8","ext":true,"d":"jOQT3McR46ZldcHsnM9ya3dGJf5JGxqCFga36o9UX7k"},"203|padrao":{"kty":"EC","crv":"P-256","x":"9c9yxxMdDtNWJZoL-QCUwUS65lbmZUXtS9WfFdwZXC4","y":"VECoquFDlRVGsTtHJwmFQKkHcf9BUDJ6518EPss94Ls","ext":true,"d":"MPzZ4IhwUHN9850k0VbNjsxA3IYjeQ2YfRH_-XXvB4Y"},"204|padrao":{"kty":"EC","crv":"P-256","x":"6F8LxfoJe4FECIj9GavIHjpIJb3XxB9BCGiSNzLUmNc","y":"R68L_ZpPwNFZSgnxfCFQDBf_RcrUrF6q0URUh6mhKwg","ext":true,"d":"uNBJ2f67fIVY2puo4rPLGbEAuT0oLT-fTkUmC1CQ52w"},"205|padrao":{"kty":"EC","crv":"P-256","x":"bCulpctzKMV0Ye2QovagFiGn7YM0NG4HU7Ijiem_Wr4","y":"lEKx-r09dkN8GGI_ltAYT5hGmBkvTbKKfj9bmhkanZA","ext":true,"d":"-KT2myIgm1bjRVD_ZQI4lg6599gBxV46ArzL0IdDO9A"},"206|padrao":{"kty":"EC","crv":"P-256","x":"JHPAyRqPHtW5JIMjrJ76IPvDCFJA-o_7vlvL3uZICS0","y":"dXdcU7SwmY6hc6IucdwWXRvWXlRoijrbQTNmS_XMYI4","ext":true,"d":"OktGiqinA5vwjj8gDqRf6EB2UwWM5oNx_a00FMVlqK0"},"207|padrao":{"kty":"EC","crv":"P-256","x":"FnaO1KIZiyKEl6UeY5jh1q-B9CMg2H5m9ZUjbRX7Oyw","y":"4yKKeJo33ksQhFTQzcP8WMgx5Wuyg7G0r83aqZd01Xk","ext":true,"d":"IPuwts3C3dLyXhvaUEfJIcdRrReSOuFBVoEIAju2-AU"},"208|padrao":{"kty":"EC","crv":"P-256","x":"vrWOJf6ffx_ArCah3UMiBowBCKpkophrkjGYQuJMFS8","y":"EO3daCbiR8ybaQzAvCo0IncY4yZf0KFObltIqPiCBIM","ext":true,"d":"kWRD5rDAJLe4opHxnzm9gcqZjXyJpdHLMvmzlCGiRi0"},"209|padrao":{"kty":"EC","crv":"P-256","x":"98-eYSqPL2VDH2Z1ws9CfzkuKXsVVLg7KuYwEA12Ifg","y":"C-RrutCn-9TNxpbuL9xvt1xmi_Q21HY78_78odq1M8E","ext":true,"d":"6btWjy1aVIzOwELRCMuSenhfgY96cSHaDIZtsUD6NCc"},"210|padrao":{"kty":"EC","crv":"P-256","x":"18X_fNj7GuNZ9b1E8xEV1Mp23PjgAJNyHmm8GH_3Cpg","y":"ycIeS0VFpZpkrAZ3nfJaA3CdVgrhJhSdC4WgvH_HJyM","ext":true,"d":"YRWM-shVgdbDyxXEhn6n6umj1LL8mnfXo9NSrVQgv7w"},"211|padrao":{"kty":"EC","crv":"P-256","x":"vetv8zGikXiR-x1lqrXBQWZ9dUuwJX0VhlutKkrvpqA","y":"wfv-vz5-QE4S5dS9CjOp2GPeCu8cUlw8sSfbdXyU3e0","ext":true,"d":"Ak0rNr5DMI9knHslvqODiY-ZQgQb_2u2ZcQqV7Yl54c"},"212|padrao":{"kty":"EC","crv":"P-256","x":"zUZtSbea7BkNbVzFPZWWRFoSq2ug0BGGDkEbqwt868Y","y":"gm_UyZfsyHCLH7hzKPA1GcLlc51Fpacc24G30TceYD0","ext":true,"d":"156P6vFEoXbRSfbU1x4YhUUkijR6DPLLnPZLOn-dJvs"},"213|padrao":{"kty":"EC","crv":"P-256","x":"afM6L6V068pmdZnBXyE3dAjm0p_jJrXSzaILUtZcu_I","y":"yCzkDAupC2ep57XajjoBDy4wezgYFnZTEMozk8gyK3s","ext":true,"d":"-k4_IJTFpK-51EGsNjfHn3DlrKzzfzv7gklIh-DXRXg"},"214|padrao":{"kty":"EC","crv":"P-256","x":"nbU_IL0wmWykrKv4VmmkNv8y2rME0jJhKvCGkExoQmg","y":"Nflwl0nwk2QmsawjCWi1VCB8P9X2lANVn6xuyafPNDY","ext":true,"d":"peeFJJlgEUQaeDsFDyYP5FglzkasvKwslVwFyxuIdRw"},"215|padrao":{"kty":"EC","crv":"P-256","x":"xrB7zRS3bewZoIbZoxGOIslt-WMGx8GT0PcL3vye3FA","y":"qFjPE5AKvzcprylpTHaTOJO27SBDcqrAtZv0uUDslyA","ext":true,"d":"OfRjspgJIMnVL94B-oJqzETcs5RTKvCFrFjHp1uPtpg"},"216|padrao":{"kty":"EC","crv":"P-256","x":"3BoycJZ1Vorr55od2FKldiGWVjUrVZKhW1tZgYaRNic","y":"aVts5YTXNugceViKzySXQfFgRHtxzgpLMRrbxqZTAnI","ext":true,"d":"Xa-iHoqo8rYaR2nNkXkuDiW38o33YuF5UC6GR5CvV5Y"},"217|padrao":{"kty":"EC","crv":"P-256","x":"tghulxbyMgH74AK3oEyUZAgp7O6d2hSollEqq9-nIik","y":"q8QUhSJkcwbmIz3uH1BwAUNymXFpfonxgHwGJEqJwrw","ext":true,"d":"0l67jk53QzH0O84SBOCStzUQuYtZu8mdZYbp6ad_UQ8"},"218|padrao":{"kty":"EC","crv":"P-256","x":"uzB_K8BKmYf-2vtXdNgjozrjICo6alrjvnEi6dX3g_w","y":"_gKWboNiqRqe3TgLcMRSxJjUkMHJaszHqOq8oU91Zw4","ext":true,"d":"TrwomCTwUJGHEORj_0tUVCYgyp7s5cvHFCOFcOIm_Xw"},"219|padrao":{"kty":"EC","crv":"P-256","x":"7RBNEnlphwNtkYu6Yxj-v5eDn5MoqCkMJxEevwtAakM","y":"_cN2Imrn4ftSbqjnHjzXA5xW6uo9zXr2e8mHYdhkvYM","ext":true,"d":"zeGm2u0Qryh2dZ2DaJnbx-Lf2dtojH2ul-SseXD2qI0"},"220|padrao":{"kty":"EC","crv":"P-256","x":"K5RfgW76u4LJoCldzYXtQ6y-TfXafT-CP15zRhoOEQM","y":"V8jkdRFC2ZN2DxStUSDazfQlvLHKLN6sDDuIqawg7bQ","ext":true,"d":"Txt4XwNHmv_uI0i-Flkn1yk60JfK2bAP2ncZj-jLcPU"}},"Bruna Zanetti":{"184|imitação":{"kty":"EC","crv":"P-256","x":"_IkWQYMp7cFZxJRos_JbjkLHf9Ni1VWFscEtFYhA0VM","y":"qFh0mNR9OhcDaWT05UzGTFc-4DW0CMzbqNgH8LA1FcQ","ext":true,"d":"cArxK9MuyLFp_i4wema68WojgYC3Hh8Ga0bU0KOd-Z0"},"184|verdadeira":{"kty":"EC","crv":"P-256","x":"8lOt8jJpkK1ZUHHI0KyuR_oeN22u0ThsC-P237nvwCU","y":"lH_DxlpwH8BYSDSdyLSEvHINxYmOhSFHzwtOY8E08Fc","ext":true,"d":"TkL2II0NmauNYaaNJnuTc9qgKTFhfIWyfzkrt2lj9rg"},"201|padrao":{"kty":"EC","crv":"P-256","x":"IqadtEnueeDifw6amBHmNPPVqxtd-xpfdWTfiHpp3ag","y":"q6q6f8TWl__0VunxO7CMoH7tVrKYNDi0RkzcI8xXsuQ","ext":true,"d":"ds3HiQuxS1iMVaxaHy_0W-P4DtvOzhYWAIlhNrD4Ezk"},"202|padrao":{"kty":"EC","crv":"P-256","x":"8Nt9-JF19XJXeUjbK2-ntTBk1z58zmK34OUR9CQHSLM","y":"HLCRQUbyB1tCQPBrIND-N7Ap1H_EvWR3VG8mUDPsqzg","ext":true,"d":"K7PUMKH5nDO3rwuQjgrSleeLnNVenl8kcv9aEgKygzM"},"203|padrao":{"kty":"EC","crv":"P-256","x":"oMmNKqPLVKb4lN6FOHQ8hAxpkZunvr2PF4FGHqYNLOU","y":"bwDT6wZOqkeS2zUPt2qhscRb6f0LzebqX0F7LLh_2ds","ext":true,"d":"gLZseXyc3qMB-QRDKld2W8PrbvSATmWWDK4j6D6zpPA"},"204|padrao":{"kty":"EC","crv":"P-256","x":"5-p6NBZFffY2JUFyz7qIrkWmV7F3tHUjCwtzIZwbxac","y":"_lCnCrEpnT6O42EO6ZDCzx2jidV9grHQo21RftOnPHo","ext":true,"d":"vrv7BAXcfqepnGeuBPErDpB8uHx_EIG9K4dLlWQHZlg"},"205|padrao":{"kty":"EC","crv":"P-256","x":"vFvP1d8uxBq14HevOwzC_0nwan-8b_TtnB_cPNsRdLw","y":"0UHYZU82P98iMcRR8xiGlhB4ljZ0EDxlLb5Pi_RZTlQ","ext":true,"d":"HqLMNec_5ASG1NoKODRvxvOhaVKadczPaEcWemhuwNQ"},"206|padrao":{"kty":"EC","crv":"P-256","x":"9nvPrLbqfrVaN2dF7IC79h9aS4vVU0V1gClrVkW8sNw","y":"ov6em1henY9q2qMf571Z3nv9Ggzj0JtyYZzurUPk6wM","ext":true,"d":"t-RMT-3nkc1oMur3LXnfAOgiDMJIjo7yGDUu8C20k0E"},"207|padrao":{"kty":"EC","crv":"P-256","x":"lfDk6qIwy-S1hNGpFlKarcmauPnxZAzPF6niu1_GD80","y":"GC5l8_-McJKAf5ZbY--lYll0kqxFX9mmhugmfK3elIQ","ext":true,"d":"8ugw3l7e6thd_7k_DSGhWTLc8nxR43KALGbihvFGkAQ"},"208|padrao":{"kty":"EC","crv":"P-256","x":"YkxBv0-dI-gaROeZ8E47rvK1IwOYWmyxD02QiihHYBM","y":"6yNymuTGcJ_owr-T3YjvgnvpqkcaUAfKXnhnIG1cqRk","ext":true,"d":"sDxRA1k8T7qiKlDWmPk8XL6KoDm0OM5iSUzYAP6kXIQ"},"209|padrao":{"kty":"EC","crv":"P-256","x":"ftH2OglFbnaO8ijKwnTsFexMdh2cxgoTp7SL4-VS-Fw","y":"0d1oFdeAiGiWK4ZQydcP7SZpBoRSdAHzrBjyrErED8U","ext":true,"d":"L48Edgknzer3lQLqALF5RI_s-1LHmUyly9zVW7miZBU"},"210|padrao":{"kty":"EC","crv":"P-256","x":"x6Fyc7UzIcfcyvDM7fxefBEDc2kx9oUvyxJMG5PP-6Y","y":"2uWTSD03VPhsDbwxXK7HBwdaPPqThzoorFL5q5U5RSw","ext":true,"d":"RcvkMBnhnNAn308-Qn8PiUOXcz34shuyTIy2aMcsxWM"},"211|padrao":{"kty":"EC","crv":"P-256","x":"YXxDj9yGw3Dsf-aTzo80lYQbudaodYQpgvWffbWFY8U","y":"u-8EF3sLEJyR-wa1o5N5lcUZx2wwM_u5x6TB7r85mMI","ext":true,"d":"DebynxDfHvvHUhsd0Z_Lrtrt3uuZKW6XjQgQsdtTONM"},"212|padrao":{"kty":"EC","crv":"P-256","x":"AIOHR74K9GXc6YO9B8jkjvNbBifRKLyF2jwiKRqKc0w","y":"NURNl9XNBX4Qyc7XcPWA661ThBY52of8A4iZqy44bNM","ext":true,"d":"01eDtxF6sfNjVMmhk9MFWKwA3zfL7gkEHf_GuW3kMZ4"},"213|padrao":{"kty":"EC","crv":"P-256","x":"94gyDVNGF4jIA3bxvvmorDiNex-hdcDT0ooAm4xg_Bs","y":"ZbzfSE03h2Vuf3kkgg1cJG2uX6rnT6Ab4tJm0TZkg-w","ext":true,"d":"7YVSjwkGQsTlZTnmL-Fuu1XUz0NvSgxd4OEL8_OF-qE"},"214|padrao":{"kty":"EC","crv":"P-256","x":"-zKw23a_WkHgK1wTaYyyfcwWOJhAHJtiBOg3il2Sqlo","y":"i01jSnxmfLlxP1O1DPjFa0XHoKwYb2ZM37z_QgWVe0U","ext":true,"d":"wAQaslPUvv_Uptp9a5jF2MfFo_zfxJp5YzecjI7Zn0U"},"215|padrao":{"kty":"EC","crv":"P-256","x":"0StYHHICYLmyToLRAptMCR5n1pRihcJp-TZEjdYhDn8","y":"bcsG8YYE79qnRMMzX3uH53iWlP-5YFKbBQ8JDZhpy00","ext":true,"d":"M5YDhqetRqMJ_hvPO5S6p-mR4ds0EJhL-K-JdROCGXw"},"216|padrao":{"kty":"EC","crv":"P-256","x":"s-W9dzdyuKgNG5OUV7TJChivvxHUqSCnDpExi0A54Vw","y":"AuKqoVWXVP9LLITVNvmNBAfx5HdzbXZGB9kO-T73-xE","ext":true,"d":"PcskLZs89FOrpBzBtdWX1J6bQl2epGmqh9JYV5crHPU"},"217|padrao":{"kty":"EC","crv":"P-256","x":"jXObbcCeEnfgpbsJFVvX1DltEsjhO38jqY9c-DxTKro","y":"-r1Gjz5b8SmuXo3U1CUoOho7gawIqboC_y0l1NkLUF4","ext":true,"d":"H1yT13q_79zegObB4YyMlyrMWWqEWSK1WpdzT172-H4"},"218|padrao":{"kty":"EC","crv":"P-256","x":"liYxbGUwYwkZtQyV7MJQSlSjlcYya9Hrzkea3JK2geg","y":"t_-GWIAJm8Wb2nJxano6pT0RmCsxgrzfI0iqKCm4-y8","ext":true,"d":"FNZp0nqc7Nu3N0GAoJhn3VF5S681NITDYqKOOq5FUgs"},"219|padrao":{"kty":"EC","crv":"P-256","x":"NWm4sYFRCUs-1y8QCO7lRUtfGcaP8nL_Z4IcQsDrdps","y":"zl-BGo9-RaRUIMXWMii0T-iZt5rlQPr3gjEt3yjyuN4","ext":true,"d":"sXi9zMDvPILn7_AsrVZmMHuL0qktobVgjnE9A0caot0"},"220|padrao":{"kty":"EC","crv":"P-256","x":"hs1nbGXGZw8yMlpozCwapx_16DFrOQFMOV_Aee4VB48","y":"tf6hj2GNJkhw0UjZDRT_i4xi1cwq2qkfmEcomXGQ2dc","ext":true,"d":"L6IWivcozcuqmFZDve5YXmLZnZphYh8aOhU8a9X7zpk"}},"Isis Pinheiro Marçal":{"184|imitação":{"kty":"EC","crv":"P-256","x":"wYQfsVFYvl8AkLQW6-loQHhaFBFRTgqV-1iiHdJ-OlQ","y":"ge9Ofun8BvhgwtlpaEOPKPndU3-F7VmuWf68REQJnVg","ext":true,"d":"DrzHz7vhUMo7jKupkq0rJMXc4_W97fhHMX0RgluQC74"},"184|verdadeira":{"kty":"EC","crv":"P-256","x":"e4bpeYAzYDxKyKCVwc_lPcjHZ0Oqasd6spe3MVEZb8k","y":"b7cSxcLwbMSNLqMXz_INxIL3r0_CF8nBe2uEpXC2Jl0","ext":true,"d":"jRvmaJG5HcrUeVXxzgUI4FIAyn9PmxyODhWthGZMy6E"},"201|padrao":{"kty":"EC","crv":"P-256","x":"cMbVH054rNQRdchxGU0KdAV1z8tmuvVHCyIzRFd-mkk","y":"CjzksRLXdM_em080s3op9PNoKPIwKOb6iUJD6IIlX0I","ext":true,"d":"itwT7LFpB180UUskD3z1zqHRdSq0hscQDj587mQiT68"},"202|padrao":{"kty":"EC","crv":"P-256","x":"K5vjtVtqBJfg19RFSV-L2Xb0KjEXGdkQpU6wYJDd59k","y":"go--EporX0dFDck-wDt7zOAxRg93Qavk-eiQOppKcZE","ext":true,"d":"vfTxnwutg6GJerjIwDd4L4oJ197b1JGRLM-rRfO-7tc"},"203|padrao":{"kty":"EC","crv":"P-256","x":"9kn4hWmxKYuxUnVvCvlp6LL2mI9HBq8EFbOJamp4aoo","y":"Gf2vlWPxZD_C4BsUyd9EM0vwjpBiWFU2kdjkcjZrwso","ext":true,"d":"kN-ThNu4mCt6JEMbd93uQpewAtSavs82V8xuH1u7HW0"},"204|padrao":{"kty":"EC","crv":"P-256","x":"KLV7m9hNqxekFRFjvPBFmjJICgY9FkGzY0q2kvv8o-g","y":"8B1Y6ynY6auYtIRqm8EnAgn5e3rxraxhir3vlohZWI4","ext":true,"d":"P9BMAbpi2SGcl1DI5CmY8wy8wJ2WZx-6IEGTOJibgC4"},"205|padrao":{"kty":"EC","crv":"P-256","x":"CpcpgcUtacMSgXpiHrolqQf_5e8lyi0XwFeivh6L6s8","y":"F7d7l4qxi8icQWngOpRz0ZdslFkNJNm8JMeqsGVSTS4","ext":true,"d":"TFhwjaGnEABcRvHw7n5ai684l8Qs5b4EGLz8IUFU1ek"},"206|padrao":{"kty":"EC","crv":"P-256","x":"SnPaCXLcZkKKVCs0xdYP6Hl_FoN2aIvYzNqCgE2dLDg","y":"VZKYVklYJsf-dn85uHbIlCLKkrCNbanTQTioPAx041k","ext":true,"d":"fGMqNgnubTP_qY8FEj1vRzjNp_KWHfTgkUTYvVnMsvw"},"207|padrao":{"kty":"EC","crv":"P-256","x":"R9h3_9JAEBqZq8ctqVS7DVPyulwPzqxlCU6QCpq2dyM","y":"5JVGr_33mCQ5aAT_2znTMmgL81qe--FAU15ojzUmhVM","ext":true,"d":"8Ru7SPEd_rwNeVRSWV7r3q7CgpV0ni17WDAerDV3x9w"},"208|padrao":{"kty":"EC","crv":"P-256","x":"RTGHG4x34V-YsS7UmatUQx14Hze25F3j9lEt8zoRWEk","y":"QAfZdtlcMztjIHOkdk8OjQGcn02Yi_sTsQZsiIWYjZ4","ext":true,"d":"zJZfXk6euR8pjFpr-VLhhKWppVTWW7vALh7-q4zyuao"},"209|padrao":{"kty":"EC","crv":"P-256","x":"W2XMQf5Hy1_wl71akep7SarSpLrhOTcGXxG2y_p9TTg","y":"rsYMcnoc9opTFMb43bVuPVCm9OGVTvsMPaRHW9V23gs","ext":true,"d":"hxapf5I_NEwza0tcSMKwJMoV1AoL1RRDfuyxBK8jYgE"},"210|padrao":{"kty":"EC","crv":"P-256","x":"17EcIfJnrnAZlEwSENVWlGv5TV2B80UVXfEN-14FM_A","y":"6lSHvJPkeGG7IfDtSOpWWO821kC_LMmfcBpTfNrlWWk","ext":true,"d":"nEQdtJ_36yetMuGXlTcU1klzDqGpr_cIq7tJ3wfmCbs"},"211|padrao":{"kty":"EC","crv":"P-256","x":"lW_TDgQInH1zJxF1iIc1bjTbREMpSlfQWAcQf0m8Pr0","y":"Nsj7XuP4xFww2HqldJchc1bmxigq72FX8T7YCwmNODs","ext":true,"d":"paD3fR3dLXJNQZZJKKT_T9wgnrOdlVf73C6RVow_Cik"},"212|padrao":{"kty":"EC","crv":"P-256","x":"8oGBe1xlLxh_FiBg5yH9VraQpH2LQ4GZ_Uu-RFsTlc4","y":"3ag9leviJiGhj_LOjDVP7Vdzh1IyN8ad446__9YwIaM","ext":true,"d":"7Wp4TwpH8PEJNRzBr5Qmoat_ErbyOYj4g3-ezpI5MwY"},"213|padrao":{"kty":"EC","crv":"P-256","x":"ve_4WNczxgVaQuTDGmxC6yy7mwY6aq6Saa1S-OuK0Eo","y":"gAI0CUX3ArehhpM6jeE05JIrG7nWiHObcMvA12sfbx0","ext":true,"d":"1oLIvGJCV8UzZWoxDj0E-3rcmN5fXYL1f83lJQRbSX4"},"214|padrao":{"kty":"EC","crv":"P-256","x":"wR_j8mf4TWSAkOtvER7osgSc02ku7lp1L5YwP3rUMTM","y":"ycVDdml8CgIYislYIrMvplumK8iSR995qSfnldhRiFw","ext":true,"d":"IFzPlOxsjLelBbp5PE-sKwtxIc-k9KLOrBeAvG5U8u4"},"215|padrao":{"kty":"EC","crv":"P-256","x":"5wywt1b2B1ZVO8aSgqFIY-Cqw4gaBqYFEU5BCj568xE","y":"eMzSi2GXhbxGqu4HhkNot0h5O4Ca23cgugFtrxON-jA","ext":true,"d":"ighNpivFrpEqm4l_dmMr2DYITneurb3Dtu3Y58h06wg"},"216|padrao":{"kty":"EC","crv":"P-256","x":"jwUvwkZfAiGtrG5Mj5mHho7RNXSpSeRWedOepI_36HI","y":"iwRuYPlCiXo7q32LepTp92mGYnLHjQ-btDGGmmykVvA","ext":true,"d":"bKznXvEYpb8kBuMmSyCRt8IZztkc4AffxvAtyd6TmeA"},"217|padrao":{"kty":"EC","crv":"P-256","x":"hnniztWOujDcV_koEOUB78t51udKfrTKni71eftAHIQ","y":"ifm6nGH6M-A1scRFM4EYFtbY2JqjBmEfpURpeujEYRA","ext":true,"d":"ssnk7Tpgne0niAqueyVx3qXPeo-GxxreEotvHSPLw8E"},"218|padrao":{"kty":"EC","crv":"P-256","x":"9AZfJxqKJRTeyqUeHDyeLiD7utYFoo-2Gj7d-GmS4ik","y":"JS-sLADfJcp5VJ5bdIWd5QLj4s5lHy9q-q7N9HqzEMo","ext":true,"d":"BVxmw8FvpxpRNyQujenwNhNaGsSRQ0FzAb98_7nmw6c"},"219|padrao":{"kty":"EC","crv":"P-256","x":"VbNctfMLIjIzMhmBQdv5_VGkKrvD2l9ozwLbzyMeugU","y":"lUaa3pHTUhWMKRwCow4EfqMgvHI6hebs8fEeTD5CRhg","ext":true,"d":"Bxj8e6teado74KRIQ6fncnEFft1H_ahS6W2hmxlO078"},"220|padrao":{"kty":"EC","crv":"P-256","x":"8JXNgTAu9heCTKaJV2h36cy3Js5znlgpP6ZGeEk_F0c","y":"YQcydnmywVuiQ_eYCGmAJluEIqH4Nk92Y1B6T1ctrWQ","ext":true,"d":"9BF-aoih6dkTLzB6xoxrNj-gZ7hQD5aA_UP6bLkuzz0"}},"José da Silva":{"184|imitação":{"kty":"EC","crv":"P-256","x":"UmUQjzYyPnDb0IfBP0-7qu9TJXSWLr8QocAXs7QG_MA","y":"vFHhNFbevSbvKzPpsHhVqWzFFWuDz6jRUiMhy-f6c_k","ext":true,"d":"37aQOkutSAXmz0ME_FDrBJvt0ZgcGqOJwHh5suOQQw4"},"184|verdadeira":{"kty":"EC","crv":"P-256","x":"_Wdo3oIYMvQ4O8Xox5Hbg291reGY2GlxRDVNYJoHk_U","y":"dVwoY544xm31l5aHp0VervxzWiqQMBbrDd0HS8FYGeg","ext":true,"d":"FkrR44YYLEGw74kArzHG7cmCsYb90lhw-teVqR2k-44"},"201|padrao":{"kty":"EC","crv":"P-256","x":"-0zqGSYtK5QJQPYj8EcvPKCvjkcS6jRKOd6oAYrZbu8","y":"4qm-ib2jHD9vqvHX0dhg4HEFcv4pfzCgs56SQYc0_oY","ext":true,"d":"MNUbIJXGCPGsRGhgJLTUYVmSUos-zqvJFOMLPIDK5XM"},"202|padrao":{"kty":"EC","crv":"P-256","x":"KHxzB9qrvsFxpBkTKDU1kFfyd_YMPMCFUKvC1IARkgM","y":"a47bNUnNywgFnSypC3aphcZNlSPC8XPSdtc7nmxIfF4","ext":true,"d":"46zkBcNUiDL3mxrnD6VINyDvlneDWXdaQvv3EcwSbK8"},"203|padrao":{"kty":"EC","crv":"P-256","x":"zgowkgWWkwUgTPhTg7iygkr9-t2RjYjsoTzYHUwHHMk","y":"pSKknGMWmBfJCaxuLtWQ8S1QW8cHX_abgf1Jjjuk1wU","ext":true,"d":"fNJlvW4TyZ0_gHkDDb8iWuOa98n83hXGcOX296TuwqI"},"204|padrao":{"kty":"EC","crv":"P-256","x":"LFW9gVE2Q6dqhfJMCqnLJ02AeLI9uYQSA21DSZ25WBc","y":"_EKmdJg49n_oAWrFgbJrQ00-DXYvKAxC1usVkGfgpgU","ext":true,"d":"ET4XDN5U-oN0jW5lrB0mm6pMjd_VldK1kkI5HILvOFc"},"205|padrao":{"kty":"EC","crv":"P-256","x":"mX3VbbI_h4tlD4-gkbWv7lDd9AGoPxOc-RKV4TFRsko","y":"4KDaBr_DHmCOQFZAFcXe-h2cmUR-KV2IMmM30tbdVWg","ext":true,"d":"2kw0Hae14kBP4dzQcyfbc3FeS8SMOVELfDsyhK9J-NI"},"206|padrao":{"kty":"EC","crv":"P-256","x":"sK-2hpH-krix3_0HMCACMCX5nqNEHdIjiUPEOUkbqoc","y":"jkH34jyw0ZJ-APuqJe0J2_E55m2oVgrBgB9eVYZj_E4","ext":true,"d":"ixEQQQlOeU9pw1_sCn8CSV0lYThrz6ghX-oz3wPoNZg"},"207|padrao":{"kty":"EC","crv":"P-256","x":"_6mojYENDknbvCKQgVV-7rVdTT9zAFALq4jyZ_TdP1Y","y":"VmA4nGyxu-OzMVHRH6fiJy4HEi6XXhqAxHKAfN4bZ_k","ext":true,"d":"-w4hcmvV24aYKHffbgwxTlQEWdLt-wlJacqY_7EWVTc"},"208|padrao":{"kty":"EC","crv":"P-256","x":"rS_hadGZkGBd4mFW494DsA5T75i-743syLiooWrfBgE","y":"acwTzeALvnHnkQChxro9xpN_-B2HVceWb6Z-Vyq4i_o","ext":true,"d":"dK4_TWVvh4-ZZISfub1PCoi6vHeFr7W2GrBN5ISt3l4"},"209|padrao":{"kty":"EC","crv":"P-256","x":"SXtc5I980-IQrCl8wanm3Z59EIFV_Kkk8ETUJg-u6TE","y":"jQ43cDHKo1y5mLnkiwwPsdbutrtoZ1oQsXXTwTj7rqU","ext":true,"d":"plkWg9cTgv4wLtff6r3ugmnYgjM43gLnUdg5B8Buuww"},"210|padrao":{"kty":"EC","crv":"P-256","x":"5xAGX6XtqeazTuDJaVTe5EFVNBUzBggPG07Cy401W30","y":"RJuxjfMzEBlZhsjYAaufBLjZIuamUBu7_ERsKmmGtEQ","ext":true,"d":"dmNq6Yom2ni1f84ZFP-0zVkzc43ZTTJF0BxJW-asoo8"},"211|padrao":{"kty":"EC","crv":"P-256","x":"8KlYvxY4FbApqbvfYQOiNtY8YAo190LEEsTv8Osz9m0","y":"TWWJ9yoTVdij4UW2h5Xdum1bLJBb5rST2aBv_fU1_TI","ext":true,"d":"sfeRR_0d0Et9CF3rBr4Wmq0F_opB7g78MtxppWYqgzA"},"212|padrao":{"kty":"EC","crv":"P-256","x":"PMbN5_XGOERHUJBVSdUG2LNbVXSwkCiTt5w7eSpjvnc","y":"3w94x_tfMW3WpiKYFEzfJszPjaaij4fH52ilyeManoY","ext":true,"d":"Pzc7v6N-ysWTNzQp__4RD3kdaRM7Bd4yA472HnMQZDc"},"213|padrao":{"kty":"EC","crv":"P-256","x":"x8gKWrtuEixvMhkhzX8eOA3fLuXthyl4wGZ6dQooWyo","y":"4fygskVn7iz4HJXKrcON83uiR-JB_58OYfgcEbMt3HU","ext":true,"d":"dnc-W-lccuPP8nYQSmb3N_ZNhS8_TwOx185kUnyRmlU"},"214|padrao":{"kty":"EC","crv":"P-256","x":"fPHsmK3yc3nELvRGLlVKpEEzy4Ma7fPK6nxvXGl6-Fo","y":"rA-GlTdjd1MB7FYqkJN1vcGdD7yit4UtyRYrSVi9sEU","ext":true,"d":"FhmhPd6on-I149akhT9bZ94nj3IOYDj5XRpx7S52XQs"},"215|padrao":{"kty":"EC","crv":"P-256","x":"-QOztlq5xry0WYzmWiCJ3vl3idjEQa7hpLl2iDktWXM","y":"xRtfA0nGfw5wIuH8jG3THEdAEMOwvOkV7XnIq1VzB-U","ext":true,"d":"bk87FvaVs6piaNWCXy-RrGAB0JC3WYUjaRL4fwHspWA"},"216|padrao":{"kty":"EC","crv":"P-256","x":"pELMvtqJbGsN0o4r2dRwOSrreIckfHlqP7shGet62yA","y":"WZI6fgTjx7EN-6kKmTlUB_Xr6TOa7bE8mSr6hIet02s","ext":true,"d":"PVRlz8kPZyCLyKMoTstcSEE7AlhAvR23jc3qUGJwD-8"},"217|padrao":{"kty":"EC","crv":"P-256","x":"bd1Er9Z5jC9gPYbMNLs0BLU_uaAQYZX8xiE1pjUJNmA","y":"Cqovh0abZc1sQd33KDAG2wpT67AbgG1R9jVIwoLp3uI","ext":true,"d":"hZBkJS8hoawlPxko5lUffjd50lbys2ZiuyaCjLPs-gs"},"218|padrao":{"kty":"EC","crv":"P-256","x":"IfRSH3Go5JD6NEFB_wxgGrUClyyj075wlVuYH7d8-gk","y":"h4DMaKqIpaeul0kSOCdzudhxzjSMVCu3Kb2dDX-HsTk","ext":true,"d":"OMvRQcvg3pKKfJGtqMe9d6WHKxt9g2fvZv9Dq6mxTmQ"},"219|padrao":{"kty":"EC","crv":"P-256","x":"C4C13QqxCbuRopuVDx6aK5UZCsphtz6yKLxAtKkLcno","y":"DN7QQHoEMSzLxfrDMOms-ywp3jObupLxey2RNmrNRKk","ext":true,"d":"gnphea2FOBakLh3hrsEwDOR-eO81uspHQGQnFAElDNQ"},"220|padrao":{"kty":"EC","crv":"P-256","x":"m_2gihX3K1uYtZOd41xYP3_6ea94DiKX8XjDkqgJ9Ug","y":"BkfpoVzmW6gwp9iohPy905UhJjvxhFJruuBxFKaG0gI","ext":true,"d":"sgYAgjoKRWRf00uuKxH0UGXabXZWkVd0-vSe3a8w2Kw"}}}};
+/* ===== Thoth · simulação e cálculos do painel do perito (cap. 6 do relatório) ===== */
+const TH = (() => {
+const FS = 300, RES = 0.005, NOISE = 0.004, G = 9.81, SGW = 21, SGO = 5, NU = 1000;
+
+/* ---------- números aleatórios reprodutíveis ---------- */
+function rngOf(seed) {
+  let a = seed >>> 0;
+  const u = () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+  let spare = null;
+  const n = (m = 0, s = 1) => {
+    if (spare !== null) { const v = spare; spare = null; return m + s * v; }
+    let x, y, r; do { x = 2 * u() - 1; y = 2 * u() - 1; r = x * x + y * y; } while (r >= 1 || r === 0);
+    const f = Math.sqrt(-2 * Math.log(r) / r); spare = y * f; return m + s * x * f;
+  };
+  return { u, n, uni: (lo, hi) => lo + (hi - lo) * u() };
+}
+function hashStr(s) { let h = 2166136261; for (const c of s) { h ^= c.codePointAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+
+/* ---------- utilidades numéricas ---------- */
+const F64 = n => new Float64Array(n);
+function interp(xq, xp, fp, left, right) {
+  const out = F64(xq.length), n = xp.length;
+  let j = 0;
+  for (let i = 0; i < xq.length; i++) {
+    const x = xq[i];
+    if (x <= xp[0]) { out[i] = left !== undefined ? left : fp[0]; continue; }
+    if (x >= xp[n - 1]) { out[i] = right !== undefined ? right : fp[n - 1]; continue; }
+    if (j > 0 && xp[j] > x) j = 0;
+    if (xp[j + 1] < x) { let lo = j, hi = n - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (xp[m] <= x) lo = m; else hi = m; } j = lo; }
+    while (xp[j + 1] < x) j++;
+    const d = xp[j + 1] - xp[j]; out[i] = d > 0 ? fp[j] + (fp[j + 1] - fp[j]) * (x - xp[j]) / d : fp[j];
+  }
+  return out;
+}
+function interp1(x, xp, fp) { return interp([x], xp, fp)[0]; }
+function gradient(y, dx) {
+  const n = y.length, g = F64(n); if (n < 2) return g;
+  g[0] = (y[1] - y[0]) / dx; g[n - 1] = (y[n - 1] - y[n - 2]) / dx;
+  for (let i = 1; i < n - 1; i++) g[i] = (y[i + 1] - y[i - 1]) / (2 * dx);
+  return g;
+}
+function gauss1d(x, sigma) {
+  const r = Math.ceil(4 * sigma), k = F64(2 * r + 1); let s = 0;
+  for (let i = -r; i <= r; i++) { k[i + r] = Math.exp(-i * i / (2 * sigma * sigma)); s += k[i + r]; }
+  const n = x.length, out = F64(n);
+  const at = i => { while (i < 0 || i >= n) { if (i < 0) i = -i - 1; if (i >= n) i = 2 * n - i - 1; } return x[i]; };
+  for (let i = 0; i < n; i++) { let a = 0; for (let j = -r; j <= r; j++) a += k[j + r] * at(i + j); out[i] = a / s; }
+  return out;
+}
+const mean = a => { let s = 0; for (const v of a) s += v; return s / a.length; };
+const std = (a, ddof = 0) => { const m = mean(a); let s = 0; for (const v of a) s += (v - m) ** 2; return Math.sqrt(s / Math.max(a.length - ddof, 1)); };
+const median = a => { const b = Array.from(a).sort((p, q) => p - q), m = b.length >> 1; return b.length % 2 ? b[m] : (b[m - 1] + b[m]) / 2; };
+function matInv(A) {
+  const n = A.length, M = A.map((r, i) => [...r, ...A.map((_, j) => (i === j ? 1 : 0))]);
+  for (let c = 0; c < n; c++) {
+    let p = c; for (let r = c + 1; r < n; r++) if (Math.abs(M[r][c]) > Math.abs(M[p][c])) p = r;
+    [M[c], M[p]] = [M[p], M[c]]; const d = M[c][c];
+    for (let j = 0; j < 2 * n; j++) M[c][j] /= d;
+    for (let r = 0; r < n; r++) if (r !== c) { const f = M[r][c]; for (let j = 0; j < 2 * n; j++) M[r][j] -= f * M[c][j]; }
+  }
+  return M.map(r => r.slice(n));
+}
+
+/* ---------- Savitzky-Golay (bordas por ajuste polinomial, como o modo 'interp' do SciPy) ---------- */
+const sgCache = {};
+function sgPinv(w, p) {
+  const key = w + ':' + p; if (sgCache[key]) return sgCache[key];
+  const m = (w - 1) / 2, A = [];
+  for (let i = 0; i < w; i++) { const r = []; for (let j = 0; j <= p; j++) r.push((i - m) ** j); A.push(r); }
+  const AtA = Array.from({ length: p + 1 }, (_, a) => Array.from({ length: p + 1 }, (_, b) => A.reduce((s, r) => s + r[a] * r[b], 0)));
+  const inv = matInv(AtA);
+  const P = inv.map(row => A.map(r => row.reduce((s, v, j) => s + v * r[j], 0)));   // (p+1) x w
+  return (sgCache[key] = { P, m });
+}
+const fact = k => (k <= 1 ? 1 : k * fact(k - 1));
+function savgol(y, w, p, k = 0, delta = 1) {
+  const { P, m } = sgPinv(w, p), n = y.length, out = F64(n), sc = 1 / delta ** k;
+  const wts = x => { const r = F64(w); for (let j = k; j <= p; j++) { const c = fact(j) / fact(j - k) * x ** (j - k); for (let i = 0; i < w; i++) r[i] += c * P[j][i]; } return r; };
+  const mid = wts(0);
+  for (let i = m; i < n - m; i++) { let a = 0; for (let t = 0; t < w; t++) a += mid[t] * y[i - m + t]; out[i] = a * sc; }
+  for (let i = 0; i < m && i < n; i++) {
+    const wl = wts(i - m); let a = 0; for (let t = 0; t < w; t++) a += wl[t] * y[t]; out[i] = a * sc;
+    const wr = wts(m - i); let b = 0; for (let t = 0; t < w; t++) b += wr[t] * y[n - w + t]; out[n - 1 - i] = b * sc;
+  }
+  return out;
+}
+const sg = (a, k) => savgol(a, SGW, SGO, k, 1 / FS);
+
+/* ---------- picos (altura, distância e proeminência, como scipy.signal.find_peaks) ---------- */
+function findPeaks(x, { height = -Infinity, distance = 1, prominence = 0 } = {}) {
+  let pk = [];
+  for (let i = 1; i < x.length - 1; i++) {
+    if (x[i] > x[i - 1]) { let j = i; while (j < x.length - 1 && x[j + 1] === x[i]) j++; if (j < x.length - 1 && x[j + 1] < x[i]) { pk.push((i + j) >> 1); i = j; } }
+  }
+  pk = pk.filter(i => x[i] >= height);
+  if (distance > 1) {
+    const keep = new Array(pk.length).fill(true), ord = pk.map((_, i) => i).sort((a, b) => x[pk[b]] - x[pk[a]]);
+    for (const o of ord) { if (!keep[o]) continue; for (let j = o - 1; j >= 0 && pk[o] - pk[j] < distance; j--) keep[j] = false; for (let j = o + 1; j < pk.length && pk[j] - pk[o] < distance; j++) keep[j] = false; }
+    pk = pk.filter((_, i) => keep[i]);
+  }
+  if (prominence > 0) {
+    pk = pk.filter(p => {
+      let lm = x[p], rm = x[p];
+      for (let i = p - 1; i >= 0 && x[i] <= x[p]; i--) lm = Math.min(lm, x[i]);
+      for (let i = p + 1; i < x.length && x[i] <= x[p]; i++) rm = Math.min(rm, x[i]);
+      return x[p] - Math.max(lm, rm) >= prominence;
+    });
+  }
+  return pk;
+}
+
+/* ---------- FFT (raiz 2) ---------- */
+function fftMag2(sig, N) {
+  const re = F64(N), im = F64(N); for (let i = 0; i < Math.min(sig.length, N); i++) re[i] = sig[i];
+  for (let i = 1, j = 0; i < N; i++) { let b = N >> 1; for (; j & b; b >>= 1) j ^= b; j ^= b; if (i < j) { [re[i], re[j]] = [re[j], re[i]]; [im[i], im[j]] = [im[j], im[i]]; } }
+  for (let len = 2; len <= N; len <<= 1) {
+    const a = -2 * Math.PI / len, wr = Math.cos(a), wi = Math.sin(a);
+    for (let i = 0; i < N; i += len) { let cr = 1, ci = 0; for (let j = 0; j < len / 2; j++) { const ur = re[i + j], ui = im[i + j], vr = re[i + j + len / 2] * cr - im[i + j + len / 2] * ci, vi = re[i + j + len / 2] * ci + im[i + j + len / 2] * cr; re[i + j] = ur + vr; im[i + j] = ui + vi; re[i + j + len / 2] = ur - vr; im[i + j + len / 2] = ui - vi; const t = cr * wr - ci * wi; ci = cr * wi + ci * wr; cr = t; } }
+  }
+  const out = F64(N / 2 + 1); for (let i = 0; i <= N / 2; i++) out[i] = Math.hypot(re[i], im[i]); return out;
+}
+function spectrum(sig) {   // amplitude 0–20 Hz em 400 pontos, normalizada, com janela de Hann
+  const n = sig.length, m = mean(sig), w = F64(n); for (let i = 0; i < n; i++) w[i] = (sig[i] - m) * (0.5 - 0.5 * Math.cos(2 * Math.PI * i / (n - 1)));
+  const N = 8192, A = fftMag2(w, N), fr = F64(N / 2 + 1); for (let i = 0; i <= N / 2; i++) fr[i] = i * FS / N;
+  return { fr, A };
+}
+
+/* ---------- distribuição F (para Hotelling) ---------- */
+function lgamma(x) { const c = [76.18009172947146, -86.50532032941677, 24.01409824083091, -1.231739572450155, 0.1208650973866179e-2, -0.5395239384953e-5]; let y = x, t = x + 5.5; t -= (x + 0.5) * Math.log(t); let s = 1.000000000190015; for (const v of c) s += v / ++y; return -t + Math.log(2.5066282746310005 * s / x); }
+function betacf(a, b, x) { let qab = a + b, qap = a + 1, qam = a - 1, c = 1, d = 1 - qab * x / qap; if (Math.abs(d) < 1e-300) d = 1e-300; d = 1 / d; let h = d; for (let m = 1; m <= 300; m++) { const m2 = 2 * m; let aa = m * (b - m) * x / ((qam + m2) * (a + m2)); d = 1 + aa * d; if (Math.abs(d) < 1e-300) d = 1e-300; c = 1 + aa / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d; h *= d * c; aa = -(a + m) * (qab + m) * x / ((a + m2) * (qap + m2)); d = 1 + aa * d; if (Math.abs(d) < 1e-300) d = 1e-300; c = 1 + aa / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 3e-14) break; } return h; }
+function betai(a, b, x) { if (x <= 0) return 0; if (x >= 1) return 1; const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log(1 - x)); return x < (a + 1) / (a + b + 2) ? bt * betacf(a, b, x) / a : 1 - bt * betacf(b, a, 1 - x) / b; }
+const Fsf = (f, d1, d2) => (f <= 0 ? 1 : betai(d2 / 2, d1 / 2, d2 / (d2 + d1 * f)));
+function Fppf(q, d1, d2) { let lo = 0, hi = 1e4; for (let i = 0; i < 200; i++) { const m = (lo + hi) / 2; if (1 - Fsf(m, d1, d2) < q) lo = m; else hi = m; } return (lo + hi) / 2; }
+const hotLim = (conf, n, p) => (n + 1) / n * p * (n - 1) / (n - p) * Fppf(conf, p, n - p);
+const hotP = (d2, n, p) => Fsf(d2 * n / (n + 1) * (n - p) / (p * (n - 1)), p, n - p);
+
+/* ---------- calibração (Apêndice D): resposta verdadeira do aparelho simulado e uso do registro ---------- */
+const ACC_LSB = 8192, GYRO_FS = 500;
+const nivelVerdadeiro = (gf, ap) => { const p = ap.pressao; return Math.min(8191, Math.max(0, Math.round(8191 * (Math.max(gf, 0) / p.fundo_gf) ** p.expoente * p.ganho))); };
+function montagem(incl, rot) { const d = incl * Math.PI / 180, p = rot * Math.PI / 180, cd = Math.cos(d), sd = Math.sin(d), cp = Math.cos(p), sp = Math.sin(p); return [[cp, -sp * cd, sp * sd], [sp, cp * cd, -cp * sd], [0, sd, cd]]; }
+const matTvec = (R, v) => [0, 1, 2].map(j => R[0][j] * v[0] + R[1][j] * v[1] + R[2][j] * v[2]);
+function nivelParaGf(lv, reg) {
+  const pts = reg.pressao.pontos_nivel_gf.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]), L = [0, ...pts.map(p => p[0])], F = [0, ...pts.map(p => p[1])], n = L.length;
+  const o = interp(lv, L, F);
+  for (let i = 0; i < lv.length; i++) { if (lv[i] > L[n - 1]) o[i] = F[n - 1] + (lv[i] - L[n - 1]) * (F[n - 1] - F[n - 2]) / (L[n - 1] - L[n - 2]); if (lv[i] <= 0) o[i] = 0; }
+  return o;
+}
+/* ---------- traços: suavização Catmull-Rom ---------- */
+function smoothStroke(pts) {
+  if (pts.length < 3) { const o = []; for (let i = 0; i < 12; i++) { const t = i / 11; o.push([pts[0][0] + (pts[1][0] - pts[0][0]) * t, pts[0][1] + (pts[1][1] - pts[0][1]) * t]); } return o; }
+  const o = [], P = [pts[0], ...pts, pts[pts.length - 1]];
+  for (let i = 1; i < P.length - 2; i++) for (let s = 0; s < 10; s++) {
+    const t = s / 10, t2 = t * t, t3 = t2 * t, f = (a, b, c, d) => 0.5 * (2 * b + (-a + c) * t + (2 * a - 5 * b + 4 * c - d) * t2 + (-a + 3 * b - 3 * c + d) * t3);
+    o.push([f(P[i - 1][0], P[i][0], P[i + 1][0], P[i + 2][0]), f(P[i - 1][1], P[i][1], P[i + 1][1], P[i + 2][1])]);
+  }
+  o.push(pts[pts.length - 1]); return o;
+}
+function smoothNoise(n, rng, sigma, amp) {
+  const pad = 4 * sigma, z = F64(n + 2 * pad); for (let i = 0; i < z.length; i++) z[i] = rng.n();
+  const g = gauss1d(z, sigma), k = amp * Math.sqrt(2 * Math.sqrt(Math.PI) * sigma), o = F64(n);
+  for (let i = 0; i < n; i++) o[i] = g[pad + i] * k; return o;
+}
+
+/* ---------- trajetória da caneta: lei de potência 2/3, rampas, movimento no ar ---------- */
+function trajectory(base, rng, q) {
+  const sc = rng.n(1, 0.02), sh = rng.n(0, 0.025), ang = rng.n(0, 1) * Math.PI / 180, ca = Math.cos(ang), sa = Math.sin(ang);
+  const amp = q ? 0.5 : 0.25;
+  let S = base.map(s => {
+    const sm = smoothStroke(s).map(([x, y]) => { const X = x + sh * y; return [(ca * X - sa * y) * sc, (sa * X + ca * y) * sc]; });
+    const nx = smoothNoise(sm.length, rng, 40, amp), ny = smoothNoise(sm.length, rng, 40, amp);
+    return sm.map(([x, y], i) => [x + nx[i], y + ny[i]]);
+  });
+  const len = s => { let L = 0; for (let i = 1; i < s.length; i++) L += Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]); return L; };
+  if (q) {   // imitação: levanta a caneta no meio de traços longos
+    const out = []; let longs = 0;
+    for (const s of S) {
+      if (len(s) > 25) { const c = Math.floor(s.length * (longs++ % 2 ? 0.7 : 0.55)); out.push(s.slice(0, c + 1), s.slice(c)); }
+      else out.push(s);
+    }
+    S = out;
+  }
+  const K = rng.n(1, 0.025) * (q ? 0.9 : 1) * 100;
+  const T = [], X = [], Y = [], C = [];
+  let tc = 0.08, pos = null;
+  // aproximação antes do primeiro pouso
+  const s0 = S[0][0]; for (let i = 0; i < 160; i++) { const f = i / 160; T.push(f * 0.08); X.push(s0[0]); Y.push(s0[1] + 2 * (1 - f) ** 2); C.push(0); }
+  for (const s of S) {
+    if (pos) {
+      const d = Math.hypot(s[0][0] - pos[0], s[0][1] - pos[1]), dur = 0.1 + d / (q ? 90 : 160) + (q ? rng.uni(0.05, 0.15) : 0), n = Math.max(3, Math.round(dur * 2000));
+      for (let i = 0; i < n; i++) { const u = i / n, mj = 10 * u ** 3 - 15 * u ** 4 + 6 * u ** 5, b = Math.sin(Math.PI * u); T.push(tc + u * dur); X.push(pos[0] + mj * (s[0][0] - pos[0]) + 0.4 * b); Y.push(pos[1] + mj * (s[0][1] - pos[1]) + 1.5 * b); C.push(0); }
+      tc += dur;
+    }
+    // reamostra por comprimento de arco (20 pontos/mm)
+    const arc = [0]; for (let i = 1; i < s.length; i++) arc.push(arc[i - 1] + Math.hypot(s[i][0] - s[i - 1][0], s[i][1] - s[i - 1][1]));
+    let Ltot = arc[arc.length - 1]; if (Ltot < 1e-6) { for (let i = 0; i < arc.length; i++) arc[i] = 0.3 * i / (arc.length - 1); Ltot = 0.3; }
+    const nf = Math.max(20, Math.round(Ltot * 20)), fine = F64(nf); for (let i = 0; i < nf; i++) fine[i] = Ltot * i / (nf - 1);
+    const px = interp(fine, arc, s.map(p => p[0])), py = interp(fine, arc, s.map(p => p[1])), ds = Ltot / (nf - 1);
+    const dx = gradient(px, ds), dy = gradient(py, ds), ddx = gradient(dx, ds), ddy = gradient(dy, ds);
+    let kap = F64(nf); for (let i = 0; i < nf; i++) kap[i] = Math.abs(dx[i] * ddy[i] - dy[i] * ddx[i]) / Math.max((dx[i] ** 2 + dy[i] ** 2) ** 1.5, 1e-9);
+    kap = gauss1d(kap, 3);
+    const mod = smoothNoise(nf, rng, 25, q ? 0.1 : 0.05), v = F64(nf);
+    const dips = q ? Array.from({ length: Math.floor(Ltot / 20) + 1 }, () => rng.uni(0, Ltot)) : [];
+    for (let i = 0; i < nf; i++) {
+      let vi = Math.min(230, Math.max(8, K * (kap[i] + 0.02) ** (-1 / 3))) * (1 + mod[i]);
+      for (const c of dips) vi *= 1 - 0.45 * Math.exp(-(((fine[i] - c) / 1.2) ** 2));
+      const ramp = Math.min(1, Math.max(0, Math.min(fine[i], Ltot - fine[i])) / 2.5) ** 0.7;
+      v[i] = Math.max(vi * Math.max(ramp, 0.06), 3);
+    }
+    let tt = 0;
+    for (let i = 0; i < nf; i++) { if (i) tt += (fine[i] - fine[i - 1]) / ((v[i] + v[i - 1]) / 2); T.push(tc + tt); X.push(px[i]); Y.push(py[i]); C.push(1); }
+    tc += tt + (q ? rng.uni(0.03, 0.06) : 0.02); pos = s[s.length - 1];
+  }
+  for (let i = 1; i <= 300; i++) { T.push(tc + i / 2000); X.push(pos[0]); Y.push(pos[1] + 2 * (i / 300)); C.push(0); }
+  // garante tempos crescentes
+  for (let i = 1; i < T.length; i++) if (T[i] <= T[i - 1]) T[i] = T[i - 1] + 1e-7;
+  return { T: Float64Array.from(T), X: Float64Array.from(X), Y: Float64Array.from(Y), C: Float64Array.from(C) };
+}
+
+/* ---------- instrumentação: mesa 300 Hz e clip 400 Hz, com a resposta verdadeira do aparelho ---------- */
+function instrument(tr, rng, ap, pBase, tilt, rot, trem, gap) {
+  const n = Math.floor(tr.T[tr.T.length - 1] * FS), t = F64(n); for (let i = 0; i < n; i++) t[i] = i / FS;
+  const x = interp(t, tr.T, tr.X), y = interp(t, tr.T, tr.Y), cf = interp(t, tr.T, tr.C), contact = new Uint8Array(n);
+  for (let i = 0; i < n; i++) contact[i] = cf[i] > 0.5 ? 1 : 0;
+  const f1 = rng.uni(8.5, 11.5), f2 = rng.uni(8.5, 11.5), ph1 = rng.uni(0, 6.3), ph2 = rng.uni(0, 6.3);
+  const pa = rng.uni(0, 6), pb = rng.uni(0, 6);
+  const gf = F64(n); for (let i = 0; i < n; i++) gf[i] = pBase + 45 * Math.sin(2 * Math.PI * 1.3 * t[i] + pa) + 25 * Math.sin(2 * Math.PI * 3.7 * t[i] + pb);
+  const ex = ap.mesa.escala_x, ey = ap.mesa.escala_y, nz = ap.mesa.ruido_mm;
+  const Xc = new Int32Array(n), Yc = new Int32Array(n), P = new Int32Array(n), tus = new Int32Array(n);
+  for (let i = 0; i < n; i++) { x[i] = x[i] + trem * Math.sin(2 * Math.PI * f1 * t[i] + ph1); y[i] = y[i] + trem * Math.sin(2 * Math.PI * f2 * t[i] + ph2); }
+  for (let i = 0; i < n; i++) {
+    Xc[i] = Math.round(((x[i] + 20) * ex + rng.n(0, nz)) / RES); Yc[i] = Math.round(((y[i] + 40) * ey + rng.n(0, nz)) / RES);
+    let r = 0; for (let j = -4; j <= 4; j++) r += contact[Math.min(n - 1, Math.max(0, i + j))]; r = r / 9 * contact[i];
+    P[i] = contact[i] ? nivelVerdadeiro(gf[i] * r + rng.n(0, 3), ap) : 0;
+    tus[i] = Math.max(0, Math.round(t[i] * 1e6 + rng.n(0, 400))); if (i && tus[i] < tus[i - 1]) tus[i] = tus[i - 1];
+  }
+  const c = ap.clip, Rm = montagem(c.incl_graus, c.rot_graus);
+  const nc = Math.floor(t[n - 1] * 400), off = 0.0124 + rng.n(0, 0.002);
+  const axw = savgol(x, 15, 3, 2, 1 / FS), ayw = savgol(y, 15, 3, 2, 1 / FS);
+  const tc = F64(nc); for (let i = 0; i < nc; i++) tc[i] = i / 400;
+  const ax = interp(tc, t, axw), ay = interp(tc, t, ayw);
+  const downs = []; for (let i = 1; i < n; i++) if (contact[i] && !contact[i - 1]) downs.push(t[i]);
+  const pth = rng.uni(0, 6), pph = rng.uni(0, 6);
+  const ct = [], acc = [], gyr = [], gi = gap ? Math.round(gap[0] * 400) : -1;
+  for (let i = 0; i < nc; i++) {
+    if (gap && i >= gi && i < gi + gap[1]) continue;
+    const th = (tilt + 2 * Math.sin(2 * Math.PI * 0.5 * tc[i] + pth)) * Math.PI / 180, ph = (rot + 3 * Math.sin(2 * Math.PI * 0.35 * tc[i] + pph)) * Math.PI / 180;
+    const dth = 2 * 2 * Math.PI * 0.5 * Math.cos(2 * Math.PI * 0.5 * tc[i] + pth), dph = 3 * 2 * Math.PI * 0.35 * Math.cos(2 * Math.PI * 0.35 * tc[i] + pph);
+    const aPen = [Math.sin(th) * Math.cos(ph) * G + ax[i] / 1000, Math.sin(th) * Math.sin(ph) * G + ay[i] / 1000, Math.cos(th) * G];
+    for (const d of downs) if (d <= tc[i] && tc[i] < d + 0.012) aPen[2] += 25 * Math.exp(-(tc[i] - d) / 0.003);
+    const aS = matTvec(Rm, aPen), aM = [0, 1, 2].map(j => aS[j] * c.acc_escala[j] + c.acc_bias_ms2[j] + rng.n(0, 0.05));
+    acc.push(aM.map(v => Math.min(32767, Math.max(-32768, Math.round(v / G * ACC_LSB)))));
+    const wS = matTvec(Rm, [dth, dph, 0]), gM = [0, 1, 2].map(j => wS[j] + c.gyro_bias_dps[j] + rng.n(0, 0.6));
+    gyr.push(gM.map(v => Math.min(32767, Math.max(-32768, Math.round(v / GYRO_FS * 32768)))));
+    ct.push(Math.round((tc[i] * (1 + 3e-6) + off) * 1e6));
+  }
+  return { t_us: tus, X: Xc, Y: Yc, P, C: contact, clip_t_us: Uint32Array.from(ct), clip_acc: acc, clip_gyro: gyr };
+}
+
+function capture(base, seed, kind, ap, gap) {
+  const rng = rngOf(seed);
+  if (kind === 'q') return instrument(trajectory(base, rng, true), rng, ap, 325, 47.2, 78.9, 0.02);
+  const tr = trajectory(base, rng, false);
+  return instrument(tr, rng, ap, 372 + rng.n(0, 12), 51.8 + rng.n(0, 1.8), 37.6 + rng.n(0, 3), 0.012, gap);
+}
+
+/* ---------- processamento (Apêndice C.4) ---------- */
+function syncOffset(P, D) {
+  if (!P.length || !D.length) return { off: 0, resid: [NaN], n: 0 };
+  let best = null;
+  for (const pi of P) for (const dj of D) {
+    const c = pi - dj; let k = 0, s = 0;
+    for (const dn of D) { let m = Infinity; for (const p of P) m = Math.min(m, Math.abs(p - dn - c)); if (m <= 0.005) { k++; s += m; } }
+    if (!best || k > best[0] || (k === best[0] && s < best[1])) best = [k, s, c];
+  }
+  const c = best[2], diffs = [];
+  for (const dn of D) { let j = 0; for (let i = 1; i < P.length; i++) if (Math.abs(P[i] - dn - c) < Math.abs(P[j] - dn - c)) j = i; if (Math.abs(P[j] - dn - c) <= 0.02) diffs.push(P[j] - dn); }
+  let off = median(diffs); const ok = diffs.filter(d => Math.abs(d - off) <= 0.02); off = median(ok);
+  return { off, resid: ok.map(d => (d - off) * 1000), n: ok.length };
+}
+function process(r, reg) {
+  const n0 = r.t_us.length, t0 = F64(n0); for (let i = 0; i < n0; i++) t0[i] = (r.t_us[i] - r.t_us[0]) / 1e6;
+  const n = Math.floor(t0[n0 - 1] * FS), t = F64(n); for (let i = 0; i < n; i++) t[i] = i / FS;
+  const A = reg.mesa.afim_mm, Xmm = F64(n0), Ymm = F64(n0);
+  for (let i = 0; i < n0; i++) { Xmm[i] = A[0][0] * r.X[i] + A[0][1] * r.Y[i] + A[0][2]; Ymm[i] = A[1][0] * r.X[i] + A[1][1] * r.Y[i] + A[1][2]; }
+  const x = interp(t, t0, Xmm), y = interp(t, t0, Ymm), lim = reg.mesa.limiar_contato_nivel;
+  const craw = Float64Array.from(r.C, (e, i) => ((e & 1) && r.P[i] >= lim ? 1 : 0));
+  const cf = interp(t, t0, craw), C = new Uint8Array(n); for (let i = 0; i < n; i++) C[i] = cf[i] > 0.5 ? 1 : 0;
+  for (const [a, b] of edges(C)) if (b - a < 5) C.fill(0, a, b);
+  const lv = interp(t, t0, Float64Array.from(r.P)), gL = nivelParaGf(lv, reg), gf = F64(n); for (let i = 0; i < n; i++) gf[i] = C[i] ? gL[i] : 0;
+  const D = {}; for (let k = 1; k <= 5; k++) D[k] = [sg(x, k), sg(y, k)];
+  const nc = r.clip_t_us.length, tcl = F64(nc), Ac = [F64(nc), F64(nc), F64(nc)], cc = reg.clip, R = cc.R_montagem;
+  for (let i = 0; i < nc; i++) {
+    tcl[i] = r.clip_t_us[i] / 1e6;
+    const a = [0, 1, 2].map(j => (r.clip_acc[i][j] / ACC_LSB * G - cc.acc_bias_ms2[j]) / cc.acc_escala[j]);
+    for (let j = 0; j < 3; j++) Ac[j][i] = a[0] * R[j][0] + a[1] * R[j][1] + a[2] * R[j][2];
+  }
+  const lowz = savgol(Ac[2], 41, 2, 0), hp = F64(nc); for (let i = 0; i < nc; i++) hp[i] = Ac[2][i] - lowz[i];
+  const pk = findPeaks(hp, { height: 6, distance: 40 }).map(i => tcl[i]);
+  const downs = []; for (let i = 1; i < n; i++) if (C[i] && !C[i - 1]) downs.push(t[i]);
+  const sy = syncOffset(pk, downs);
+  const lp = Ac.map(a => savgol(a, 161, 2, 0)), tadj = F64(nc), tilt = F64(nc), rot = F64(nc);
+  for (let i = 0; i < nc; i++) { tadj[i] = tcl[i] - sy.off; const nm = Math.hypot(lp[0][i], lp[1][i], lp[2][i]); tilt[i] = Math.acos(Math.max(-1, Math.min(1, lp[2][i] / nm))) * 180 / Math.PI; rot[i] = Math.atan2(lp[1][i], lp[0][i]) * 180 / Math.PI; }
+  const vabs = F64(n); for (let i = 0; i < n; i++) vabs[i] = Math.hypot(D[1][0][i], D[1][1][i]);
+  const segs = edges(C), i0 = segs[0][0], i1 = segs[segs.length - 1][1] - 1;
+  const path = F64(n); for (let i = 1; i < n; i++) path[i] = path[i - 1] + (C[i] ? vabs[i] / FS : 0);
+  const neg = F64(n); for (let i = 0; i < n; i++) neg[i] = -vabs[i];
+  const mins = findPeaks(neg, { prominence: 25, distance: 15 }).filter(i => C[i]);
+  return { t, x, y, C, gf, D, vabs, tilt: interp(t, tadj, tilt), rot: interp(t, tadj, rot), segs, i0, i1, path, mins, lifts: segs.slice(1).map(s => s[0]),
+           sync: { off_ms: sy.off * 1000, resid_ms: Math.max(...sy.resid.map(Math.abs)), n: sy.n } };
+}
+function edges(C) { const s = []; let st = -1; for (let i = 0; i <= C.length; i++) { const c = i < C.length ? C[i] : 0; if (c && st < 0) st = i; else if (!c && st >= 0) { s.push([st, i]); st = -1; } } return s; }
+
+const comp = (p, g, k) => { const [a, b] = p.D[k]; if (g === 'x') return a; if (g === 'y') return b; const o = F64(a.length); for (let i = 0; i < a.length; i++) o[i] = Math.hypot(a[i], b[i]); return o; };
+function power(p, g) { const [vx, vy] = p.D[1], [ax, ay] = p.D[2], o = F64(vx.length); for (let i = 0; i < o.length; i++) o[i] = (g === 'x' ? ax[i] * vx[i] : g === 'y' ? ay[i] * vy[i] : ax[i] * vx[i] + ay[i] * vy[i]) * 1e-6; return o; }
+
+const noiseFloor = reg => { const o = {}; for (let k = 1; k <= 5; k++) o[k] = reg.mesa.ruido_sg[String(k)]; return o; };
+function signChanges(sig, thr) { let st = 0, c = 0; for (const v of sig) { if (v > thr && st <= 0) { if (st < 0) c++; st = 1; } else if (v < -thr && st >= 0) { if (st > 0) c++; st = -1; } } return c; }
+
+const KEYS = ['tempo total (s)', 'velocidade média (mm/s)', 'energia de aceleração (J/kg)', 'levantamentos', 'pressão média (gf)', 'impulso total (kgf·s)', 'caminho total (mm)',
+  'inclinação média (°)', 'rotação média (°)', 'trocas de aceleração / traço', 'trocas de jerk / traço', '% do espectro em 5–8 Hz'];
+function measures(p, NF, sel) {
+  const n = p.t.length; let a0 = -1, a1 = -1; for (let i = 0; i < n; i++) if (sel[i]) { if (a0 < 0) a0 = i; a1 = i; }
+  const C = i => p.C[i] && sel[i];
+  const T = (a1 - a0) / FS; let path = 0, Ea = 0, pm = 0, np_ = 0, imp = 0, ti = 0, ro = 0;
+  const pw = power(p, 'r');
+  for (let i = a0; i <= a1; i++) { imp += p.gf[i] / FS; if (C(i)) { path += p.vabs[i] / FS; if (pw[i] > 0) Ea += pw[i] / FS; pm += p.gf[i]; ti += p.tilt[i]; ro += p.rot[i]; np_++; } }
+  const cs = []; let st = -1; for (let i = a0; i <= a1 + 1; i++) { const c = i <= a1 && C(i); if (c && st < 0) st = i; else if (!c && st >= 0) { cs.push([st, i]); st = -1; } }
+  const bounds = [...new Set([a0, a1, ...p.mins.filter(m => m > a0 && m < a1), ...cs.flat()])].sort((u, v) => u - v);
+  if (!p._at) { p._at = savgol(p.vabs, SGW, SGO, 1, 1 / FS); p._jt = savgol(p.vabs, SGW, SGO, 2, 1 / FS); }
+  let na = 0, nj = 0, ns = 0;
+  for (let k = 0; k < bounds.length - 1; k++) { const a = bounds[k], b = bounds[k + 1]; if (b - a < 8 || !C((a + b) >> 1)) continue; ns++; na += signChanges(p._at.subarray(a, b), 3 * NF[2]); nj += signChanges(p._jt.subarray(a, b), 3 * NF[3]); }
+  const { fr, A } = spectrum(p.vabs.subarray(a0, a1 + 1)); let e58 = 0, e20 = 0;
+  for (let i = 1; i < fr.length; i++) { const P2 = A[i] ** 2; if (fr[i] <= 20) e20 += P2; if (fr[i] >= 5 && fr[i] < 8) e58 += P2; }
+  return { 'tempo total (s)': T, 'velocidade média (mm/s)': path / T, 'energia de aceleração (J/kg)': Ea, 'levantamentos': Math.max(cs.length - 1, 0),
+    'pressão média (gf)': pm / Math.max(np_, 1), 'impulso total (kgf·s)': imp / 1000, 'caminho total (mm)': path, 'inclinação média (°)': ti / Math.max(np_, 1),
+    'rotação média (°)': ro / Math.max(np_, 1), 'trocas de aceleração / traço': na / Math.max(ns, 1), 'trocas de jerk / traço': nj / Math.max(ns, 1), '% do espectro em 5–8 Hz': 100 * e58 / e20 };
+}
+
+/* ---------- alinhamento por marcos (levantamentos casados primeiro) + DTW limitado ---------- */
+function dtwPath(a, b, band) {
+  const n = a.length, m = b.length, w = Math.max(band, Math.abs(n - m)), D = new Float64Array((n + 1) * (m + 1)).fill(Infinity), M = m + 1; D[0] = 0;
+  for (let i = 1; i <= n; i++) { const lo = Math.max(1, i - w), hi = Math.min(m, i + w); for (let j = lo; j <= hi; j++) { const c = (a[i - 1] - b[j - 1]) ** 2; D[i * M + j] = c + Math.min(D[(i - 1) * M + j], D[i * M + j - 1], D[(i - 1) * M + j - 1]); } }
+  let i = n, j = m; const path = [[i - 1, j - 1]];
+  while (i > 1 || j > 1) { const d = [D[(i - 1) * M + j - 1], D[(i - 1) * M + j], D[i * M + j - 1]]; const k = d.indexOf(Math.min(...d)); if (k === 0) { i--; j--; } else if (k === 1) i--; else j--; path.push([i - 1, j - 1]); }
+  return { path: path.reverse(), dist: Math.sqrt(D[n * M + m]) / (n + m) };
+}
+function marks(p) { const P = p.path[p.i1]; return { lifts: p.lifts.filter(l => l > p.i0 && l < p.i1), mins: p.mins.filter(m => m > p.i0 && m < p.i1), pos: i => p.path[i] / P }; }
+function matchDP(ri, rp, ii, ip, tol) {
+  const n = rp.length, m = ip.length; if (!n || !m) return [];
+  const D = Array.from({ length: n + 1 }, (_, i) => Array.from({ length: m + 1 }, (_, j) => (i === 0 ? j * tol : j === 0 ? i * tol : 0))), B = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+  for (let i = 1; i <= n; i++) for (let j = 1; j <= m; j++) { const c = Math.abs(rp[i - 1] - ip[j - 1]), o = [D[i - 1][j - 1] + (c < tol ? c : 9e9), D[i - 1][j] + tol, D[i][j - 1] + tol]; B[i][j] = o.indexOf(Math.min(...o)); D[i][j] = o[B[i][j]]; }
+  const out = []; let i = n, j = m;
+  while (i > 0 && j > 0) { if (B[i][j] === 0) { out.push([ri[i - 1], ii[j - 1]]); i--; j--; } else if (B[i][j] === 1) i--; else j--; }
+  return out.reverse();
+}
+function warp(p, ref, refv) {
+  const R = marks(ref), Q = marks(p);
+  const knots = [[ref.i0, p.i0], ...matchDP(R.lifts, R.lifts.map(R.pos), Q.lifts, Q.lifts.map(Q.pos), 0.04), [ref.i1, p.i1]];
+  const full = [];
+  for (let k = 0; k < knots.length - 1; k++) {
+    const [ra, pa] = knots[k], [rb, pb] = knots[k + 1]; full.push(knots[k]);
+    const rm = R.mins.filter(m => m > ra && m < rb), pm = Q.mins.filter(m => m > pa && m < pb);
+    const fr = (i, a, b, f) => (f(i) - f(a)) / Math.max(f(b) - f(a), 1e-9);
+    if (rm.length && pm.length) full.push(...matchDP(rm, rm.map(i => fr(i, ra, rb, R.pos)), pm, pm.map(i => fr(i, pa, pb, Q.pos)), 0.12));
+  }
+  full.push(knots[knots.length - 1]);
+  let ku = full.map(([r]) => (r - ref.i0) / (ref.i1 - ref.i0)), ki = full.map(([, q]) => q);
+  const keep = ku.map((u, i) => i === 0 || (u - ku[i - 1] > 1e-4 && ki[i] - ki[i - 1] > 0)); ku = ku.filter((_, i) => keep[i]); ki = ki.filter((_, i) => keep[i]);
+  const kn = ku.map(u => Math.round(u * (NU - 1))), out = F64(NU);
+  for (let k = 0; k < kn.length - 1; k++) {
+    const s0 = kn[k], s1 = kn[k + 1], a0 = ki[k], a1 = ki[k + 1], ns = s1 - s0 + 1; if (ns < 2) continue;
+    let idx = F64(ns); for (let i = 0; i < ns; i++) idx[i] = a0 + (a1 - a0) * i / (ns - 1);
+    if (ns > 6) {
+      const vv = interp(idx, p._ix || (p._ix = Float64Array.from(p.vabs, (_, i) => i)), p.vabs);
+      const bd = Math.max(2, Math.floor(0.1 * ns)), { path } = dtwPath(refv.subarray(s0, s1 + 1), vv, bd);
+      const fine = F64(ns), cnt = F64(ns); for (const [a, b] of path) { fine[a] += idx[b]; cnt[a]++; }
+      const lim = bd * (a1 - a0) / Math.max(ns - 1, 1), dev = F64(ns);
+      for (let i = 0; i < ns; i++) dev[i] = Math.max(-lim, Math.min(lim, fine[i] / Math.max(cnt[i], 1) - idx[i]));
+      const kw = Math.max(3, Math.floor(0.1 * ns)) | 1, hw = F64(kw); let hs = 0; for (let i = 0; i < kw; i++) { hw[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * (i + 1) / (kw + 1)); hs += hw[i]; }
+      const sm = F64(ns); for (let i = 0; i < ns; i++) { let a = 0; for (let j = 0; j < kw; j++) a += hw[j] * dev[Math.min(ns - 1, Math.max(0, i + j - (kw >> 1)))]; sm[i] = a / hs; }
+      sm[0] = sm[ns - 1] = 0; let mx = -Infinity; for (let i = 0; i < ns; i++) { idx[i] += sm[i]; mx = Math.max(mx, idx[i]); idx[i] = mx; }
+    }
+    out.set(idx, s0);
+  }
+  return { w: out, matched: full.length - 2, nmarks: Q.lifts.length + Q.mins.length };
+}
+function alignAll(PP, Q) {
+  const T = PP.map(p => p.t[p.i1] - p.t[p.i0]), ord = T.map((v, i) => [v, i]).sort((a, b) => a[0] - b[0]), ri = ord[ord.length >> 1][1], ref = PP[ri];
+  const U = F64(NU); for (let i = 0; i < NU; i++) U[i] = ref.i0 + (ref.i1 - ref.i0) * i / (NU - 1);
+  for (const p of [...PP, Q]) p._ix = Float64Array.from(p.vabs, (_, i) => i);
+  let refv = interp(U, ref._ix, ref.vabs);
+  for (let it = 0; it < 2; it++) { const W = PP.map(p => warp(p, ref, refv).w); const nv = F64(NU); W.forEach((w, k) => { const v = interp(w, PP[k]._ix, PP[k].vabs); for (let i = 0; i < NU; i++) nv[i] += v[i] / PP.length; }); refv = nv; }
+  const out = PP.map(p => warp(p, ref, refv)), q = warp(Q, ref, refv), R = marks(ref);
+  return { W: out.map(o => o.w), WQ: q.w, refv, ri, info: { q_casados: q.matched, q_marcos: q.nmarks, ref_marcos: R.lifts.length + R.mins.length } };
+}
+function uOf(p, w) { const m = F64(w.length); let mx = -Infinity; for (let i = 0; i < w.length; i++) { mx = Math.max(mx, w[i]); m[i] = mx; } const UG = F64(NU); for (let i = 0; i < NU; i++) UG[i] = 100 * i / (NU - 1); return interp(p._ix, m, UG, -1, 101); }
+
+/* ---------- Mahalanobis com Ledoit-Wolf e Hotelling (6.6.1) ---------- */
+const MAHA = ['tempo total (s)', 'pressão média (gf)', 'inclinação média (°)', 'trocas de jerk / traço'];
+function ledoitWolf(Z) {
+  const n = Z.length, p = Z[0].length, mu = Array.from({ length: p }, (_, j) => mean(Z.map(r => r[j]))), X = Z.map(r => r.map((v, j) => v - mu[j]));
+  const emp = Array.from({ length: p }, (_, a) => Array.from({ length: p }, (_, b) => X.reduce((s, r) => s + r[a] * r[b], 0) / n));
+  const tr = emp.reduce((s, r, i) => s + r[i], 0), m = tr / p; let beta_ = 0, delta_ = 0;
+  for (let a = 0; a < p; a++) for (let b = 0; b < p; b++) { let s2 = 0, s1 = 0; for (const r of X) { s2 += r[a] ** 2 * r[b] ** 2; s1 += r[a] * r[b]; } beta_ += s2; delta_ += s1 ** 2; }
+  delta_ /= n * n; let beta = 1 / (p * n) * (beta_ / n - delta_), delta = (delta_ - 2 * m * tr + p * m * m) / p; beta = Math.min(beta, delta);
+  const s = beta === 0 ? 0 : beta / delta;
+  return { S: emp.map((r, a) => r.map((v, b) => (1 - s) * v + (a === b ? s * m : 0))), shrink: s };
+}
+function maha(Mp, mq, keysIn = MAHA) {
+  const keys = keysIn.filter(k => std(Mp.map(m => m[k])) > 1e-9), dropped = keysIn.filter(k => !keys.includes(k)), p = keys.length, n = Mp.length;
+  const A = Mp.map(m => keys.map(k => m[k])), q = keys.map(k => mq[k]);
+  const fit = rows => { const mu = keys.map((_, j) => mean(rows.map(r => r[j]))), sd = keys.map((_, j) => Math.max(std(rows.map(r => r[j]), 1), 1e-9)); const Z = rows.map(r => r.map((v, j) => (v - mu[j]) / sd[j])); const lw = ledoitWolf(Z); const S = lw.S.map((r, a) => r.map((v, b) => v + (a === b ? 1e-3 : 0))); return { mu, sd, S, Si: matInv(S), shrink: lw.shrink }; };
+  const d2 = (f, x) => { const z = x.map((v, j) => (v - f.mu[j]) / f.sd[j]); return z.reduce((s, za, a) => s + za * z.reduce((t, zb, b) => t + f.Si[a][b] * zb, 0), 0); };
+  const F = fit(A), D2 = d2(F, q);
+  const loo = A.map((r, i) => d2(fit(A.filter((_, j) => j !== i)), r)), m1 = n - 1;
+  const limLoo = hotLim(0.99, m1, p);
+  return { keys, dropped, A, q, mu: F.mu, sd: F.sd, S: F.S, shrink: F.shrink, d2: D2, p: hotP(D2, n, p), lim95: hotLim(0.95, n, p), lim99: hotLim(0.99, n, p),
+           loo, looOut: loo.filter(v => v > limLoo).length, looP: loo.map(v => hotP(v, m1, p)) };
+}
+
+/* ---------- registro espacial (só para o desenho) ---------- */
+function register(PP, W, Q, WQ) {
+  const pts = (p, w) => { const x = interp(w, p._ix, p.x), y = interp(w, p._ix, p.y); return [x, y]; };
+  const P = PP.map((p, k) => pts(p, W[k])); const rx = F64(NU), ry = F64(NU);
+  P.forEach(([x, y]) => { for (let i = 0; i < NU; i++) { rx[i] += x[i] / P.length; ry[i] += y[i] / P.length; } });
+  const mrx = mean(rx), mry = mean(ry);
+  return [...PP, Q].map((p, k) => {
+    const [ax, ay] = k < PP.length ? P[k] : pts(Q, WQ), max = mean(ax), may = mean(ay);
+    let sxx = 0, sxy = 0, syx = 0, syy = 0, ss = 0;
+    for (let i = 0; i < NU; i++) { const a0 = ax[i] - max, a1 = ay[i] - may, r0 = rx[i] - mrx, r1 = ry[i] - mry; sxx += a0 * r0; sxy += a0 * r1; syx += a1 * r0; syy += a1 * r1; ss += a0 * a0 + a1 * a1; }
+    const th = Math.atan2(sxy - syx, sxx + syy), c = Math.cos(th), s = Math.sin(th), sc = ((sxx + syy) * c + (sxy - syx) * s) / ss;
+    const X = F64(p.x.length), Y = F64(p.x.length);
+    for (let i = 0; i < p.x.length; i++) { const a0 = p.x[i] - max, a1 = p.y[i] - may; X[i] = (a0 * c - a1 * s) * sc + mrx; Y[i] = (a0 * s + a1 * c) * sc + mry; }
+    return [X, Y];
+  });
+}
+
+/* ---------- formato do registro e do pacote (Apêndice C.2 e C.3) ---------- */
+const te = new TextEncoder(), td = new TextDecoder();
+function canonJSON(v) {
+  if (v === null || typeof v !== 'object') return JSON.stringify(v);
+  if (Array.isArray(v)) return '[' + v.map(canonJSON).join(',') + ']';
+  const ks = Object.keys(v).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  return '{' + ks.map(k => JSON.stringify(k) + ':' + canonJSON(v[k])).join(',') + '}';
+}
+const semAcento = s => s.normalize('NFD').replace(/\p{Mn}/gu, '').toUpperCase();
+function cpfFicticio(nome) {
+  const d = String(hashStr('CPF|' + nome) % 1e9).padStart(9, '0').split('').map(Number);
+  for (let r = 0; r < 2; r++) { let s = 0; for (let i = 0; i < d.length; i++) s += d[i] * (d.length + 1 - i); d.push(s % 11 < 2 ? 0 : 11 - (s % 11)); }
+  return d.join('');
+}
+async function sha256(bytes) { return new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)); }
+const hexOf = b => Array.from(b, x => x.toString(16).padStart(2, '0')).join('');
+async function sha256hex(x) { return hexOf(await sha256(typeof x === 'string' ? te.encode(x) : x)); }
+async function sha256regCal(reg) { return sha256hex(canonJSON(reg)); }
+function cabecalho(nome, contador, hashAnt, dataHora, reg, calSha) {
+  return { aparelho_sn: reg.aparelho_sn, calibracao_id: reg.calibracao_id, calibracao_sha256: calSha,
+    clip: { acc_lsb_por_g: ACC_LSB, fs_hz: 400, gyro_fs_dps: GYRO_FS, sn: 'CLIP-7A21' }, contador, data_hora_utc: dataHora, empresa_id: 'A7F3K9', erro_hora_ms: 20,
+    firmware: '1.0.0', fonte_hora: 'GNSS', geo: { fonte: 'GNSS', lat_e6: -23550520, lon_e6: -46633308, precisao_cm: 480 }, hash_anterior: hashAnt,
+    mesa: { fs_hz: 300, lpi: 5080, modelo: 'Huion Inspiroy H420X' }, signatario: { cpf: cpfFicticio(nome), nome: semAcento(nome) }, ultima_sinc: '2026-10-03T08:00:00.000Z', versao: 2 };
+}
+function registroBytes(cab, r) {
+  const cb = te.encode(canonJSON(cab)), n = r.t_us.length, nc = r.clip_t_us.length;
+  const buf = new ArrayBuffer(8 + cb.length + 8 + 16 * n + 8 + 16 * nc), u8 = new Uint8Array(buf), dv = new DataView(buf); let o = 0;
+  const mag = s => { u8.set(te.encode(s), o); o += 4; };
+  mag('THR2'); dv.setUint32(o, cb.length, true); o += 4; u8.set(cb, o); o += cb.length;
+  mag('MESA'); dv.setUint32(o, n, true); o += 4;
+  for (let i = 0; i < n; i++) { dv.setUint32(o, r.t_us[i], true); dv.setInt32(o + 4, r.X[i], true); dv.setInt32(o + 8, r.Y[i], true); dv.setUint16(o + 12, r.P[i], true); dv.setUint8(o + 14, (r.C[i] & 1) | 2); dv.setUint8(o + 15, 0); o += 16; }
+  mag('CLIP'); dv.setUint32(o, nc, true); o += 4;
+  for (let i = 0; i < nc; i++) { dv.setUint32(o, r.clip_t_us[i], true); for (let j = 0; j < 3; j++) dv.setInt16(o + 4 + 2 * j, r.clip_acc[i][j], true); for (let j = 0; j < 3; j++) dv.setInt16(o + 10 + 2 * j, r.clip_gyro[i][j], true); o += 16; }
+  return u8;
+}
+function lerRegistro(u8) {
+  const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength), mag = o => td.decode(u8.subarray(o, o + 4));
+  if (mag(0) !== 'THR2') throw new Error('registro inválido');
+  const lc = dv.getUint32(4, true), cab = JSON.parse(td.decode(u8.subarray(8, 8 + lc))); let o = 8 + lc;
+  if (mag(o) !== 'MESA') throw new Error('bloco MESA ausente'); const n = dv.getUint32(o + 4, true); o += 8;
+  const r = { t_us: new Uint32Array(n), X: new Int32Array(n), Y: new Int32Array(n), P: new Uint16Array(n), C: new Uint8Array(n) };
+  for (let i = 0; i < n; i++) { r.t_us[i] = dv.getUint32(o, true); r.X[i] = dv.getInt32(o + 4, true); r.Y[i] = dv.getInt32(o + 8, true); r.P[i] = dv.getUint16(o + 12, true); r.C[i] = dv.getUint8(o + 14); o += 16; }
+  if (mag(o) !== 'CLIP') throw new Error('bloco CLIP ausente'); const nc = dv.getUint32(o + 4, true); o += 8;
+  r.clip_t_us = new Uint32Array(nc); r.clip_acc = []; r.clip_gyro = [];
+  for (let i = 0; i < nc; i++) { r.clip_t_us[i] = dv.getUint32(o, true); r.clip_acc.push([0, 1, 2].map(j => dv.getInt16(o + 4 + 2 * j, true))); r.clip_gyro.push([0, 1, 2].map(j => dv.getInt16(o + 10 + 2 * j, true))); o += 16; }
+  if (o !== u8.length) throw new Error('tamanho do registro não confere');
+  return { cab, r };
+}
+const b64u = s => Uint8Array.from(atob(s.replace(/-/g, '+').replace(/_/g, '/') + '==='.slice((s.length + 3) % 4)), c => c.charCodeAt(0));
+const ECP = { name: 'ECDH', namedCurve: 'P-256' };
+async function aesKey(privKey, pubKey) {
+  const shared = await crypto.subtle.deriveBits({ name: 'ECDH', public: pubKey }, privKey, 256);
+  const ikm = await crypto.subtle.importKey('raw', shared, 'HKDF', false, ['deriveBits']);
+  const k = await crypto.subtle.deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(32), info: te.encode('THOTH-PACOTE-v2') }, ikm, 256);
+  return crypto.subtle.importKey('raw', k, 'AES-GCM', false, ['encrypt', 'decrypt']);
+}
+async function montarPacote(reg, srvPubJwk, kid, efJwk, nonce) {
+  const eph = await crypto.subtle.importKey('jwk', efJwk, ECP, false, ['deriveBits']);
+  const srv = await crypto.subtle.importKey('jwk', { kty: 'EC', crv: 'P-256', x: srvPubJwk.x, y: srvPubJwk.y }, ECP, false, []);
+  const E = new Uint8Array(65); E[0] = 4; E.set(b64u(efJwk.x), 1); E.set(b64u(efJwk.y), 33);
+  const kb = te.encode(kid), head = new Uint8Array(4 + 2 + kb.length + 65 + 12);
+  head.set(te.encode('THP2'), 0); head[4] = 2; head[5] = kb.length; head.set(kb, 6); head.set(E, 6 + kb.length); head.set(nonce, 6 + kb.length + 65);
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv: nonce, additionalData: head, tagLength: 128 }, await aesKey(eph, srv), reg));
+  const out = new Uint8Array(head.length + 4 + ct.length); out.set(head, 0); new DataView(out.buffer).setUint32(head.length, ct.length, true); out.set(ct, head.length + 4);
+  return out;
+}
+async function abrirPacote(pac, srvPrivJwk) {
+  if (td.decode(pac.subarray(0, 4)) !== 'THP2' || pac[4] !== 2) throw new Error('pacote inválido');
+  const lk = pac[5], kid = td.decode(pac.subarray(6, 6 + lk)); let o = 6 + lk;
+  const E = pac.slice(o, o + 65), nonce = pac.slice(o + 65, o + 77); o += 77;
+  const lct = new DataView(pac.buffer, pac.byteOffset).getUint32(o, true), ct = pac.slice(o + 4, o + 4 + lct);
+  if (o + 4 + lct !== pac.length) throw new Error('tamanho do pacote não confere');
+  const epub = await crypto.subtle.importKey('raw', E, ECP, false, []), srv = await crypto.subtle.importKey('jwk', srvPrivJwk, ECP, false, ['deriveBits']);
+  const reg = new Uint8Array(await crypto.subtle.decrypt({ name: 'AES-GCM', iv: nonce, additionalData: pac.subarray(0, o), tagLength: 128 }, await aesKey(srv, epub), ct));
+  return { kid, reg };
+}
+function derOf(raw) {
+  const int = b => { let i = 0; while (i < b.length - 1 && b[i] === 0) i++; b = b.slice(i); if (b[0] & 0x80) b = Uint8Array.from([0, ...b]); return [2, b.length, ...b]; };
+  const r = int(raw.slice(0, 32)), s = int(raw.slice(32)); return Uint8Array.from([0x30, r.length + s.length, ...r, ...s]);
+}
+function rawOf(der) {
+  let o = 2; const rd = () => { const l = der[o + 1]; let v = der.slice(o + 2, o + 2 + l); o += 2 + l; while (v.length > 32) v = v.slice(1); const p = new Uint8Array(32); p.set(v, 32 - v.length); return p; };
+  const r = rd(), s = rd(), out = new Uint8Array(64); out.set(r, 0); out.set(s, 32); return out;
+}
+async function assinar(pac, devJwk) { const k = await crypto.subtle.importKey('jwk', devJwk, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign']); return derOf(new Uint8Array(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, k, pac))); }
+async function verificar(pac, der, devJwk) { const k = await crypto.subtle.importKey('jwk', { kty: 'EC', crv: 'P-256', x: devJwk.x, y: devJwk.y }, { name: 'ECDSA', namedCurve: 'P-256' }, false, ['verify']); try { return await crypto.subtle.verify({ name: 'ECDSA', hash: 'SHA-256' }, k, rawOf(der), pac); } catch (e) { return false; } }
+async function nonceDe(nome, contador, modo) { return (await sha256(te.encode(`THOTH-SIM-NONCE|${nome}|${contador}|${modo}`))).slice(0, 12); }
+
+/* ---------- caso completo: captura → registro → pacote → servidor abre → painel calcula ---------- */
+async function montarCaso(nome, modo, base, DADOS, prog = () => {}) {
+  const tick = () => new Promise(r => setTimeout(r, 0)), ap = DADOS.aparelho, cal = DADOS.calibracao, s0 = hashStr(nome);
+  const calSha = await sha256regCal(cal), RR = [];
+  for (let i = 0; i < 20; i++) { prog(`Simulando a colheita P${String(i + 1).padStart(2, '0')} de 20`, i / 30); await tick(); RR.push(capture(base, (s0 + 101 + i) >>> 0, 'p', ap, i === 12 ? [1.6, 4] : null)); }
+  prog('Simulando a assinatura questionada', 20 / 30); await tick();
+  const RQ = modo === 'imitação' ? capture(base, (s0 + 999) >>> 0, 'q', ap) : capture(base, (s0 + 777) >>> 0, 'p', ap);
+  prog('Montando, cifrando e assinando os 21 pacotes', 22 / 30); await tick();
+  const ef = DADOS.efemeras[nome], packs = [];
+  const emp = async (r, cnt, ant, dh, md) => {
+    const cab = cabecalho(nome, cnt, ant, dh, cal, calSha), reg = registroBytes(cab, r);
+    const pac = await montarPacote(reg, DADOS.servidor, DADOS.kid, ef[`${cnt}|${md}`], await nonceDe(nome, cnt, md));
+    return { cab, cnt, pacote: pac, sha: await sha256hex(pac), sha_registro: await sha256hex(reg), sig: await assinar(pac, DADOS.aparelho_chave), recalc: null, ok: null };
+  };
+  packs.push({ name: 'Q', ...(await emp(RQ, 184, await sha256hex('registro 183'), '2026-10-03T14:32:07.418Z', modo)) });
+  let ant = await sha256hex('registro 200');
+  for (let i = 0; i < 20; i++) { const p = await emp(RR[i], 201 + i, ant, `2026-10-03T19:${String(5 + i).padStart(2, '0')}:00.000Z`, 'padrao'); packs.push({ name: 'P' + String(i + 1).padStart(2, '0'), ...p }); ant = p.sha; }
+  prog('Servidor: abrindo os pacotes', 24 / 30); await tick();
+  const abertos = []; for (const p of packs) { const { reg } = await abrirPacote(p.pacote, DADOS.servidor); const o = lerRegistro(reg); p.r = o.r; abertos.push(o); }
+  prog('Derivadas (Savitzky-Golay) e sincronismo do clip', 25 / 30); await tick();
+  const PP = abertos.slice(1).map(o => process(o.r, cal)), Q = process(abertos[0].r, cal);
+  prog('Alinhando por marcos e DTW', 27 / 30); await tick();
+  const A = alignAll(PP, Q); PP.forEach((p, i) => (p.u = uOf(p, A.W[i]))); Q.u = uOf(Q, A.WQ);
+  const tim = abertos.map(({ r }) => {
+    const dm = [], dc = []; for (let i = 1; i < r.t_us.length; i++) dm.push((r.t_us[i] - r.t_us[i - 1]) / 1000);
+    for (let i = 1; i < r.clip_t_us.length; i++) dc.push((r.clip_t_us[i] - r.clip_t_us[i - 1]) / 1000);
+    const gaps = []; dc.forEach((d, i) => { if (d > 5) gaps.push({ i, ms: d }); });
+    return { nm: r.t_us.length, maxm: Math.max(...dm), nc: r.clip_t_us.length, maxc: Math.max(...dc), gaps };
+  });
+  prog('Pronto', 1);
+  return { name: nome, mode: modo, RR: abertos.slice(1).map(o => o.r), RQ: abertos[0].r, PP, Q, NF: noiseFloor(cal), A, REG: register(PP, A.W, Q, A.WQ), packs, tim, ri: A.ri, cal, calSha };
+}
+
+return { FS, NU, SGW, SGO, NOISE, RES, rngOf, hashStr, interp, mean, std, median, savgol, sg, findPeaks, spectrum, Fsf, Fppf, hotLim, hotP, capture, process, comp, power,
+         noiseFloor, measures, KEYS, MAHA, alignAll, uOf, maha, register, dtwPath, edges, nivelParaGf, canonJSON, cabecalho, registroBytes, lerRegistro, montarPacote, abrirPacote, assinar, verificar, sha256hex, sha256regCal, nonceDe, montagem, hexOf, cpfFicticio, montarCaso };
+})();
+
+
+</script>
+<script>
+/* ===== Thoth · interface do painel do perito ===== */
+(() => {
+const NAMES = Object.keys(GLYPHS);
+const KEYS = TH.KEYS, FS = TH.FS, NU = TH.NU;
+const $ = s => document.querySelector(s), $$ = s => Array.from(document.querySelectorAll(s));
+const tick = () => new Promise(r => setTimeout(r, 0));
+const br = (v, d = 2) => (Number.isFinite(v) ? v.toFixed(d).replace('.', ',').replace('-', '−') : '—');
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const hex = b => Array.from(new Uint8Array(b), x => x.toString(16).padStart(2, '0')).join('');
+const SES = Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padStart(4, '0');
+const PERITO = 'Nome do Perito', CPFP = '***.456.789-**';
+
+const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira' : 'imitação');
+const DADOS_ = null;
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 0, my: 1,
+  crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false };
+let D = null, V = null;
+const cache = {};
+
+/* ---------------- registro de acessos encadeado por hash ---------------- */
+let logChain = Promise.resolve();
+function log(acao, det) {
+  const now = new Date(), ts = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR');
+  logChain = logChain.then(async () => {
+    const prev = S.logPrev || hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode('abertura do processo 0001234-56.2026.8.26.0100')));
+    const h = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode([prev, ts, PERITO, acao, det].join('|'))));
+    S.logPrev = h; S.log.push({ ts, user: PERITO, acao, det, h });
+    if (S.tab === 'integ') renderLog();
+  });
+}
+
+/* ---------------- montagem do caso (simulação + cálculos) ---------------- */
+let KEY = null;
+async function keys() {
+  if (KEY) return KEY;
+  const perito = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']);
+  return (KEY = { perito });
+}
+async function build(name, mode) {
+  const k = name + '|' + mode; if (cache[k]) return cache[k];
+  const prog = (t, f) => { $('#loadtxt').textContent = t; $('#loadbar').style.width = (f * 100).toFixed(0) + '%'; };
+  return (cache[k] = await TH.montarCaso(name, mode, GLYPHS[name], DADOS, prog));
+}
+
+/* ---------------- recorte (trecho) e cálculos da vista ---------------- */
+const selOf = p => { const s = new Uint8Array(p.t.length); if (!S.trecho) { s.fill(1); return s; } const [a, b] = S.trecho; for (let i = 0; i < s.length; i++) s[i] = p.u[i] >= a && p.u[i] <= b ? 1 : 0; return s; };
+function view() {
+  const sels = D.PP.map(selOf), selq = selOf(D.Q);
+  if (sels.some(s => !s.some(v => v)) || !selq.some(v => v)) { S.trecho = null; return view(); }
+  const M = D.PP.map((p, i) => TH.measures(p, D.NF, sels[i])), MQ = TH.measures(D.Q, D.NF, selq), MH = TH.maha(M, MQ);
+  const prof = (p, s) => { let a = -1, b = -1; for (let i = 0; i < s.length; i++) if (s[i]) { if (a < 0) a = i; b = i; } const g = new Float64Array(400); for (let i = 0; i < 400; i++) g[i] = a + (b - a) * i / 399; return TH.interp(g, p._ix, p.vabs); };
+  const PR = D.PP.map((p, i) => prof(p, sels[i])), avg = ex => { const o = new Float64Array(400); let n = 0; PR.forEach((r, j) => { if (j === ex) return; n++; for (let i = 0; i < 400; i++) o[i] += r[i]; }); return o.map(v => v / n); };
+  const dtwP = PR.map((r, i) => TH.dtwPath(r, avg(i), 40).dist), dtwQ = TH.dtwPath(prof(D.Q, selq), avg(-1), 40).dist;
+  if (S.mx >= MH.keys.length) S.mx = 0; if (S.my >= MH.keys.length || S.my === S.mx) S.my = S.mx === 0 ? 1 : 0;
+  return (V = { sels, selq, M, MQ, MH, dtwP, dtwQ });
+}
+
+/* ---------------- canvas: utilidades de desenho ---------------- */
+function pal() {
+  const p = { fg: css('--ink'), mut: css('--muted'), grid: css('--grid'), line: css('--line'), acc: css('--q'), band: css('--band'), red: css('--red'), amb: css('--amber'), grn: css('--green'), sel: css('--sel'), panel: css('--panel'), noise: css('--noise') };
+  if (S.printing) Object.assign(p, { fg: '#1b2230', mut: '#5d6878', grid: '#e7eaf0', line: '#d9dee7', acc: '#2f6fd6', band: '#8a919c', red: '#c8372d', amb: '#c47a0a', grn: '#1f7a35', sel: '#f5c542', panel: '#ffffff', noise: '#c47a0a' });
+  return p;
+}
+function setup(cv, h) {
+  const r = S.printing ? 2 : (window.devicePixelRatio || 1), w = cv.clientWidth || 600; h = h || cv.clientHeight || 200;
+  cv.width = Math.round(w * r); cv.height = Math.round(h * r); const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0);
+  c.clearRect(0, 0, w, h); return { c, w, h };
+}
+function nice(lo, hi, n = 5) {
+  if (!(hi > lo)) { hi = lo + 1; }
+  const span = hi - lo, st0 = span / n, mag = 10 ** Math.floor(Math.log10(st0)), st = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= st0);
+  const out = []; for (let v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) out.push(+v.toFixed(10)); return { ticks: out, st };
+}
+function fmtTick(v, st) { const d = st >= 1 ? 0 : Math.min(4, Math.ceil(-Math.log10(st))); return Math.abs(v) >= 1e4 || (Math.abs(v) > 0 && Math.abs(v) < 1e-3) ? v.toExponential(1).replace('.', ',') : v.toFixed(d).replace('.', ',').replace('-', '−'); }
+function frame(cv, xr, yr, o = {}) {
+  const P = pal(), { c, w, h } = setup(cv, o.h), m = { l: o.ml ?? 46, r: 10, t: 8, b: o.xlabel ? 32 : 20 };
+  const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (w - m.l - m.r), Y = v => h - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (h - m.t - m.b);
+  c.font = '10px ' + css('--mono'); c.fillStyle = P.mut; c.strokeStyle = P.grid; c.lineWidth = 1;
+  const tx = nice(xr[0], xr[1], Math.max(3, Math.floor((w - 60) / 70))), ty = nice(yr[0], yr[1], 4);
+  for (const v of tx.ticks) { c.beginPath(); c.moveTo(X(v), m.t); c.lineTo(X(v), h - m.b); c.stroke(); c.textAlign = 'center'; c.fillText(o.xfmt ? o.xfmt(v) : fmtTick(v, tx.st), X(v), h - m.b + 12); }
+  for (const v of ty.ticks) { c.beginPath(); c.moveTo(m.l, Y(v)); c.lineTo(w - m.r, Y(v)); c.stroke(); c.textAlign = 'right'; c.fillText(fmtTick(v, ty.st), m.l - 4, Y(v) + 3); }
+  c.strokeStyle = P.line; c.strokeRect(m.l, m.t, w - m.l - m.r, h - m.t - m.b);
+  if (o.xlabel) { c.textAlign = 'center'; c.fillText(o.xlabel, (m.l + w - m.r) / 2, h - 4); }
+  if (o.ylabel) { c.save(); c.translate(10, (m.t + h - m.b) / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.fillText(o.ylabel, 0, 0); c.restore(); }
+  c.save(); c.beginPath(); c.rect(m.l, m.t, w - m.l - m.r, h - m.t - m.b); c.clip();
+  return { c, X, Y, P, w, h, m, done: () => c.restore() };
+}
+function polyline(F, xs, ys, color, lw = 1, gapTol = Infinity, dash) {
+  const { c, X, Y } = F; c.strokeStyle = color; c.lineWidth = lw; c.setLineDash(dash || []); c.beginPath(); let pen = false;
+  for (let i = 0; i < xs.length; i++) { if (!Number.isFinite(ys[i]) || !Number.isFinite(xs[i]) || (i && xs[i] - xs[i - 1] > gapTol)) { pen = false; if (!Number.isFinite(ys[i])) continue; } const x = X(xs[i]), y = Y(ys[i]); if (pen) c.lineTo(x, y); else { c.moveTo(x, y); pen = true; } }
+  c.stroke(); c.setLineDash([]);
+}
+function bandFill(F, xs, lo, hi, color) {
+  const { c, X, Y } = F; c.fillStyle = color; c.globalAlpha = 0.28; let i = 0;
+  while (i < xs.length) { while (i < xs.length && !(Number.isFinite(lo[i]) && Number.isFinite(hi[i]))) i++; const a = i; while (i < xs.length && Number.isFinite(lo[i]) && Number.isFinite(hi[i])) i++; if (i - a < 2) continue; c.beginPath(); for (let k = a; k < i; k++) c.lineTo(X(xs[k]), Y(hi[k])); for (let k = i - 1; k >= a; k--) c.lineTo(X(xs[k]), Y(lo[k])); c.closePath(); c.fill(); }
+  c.globalAlpha = 1;
+}
+const extent = (arrs, pad = 0.08) => { let lo = Infinity, hi = -Infinity; for (const a of arrs) for (const v of a) if (Number.isFinite(v)) { if (v < lo) lo = v; if (v > hi) hi = v; } if (!(hi > lo)) { lo -= 1; hi += 1; } const d = (hi - lo) * pad; return [lo - d, hi + d]; };
+function robust(arrs, q = 0.995) { const all = []; for (const a of arrs) for (const v of a) if (Number.isFinite(v)) all.push(v); all.sort((a, b) => a - b); const lo = all[Math.floor(all.length * (1 - q))], hi = all[Math.floor(all.length * q) - 1]; const d = (hi - lo) * 0.1 || 1; return [lo - d, hi + d]; }
+
+/* ---------------- eixos das curvas ---------------- */
+function selRange(s) { let a = -1, b = -1; for (let i = 0; i < s.length; i++) if (s[i]) { if (a < 0) a = i; b = i; } return [a, b]; }
+function pathPct(p) { const P = p.path[p.i1] || 1; return p.path.map(v => 100 * v / P); }
+function curveData(sigf, shiftKey) {
+  const { sels, selq } = V, mode = S.eixo, sh = S.shifts[shiftKey] || 0;
+  let gx, rows, qx, qy, xr, xlabel, tol;
+  if (mode === 'alinhado') {
+    const ua = S.trecho ? S.trecho[0] : 0, ub = S.trecho ? S.trecho[1] : 100, idx = [];
+    for (let i = 0; i < NU; i++) { const u = 100 * i / (NU - 1); if (u >= ua && u <= ub) idx.push(i); }
+    gx = idx.map(i => 100 * i / (NU - 1));
+    rows = D.PP.map((p, k) => { const v = TH.interp(idx.map(i => D.A.W[k][i]), p._ix, sigf(p)); return v; });
+    const ys = sigf(D.Q); qx = []; qy = []; for (let i = 0; i < ys.length; i++) if (selq[i] && D.Q.u[i] >= 0 && D.Q.u[i] <= 100) { qx.push(D.Q.u[i]); qy.push(ys[i]); }
+    xr = [ua, ub]; xlabel = 'alinhado por traço (% da assinatura)'; tol = 0.4 * (ub - ua) / 100 + 0.05;
+  } else if (mode === 'tempo') {
+    const durs = D.PP.map((p, k) => { const [a, b] = selRange(sels[k]); return [a, b]; }), maxd = Math.max(...durs.map(([a, b]) => (b - a) / FS));
+    const n = Math.max(50, Math.round(maxd * FS)); gx = Array.from({ length: n }, (_, i) => i / FS);
+    rows = D.PP.map((p, k) => { const [a, b] = durs[k], y = sigf(p), o = new Float64Array(n); for (let i = 0; i < n; i++) o[i] = a + i <= b ? y[a + i] : NaN; return o; });
+    const [qa, qb] = selRange(selq), ys = sigf(D.Q); qx = []; qy = []; for (let i = qa; i <= qb; i++) { qx.push((i - qa) / FS); qy.push(ys[i]); }
+    xr = [0, Math.max(maxd, (qb - qa) / FS)]; xlabel = 'tempo real (s)' + (S.trecho ? ' desde o início do trecho' : ''); tol = Infinity;
+  } else {
+    const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.sels[D.ri]; let PA = 0, PB = 100;
+    if (S.trecho) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
+    const n = 500; gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
+    rows = D.PP.map(p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) if (p.C[i]) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); });
+    const qp = pathPct(D.Q), ys = sigf(D.Q); qx = []; qy = []; for (let i = D.Q.i0; i <= D.Q.i1; i++) if (D.Q.C[i] && selq[i]) { qx.push(qp[i]); qy.push(ys[i]); }
+    xr = [PA, PB]; xlabel = 'posição no caminho (%)'; tol = 0.6 * (PB - PA) / 100 + 0.05;
+  }
+  const n = gx.length, m = new Float64Array(n), s = new Float64Array(n);
+  for (let i = 0; i < n; i++) { const v = rows.map(r => r[i]).filter(Number.isFinite); m[i] = v.length >= 3 ? TH.mean(v) : NaN; s[i] = v.length >= 3 ? TH.std(v) : NaN; }
+  const shift = sh * (xr[1] - xr[0]) / 100;
+  return { gx: gx.map(v => v + shift), m, lo: m.map((v, i) => v - 2 * s[i]), hi: m.map((v, i) => v + 2 * s[i]), qx, qy, xr, xlabel, tol };
+}
+function drawCurve(cv, sigf, shiftKey, ylabel, noise, scale = 1) {
+  const d = curveData(p => { const y = sigf(p); return scale === 1 ? y : y.map(v => v * scale); }, shiftKey);
+  const yr = robust([d.lo, d.hi, d.qy]);
+  const F = frame(cv, d.xr, yr, { xlabel: d.xlabel, ylabel });
+  bandFill(F, d.gx, d.lo, d.hi, F.P.band); polyline(F, d.gx, d.m, F.P.band, 1);
+  if (noise) for (const sg of [1, -1]) polyline(F, d.xr, [sg * 2 * noise * scale, sg * 2 * noise * scale], F.P.noise, 1, Infinity, [2, 3]);
+  polyline(F, d.qx, d.qy, F.P.acc, 1, d.tol); F.done();
+}
+
+/* ---------------- gráficos do painel ---------------- */
+const SYM = { x: ['vₓ', 'aₓ', 'aₓ·vₓ', 'X'], y: ['v_y', 'a_y', 'a_y·v_y', 'Y'], r: ['|v|', '|a|', 'a·v', 'resultante'] };
+let drawXform = null, dragRect = null;
+function drawSignature(cv) {
+  const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), R = D.REG;
+  let xs = [], ys = []; R.forEach(([X, Y], k) => { const p = k < 20 ? D.PP[k] : D.Q; for (let i = 0; i < X.length; i += 3) if (p.C[i]) { xs.push(X[i]); ys.push(Y[i]); } });
+  const x0 = Math.min(...xs) - 2, x1 = Math.max(...xs) + 2, y0 = Math.min(...ys) - 2, y1 = Math.max(...ys) + 2, sc = Math.min((w - 16) / (x1 - x0), (h - 16) / (y1 - y0));
+  const ox = (w - sc * (x1 - x0)) / 2, oy = (h - sc * (y1 - y0)) / 2;
+  const X = v => ox + (v - x0) * sc, Y = v => h - oy - (v - y0) * sc; drawXform = { X, Y, inv: (px, py) => [(px - ox) / sc + x0, (h - oy - py) / sc + y0] };
+  if (S.trecho) {
+    let a = Infinity, b = -Infinity, e = Infinity, f = -Infinity;
+    D.PP.forEach((p, k) => { const s = V.sels[k], [RX, RY] = R[k]; for (let i = 0; i < s.length; i++) if (s[i]) { a = Math.min(a, RX[i]); b = Math.max(b, RX[i]); e = Math.min(e, RY[i]); f = Math.max(f, RY[i]); } });
+    c.fillStyle = P.sel; c.globalAlpha = 0.35; c.fillRect(X(a - 0.8), Y(f + 0.8), (b - a + 1.6) * sc, (f - e + 1.6) * sc); c.globalAlpha = 1;
+  }
+  const stroke = (RX, RY, C, col, lw, alpha, air) => {
+    c.strokeStyle = col; c.globalAlpha = alpha; c.lineWidth = lw; c.beginPath(); let pen = false;
+    for (let i = 0; i < RX.length; i++) { const on = air ? !C[i] : C[i]; if (!on) { pen = false; continue; } if (pen) c.lineTo(X(RX[i]), Y(RY[i])); else { c.moveTo(X(RX[i]), Y(RY[i])); pen = true; } }
+    c.stroke(); c.globalAlpha = 1;
+  };
+  D.PP.forEach((p, k) => stroke(R[k][0], R[k][1], p.C, P.band, 0.7, 0.45));
+  c.setLineDash([1.5, 2.5]); stroke(R[20][0], R[20][1], D.Q.C, P.acc, 0.9, 0.9, true); c.setLineDash([]);
+  stroke(R[20][0], R[20][1], D.Q.C, P.acc, 1.4, 1);
+  if (dragRect) { c.strokeStyle = P.amb; c.setLineDash([4, 3]); c.lineWidth = 1.2; c.strokeRect(Math.min(dragRect[0], dragRect[2]), Math.min(dragRect[1], dragRect[3]), Math.abs(dragRect[2] - dragRect[0]), Math.abs(dragRect[3] - dragRect[1])); c.setLineDash([]); }
+}
+function drawZoom(cv) {
+  const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), R = D.REG; let mx = 0, my = 0, n = 0;
+  D.PP.forEach((p, k) => { const s = V.sels[k]; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { mx += R[k][0][i]; my += R[k][1][i]; n++; } }); mx /= n; my /= n;
+  const all = [...D.PP, D.Q], sels = [...V.sels, V.selq]; let ex = 1;
+  all.forEach((p, k) => { const s = sels[k]; for (let i = 0; i < s.length; i++) if (s[i]) ex = Math.max(ex, Math.abs(R[k][0][i] - mx), Math.abs(R[k][1][i] - my)); });
+  const sc = Math.min(w, h) / 2 / (ex * 1.08), X = v => w / 2 + (v - mx) * sc, Y = v => h / 2 - (v - my) * sc;
+  c.fillStyle = P.sel; c.globalAlpha = 0.12; c.fillRect(0, 0, w, h); c.globalAlpha = 1;
+  all.forEach((p, k) => { const s = sels[k], q = k === 20; for (const air of [false, true]) { c.strokeStyle = q ? P.acc : P.band; c.globalAlpha = q ? 1 : 0.5; c.lineWidth = q ? 1.6 : 0.7; c.setLineDash(air ? [1.5, 2.5] : []); c.beginPath(); let pen = false; for (let i = 0; i < s.length; i++) { const on = s[i] && (air ? !p.C[i] : p.C[i]); if (!on) { pen = false; continue; } const x = X(R[k][0][i]), y = Y(R[k][1][i]); if (pen) c.lineTo(x, y); else { c.moveTo(x, y); pen = true; } } c.stroke(); } });
+  c.setLineDash([]); c.globalAlpha = 1;
+  c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText(`escala: ${br(10 * sc / 10, 1)} px/mm`, 6, h - 6);
+}
+function drawCompass(cv) {
+  const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), cx = w / 2, cy = h / 2 - 6, R = Math.min(w, h) / 2 - 22;
+  c.strokeStyle = P.grid; c.lineWidth = 1; for (const r of [30, 60, 90]) { c.beginPath(); c.arc(cx, cy, R * r / 90, 0, 2 * Math.PI); c.stroke(); }
+  c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'center';
+  for (let a = 0; a < 360; a += 45) { const t = a * Math.PI / 180; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + R * Math.sin(t), cy - R * Math.cos(t)); c.stroke(); c.fillText(a + '°', cx + (R + 11) * Math.sin(t), cy - (R + 11) * Math.cos(t) + 3); }
+  const pt = (rot, til) => [cx + R * til / 90 * Math.sin(rot * Math.PI / 180), cy - R * til / 90 * Math.cos(rot * Math.PI / 180)];
+  c.fillStyle = P.band; c.globalAlpha = 0.45;
+  D.PP.forEach((p, k) => { const s = V.sels[k]; for (let i = 0; i < s.length; i += 4) if (s[i] && p.C[i]) { const [x, y] = pt(p.rot[i], p.tilt[i]); c.fillRect(x - 1, y - 1, 2, 2); } });
+  c.globalAlpha = 1; c.strokeStyle = P.acc; c.lineWidth = 1; c.beginPath(); let pen = false;
+  for (let i = 0; i < D.Q.t.length; i++) { if (!(V.selq[i] && D.Q.C[i])) { pen = false; continue; } const [x, y] = pt(D.Q.rot[i], D.Q.tilt[i]); if (pen) c.lineTo(x, y); else { c.moveTo(x, y); pen = true; } } c.stroke();
+  const mr = TH.mean(V.M.map(m => m['rotação média (°)'])), mt = TH.mean(V.M.map(m => m['inclinação média (°)'])), [x, y] = pt(mr, mt);
+  c.strokeStyle = P.fg; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x - 4, y - 4); c.lineTo(x + 4, y + 4); c.moveTo(x + 4, y - 4); c.lineTo(x - 4, y + 4); c.stroke();
+  c.fillStyle = P.mut; c.fillText('ângulo: rotação no eixo · raio: inclinação · ✕ média', cx, h - 4);
+}
+function drawHist(cv) {
+  const g = S.g, sels = V.sels, selq = V.selq, vals = []; D.PP.forEach((p, k) => { const v = TH.comp(p, g, 1); for (let i = 0; i < v.length; i++) if (sels[k][i] && p.C[i]) vals.push(v[i]); });
+  const qv = TH.comp(D.Q, g, 1), qs = []; for (let i = 0; i < qv.length; i++) if (selq[i] && D.Q.C[i]) qs.push(qv[i]);
+  const [lo, hi] = robust([vals, qs], 0.995), nb = 28, bw = (hi - lo) / nb, bin = v => Math.min(nb - 1, Math.max(0, Math.floor((v - lo) / bw)));
+  const H = D.PP.map((p, k) => { const h = new Float64Array(nb), v = TH.comp(p, g, 1); let n = 0; for (let i = 0; i < v.length; i++) if (sels[k][i] && p.C[i]) { h[bin(v[i])]++; n++; } return h.map(x => 100 * x / n); });
+  const hq = new Float64Array(nb); qs.forEach(v => hq[bin(v)]++); for (let i = 0; i < nb; i++) hq[i] *= 100 / qs.length;
+  const m = [], s = []; for (let i = 0; i < nb; i++) { const c = H.map(h => h[i]); m.push(TH.mean(c)); s.push(TH.std(c)); }
+  const F = frame(cv, [lo, hi], [0, Math.max(...m.map((v, i) => v + 2 * s[i]), ...hq) * 1.1], { xlabel: SYM[g][0] + ' (mm/s)', ylabel: '% do tempo' }), { c, X, Y, P } = F;
+  c.fillStyle = P.band; c.globalAlpha = 0.45; for (let i = 0; i < nb; i++) c.fillRect(X(lo + i * bw) + 0.5, Y(m[i]), X(lo + (i + 1) * bw) - X(lo + i * bw) - 1, Y(0) - Y(m[i])); c.globalAlpha = 1;
+  c.strokeStyle = P.mut; c.lineWidth = 0.8; for (let i = 0; i < nb; i++) { const x = X(lo + (i + 0.5) * bw); c.beginPath(); c.moveTo(x, Y(Math.max(0, m[i] - 2 * s[i]))); c.lineTo(x, Y(m[i] + 2 * s[i])); c.stroke(); }
+  c.strokeStyle = P.acc; c.lineWidth = 1.4; c.beginPath(); for (let i = 0; i < nb; i++) { c.lineTo(X(lo + i * bw), Y(hq[i])); c.lineTo(X(lo + (i + 1) * bw), Y(hq[i])); } c.stroke(); F.done();
+}
+function byPathRows(sigf) {
+  const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.sels[D.ri]; let PA = 0, PB = 100;
+  if (S.trecho) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
+  const n = 400, gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
+  const one = p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); };
+  return { gx, rows: D.PP.map(one), q: one(D.Q), PA, PB };
+}
+function drawPressure(cv) {
+  const { gx, rows, q, PA, PB } = byPathRows(p => p.gf), sh = (S.shifts.pres || 0) * (PB - PA) / 100;
+  const m = gx.map((_, i) => TH.mean(rows.map(r => r[i]))), s = gx.map((_, i) => TH.std(rows.map(r => r[i])));
+  const lo = m.map((v, i) => v - 2 * s[i]), hi = m.map((v, i) => v + 2 * s[i]);
+  const F = frame(cv, [PA, PB], extent([lo, hi, q]), { xlabel: 'posição no caminho (%)', ylabel: 'gf' });
+  const gs = gx.map(v => v + sh); bandFill(F, gs, lo, hi, F.P.band); polyline(F, gs, m, F.P.band); polyline(F, gx, q, F.P.acc, 1.1); F.done();
+}
+function drawDeform(cv) {
+  const { gx, rows, q, PA, PB } = byPathRows(p => p.t), sh = (S.shifts.def || 0) * (PB - PA) / 100;
+  const st = (p, s) => p.t[selRange(s)[0]], R = rows.map((r, k) => r.map(v => v - st(D.PP[k], V.sels[k]))), qq = q.map(v => v - st(D.Q, V.selq));
+  const F = frame(cv, [PA, PB], [Math.min(0, ...R.map(r => Math.min(...r))), Math.max(...qq, ...R.map(r => Math.max(...r))) * 1.05], { xlabel: 'posição no caminho (%)', ylabel: 'tempo real (s)' });
+  R.forEach(r => polyline(F, gx.map(v => v + sh), r, F.P.band, 0.6)); polyline(F, gx, qq, F.P.acc, 1.4); F.done();
+}
+function segsIn(p, s) { const o = []; let st = -1; for (let i = 0; i <= s.length; i++) { const c = i < s.length && s[i] && p.C[i]; if (c && st < 0) st = i; else if (!c && st >= 0) { if (i - st > 3) o.push([st, i]); st = -1; } } return o; }
+function drawImpulse(cv) {
+  const L = D.PP.map((p, k) => segsIn(p, V.sels[k]).map(([a, b]) => { let s = 0; for (let i = a; i < b; i++) s += p.gf[i] / FS; return s; })), q = segsIn(D.Q, V.selq).map(([a, b]) => { let s = 0; for (let i = a; i < b; i++) s += D.Q.gf[i] / FS; return s; });
+  const nmax = Math.max(q.length, ...L.map(l => l.length)), m = [], s = [];
+  for (let i = 0; i < nmax; i++) { const c = L.map(l => l[i]).filter(Number.isFinite); m.push(c.length ? TH.mean(c) : NaN); s.push(c.length ? TH.std(c) : 0); }
+  const F = frame(cv, [0.4, nmax + 0.6], [0, Math.max(...q, ...m.map((v, i) => (v || 0) + 2 * s[i])) * 1.1], { xlabel: 'traço (entre levantamentos)', ylabel: 'gf·s', xfmt: v => (Number.isInteger(v) ? String(v) : '') }), { c, X, Y, P } = F;
+  const bw = Math.max(2, (X(1) - X(0)) * 0.36);
+  for (let i = 0; i < nmax; i++) {
+    if (Number.isFinite(m[i])) { c.fillStyle = P.band; c.fillRect(X(i + 1) - bw, Y(m[i]), bw, Y(0) - Y(m[i])); c.strokeStyle = P.fg; c.beginPath(); c.moveTo(X(i + 1) - bw / 2, Y(m[i] - 2 * s[i])); c.lineTo(X(i + 1) - bw / 2, Y(m[i] + 2 * s[i])); c.stroke(); }
+    if (Number.isFinite(q[i])) { c.fillStyle = P.acc; c.fillRect(X(i + 1), Y(q[i]), bw, Y(0) - Y(q[i])); }
+  }
+  F.done();
+}
+function drawEnergy(cv) {
+  const en = (p, s) => { const pw = TH.power(p, S.g); let a = 0, b = 0; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { if (pw[i] > 0) a += pw[i] / FS; else b += pw[i] / FS; } return [a, b]; };
+  const E = D.PP.map((p, k) => en(p, V.sels[k])), q = en(D.Q, V.selq), m = [0, 1].map(j => TH.mean(E.map(e => e[j]))), s = [0, 1].map(j => TH.std(E.map(e => e[j])));
+  const top = Math.max(m[0] + 2 * s[0], q[0]) * 1.15, bot = Math.min(m[1] - 2 * s[1], q[1]) * 1.15;
+  const F = frame(cv, [0, 4], [bot, top], { ylabel: 'J/kg', xfmt: () => '' }), { c, X, Y, P } = F;
+  [[0.5, m[0], s[0], q[0]], [2.5, m[1], s[1], q[1]]].forEach(([x, mm, ss, qq]) => { c.fillStyle = P.band; c.fillRect(X(x), Y(Math.max(mm, 0)), X(x + 0.5) - X(x), Math.abs(Y(mm) - Y(0))); c.strokeStyle = P.fg; c.beginPath(); c.moveTo(X(x + 0.25), Y(mm - 2 * ss)); c.lineTo(X(x + 0.25), Y(mm + 2 * ss)); c.stroke(); c.fillStyle = P.acc; c.fillRect(X(x + 0.5), Y(Math.max(qq, 0)), X(x + 1) - X(x + 0.5), Math.abs(Y(qq) - Y(0))); });
+  c.strokeStyle = P.mut; c.beginPath(); c.moveTo(X(0), Y(0)); c.lineTo(X(4), Y(0)); c.stroke(); F.done();
+  c.fillStyle = P.mut; c.textAlign = 'center'; c.font = '10px ' + css('--mono'); c.fillText('aceleração (+)', X(1), F.h - 6); c.fillText('frenagem (−)', X(3), F.h - 6);
+}
+function drawFFT(cv) {
+  const fq = Array.from({ length: 400 }, (_, i) => 20 * i / 399);
+  const sp = (p, s) => { const [a, b] = selRange(s), { fr, A } = TH.spectrum(TH.comp(p, S.g, 1).subarray(a, b + 1)), v = TH.interp(fq, fr, A); const mx = Math.max(...v); return v.map(x => x / mx); };
+  const R = D.PP.map((p, k) => sp(p, V.sels[k])), q = sp(D.Q, V.selq), m = fq.map((_, i) => TH.mean(R.map(r => r[i]))), s = fq.map((_, i) => TH.std(R.map(r => r[i])));
+  const F = frame(cv, [0, 20], [0, 1.08], { xlabel: 'Hz', ylabel: 'amplitude relativa' }), { c, X, Y, P } = F;
+  [[0, 5, P.grn], [5, 8, P.red], [8, 13, P.amb]].forEach(([a, b, col]) => { c.fillStyle = col; c.globalAlpha = 0.1; c.fillRect(X(a), Y(1.08), X(b) - X(a), Y(0) - Y(1.08)); }); c.globalAlpha = 1;
+  bandFill(F, fq, m.map((v, i) => v - 2 * s[i]), m.map((v, i) => v + 2 * s[i]), P.band); polyline(F, fq, m, P.band); polyline(F, fq, q, P.acc, 1.1); F.done();
+}
+function ellipsePts(mu, S2, k) {
+  const a = S2[0][0], b = S2[0][1], d = S2[1][1], tr = (a + d) / 2, det = Math.sqrt(((a - d) / 2) ** 2 + b * b), l1 = tr + det, l2 = tr - det, th = Math.atan2(l1 - a, b || 1e-12);
+  return Array.from({ length: 121 }, (_, i) => { const t = 2 * Math.PI * i / 120, u = Math.sqrt(k * l1) * Math.cos(t), v = Math.sqrt(k * l2) * Math.sin(t); return [mu[0] + u * Math.cos(th) - v * Math.sin(th), mu[1] + u * Math.sin(th) + v * Math.cos(th)]; });
+}
+function drawMaha(cv) {
+  const MH = V.MH, i = S.mx, j = S.my, mu = [MH.mu[i], MH.mu[j]], sd = [MH.sd[i], MH.sd[j]];
+  const S2 = [[MH.S[i][i] * sd[0] * sd[0], MH.S[i][j] * sd[0] * sd[1]], [MH.S[j][i] * sd[1] * sd[0], MH.S[j][j] * sd[1] * sd[1]]];
+  const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
+  const q = [MH.q[i], MH.q[j]], det = S2[0][0] * S2[1][1] - S2[0][1] ** 2, Si = [[S2[1][1] / det, -S2[0][1] / det], [-S2[1][0] / det, S2[0][0] / det]];
+  const dq = [q[0] - mu[0], q[1] - mu[1]], r = Math.sqrt(dq[0] * (Si[0][0] * dq[0] + Si[0][1] * dq[1]) + dq[1] * (Si[1][0] * dq[0] + Si[1][1] * dq[1])), rmax = 1.7 * Math.sqrt(l99);
+  const pt = r <= rmax ? q : [mu[0] + dq[0] * rmax / r, mu[1] + dq[1] * rmax / r];
+  const xs = [...e99.map(p => p[0]), pt[0], ...MH.A.map(a => a[i])], ys = [...e99.map(p => p[1]), pt[1], ...MH.A.map(a => a[j])];
+  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.16), { xlabel: MH.keys[i], ylabel: MH.keys[j], ml: 52 }), { c, X, Y, P } = F;
+  for (const [E, dsh] of [[e99, [2, 3]], [e95, [6, 4]]]) { c.fillStyle = P.acc; c.globalAlpha = 0.07; c.beginPath(); E.forEach(([x, y]) => c.lineTo(X(x), Y(y))); c.fill(); c.globalAlpha = 1; c.strokeStyle = P.acc; c.setLineDash(dsh); c.lineWidth = 1.2; c.stroke(); c.setLineDash([]); }
+  c.fillStyle = P.acc; c.font = 'bold 11px ' + css('--sans'); c.textAlign = 'center';
+  c.fillText('99%', X(mu[0]), Y(Math.max(...e99.map(p => p[1]))) - 4); c.fillText('95%', X(mu[0]), Y(Math.max(...e95.map(p => p[1]))) - 4);
+  c.fillStyle = P.fg; MH.A.forEach(a => { c.beginPath(); c.arc(X(a[i]), Y(a[j]), 3, 0, 7); c.fill(); });
+  const atip = MH.d2 > MH.lim99, col = atip ? P.red : P.grn;
+  c.strokeStyle = P.mut; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(X(mu[0]), Y(mu[1])); c.lineTo(X(pt[0]), Y(pt[1])); c.stroke(); c.setLineDash([]);
+  if (r > rmax) { const mx = X(mu[0] + (pt[0] - mu[0]) * 0.86), my = Y(mu[1] + (pt[1] - mu[1]) * 0.86); c.fillStyle = P.fg; c.font = 'bold 13px ' + css('--sans'); c.fillText('//', mx, my + 4); }
+  c.fillStyle = col; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 5.5, 0, 7); c.fill();
+  c.font = 'bold 11px ' + css('--sans'); c.textAlign = X(pt[0]) > F.w * 0.7 ? 'right' : 'left';
+  c.fillText(`questionada: ${br(q[0], MH.keys[i].includes('tempo') || MH.keys[i].includes('trocas') ? 2 : 1)} · ${br(q[1], MH.keys[j].includes('tempo') || MH.keys[j].includes('trocas') ? 2 : 1)}`, X(pt[0]) + (c.textAlign === 'right' ? -9 : 9), Y(pt[1]) - 9);
+  F.done();
+  c.textAlign = 'right'; c.fillStyle = col; c.font = 'bold 22px ' + css('--sans'); c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.w - 16, 34);
+  c.font = '11px ' + css('--sans'); c.fillText('para a pessoa', F.w - 16, 50); c.fillText(`D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, F.w - 16, 64);
+  if (r > rmax) { c.textAlign = 'left'; c.fillStyle = P.mut; c.font = '10px ' + css('--sans'); c.fillText('// distância encurtada no desenho; valores reais no rótulo', F.m.l + 6, F.h - F.m.b - 6); }
+}
+
+/* ---------------- medidas ---------------- */
+const DEC = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
+const GROUPS = [['Lentidão', [0, 1, 2]], ['Segmentação', [3]], ['Pressão', [4, 5]], ['Forma', [6]], ['Postura da caneta', [7, 8]], ['Fluência (Phillips et al. 1991)', [9, 10, 11]]];
+function renderMeasures() {
+  const { M, MQ, MH, dtwP, dtwQ } = V; let h = `<table class="mt"><thead><tr><th></th><th>padrões</th><th>quest.</th><th>z</th></tr></thead><tbody>`;
+  for (const [g, ix] of GROUPS) {
+    h += `<tr class="g"><td colspan="4">${g}</td></tr>`;
+    for (const k of ix.map(i => KEYS[i])) { const a = M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k), z = sd > 1e-9 ? (MQ[k] - mu) / sd : NaN, lbl = S.trecho && k.startsWith('tempo') ? 'tempo do trecho (s)' : k;
+      h += `<tr><td>${lbl}</td><td>${br(mu, d)} ± ${br(sd, d)}</td><td class="q">${br(MQ[k], d)}</td><td class="${Math.abs(z) > 3 ? 'hz' : ''}">${Number.isFinite(z) ? (z > 0 ? '+' : '') + br(z, 1) : '—'}</td></tr>`; }
+  }
+  const atip = MH.d2 > MH.lim99;
+  h += `<tr class="g"><td colspan="4">Distância ao conjunto dos padrões</td></tr>
+  <tr><td>Mahalanobis D² (${MH.keys.length} medidas)</td><td>${br(Math.min(...MH.loo), 1)}–${br(Math.max(...MH.loo), 1)}</td><td class="q">${br(MH.d2, MH.d2 > 100 ? 0 : 1)}</td><td></td></tr>
+  <tr><td>limite D² de 99%</td><td>${br(MH.lim99, 1)}</td><td></td><td></td></tr>
+  <tr><td>valor p</td><td>${br(Math.min(...MH.looP), 2)}–${br(Math.max(...MH.looP), 2)}</td><td class="q">${MH.p < 1e-4 ? '&lt; 0,0001' : br(MH.p, 4)}</td><td></td></tr>
+  <tr><td>fora da elipse de 99%</td><td>${MH.looOut} de 20</td><td class="q">${atip ? 'sim' : 'não'}</td><td></td></tr>
+  <tr><td>DTW dos perfis</td><td>${br(Math.min(...dtwP))}–${br(Math.max(...dtwP))}</td><td class="q">${br(dtwQ)}</td><td></td></tr></tbody></table>
+  <p class="fine">Ledoit-Wolf: encolhimento ${br(MH.shrink)}. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
+  $('#measures').innerHTML = h;
+  $('#mh-x').innerHTML = MH.keys.map((k, i) => `<option value="${i}" ${i === S.mx ? 'selected' : ''}>${k}</option>`).join('');
+  $('#mh-y').innerHTML = MH.keys.map((k, i) => `<option value="${i}" ${i === S.my ? 'selected' : ''}>${k}</option>`).join('');
+}
+
+/* ---------------- aba Análise ---------------- */
+function renderAnalise() {
+  const g = S.g, [v, a, pw, nm] = SYM[g], z = S.trecho ? ' · trecho' : '';
+  $$('[data-eixo]').forEach(b => b.classList.toggle('on', b.dataset.eixo === S.eixo));
+  $$('[data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === g));
+  $('#btn-inteira').classList.toggle('on', !S.trecho);
+  $('#trecho-txt').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : 'Trecho: arraste sobre o desenho';
+  $('#card-zoom').hidden = !S.trecho; $('#card-sig').classList.toggle('span2', !S.trecho);
+  $('#t-sig').textContent = S.trecho ? 'Desenho · seleção do trecho' : 'Desenho: 20 padrões + questionada, registrados';
+  $('#t-zoom').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : '';
+  const T = { hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${z}`, pow: `Potência inercial · ${pw} (massa = 1)${z}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${z}`, d5: `5ª derivada · microcorreções · ${nm}${z}` };
+  for (const k in T) $('#t-' + k).textContent = T[k];
+  $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}%` : 'Medidas globais';
+  $('#t-maha').textContent = `Mahalanobis${z} · ${V.MH.keys.length} medidas`;
+  $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
+  renderMeasures();
+  requestAnimationFrame(() => {
+    drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom')); drawCompass($('#cv-comp'));
+    drawHist($('#cv-hist')); drawPressure($('#cv-pres')); drawImpulse($('#cv-imp')); drawDeform($('#cv-def'));
+    drawCurve($('#cv-acc'), p => TH.comp(p, g, 2), 'acc', 'm/s²', D.NF[2], 1e-3);
+    drawCurve($('#cv-pow'), p => TH.power(p, g), 'pow', 'W/kg');
+    drawEnergy($('#cv-en')); drawFFT($('#cv-fft'));
+    drawCurve($('#cv-d4'), p => TH.comp(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4], 1e-6);
+    drawCurve($('#cv-d5'), p => TH.comp(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5], 1e-8);
+    drawMaha($('#cv-maha'));
+  });
+}
+
+/* ---------------- aba Dados crus ---------------- */
+const PG = 10;
+function clipAngles(r) {
+  if (r._ang) return r._ang; const c = D.cal.clip, R = c.R_montagem, n = r.clip_t_us.length, A = [new Float64Array(n), new Float64Array(n), new Float64Array(n)];
+  for (let i = 0; i < n; i++) { const a = [0, 1, 2].map(j => (r.clip_acc[i][j] / 8192 * 9.81 - c.acc_bias_ms2[j]) / c.acc_escala[j]); for (let j = 0; j < 3; j++) A[j][i] = a[0] * R[j][0] + a[1] * R[j][1] + a[2] * R[j][2]; }
+  const L = A.map(a => TH.savgol(a, 161, 2, 0));
+  return (r._ang = Array.from({ length: n }, (_, i) => [Math.acos(Math.max(-1, Math.min(1, L[2][i] / Math.hypot(L[0][i], L[1][i], L[2][i])))) * 180 / Math.PI, Math.atan2(L[1][i], L[0][i]) * 180 / Math.PI]));
+}
+function mesaTable(r, page) {
+  const n = r.t_us.length, a = page * PG, rows = [];
+  for (let i = a; i < Math.min(n, a + PG); i++) rows.push(`<tr class="${r.C[i] & 1 ? '' : 'air'}"><td>${r.t_us[i]}</td><td>${r.X[i]}</td><td>${r.Y[i]}</td><td>${r.P[i]}</td><td>${r.C[i]}</td></tr>`);
+  return `<div class="tw"><table class="raw"><thead><tr><th>t (µs)</th><th>X (cont.)</th><th>Y (cont.)</th><th>pressão (0–8191)</th><th>estado</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+function clipTable(r, page, pk, gaps) {
+  const n = r.clip_t_us.length, a = page * PG, ang = clipAngles(r), off = pk.off, rows = [];
+  for (let i = a; i < Math.min(n, a + PG); i++) {
+    const g = gaps.find(g => g.i === i - 1);
+    if (g && i > a) rows.push(`<tr class="gap"><td colspan="10">⚠ lacuna: ${br(g.ms, 1)} ms sem amostras (${Math.round(g.ms / 2.5) - 1} perdidas, pacote BLE) · mostrada, não preenchida</td></tr>`);
+    rows.push(`<tr><td>${r.clip_t_us[i]}</td><td>${Math.round(r.clip_t_us[i] - off * 1000)}</td>${r.clip_acc[i].map(v => `<td>${v}</td>`).join('')}${r.clip_gyro[i].map(v => `<td>${v}</td>`).join('')}<td class="calc">${br(ang[i][0], 1)}</td><td class="calc">${br(ang[i][1], 1)}</td></tr>`);
+  }
+  const gl = gaps.find(g => g.i === Math.min(n, a + PG) - 1);
+  if (gl) rows.push(`<tr class="gap"><td colspan="10">⚠ lacuna: ${br(gl.ms, 1)} ms sem amostras (${Math.round(gl.ms / 2.5) - 1} perdidas, pacote BLE) · continua na próxima página</td></tr>`);
+  return `<div class="tw"><table class="raw"><thead><tr><th>t Clip (µs)</th><th>t ajust. (µs)</th><th>ax</th><th>ay</th><th>az</th><th>gx</th><th>gy</th><th>gz</th><th>∠ incl.</th><th>∠ rot.</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+}
+const pager = (id, page, n) => `<div class="pager"><button data-pg="${id}" data-d="-1" aria-label="Página anterior">◀</button><span>página ${page + 1} de ${Math.ceil(n / PG)}</span><button data-pg="${id}" data-d="1" aria-label="Próxima página">▶</button></div>`;
+function renderCrus() {
+  const pq = D.packs[0], tq = D.tim[0], r = D.RQ, sy = D.Q.sync, c = S.crus;
+  if (c.qm < 0) { let f = 0; while (f < r.C.length && !r.C[f]) f++; c.qm = Math.max(0, Math.floor((f - 3) / PG)); }
+  $('#crus-q').innerHTML = `
+  <div class="qhead"><span class="qtag">QUESTIONADA</span><b>pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)}</b><span>assinatura que está sendo contestada</span></div>
+  <div class="qgrid">
+   <dl class="kv">
+    <dt>Signatário (cabeçalho)</dt><dd>${pq.cab.signatario.nome} · CPF ${pq.cab.signatario.cpf.slice(0, 3)}.***.***-${pq.cab.signatario.cpf.slice(9)}</dd><dt>Thoth nº</dt><dd>${pq.cab.aparelho_sn}</dd><dt>Contador</dt><dd>${pq.cab.contador}</dd>
+    <dt>Data/hora (UTC)</dt><dd>${pq.cab.data_hora_utc} (${pq.cab.fonte_hora})</dd><dt>Calibração · firmware</dt><dd>${pq.cab.calibracao_id} · ${pq.cab.firmware}</dd>
+    <dt>Hash anterior</dt><dd class="mono">${pq.cab.hash_anterior.slice(0, 16)}… (registro 183)</dd><dt>Pacote</dt><dd>${pq.pacote.length} bytes · ECDH P-256 + HKDF-SHA256 + AES-256-GCM · ${pq.dec === undefined ? 'cifra a conferir' : pq.dec ? '✓ cifra íntegra' : '✗ cifra adulterada'}</dd>
+    <dt>Assinatura ECDSA</dt><dd class="${pq.ok === false ? 'bad' : 'ok'}">${pq.ok === null ? 'a conferir' : pq.ok ? '✓ válida' : '✗ inválida'}</dd>
+    <dt>SHA-256 registrado</dt><dd class="mono">${pq.sha}</dd><dt>SHA-256 recalculado</dt><dd class="mono">${pq.recalc || '— (use “Verificar hashes agora”)'}</dd>
+    <dt>Comparação</dt><dd class="${pq.recalc ? (pq.recalc === pq.sha ? 'ok' : 'bad') : ''}">${pq.recalc ? (pq.recalc === pq.sha ? '✓ idênticos' : '✗ diferentes') : '—'}</dd>
+    <dt>Mesa (USB)</dt><dd>${tq.nm} amostras · 300 Hz · relógio do ESP32 · maior intervalo ${br(tq.maxm)} ms</dd>
+    <dt>Clip (BLE)</dt><dd>${tq.nc} amostras · 400 Hz · relógio próprio · lacunas: ${tq.gaps.length}</dd>
+    <dt>Ajuste Clip → ESP32</dt><dd>deslocamento ${br(sy.off_ms, 1)} ms por ${sy.n} pousos · resíduo ${br(sy.resid_ms)} ms</dd>
+   </dl>
+   <div class="min0"><h4>Mesa · amostras cruas <span class="fine">laranja = caneta no ar</span></h4>${mesaTable(r, c.qm)}${pager('qm', c.qm, r.t_us.length)}
+   <h4>Clip · contagens cruas → ângulos calculados (itálico)</h4>${clipTable(r, Math.max(0, c.qc), { off: sy.off_ms }, tq.gaps)}${pager('qc', Math.max(0, c.qc), r.clip_t_us.length)}</div>
+   <div class="min0"><h4>Sinais crus · mesa e Clip</h4><canvas id="cv-raw1" class="ch-s"></canvas><canvas id="cv-raw2" class="ch-s"></canvas><canvas id="cv-raw3" class="ch-s"></canvas><canvas id="cv-raw4" class="ch-s"></canvas></div>
+  </div>`;
+  const rows = D.packs.slice(1).map((p, k) => { const t = D.tim[k + 1]; return `<tr data-row="${k}" class="${k === c.sel ? 'cur' : ''}"><td>${p.name}</td><td class="mono">${p.sha.slice(0, 6)}…${p.sha.slice(-4)}</td><td class="mono">${p.recalc ? p.recalc.slice(0, 6) + '…' + p.recalc.slice(-4) : '—'}</td><td class="${p.ok === false ? 'bad' : 'ok'}">${p.ok === null ? '·' : p.ok ? '✓' : '✗'}</td><td class="${p.recalc ? (p.recalc === p.sha ? 'ok' : 'bad') : ''}">${p.recalc ? (p.recalc === p.sha ? '✓' : '✗') : '·'}</td><td>${p.cnt}</td><td>${t.nm}</td><td>${t.nc}</td><td class="${t.gaps.length ? 'warn' : ''}">${t.gaps.length ? '⚠ ' + br(t.gaps[0].ms, 1) + ' ms' : '0'}</td><td>${br(D.PP[k].sync.off_ms, 1)} ms</td></tr>`; });
+  $('#crus-p').innerHTML = `<div class="tw"><table class="raw list"><thead><tr><th>nº</th><th>SHA-256 registrado</th><th>recalculado</th><th>ECDSA</th><th>=</th><th>contador</th><th>mesa</th><th>Clip</th><th>lacunas</th><th>ajuste Clip</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  const k = c.sel, rp = D.RR[k], tp = D.tim[k + 1];
+  if (c.pc < 0) c.pc = tp.gaps.length ? Math.floor(tp.gaps[0].i / PG) : 0;
+  $('#crus-d').innerHTML = `<h4>Padrão ${D.packs[k + 1].name} · contador ${D.packs[k + 1].cnt}</h4><p class="fine mono">SHA-256 ${D.packs[k + 1].sha}</p>
+   <h4>Clip</h4>${clipTable(rp, c.pc, { off: D.PP[k].sync.off_ms }, tp.gaps)}${pager('pc', c.pc, rp.clip_t_us.length)}<h4>Mesa</h4>${mesaTable(rp, c.pm)}${pager('pm', c.pm, rp.t_us.length)}`;
+  requestAnimationFrame(drawRaw);
+}
+function drawRaw() {
+  const r = D.RQ, t = Array.from(r.t_us, v => (v - r.t_us[0]) / 1e6), off = D.Q.sync.off_ms / 1000, tc = Array.from(r.clip_t_us, v => v / 1e6 - off - r.t_us[0] / 1e6);
+  const air = (F) => { const { c, X, Y, P } = F; c.fillStyle = P.amb; c.globalAlpha = 0.1; let st = -1; for (let i = 0; i <= t.length; i++) { const a = i < t.length && !(r.C[i] & 1); if (a && st < 0) st = i; else if (!a && st >= 0) { c.fillRect(X(t[st]), 0, X(t[i - 1]) - X(t[st]), 1e4); st = -1; } } c.globalAlpha = 1; };
+  const one = (id, series, ylabel, xl) => { const F = frame($(id), [0, t[t.length - 1]], extent(series.map(s => s[1])), { ylabel, xlabel: xl, h: 120, ml: 58 }); air(F); series.forEach(([xs, ys, col]) => polyline(F, xs, ys, col, 0.7)); F.done(); };
+  const P = pal();
+  one('#cv-raw1', [[t, Array.from(r.X), P.acc], [t, Array.from(r.Y), P.red]], 'X, Y (cont.)');
+  one('#cv-raw2', [[t, Array.from(r.P), P.red]], 'pressão');
+  one('#cv-raw3', [0, 1, 2].map(j => [tc, r.clip_acc.map(a => a[j]), [P.grn, P.red, P.acc][j]]), 'acel. (cont.)');
+  one('#cv-raw4', [0, 1, 2].map(j => [tc, r.clip_gyro.map(a => a[j]), [P.grn, P.red, P.acc][j]]), 'giro (cont.)', 'tempo no relógio do ESP32 (s)');
+}
+async function verifyAll() {
+  let ok = 0, eq = 0, dec = 0;
+  for (const p of D.packs) {
+    p.recalc = await TH.sha256hex(p.pacote); p.ok = await TH.verificar(p.pacote, p.sig, DADOS.aparelho_chave);
+    try { await TH.abrirPacote(p.pacote, DADOS.servidor); p.dec = true; } catch (e) { p.dec = false; }
+    ok += p.ok; eq += p.recalc === p.sha; dec += p.dec;
+  }
+  log('verificação de hashes', `${eq} de 21 idênticos · ${ok} de 21 assinaturas ECDSA válidas · ${dec} de 21 cifras íntegras`); return { ok, eq };
+}
+
+/* ---------------- aba Integridade e laudo ---------------- */
+const HIP = ['Variação natural', 'Condição motora (idade, doença, medicação)', 'Disfarce pelo próprio autor', 'Imitação por terceiro'];
+const GRAU = ['nenhum', 'fraco', 'moderado', 'forte', 'muito forte', 'extremamente forte'];
+function integrity() {
+  const P = D.packs, ver = P.every(p => p.recalc !== null), ok = P.filter(p => p.ok).length, eq = P.filter(p => p.recalc === p.sha).length;
+  const chain = P.slice(2).every((p, i) => p.cab.hash_anterior === P[i + 1].sha), res = [D.Q, ...D.PP].map(p => p.sync.resid_ms), gaps = D.tim.map((t, i) => [i, t.gaps]).filter(([, g]) => g.length);
+  const drot = V.MQ['rotação média (°)'] - TH.mean(V.M.map(m => m['rotação média (°)']));
+  return [
+    ['Assinatura ECDSA dos pacotes', ver ? (ok === 21 ? 'ok' : 'bad') : 'na', ver ? `${ok} de 21` : 'a conferir', 'chave do Thoth 0123…F6EE (software no lugar do ATECC608B)'],
+    ['Cifra AES-256-GCM (abre e confere a etiqueta)', ver ? (P.every(p => p.dec) ? 'ok' : 'bad') : 'na', ver ? `${P.filter(p => p.dec).length} de 21` : 'a conferir', 'chave do servidor (simulada; no real fica no AWS KMS)'],
+    ['Calibração usada', P.every(p => p.cab.calibracao_sha256 === D.calSha) ? 'ok' : 'bad', D.cal.calibracao_id, `SHA-256 ${D.calSha.slice(0, 16)}… ${P.every(p => p.cab.calibracao_sha256 === D.calSha) ? 'confere' : 'NÃO confere'} com o cabeçalho dos 21 pacotes`],
+    ['Certificado do aparelho', 'sim', 'simulado', 'não há certificado X.509 nesta simulação'],
+    ['Hash recalculado = registrado', ver ? (eq === 21 ? 'ok' : 'bad') : 'na', ver ? `${eq} de 21` : 'a conferir', 'dados da mesa e do Clip'],
+    ['Cadeia de hash e contador', chain ? 'ok' : 'bad', chain ? 'sem lacunas' : 'quebrada', 'questionada 184 ← 183 · padrões 201–220 encadeados'],
+    ['Object Lock (AWS S3)', 'sim', 'simulado', 'não verificável fora da AWS'],
+    ['Carimbo do tempo', 'sim', 'simulado', 'não verificável nesta simulação'],
+    ['Mesmo aparelho', P.every(p => p.cab.aparelho_sn === P[0].cab.aparelho_sn) ? 'ok' : 'warn', `${P.filter(p => p.cab.aparelho_sn === P[0].cab.aparelho_sn).length} de 21`, P[0].cab.aparelho_sn],
+    ['Sincronização mesa × Clip', Math.max(...res) <= 2.5 ? 'ok' : 'warn', `≤ ${br(Math.max(...res), 1)} ms`, 'resíduo após o ajuste pelos pousos'],
+    ['Lacunas de amostras', gaps.length ? 'warn' : 'ok', gaps.length ? `${gaps.length} em ${gaps.map(([i]) => (i ? 'P' + String(i).padStart(2, '0') : 'Q')).join(', ')}` : 'nenhuma', gaps.length ? `${br(gaps[0][1][0].ms, 1)} ms no Clip; mostrada, não preenchida` : ''],
+    ['Posição do clip na caneta', Math.abs(drot) > 10 ? 'warn' : 'ok', Math.abs(drot) > 10 ? 'conferir' : 'coerente', `rotação da questionada difere ${br(drot, 0)}° dos padrões`]];
+}
+function params() {
+  return [['Derivadas', `Savitzky-Golay · janela ${TH.SGW} (70 ms) · grau ${TH.SGO} · corte ~24,5 Hz`], ['Ruído (caneta parada)', `σ velocidade ${br(D.NF[1])} mm/s · σ 5ª derivada ${br(D.NF[5] / 1e7, 1)}×10⁷ mm/s⁵`],
+    ['Alinhamento', 'marcos (levantamentos casados primeiro) + DTW limitado, banda de 10%'], ['Padrão médio', `DBA dos 20 padrões · referência P${String(D.ri + 1).padStart(2, '0')}`],
+    ['Mahalanobis', `${V.MH.keys.length} medidas: ${V.MH.keys.join(', ')}`], ['Covariância', `Ledoit-Wolf (encolhimento ${br(V.MH.shrink)}) · limite de Hotelling (n = 20)`],
+    ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'], ['Grandeza', SYM[S.g][3]], ['Eixo das curvas', { alinhado: 'alinhado por traço', tempo: 'tempo real', caminho: 'caminho percorrido' }[S.eixo]],
+    ['Deslocamentos dos padrões', Object.keys(S.shifts).filter(k => S.shifts[k]).map(k => `${k} ${br(S.shifts[k], 1)}%`).join(' · ') || 'todos +0,0%'], ['Questionada (simulação)', S.mode === 'imitação' ? 'imitação por terceiro' : 'assinatura verdadeira da pessoa']];
+}
+function renderInteg() {
+  $('#integ').innerHTML = integrity().map(([a, s, b, c]) => `<tr><td>${a}</td><td class="${{ ok: 'ok', bad: 'bad', warn: 'warn', sim: 'sim', na: 'sim' }[s]}">${{ ok: '✓ ', bad: '✗ ', warn: '⚠ ', sim: '◦ ', na: '◦ ' }[s]}${b}</td><td>${c}</td></tr>`).join('');
+  $('#params').innerHTML = params().map(([a, b]) => `<tr><td>${a}</td><td>${b}</td></tr>`).join('');
+  $('#hip-h').innerHTML = '<option value="">escolher…</option>' + HIP.map(h => `<option ${S.hip.h === h ? 'selected' : ''}>${h}</option>`).join('');
+  $('#hip-c').innerHTML = '<option value="">escolher…</option>' + HIP.map(h => `<option ${S.hip.c === h ? 'selected' : ''}>${h}</option>`).join('');
+  $('#grau').innerHTML = GRAU.map(g => `<button type="button" class="chip ${S.hip.grau === g ? 'on' : ''}" data-grau="${g}">${g}</button>`).join('');
+  renderLog();
+}
+function renderLog() { $('#log').innerHTML = S.log.slice().reverse().map(l => `<tr><td>${l.ts}</td><td>${l.user}</td><td>${l.acao}</td><td>${l.det}</td><td class="mono">${l.h.slice(0, 10)}…</td></tr>`).join(''); }
+
+/* ---------------- laudo em PDF ---------------- */
+const latin = s => String(s).replace(/[✓]/g, 'OK').replace(/[✗]/g, 'X').replace(/[⚠]/g, '!').replace(/[◦·]/g, '·').replace(/≤/g, '<=').replace(/σ/g, 'sigma').replace(/[→←]/g, '->').replace(/[ₓ]/g, 'x').replace(/⁷/g, '7').replace(/⁶/g, '6').replace(/⁸/g, '8').replace(/[∠]/g, '').replace(/−/g, '-').replace(/[^\x00-\xFF–—…‘’“”•€]/g, '');
+async function chartImg(fn, w, h) {
+  const cv = document.createElement('canvas'); cv.style.width = w + 'px'; cv.style.height = h + 'px'; cv.style.position = 'fixed'; cv.style.left = '-9999px'; document.body.appendChild(cv);
+  S.printing = true;
+  try { fn(cv, w, h); const ctx = cv.getContext('2d'); ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); return cv.toDataURL('image/png'); }
+  finally { S.printing = false; cv.remove(); }
+}
+async function makePDF() {
+  const st = $('#pdf-status'); st.textContent = 'Montando o laudo…';
+  if (D.packs.some(p => p.recalc === null)) await verifyAll();
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4' }), K = await keys();
+  const W = 210, L = 18, R = W - 18; let y = 20;
+  const MH = V.MH, atip = MH.d2 > MH.lim99, now = new Date();
+  const body = JSON.stringify({ processo: '0001234-56.2026.8.26.0100', signatario: D.name, questionada: D.packs[0].sha, padroes: D.packs.slice(1).map(p => p.sha), trecho: S.trecho, grandeza: S.g, D2: MH.d2, p: MH.p, hip: S.hip, fund: $('#fund').value, data: now.toISOString() });
+  const hb = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body)), hh = hex(hb);
+  const sig = hex(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, K.perito.privateKey, new TextEncoder().encode(body)));
+  const code = hh.slice(0, 16).toUpperCase().match(/.{4}/g).join('-');
+  const T = (t, x, yy, o = {}) => { doc.setFont('helvetica', o.b ? 'bold' : o.i ? 'italic' : 'normal'); doc.setFontSize(o.s || 9.5); doc.setTextColor(...(o.c || [27, 34, 48])); const lines = doc.splitTextToSize(latin(t), o.w || R - x); doc.text(lines, x, yy); return yy + lines.length * (o.s || 9.5) * 0.42 + (o.gap ?? 1.2); };
+  const need = h => { if (y + h > 278) { doc.addPage(); y = 20; } };
+  const H2 = t => { need(14); y += 3; y = T(t, L, y, { b: true, s: 11.5, c: [47, 111, 214], gap: 2 }); };
+  const table = (rows, cols, o = {}) => { for (const [ri, r] of rows.entries()) { need(6); let x = L; const head = o.head && ri === 0; let hmax = 0; r.forEach((cell, j) => { const yy = T(cell, x + 1, y + 3.6, { s: o.s || 8, b: head, w: cols[j] - 2, gap: 0 }); hmax = Math.max(hmax, yy - y); x += cols[j]; }); y += Math.max(hmax, 4.8) + 0.8; doc.setDrawColor(head ? 47 : 220, head ? 111 : 222, head ? 214 : 231); doc.line(L, y - 0.6, R, y - 0.6); } y += 2; };
+  doc.setFillColor(23, 33, 51); doc.rect(0, 0, W, 14, 'F'); doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text('THOTH · Laudo de análise dinâmica de assinatura', L, 9);
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text('SIMULAÇÃO · dados sintéticos para demonstração', R, 9, { align: 'right' });
+  y = 24; y = T(`Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: ${PERITO} · emitido em ${now.toLocaleString('pt-BR')}`, L, y, { s: 8.5, c: [93, 104, 120] });
+  y = T(`Signatário declarado: ${D.name} · Thoth nº 0123A1B2C3D4E5F6EE · questionada: contador 184 · padrões: 20 colheitas (contadores 201–220)`, L, y, { s: 8.5, c: [93, 104, 120], gap: 4 });
+  H2('1. Conclusão do perito');
+  y = T(`Hipótese: ${S.hip.h || '(não escolhida)'}   ·   contra: ${S.hip.c || '(não escolhida)'}`, L, y, { b: true });
+  y = T(`Grau de suporte (escala verbal ENFSI / SWGDOC): ${S.hip.grau || '(não escolhido)'}`, L, y, { b: true });
+  y = T('Fundamentação: ' + ($('#fund').value.trim() || '(não preenchida)'), L, y, { gap: 3 });
+  H2('2. Resultado estatístico');
+  y = T(`Análise: ${S.trecho ? `trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'} · grandeza ${SYM[S.g][3]} · eixo ${params()[8][1]}.`, L, y);
+  y = T(`Mahalanobis com ${MH.keys.length} medidas (${MH.keys.join(', ')}): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}; limite de 99% (Hotelling, n = 20) = ${br(MH.lim99, 1)}; valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}. Leitura do painel: ${atip ? 'ATÍPICA' : 'TÍPICA'} para a pessoa. Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
+  y = T('O valor p mede só o quanto a questionada é atípica para a pessoa; não é a probabilidade de falsificação.', L, y, { i: true, s: 8.5, c: [93, 104, 120], gap: 3 });
+  const rows = [['Medida', 'Padrões (média ± dp)', 'Questionada', 'z']].concat(KEYS.map(k => { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k); return [k, `${br(mu, d)} ± ${br(sd, d)}`, br(V.MQ[k], d), sd > 1e-9 ? br((V.MQ[k] - mu) / sd, 1) : '—']; }));
+  table(rows, [70, 50, 35, 19], { head: true });
+  H2('3. Gráficos');
+  const imgs = [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
+    [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => TH.comp(p, S.g, 2), 'acc', 'm/s²', D.NF[2], 1e-3), 174, 50], [`5ª derivada · ${SYM[S.g][3]}`, cv => drawCurve(cv, p => TH.comp(p, S.g, 5), 'd5', 'x10^8 mm/s^5', D.NF[5], 1e-8), 174, 50],
+    [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50]];
+  for (const [cap, fn, wmm, hmm] of imgs) { need(hmm + 8); y = T(cap, L, y, { b: true, s: 8.5 }); const url = await chartImg(fn, wmm * 4, hmm * 4); doc.addImage(url, 'PNG', L, y, wmm, hmm); y += hmm + 3; }
+  H2('4. Verificação de integridade');
+  table([['Verificação', 'Resultado', 'Detalhe']].concat(integrity().map(([a, s, b, c]) => [a, ({ ok: 'OK ', bad: 'FALHA ', warn: 'ATENÇÃO ', sim: '', na: '' }[s]) + b, c])), [55, 35, 84], { head: true });
+  H2('5. Parâmetros de cálculo'); table(params(), [50, 124]);
+  H2('6. Pacotes analisados (SHA-256 sobre os dados crus)');
+  table([['Pacote', 'Contador', 'SHA-256']].concat(D.packs.map(p => [p.name === 'Q' ? 'Questionada' : p.name, String(p.cnt), p.sha])), [24, 18, 132], { head: true, s: 7 });
+  y = T('O laudo não contém amostras cruas: elas não saem do sistema (6.10.3). Quem precisar conferir recebe acesso próprio ao caso.', L, y, { i: true, s: 8, c: [93, 104, 120], gap: 3 });
+  H2('7. Registro de acessos (encadeado por hash)');
+  table([['Data/hora', 'Ação', 'Detalhe', 'Hash']].concat(S.log.map(l => [l.ts, l.acao, l.det, l.h.slice(0, 16)])), [32, 36, 76, 30], { head: true, s: 7 });
+  const n = doc.getNumberOfPages();
+  for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(93, 104, 120); doc.text(latin(`Assinado digitalmente (simulado, ECDSA P-256 da sessão ${SES}) · código de verificação ${code}`), L, 287); doc.text(latin(`SHA-256 do conteúdo ${hh.slice(0, 32)}… · assinatura ${sig.slice(0, 24)}…`), L, 290.5); doc.text(`${i}/${n}`, R, 290.5, { align: 'right' }); }
+  const blob = doc.output('blob'), fname = `laudo_thoth_${D.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+  log('gerou o laudo', `PDF ${n} páginas · código ${code}`);
+  const dl = window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null;
+  if (dl) { try { await dl.save({ filename: fname, data: blob }); st.textContent = `Laudo salvo · código de verificação ${code}`; } catch (e) { st.textContent = e && e.code === 'declined' ? 'Você recusou o salvamento. O laudo pode ser gerado de novo.' : 'Não foi possível salvar o arquivo neste visualizador.'; } }
+  else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); st.textContent = `Laudo gerado · código de verificação ${code}`; }
+}
+
+/* ---------------- controle geral ---------------- */
+function render() {
+  $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === S.tab)); $$('.pane').forEach(p => (p.hidden = p.id !== 'pane-' + S.tab));
+  const pq = D.packs[0];
+  $('#h-q').textContent = `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · Thoth nº 0123A1B2C3D4E5F6EE · 03/10/2026 14:32:07 UTC (GNSS)`;
+  $('#h-sig').textContent = `Signatário declarado: ${D.name}`;
+  if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else renderInteg();
+}
+async function loadCase() {
+  $('#loading').hidden = false; await tick();
+  D = await build(S.name, S.mode); S.trecho = null; S.shifts = {}; S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 }; view();
+  $('#loading').hidden = true; log('abriu o caso', `${S.name} · questionada: ${S.mode}`); render();
+}
+function watermark() {
+  const c = document.createElement('canvas'); c.width = 420; c.height = 220; const x = c.getContext('2d'); x.translate(210, 110); x.rotate(-0.42);
+  x.font = '13px ' + css('--sans'); x.fillStyle = css('--ink'); x.textAlign = 'center'; x.fillText(`${PERITO} · CPF ${CPFP}`, 0, -6); x.fillText(`sessão ${SES} · ${new Date().toLocaleString('pt-BR')}`, 0, 12);
+  $('#wm').style.backgroundImage = `url(${c.toDataURL()})`;
+}
+function bind() {
+  $$('.tab').forEach(t => t.addEventListener('click', () => { S.tab = t.dataset.tab; log('mudou de aba', t.textContent.trim()); render(); }));
+  $$('[data-eixo]').forEach(b => b.addEventListener('click', () => { S.eixo = b.dataset.eixo; log('eixo das curvas', b.textContent); renderAnalise(); }));
+  $$('[data-g]').forEach(b => b.addEventListener('click', () => { S.g = b.dataset.g; log('mudou grandeza', SYM[S.g][3]); renderAnalise(); }));
+  $('#btn-inteira').addEventListener('click', () => { if (!S.trecho) return; S.trecho = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
+  $('#btn-zero').addEventListener('click', () => { S.shifts = {}; renderAnalise(); });
+  $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); renderAnalise(); }));
+  $('#mh-x').addEventListener('change', e => { S.mx = +e.target.value; if (S.my === S.mx) S.my = (S.mx + 1) % V.MH.keys.length; renderAnalise(); });
+  $('#mh-y').addEventListener('change', e => { S.my = +e.target.value; if (S.my === S.mx) S.mx = (S.my + 1) % V.MH.keys.length; renderAnalise(); });
+  const cv = $('#cv-sig'); let start = null;
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  cv.addEventListener('pointerdown', e => { start = pos(e); dragRect = [...start, ...start]; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', e => { if (!start) return; const p = pos(e); dragRect = [...start, ...p]; drawSignature(cv); });
+  cv.addEventListener('pointerup', e => {
+    if (!start) return; const p = pos(e), r0 = dragRect; start = null; dragRect = null;
+    if (Math.abs(r0[2] - r0[0]) < 6 || Math.abs(r0[3] - r0[1]) < 6) { drawSignature(cv); return; }
+    const [ax, ay] = drawXform.inv(Math.min(r0[0], r0[2]), Math.max(r0[1], r0[3])), [bx, by] = drawXform.inv(Math.max(r0[0], r0[2]), Math.min(r0[1], r0[3]));
+    const k = D.ri, [RX, RY] = D.REG[k], ref = D.PP[k], us = [];
+    for (let i = 0; i < RX.length; i++) if (ref.C[i] && RX[i] >= ax && RX[i] <= bx && RY[i] >= ay && RY[i] <= by && ref.u[i] >= 0 && ref.u[i] <= 100) us.push(ref.u[i]);
+    if (us.length < 3) { drawSignature(cv); return; }
+    S.trecho = [Math.floor(Math.min(...us)), Math.ceil(Math.max(...us))]; view(); log('selecionou trecho', `${S.trecho[0]}–${S.trecho[1]}%`); renderAnalise();
+  });
+  cv.addEventListener('pointercancel', () => { start = null; dragRect = null; drawSignature(cv); });
+  document.addEventListener('click', e => {
+    const pg = e.target.closest('[data-pg]'); if (pg) { const id = pg.dataset.pg, d = +pg.dataset.d, c = S.crus, r = id[0] === 'q' ? D.RQ : D.RR[c.sel], n = id[1] === 'm' ? r.t_us.length : r.clip_t_us.length; c[id] = Math.max(0, Math.min(Math.ceil(n / PG) - 1, (c[id] < 0 ? 0 : c[id]) + d)); log('página vista', `${id[0] === 'q' ? 'questionada' : D.packs[c.sel + 1].name} · ${id[1] === 'm' ? 'mesa' : 'Clip'} · página ${c[id] + 1}`); renderCrus(); return; }
+    const row = e.target.closest('[data-row]'); if (row) { S.crus.sel = +row.dataset.row; S.crus.pc = -1; S.crus.pm = 0; log('abriu padrão', D.packs[S.crus.sel + 1].name); renderCrus(); return; }
+    const gr = e.target.closest('[data-grau]'); if (gr) { S.hip.grau = gr.dataset.grau; renderInteg(); }
+  });
+  $('#btn-verify').addEventListener('click', async e => { e.target.disabled = true; e.target.textContent = 'Verificando…'; await verifyAll(); e.target.disabled = false; e.target.textContent = 'Verificar hashes agora'; renderCrus(); });
+  $('#btn-verify2').addEventListener('click', async () => { await verifyAll(); renderInteg(); });
+  $('#hip-h').addEventListener('change', e => { S.hip.h = e.target.value; });
+  $('#hip-c').addEventListener('change', e => { S.hip.c = e.target.value; });
+  $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
+  $('#btn-next').addEventListener('click', () => { S.name = NAMES[(NAMES.indexOf(S.name) + 1) % NAMES.length]; S.mode = MODE0(S.name); loadCase(); });
+  $('#btn-mode').addEventListener('click', () => { S.mode = S.mode === 'imitação' ? 'verdadeira' : 'imitação'; loadCase(); });
+  document.addEventListener('keydown', e => { if (S.tab === 'crus' && (e.ctrlKey || e.metaKey) && 'cpas'.includes(e.key.toLowerCase())) e.preventDefault(); });
+  $('#pane-crus').addEventListener('contextmenu', e => e.preventDefault());
+  $('#pane-crus').addEventListener('copy', e => e.preventDefault());
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => D && render(), 150); });
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { watermark(); D && render(); });
+  new MutationObserver(() => { watermark(); D && render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
+$$('.card > canvas').forEach(cv => { const d = document.createElement('div'); d.className = 'cw' + (cv.classList.contains('ch-l') ? ' l' : cv.classList.contains('ch-m') ? ' m' : cv.id === 'cv-sig' ? ' sig' : ''); cv.replaceWith(d); d.appendChild(cv); });
+bind(); watermark(); loadCase();
+})();
+
+</script>
