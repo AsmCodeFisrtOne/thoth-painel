@@ -68,6 +68,7 @@ table.tv tr[data-tv] { cursor: pointer } table.tv tr[data-tv]:hover td, table.tv
 .chip-r { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: .03em; padding: 1px 8px; border-radius: 999px; color: var(--panel) }
 .chip-r.r-at { background: var(--red) } .chip-r.r-ty { background: var(--green) } .chip-r.r-in { background: var(--amber) }
 b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(--amber) }
+.dica.warnt { color: var(--amber); font-weight: 600 }
 .m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
@@ -151,6 +152,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn" data-eixo="tempo" title="Cada assinatura no próprio relógio: mostra o ritmo e a duração; os traços podem não coincidir.">tempo real</button><button type="button" class="btn on" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
       <div class="grp hl"><span>Grandeza:</span><button type="button" class="btn" data-g="x">X</button><button type="button" class="btn" data-g="y">Y</button><button type="button" class="btn on" data-g="r">resultante</button></div>
       <div class="grp"><span id="trecho-txt">Trecho: arraste sobre o desenho</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button></div>
+      <div class="grp"><label for="suav"><span>Suavizar as curvas:</span></label><input type="range" id="suav" min="0" max="10" step="1" value="0"><b id="suav-o" style="font-size:12px">0 de 10 · nenhuma</b><span class="dica" id="suav-dica"></span></div>
       <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
       <div class="grp"><span>Deslocar padrões:</span><button type="button" class="btn" id="btn-zero">zerar todos</button></div>
       <span class="note">duplo clique num gráfico para ampliar · dados não saem do sistema</span>
@@ -170,8 +172,8 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card span2 c-full"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
-      <div class="card span2 c-left"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa 48 combinações; entre o pontilhado de 99% e essa linha a combinação fica "na borda". O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
-      <div class="card span2 c-right"><h3><span>Mahalanobis 3D · elipsoide de 3 medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = elipsoide de 95% da pessoa (zᵀR⁻¹z = limite de Hotelling com p = 3); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram como as três medidas variam juntas (matriz de correlação R); as linhas tracejadas internas são os eixos principais (autovetores de R). As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
+      <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos 20 padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). ★ = medida do modelo. Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa 48 combinações; entre o pontilhado de 99% e essa linha a combinação fica "na borda". O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), a distância e a raridade usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
+      <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
       <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os 20 padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos 20 padrões sai quando testado contra os outros 19). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Só a linha do veredito decide; as demais mostram onde a assinatura se afasta. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
     </div>
   </section>
@@ -914,40 +916,54 @@ function selRange(s) { let a = -1, b = -1; for (let i = 0; i < s.length; i++) if
 function pathPct(p) { const P = p.path[p.i1] || 1; return p.path.map(v => 100 * v / P); }
 function curveData(sigf, shiftKey) {
   const { sels, selq } = V, mode = S.eixo, sh = S.shifts[shiftKey] || 0;
-  let gx, rows, qx, qy, xr, xlabel, tol;
+  let gx, rows, qx, qy, qi, xr, xlabel, tol;
   if (mode === 'alinhado') {
     const ua = S.trecho ? S.trecho[0] : 0, ub = S.trecho ? S.trecho[1] : 100, idx = [];
     for (let i = 0; i < NU; i++) { const u = 100 * i / (NU - 1); if (u >= ua && u <= ub) idx.push(i); }
     gx = idx.map(i => 100 * i / (NU - 1));
     rows = D.PP.map((p, k) => { const v = TH.interp(idx.map(i => D.A.W[k][i]), p._ix, sigf(p)); return v; });
-    const ys = sigf(D.Q); qx = []; qy = []; for (let i = 0; i < ys.length; i++) if (selq[i] && D.Q.u[i] >= 0 && D.Q.u[i] <= 100) { qx.push(D.Q.u[i]); qy.push(ys[i]); }
+    const ys = sigf(D.Q); qx = []; qy = []; qi = []; for (let i = 0; i < ys.length; i++) if (selq[i] && D.Q.u[i] >= 0 && D.Q.u[i] <= 100) { qx.push(D.Q.u[i]); qy.push(ys[i]); qi.push(i); }
     xr = [ua, ub]; xlabel = 'traço a traço (% da assinatura)'; tol = 1.0;
   } else if (mode === 'tempo') {
     const durs = D.PP.map((p, k) => { const [a, b] = selRange(sels[k]); return [a, b]; }), maxd = Math.max(...durs.map(([a, b]) => (b - a) / FS));
     const n = Math.max(50, Math.round(maxd * FS)); gx = Array.from({ length: n }, (_, i) => i / FS);
     rows = D.PP.map((p, k) => { const [a, b] = durs[k], y = sigf(p), o = new Float64Array(n); for (let i = 0; i < n; i++) o[i] = a + i <= b ? y[a + i] : NaN; return o; });
-    const [qa, qb] = selRange(selq), ys = sigf(D.Q); qx = []; qy = []; for (let i = qa; i <= qb; i++) { qx.push((i - qa) / FS); qy.push(ys[i]); }
+    const [qa, qb] = selRange(selq), ys = sigf(D.Q); qx = []; qy = []; qi = []; for (let i = qa; i <= qb; i++) { qx.push((i - qa) / FS); qy.push(ys[i]); qi.push(i); }
     xr = [0, Math.max(maxd, (qb - qa) / FS)]; xlabel = 'tempo real (s)' + (S.trecho ? ' desde o início do trecho' : ''); tol = Infinity;
   } else {
     const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.sels[D.ri]; let PA = 0, PB = 100;
     if (S.trecho) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
     const n = 500; gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
     rows = D.PP.map(p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) if (p.C[i]) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); });
-    const qp = pathPct(D.Q), ys = sigf(D.Q); qx = []; qy = []; for (let i = D.Q.i0; i <= D.Q.i1; i++) if (D.Q.C[i] && selq[i]) { qx.push(qp[i]); qy.push(ys[i]); }
+    const qp = pathPct(D.Q), ys = sigf(D.Q); qx = []; qy = []; qi = []; for (let i = D.Q.i0; i <= D.Q.i1; i++) if (D.Q.C[i] && selq[i]) { qx.push(qp[i]); qy.push(ys[i]); qi.push(i); }
     xr = [PA, PB]; xlabel = 'posição no traçado (%)'; tol = 1.0;
   }
   const n = gx.length, m = new Float64Array(n), s = new Float64Array(n);
   for (let i = 0; i < n; i++) { const v = rows.map(r => r[i]).filter(Number.isFinite); m[i] = v.length >= 3 ? TH.mean(v) : NaN; s[i] = v.length >= 3 ? TH.std(v) : NaN; }
   const shift = sh * (xr[1] - xr[0]) / 100;
-  return { gx: gx.map(v => v + shift), m, lo: m.map((v, i) => v - 2 * s[i]), hi: m.map((v, i) => v + 2 * s[i]), qx, qy, xr, xlabel, tol };
+  return { gx: gx.map(v => v + shift), m, lo: m.map((v, i) => v - 2 * s[i]), hi: m.map((v, i) => v + 2 * s[i]), qx, qy, qi, xr, xlabel, tol };
+}
+// trechos em que a questionada está com a caneta no ar: a linha fica interrompida (é real) e a região ganha uma faixa clara
+function airBands(F, d) { // faixa clara onde a questionada está com a caneta no ar (amostras sem contato ou levantamento entre dois pontos)
+  const { c, X, P, m, h, w } = F, Cq = D.Q.C; let any = false; c.save(); c.fillStyle = P.amb; c.globalAlpha = 0.12;
+  const band = (a, b) => { let x0 = X(a), x1 = X(b); if (x1 < x0) [x0, x1] = [x1, x0]; if (x1 - x0 < 3) { const cx = (x0 + x1) / 2; x0 = cx - 1.5; x1 = cx + 1.5; } c.fillRect(x0, m.t, x1 - x0, h - m.t - m.b); any = true; };
+  let s0 = -1;
+  for (let j = 0; j < d.qx.length; j++) {
+    const air = !Cq[d.qi[j]];
+    if (air && s0 < 0) s0 = j;
+    if ((!air || j === d.qx.length - 1) && s0 >= 0) { band(d.qx[Math.max(0, s0 - 1)], d.qx[j]); s0 = -1; }
+    if (!air && j > 0 && Cq[d.qi[j - 1]] && (d.qi[j] - d.qi[j - 1] > 1 || d.qx[j] - d.qx[j - 1] > d.tol)) band(d.qx[j - 1], d.qx[j]); // levantamento sem amostras no eixo (posição no traçado)
+  }
+  c.restore();
+  if (any) { c.save(); c.font = '10px ' + css('--sans'); const t = 'faixa clara = questionada com a caneta no ar', tw = c.measureText(t).width; c.fillStyle = P.panel; c.globalAlpha = 0.85; c.fillRect(w - m.r - tw - 18, m.t + 3, tw + 14, 15); c.globalAlpha = 1; c.fillStyle = P.amb; c.globalAlpha = 0.5; c.fillRect(w - m.r - tw - 14, m.t + 7, 8, 8); c.globalAlpha = 1; c.fillStyle = P.mut; c.textAlign = 'left'; c.fillText(t, w - m.r - tw - 2, m.t + 14); c.restore(); }
 }
 function drawCurve(cv, sigf, shiftKey, ylabel, noise, scale = 1) {
   const d = curveData(p => { const y = sigf(p); return scale === 1 ? y : y.map(v => v * scale); }, shiftKey);
   const yr = robust([d.lo, d.hi, d.qy]);
   const F = frame(cv, d.xr, yr, { xlabel: d.xlabel, ylabel });
-  bandFill(F, d.gx, d.lo, d.hi, F.P.band); polyline(F, d.gx, d.m, F.P.band, 1);
+  airBands(F, d); bandFill(F, d.gx, d.lo, d.hi, F.P.band); polyline(F, d.gx, d.m, F.P.band, 1);
   if (noise) for (const sg of [1, -1]) polyline(F, d.xr, [sg * 2 * noise * scale, sg * 2 * noise * scale], F.P.noise, 1, Infinity, [2, 3]);
-  polyline(F, d.qx, d.qy, F.P.acc, 1, d.tol); F.done();
+  polyline(F, d.qx, d.qy, F.P.acc, 1, Infinity); F.done(); // contínua (sem buracos); as faixas claras mostram onde a caneta estava no ar —: inclui o movimento no ar medido pela mesa (até ~10 mm do papel), como a faixa dos padrões
 }
 
 /* ---------------- gráficos do painel ---------------- */
@@ -1128,6 +1144,48 @@ function mahaPair() {
 }
 const ease = x => 1 - (1 - Math.min(1, Math.max(0, x))) ** 3;
 const ph = (t, a, b) => ease((t - a) / (b - a));
+/* ---------------- palavras para o perito ---------------- */
+const fDist = v => br(v, v > 100 ? 0 : 1);
+function raridade(p) { if (!Number.isFinite(p)) return '—'; if (p < 1e-4) return 'mais rara que 1 em 10 000'; const N = 1 / p; return `1 em ${N < 20 ? br(N, N < 3 ? 1 : 0) : N < 1000 ? Math.round(N / 5) * 5 : Math.round(N / 100) * 100}`; }
+function ligacao(r) { const a = Math.abs(r); if (!Number.isFinite(r)) return '—'; if (a < 0.3) return 'fraca'; return (a < 0.6 ? 'moderada' : 'forte') + (r < 0 ? ', inversa' : ', direta'); }
+/* ---------------- detalhe das curvas (só o desenho; os números usam sempre o filtro padrão) ---------------- */
+// suavização só do desenho: nível 0 a 10 → passa-baixa gaussiano sobre as derivadas do filtro padrão
+// (bordas espelhadas, sem artefato no início e no fim); 0 = exatamente o que os números usam
+const SUAV_SIG = [0, ...Array.from({ length: 10 }, (_, i) => +(0.5 * 38.6 ** (i / 9)).toFixed(2))]; // escala logarítmica: 0,5 a 19,3 amostras; até o nível 4 quase não suaviza
+const suavN = () => S.suav || 0;
+const suavFc = n => (n ? 1.1774 / (2 * Math.PI * SUAV_SIG[n] / TH.FS) : 28); // frequência em que a curva cai à metade
+const SUAV_NOME = ['nenhuma', 'muito leve', 'leve', 'leve', 'média', 'média', 'forte', 'forte', 'muito forte', 'muito forte', 'máxima'];
+function suavDica() { const n = suavN();
+  if (!n) return 'Curvas com todo o detalhe do movimento (é o que os números usam).';
+  return (suavFc(n) < 13 ? '⚠ Esconde o tremor e as pequenas correções do movimento; use só para ver o desenho geral. ' : 'Desenho mais limpo. ') + 'Só muda o desenho: os números e o veredito não mudam.'; }
+function gsmooth(a, sig, skip = 0) { // média gaussiana só com as amostras válidas (sem espelhar nem inventar nas pontas)
+  if (!sig) return a; const r = Math.ceil(3 * sig), ker = []; for (let i = -r; i <= r; i++) ker.push(Math.exp(-0.5 * (i / sig) ** 2));
+  const n = a.length, o = new Float64Array(n);
+  for (let i = 0; i < n; i++) { let acc = 0, ws = 0; const j0 = Math.max(skip, i - r), j1 = Math.min(n - 1 - skip, i + r); for (let j = j0; j <= j1; j++) { const w = ker[j - i + r]; acc += w * a[j]; ws += w; } o[i] = ws > 0 ? acc / ws : NaN; }
+  return o;
+}
+function Dw(p, k) {
+  const n = suavN(); if (!n) return p.D[k]; p._Dw = p._Dw || {}; const key = n + '|' + k; if (p._Dw[key]) return p._Dw[key];
+  const sk = TH.SGW >> 1, sig = SUAV_SIG[n], cut = arr => { const m = sk + Math.ceil(sig); for (let i = 0; i < Math.min(m, arr.length); i++) { arr[i] = NaN; arr[arr.length - 1 - i] = NaN; } return arr; }; // pontas sem vizinhos dos dois lados: não desenhar
+  return (p._Dw[key] = [cut(gsmooth(p.D[k][0], sig, sk)), cut(gsmooth(p.D[k][1], sig, sk))]);
+}
+function smoothSig(p, tag, f) { // suaviza um sinal já pronto (módulo ou potência): média gaussiana das amostras válidas
+  const n = suavN(); if (!n) return f(); p._Sw = p._Sw || {}; const key = n + '|' + tag; if (p._Sw[key]) return p._Sw[key];
+  const sk = TH.SGW >> 1, sig = SUAV_SIG[n], o = gsmooth(f(), sig, sk), m = sk + Math.ceil(sig); for (let i = 0; i < Math.min(m, o.length); i++) { o[i] = NaN; o[o.length - 1 - i] = NaN; }
+  return (p._Sw[key] = o);
+}
+// resultante: suaviza o tamanho (sempre positivo), não as componentes, que se cancelam; X ou Y: suaviza a componente com sinal
+function compV(p, g, k) { if (g === 'x' || g === 'y') { const [a, b] = Dw(p, k); return g === 'x' ? a : b; } return smoothSig(p, 'r' + k, () => TH.comp(p, 'r', k)); }
+function powerV(p, g) { return smoothSig(p, 'p' + g, () => TH.power(p, g)); }
+const _nsc = {};
+function noiseScale(k) { if (S.g === 'r') return 1; // no módulo, o nível médio do ruído praticamente não muda com a média
+  return noiseScaleC(k); }
+function noiseScaleC(k) { // ruído branco de posição → derivada SG padrão → média gaussiana: razão das normas da resposta ao impulso
+  const n = suavN(); if (!n) return 1; const key = n + '|' + k; if (_nsc[key]) return _nsc[key];
+  const N = 1201, d = new Float64Array(N); d[600] = 1; const h = TH.savgol(d, TH.SGW, TH.SGO, k, 1 / TH.FS), hs = gsmooth(h, SUAV_SIG[n]);
+  const nrm = y => { let s2 = 0; for (let i = 300; i <= 900; i++) s2 += y[i] * y[i]; return Math.sqrt(s2); };
+  return (_nsc[key] = nrm(hs) / nrm(h));
+}
 /* ---------------- veredito com três saídas e tabela verdade ---------------- */
 const TV_SIX = ['tempo total (s)', 'pressão média (gf)', 'inclinação média (°)', 'trocas de jerk / traço', 'levantamentos', '% do espectro em 5–8 Hz'];
 const TV_EXTRA = ['velocidade média (mm/s)', 'aceleração RMS (m/s²)'];
@@ -1158,23 +1216,23 @@ function mahaPlain(A, q) { // covariância amostral simples, a mesma das elipses
 function tvLinha(ks) {
   const A = V.M.map(m => ks.map(k => m[k])), q = ks.map(k => V.MQ[k]), n = A.length, p = ks.length, K = TV_K();
   const base = { ks, p, n, lim95: TH.hotLim(0.95, n, p), lim99: TH.hotLim(0.99, n, p), limC: TH.hotLim(1 - 0.01 / K, n, p) };
-  if (ks.includes('% do espectro em 5–8 Hz') && TH.mean(V.M.map(m => m['tempo total (s)'])) < 1.0) return { ...base, res: 'INCONCLUSIVA', why: 'trecho curto para o espectro' };
+  if (ks.includes('% do espectro em 5–8 Hz') && TH.mean(V.M.map(m => m['tempo total (s)'])) < 1.0) return { ...base, res: 'INCONCLUSIVA', why: 'trecho curto demais para medir o tremor' };
   const r = mahaPlain(A, q);
   if (r.semVar) return { ...base, res: 'INCONCLUSIVA', why: 'medida não varia nos padrões' };
-  if (r.redund) return { ...base, res: 'INCONCLUSIVA', why: 'medidas redundantes nos padrões' };
+  if (r.redund) return { ...base, res: 'INCONCLUSIVA', why: 'as medidas andam sempre juntas nos padrões (dizem a mesma coisa)' };
   let out = 0; const l19 = TH.hotLim(0.99, n - 1, p);
   for (let j = 0; j < n; j++) { const rr = mahaPlain(A.filter((_, i) => i !== j), A[j]); if (rr.d2 > l19) out++; }
   const L = { ...base, d2: r.d2, d2diag: r.d2diag, pval: TH.hotP(r.d2, n, p), out };
   if (r.d2 <= L.lim95) return { ...L, res: 'TÍPICA', why: 'dentro da variação da pessoa' };
   if (r.d2 > L.limC && r.d2diag <= L.limC) return { ...L, res: 'INCONCLUSIVA', why: 'cada medida está normal; só a relação entre elas destoa (com 20 padrões, pode ser acaso)' };
-  if (r.d2 > L.limC) return out >= 2 ? { ...L, res: 'INCONCLUSIVA', why: `régua instável: ${out} padrões da própria pessoa também saem` } : { ...L, res: 'ATÍPICA', why: 'fora com folga, mesmo após a correção' };
-  return { ...L, res: 'INCONCLUSIVA', why: 'na borda: pode ser acaso' };
+  if (r.d2 > L.limC) return out >= 2 ? { ...L, res: 'INCONCLUSIVA', why: `régua instável: ${out} padrões da própria pessoa também saem` } : { ...L, res: 'ATÍPICA', why: 'fora com folga, mesmo descontando as 48 comparações' };
+  return { ...L, res: 'INCONCLUSIVA', why: 'na borda: passou do limite da pessoa, não do limite da tabela; pode ser acaso' };
 }
 function mainVerdict() { // modelo de 4 medidas ★ (Ledoit-Wolf), sem correção: é o teste definido antes
   const MH = V.MH, base = { ks: MH.keys, d2: MH.d2, pval: MH.p, lim95: MH.lim95, lim99: MH.lim99, out: MH.looOut, p: MH.keys.length };
   if (MH.d2 <= MH.lim95) return { ...base, res: 'TÍPICA', why: 'dentro da variação da pessoa' };
   if (MH.d2 > MH.lim99) return MH.looOut >= 2 ? { ...base, res: 'INCONCLUSIVA', why: `régua instável: ${MH.looOut} padrões da própria pessoa também saem` } : { ...base, res: 'ATÍPICA', why: 'fora com folga' };
-  return { ...base, res: 'INCONCLUSIVA', why: 'na borda: pode ser acaso' };
+  return { ...base, res: 'INCONCLUSIVA', why: 'na borda: passou do limite da pessoa, não do limite da tabela; pode ser acaso' };
 }
 const vCol = (res, P) => (res === 'ATÍPICA' ? P.red : res === 'TÍPICA' ? P.grn : P.amb);
 let TVROWS = [];
@@ -1250,7 +1308,7 @@ function drawMaha(cv, t = 1) {
   const xs = [...eC.map(p => p[0]), ...e99.map(p => p[0]), ...A.map(a => a[0]), ...(fora ? [] : [q[0]])], ys = [...eC.map(p => p[1]), ...e99.map(p => p[1]), ...A.map(a => a[1]), ...(fora ? [] : [q[1]])];
   const pt = q;
   const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') || k.includes('RMS') ? 2 : 1);
-  const narrow = (cv.clientWidth || 600) < 560, MT = narrow ? 74 : 50;
+  const narrow = (cv.clientWidth || 600) < 560, MT = narrow ? 88 : 74; // cabeçalho sempre em 3 linhas: as frases em palavras são mais longas
   const F = frame(cv, extent([xs], 0.12), extent([ys], 0.12), { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52, mt: MT }), { c, X, Y, P } = F;
   const halo = (txt, x, y) => { c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.globalAlpha *= 0.9; c.strokeText(txt, x, y); c.restore(); c.fillText(txt, x, y); };
   // 1) padrões aparecem um a um
@@ -1292,12 +1350,13 @@ function drawMaha(cv, t = 1) {
   // 5) veredito (sempre do modelo de 4 medidas) e D² do par desenhado — na faixa acima do gráfico, sem cobrir o desenho
   const V5 = ph(t, 0.88, 1);
   if (V5 > 0) {
-    const sans = css('--sans'), L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, L2 = `só este par: D² = ${br(pr.d2, pr.d2 > 100 ? 0 : 1)} · correlação r = ${br(pr.corr, 2)}`;
+    const sans = css('--sans'), L1 = `4 medidas ★: distância ${fDist(MH.d2)} (limite ${br(MH.lim99, 1)}) · raridade ${raridade(MH.p)}`, L2 = `só este par: distância ${fDist(pr.d2)} · ligação ${ligacao(pr.corr)}`;
     c.globalAlpha = V5; c.fillStyle = col;
-    if (narrow) {
+    if (true) {
       c.textAlign = 'left'; c.font = 'bold 20px ' + sans; const wd = VD.res; c.fillText(wd, F.m.l, 22);
       const ww = c.measureText(wd).width; c.font = '11px ' + sans; c.fillText('para a pessoa', F.m.l + ww + 8, 22);
-      c.fillText(L1, F.m.l, 42); c.fillStyle = P.mut; c.fillText(L2, F.m.l, 58);
+      if (narrow) { const [a1, a2] = L1.split(' · raridade'); c.fillText(a1, F.m.l, 40); c.fillText('raridade' + a2, F.m.l, 54); c.fillStyle = P.mut; c.fillText(L2, F.m.l, 70); }
+      else { c.fillText(L1, F.m.l, 42); c.fillStyle = P.mut; c.fillText(L2, F.m.l, 58); }
     } else {
       c.textAlign = 'left'; c.font = 'bold 22px ' + sans; c.fillText(VD.res, F.m.l, 30);
       c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, F.w - F.m.r, 20); c.fillStyle = P.mut; c.fillText(L2, F.w - F.m.r, 36);
@@ -1348,10 +1407,10 @@ function maha3() {
 }
 function drawM3(cv, t = 1) {
   const P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), mono = css('--mono'), MH = V.MH, VD = mainVerdict(), col = vCol(VD.res, P);
-  const M = maha3(), narrow = w < 560, top = narrow ? 70 : 46;
+  const M = maha3(), narrow = w < 560, top = narrow ? 84 : 70;
   if (!M.ok) { c.fillStyle = P.mut; c.font = '12px ' + sans; c.textAlign = 'center'; c.fillText('Uma das medidas não varia nos padrões ou duas são iguais: escolha outro trio.', w / 2, h / 2); return M; }
   const { eg, Z, zq, r, l95, l99 } = M, lC3 = TH.hotLim(1 - 0.01 / TV_K(), M.n, 3), rmax = Math.max(1.3 * Math.sqrt(l99), 1.1 * Math.sqrt(lC3)), clip = !S.mahaReal && r > rmax, q = zq; // nunca desloca a questionada: fora da escala vira seta
-  const B = 1.06 * Math.max(Math.sqrt(lC3), ...Z.flat().map(Math.abs), ...(clip ? [] : q.map(Math.abs)));
+  const B = 1.06 * Math.max(Math.sqrt(l99), ...Z.flat().map(Math.abs), ...(clip ? [] : q.map(Math.abs)));
   const cy_ = Math.cos(M3.yaw), sy_ = Math.sin(M3.yaw), cp = Math.cos(M3.pitch), sp = Math.sin(M3.pitch);
   const view = p => { const x1 = p[0] * cy_ - p[1] * sy_, y1 = p[0] * sy_ + p[1] * cy_; return [x1, y1 * cp - p[2] * sp, y1 * sp + p[2] * cp]; }; // [tela x, profundidade, tela cima]
   const bot = narrow ? 66 : 26, cx = w / 2, cyy = top + (h - top - bot) / 2, sc = Math.min(w * 0.82, h - top - bot - 8) / (2 * B * (narrow ? 1.35 : 1.5));
@@ -1454,10 +1513,10 @@ function drawM3(cv, t = 1) {
 
   // cabeçalho: veredito do modelo (4 medidas) e D² deste trio
   if (hd > 0) {
-    c.globalAlpha = hd; const L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`;
-    const L2 = `este trio: D² = ${br(M.d2, M.d2 > 100 ? 0 : 1)} · limite 99% (p = 3) = ${br(l99, 1)}`, L3 = `correlações: r(X,Y) = ${br(M.R[0][1], 2)} · r(X,Z) = ${br(M.R[0][2], 2)} · r(Y,Z) = ${br(M.R[1][2], 2)}`;
+    c.globalAlpha = hd; const L1 = `4 medidas ★: distância ${fDist(MH.d2)} (limite ${br(MH.lim99, 1)}) · raridade ${raridade(MH.p)}`;
+    const L2 = `este trio: distância ${fDist(M.d2)} (limite ${br(l99, 1)})`, L3 = `ligações: X–Y ${ligacao(M.R[0][1])} · X–Z ${ligacao(M.R[0][2])} · Y–Z ${ligacao(M.R[1][2])}`;
     c.fillStyle = col; c.textAlign = 'left';
-    if (narrow) { c.font = 'bold 20px ' + sans; c.fillText(VD.res, 10, 22); c.font = '11px ' + sans; c.fillText(L1, 10, 40); c.fillStyle = P.mut; c.fillText(L2, 10, 54); c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
+    if (true) { c.font = 'bold 20px ' + sans; c.fillText(VD.res, 10, 22); c.font = '11px ' + sans; if (narrow) { const [a1, a2] = L1.split(' · raridade'); c.fillText(a1, 10, 38); c.fillText('raridade' + a2, 10, 52); c.fillStyle = P.mut; c.fillText(L2, 10, 66); } else { c.fillText(L1, 10, 40); c.fillStyle = P.mut; c.fillText(L2, 10, 54); } c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
     else { c.font = 'bold 22px ' + sans; c.fillText(VD.res, 10, 30); c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, w - 10, 18); c.fillStyle = P.mut; c.fillText(L2, w - 10, 33); c.textAlign = 'left'; c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
     c.textAlign = 'right'; c.font = '10px ' + sans; c.fillStyle = P.mut; if (!narrow) c.fillText(clip ? 'seta = só direção · arraste para girar' : S.mahaReal ? 'escala real · arraste para girar' : 'arraste para girar', w - 10, h - 8);
     c.globalAlpha = 1;
@@ -1533,12 +1592,12 @@ function renderMeasures() {
   }
   const atip = MH.d2 > MH.lim99;
   h += `<tr class="g"><td colspan="4">Distância ao conjunto dos padrões</td></tr>
-  <tr><td>Mahalanobis D² (${MH.keys.length} medidas)</td><td>${br(Math.min(...MH.loo), 1)}–${br(Math.max(...MH.loo), 1)}</td><td class="q">${br(MH.d2, MH.d2 > 100 ? 0 : 1)}</td><td></td></tr>
-  <tr><td>limite D² de 99%</td><td>${br(MH.lim99, 1)}</td><td></td><td></td></tr>
-  <tr><td>valor p</td><td>${br(Math.min(...MH.looP), 2)}–${br(Math.max(...MH.looP), 2)}</td><td class="q">${MH.p < 1e-4 ? '&lt; 0,0001' : br(MH.p, 4)}</td><td></td></tr>
-  <tr><td>fora da elipse de 99%</td><td>${MH.looOut} de 20</td><td class="q">${atip ? 'sim' : 'não'}</td><td></td></tr>
-  <tr><td>DTW dos perfis</td><td>${br(Math.min(...dtwP))}–${br(Math.max(...dtwP))}</td><td class="q">${br(dtwQ)}</td><td></td></tr></tbody></table>
-  <p class="fine">Ledoit-Wolf: encolhimento ${br(MH.shrink)}. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício. A rotação no eixo vem do clip (direção da gravidade em volta do eixo da caneta, válida com inclinação ≥ 10°); ainda não foi validada em bancada e fica fora do Mahalanobis.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
+  <tr><td>distância à pessoa (${MH.keys.length} medidas ★)</td><td>${br(Math.min(...MH.loo), 1)}–${br(Math.max(...MH.loo), 1)}</td><td class="q">${br(MH.d2, MH.d2 > 100 ? 0 : 1)}</td><td></td></tr>
+  <tr><td>limite da pessoa (99%)</td><td>${br(MH.lim99, 1)}</td><td></td><td></td></tr>
+  <tr><td>raridade (quão rara seria para a pessoa)</td><td>${raridade(Math.max(...MH.looP))} a ${raridade(Math.min(...MH.looP))}</td><td class="q">${raridade(MH.p).replace('mais rara que ', '&lt; ')}</td><td></td></tr>
+  <tr><td>fora do limite da pessoa</td><td>${MH.looOut} de 20</td><td class="q">${atip ? 'sim' : 'não'}</td><td></td></tr>
+  <tr><td>diferença no formato dos perfis</td><td>${br(Math.min(...dtwP))}–${br(Math.max(...dtwP))}</td><td class="q">${br(dtwQ)}</td><td></td></tr></tbody></table>
+  <p class="fine">Distância: quanto a questionada se afasta da variação natural da pessoa, nas 4 medidas ★ juntas. Raridade: com que frequência uma assinatura verdadeira dela ficaria tão longe ou mais (1 em 2 é comum; mais rara que 1 em 10 000 praticamente não acontece). Ajuste para poucas amostras: ${Math.round(MH.shrink * 100)}%. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício. A rotação no eixo vem do clip (direção da gravidade em volta do eixo da caneta, válida com inclinação ≥ 10°); ainda não foi validada em bancada e fica fora da distância.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
   $('#measures').innerHTML = h;
   const opt = sel => TV_SET.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
   $('#mh-x').innerHTML = opt(S.mx); $('#mh-y').innerHTML = opt(S.my);
@@ -1555,20 +1614,21 @@ function renderAnalise() {
   $('#card-zoom').hidden = !S.trecho; $('#card-sig').classList.toggle('span2', !S.trecho);
   $('#t-sig').textContent = S.trecho ? 'Desenho · seleção do trecho' : 'Desenho: 20 padrões + questionada, registrados';
   $('#t-zoom').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : '';
-  const T = { hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${z}`, pow: `Potência inercial · ${pw} (massa = 1)${z}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${z}`, d5: `5ª derivada · microcorreções · ${nm}${z}` };
+  const sv = suavN() ? ` · suavizado ${suavN()}/10` : '';
+  const T = { hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${z}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${z}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${z}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${z}${sv}` };
   for (const k in T) $('#t-' + k).textContent = T[k];
   $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}%` : 'Medidas globais';
-  $('#t-maha').textContent = `Mahalanobis${z} · ${V.MH.keys.length} medidas`;
+  $('#t-maha').textContent = `Distância à pessoa${z} · ${V.MH.keys.length} medidas ★`;
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
   renderMeasures(); renderTV();
   DRAW = {
     'cv-sig': cv => drawSignature(cv), 'cv-zoom': cv => drawZoom(cv), 'cv-comp': cv => drawCompass(cv), 'cv-hist': cv => drawHist(cv),
     'cv-pres': cv => drawPressure(cv), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
-    'cv-acc': cv => drawCurve(cv, p => TH.comp(p, g, 2), 'acc', 'm/s²', D.NF[2], 1e-3),
-    'cv-pow': cv => drawCurve(cv, p => TH.power(p, g), 'pow', 'W/kg'),
+    'cv-acc': cv => drawCurve(cv, p => compV(p, g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3),
+    'cv-pow': cv => drawCurve(cv, p => powerV(p, g), 'pow', 'W/kg'),
     'cv-en': cv => drawEnergy(cv), 'cv-fft': cv => drawFFT(cv),
-    'cv-d4': cv => drawCurve(cv, p => TH.comp(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4], 1e-6),
-    'cv-d5': cv => drawCurve(cv, p => TH.comp(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5], 1e-8),
+    'cv-d4': cv => drawCurve(cv, p => compV(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4] * noiseScale(4), 1e-6),
+    'cv-d5': cv => drawCurve(cv, p => compV(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5] * noiseScale(5), 1e-8),
     'cv-maha': cv => drawMaha(cv, 1), 'cv-m3': cv => { drawM3(cv, M3.tAnim); m3Kick(); },
   };
   requestAnimationFrame(() => {
@@ -1736,7 +1796,7 @@ async function makePDF() {
   y = T('Fundamentação: ' + ($('#fund').value.trim() || '(não preenchida)'), L, y, { gap: 3 });
   H2('2. Resultado estatístico');
   y = T(`Análise: ${S.trecho ? `trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'} · grandeza ${SYM[S.g][3]} · eixo ${params()[8][1]}.`, L, y);
-  y = T(`Mahalanobis com ${MH.keys.length} medidas (${MH.keys.join(', ')}): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}; limite de 99% (Hotelling, n = 20) = ${br(MH.lim99, 1)}; valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}. Leitura do painel: ${mainVerdict().res} para a pessoa (${mainVerdict().why}; regra de três saídas: típica abaixo do limite de 95%, atípica acima do de 99% com régua estável, inconclusiva no meio ou com régua instável). Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
+  y = T(`Distância à pessoa nas ${MH.keys.length} medidas (${MH.keys.join(', ')}): ${fDist(MH.d2)}, contra limite da pessoa de ${br(MH.lim99, 1)} (99%); raridade: ${raridade(MH.p)} [técnico: Mahalanobis D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}, limite de Hotelling n = 20, valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}]. Leitura do painel: ${mainVerdict().res} para a pessoa (${mainVerdict().why}; regra de três saídas: típica abaixo do limite de 95%, atípica acima do de 99% com régua estável, inconclusiva no meio ou com régua instável). Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
   y = T('O valor p mede só o quanto a questionada é atípica para a pessoa; não é a probabilidade de falsificação.', L, y, { i: true, s: 8.5, c: [93, 104, 120], gap: 3 });
   const H3 = S.m3hist || [], last = H3[H3.length - 1];
   if (last) {
@@ -1745,6 +1805,7 @@ async function makePDF() {
   const rows = [['Medida', 'Padrões (média ± dp)', 'Questionada', 'z']].concat(KEYS.map(k => { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k); return [LBL(k), `${br(mu, d)} ± ${br(sd, d)}`, br(V.MQ[k], d), sd > 1e-9 ? br((V.MQ[k] - mu) / sd, 1) : '—']; }));
   table(rows, [70, 50, 35, 19], { head: true });
   H2('3. Gráficos');
+  y = T(`Suavização das curvas nos gráficos: ${suavN()} de 10 (${SUAV_NOME[suavN()]})${suavN() ? ' — só o desenho; os números e o veredito usam o filtro padrão' : ''}.`, L, y, { s: 8.5, c: [93, 104, 120], gap: 2 });
   const imgs = [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
     [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => TH.comp(p, S.g, 2), 'acc', 'm/s²', D.NF[2], 1e-3), 174, 50], [`5ª derivada · ${SYM[S.g][3]}`, cv => drawCurve(cv, p => TH.comp(p, S.g, 5), 'd5', 'x10^8 mm/s^5', D.NF[5], 1e-8), 174, 50],
     [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50], ['Mahalanobis 3D (exploratório, vista atual)', cv => drawM3(cv, 1), 174, 95]];
@@ -1832,6 +1893,11 @@ function bind() {
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
+  const suavUI = () => { $('#suav').value = suavN(); $('#suav-o').textContent = `${suavN()} de 10 · ${SUAV_NOME[suavN()]}`; $('#suav-dica').textContent = suavDica(); $('#suav-dica').classList.toggle('warnt', suavFc(suavN()) < 13); };
+  let suavRaf = 0;
+  $('#suav').addEventListener('input', e => { S.suav = +e.target.value; suavUI(); cancelAnimationFrame(suavRaf); suavRaf = requestAnimationFrame(() => { for (const id of ['cv-acc', 'cv-pow', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id)); const sv = suavN() ? ` · suavizado ${suavN()}/10` : ''; for (const [id, base] of [['t-acc', /^(Aceleração[^·]*·[^·]*)/], ['t-pow', null], ['t-d4', null], ['t-d5', null]]) { const el = $('#' + id); el.textContent = el.textContent.replace(/ · suavizado \d+\/10$/, '') + sv; } if (BIG && ['cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(BIG)) DRAW[BIG]($('#cv-big')); }); });
+  $('#suav').addEventListener('change', () => log('Suavização das curvas', `${suavN()} de 10 (${SUAV_NOME[suavN()]}), só o desenho`));
+  suavUI();
   $('#tv').addEventListener('click', e => {
     if (e.target.closest('#tv-list')) { TVLIST = !TVLIST; renderTV(); return; }
     if (e.target.closest('#tv-open')) { tvOpen(TVSEL); return; }
