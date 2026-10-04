@@ -148,8 +148,8 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card span2 c-full"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
-      <div class="card span2 c-left"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. A palavra TÍPICA/ATÍPICA, o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado.</p></div>
-      <div class="card span2 c-right"><h3><span>Mahalanobis 3D · elipsoide de 3 medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = elipsoide de 95% da pessoa (zᵀR⁻¹z = limite de Hotelling com p = 3); contorno tracejado = 95%, pontilhado = 99%. O alongamento e a inclinação mostram como as três medidas variam juntas (matriz de correlação R); as linhas tracejadas internas são os eixos principais (autovetores de R). As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
+      <div class="card span2 c-left"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. A palavra TÍPICA/ATÍPICA, o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado.</p></div>
+      <div class="card span2 c-right"><h3><span>Mahalanobis 3D · elipsoide de 3 medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = elipsoide de 95% da pessoa (zᵀR⁻¹z = limite de Hotelling com p = 3); contorno tracejado = 95%, pontilhado = 99%. O alongamento e a inclinação mostram como as três medidas variam juntas (matriz de correlação R); as linhas tracejadas internas são os eixos principais (autovetores de R). As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
     </div>
   </section>
 
@@ -1093,14 +1093,34 @@ function mahaPair() {
 }
 const ease = x => 1 - (1 - Math.min(1, Math.max(0, x))) ** 3;
 const ph = (t, a, b) => ease((t - a) / (b - a));
+// Seta na borda para um valor fora da escala: parte de (sx,sy) na direção de (tx,ty) e para na borda do retângulo.
+function offArrow(c, sx, sy, tx, ty, R, L, D, col, P, lines) {
+  const dx = tx - sx, dy = ty - sy, pad = 12; let s = Infinity;
+  if (dx > 0) s = Math.min(s, (R.r - pad - sx) / dx); if (dx < 0) s = Math.min(s, (R.l + pad - sx) / dx);
+  if (dy > 0) s = Math.min(s, (R.b - pad - sy) / dy); if (dy < 0) s = Math.min(s, (R.t + pad - sy) / dy);
+  if (!Number.isFinite(s) || s <= 0) return;
+  const ex = sx + dx * s, ey = sy + dy * s, ang = Math.atan2(dy, dx);
+  if (L > 0) { c.strokeStyle = col; c.globalAlpha = 0.7; c.setLineDash([5, 4]); c.lineWidth = 1.3; c.beginPath(); c.moveTo(sx, sy); c.lineTo(sx + (ex - sx) * L, sy + (ey - sy) * L); c.stroke(); c.setLineDash([]); c.globalAlpha = 1; }
+  if (D <= 0) return;
+  c.globalAlpha = D; c.fillStyle = col; c.save(); c.translate(ex, ey); c.rotate(ang); c.beginPath(); c.moveTo(9, 0); c.lineTo(-7, -7); c.lineTo(-3, 0); c.lineTo(-7, 7); c.closePath(); c.fill(); c.restore();
+  const sans = css('--sans'), txt = ['questionada fora da escala', ...lines];
+  c.font = 'bold 11px ' + sans; const tw = Math.max(...txt.map(t => c.measureText(t).width)) + 4, th = 13 * txt.length;
+  let lx = ex - Math.cos(ang) * 16 - (Math.cos(ang) > 0.3 ? tw : Math.cos(ang) < -0.3 ? 0 : tw / 2), ly = ey - Math.sin(ang) * 16 - (Math.sin(ang) > 0.3 ? th : Math.sin(ang) < -0.3 ? 0 : th / 2);
+  lx = Math.max(R.l + 4, Math.min(R.r - 4 - tw, lx)); ly = Math.max(R.t + 4, Math.min(R.b - 4 - th, ly));
+  c.textAlign = 'left'; txt.forEach((t, i) => { const yy = ly + 10 + 13 * i; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(t, lx, yy); c.restore(); c.fillStyle = col; c.font = (i ? '600 ' : 'bold ') + '11px ' + sans; c.fillText(t, lx, yy); });
+  c.globalAlpha = 1;
+}
 function drawMaha(cv, t = 1) {
   const MH = V.MH, pr = mahaPair(), kx = S.mx, ky = S.my;
   const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), atip = MH.d2 > MH.lim99;
   if (!pr.ok) { const F = frame(cv, [0, 1], [0, 1], { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52 }); F.done(); F.c.fillStyle = F.P.mut; F.c.textAlign = 'center'; F.c.font = '12px ' + css('--sans'); F.c.fillText('Uma das medidas não varia nos padrões: escolha outro par.', F.w / 2, F.h / 2); return; }
-  const { A, mu, S2, q, dq, r } = pr, rmax = 1.7 * Math.sqrt(l99);
-  const pt = r <= rmax ? q : [mu[0] + dq[0] * rmax / r, mu[1] + dq[1] * rmax / r];
+  const { A, mu, S2, q, r } = pr, rmax = 1.7 * Math.sqrt(l99);
+  // Regra: a questionada só é desenhada como ponto na posição verdadeira. Se não couber na escala da pessoa,
+  // vira uma seta na borda com os valores reais (nunca um ponto deslocado). "Escala real" abre os eixos até ela.
+  let fora = !S.mahaReal && r > rmax;
   const e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
-  const xs = [...e99.map(p => p[0]), pt[0], ...A.map(a => a[0])], ys = [...e99.map(p => p[1]), pt[1], ...A.map(a => a[1])];
+  const xs = [...e99.map(p => p[0]), ...A.map(a => a[0]), ...(fora ? [] : [q[0]])], ys = [...e99.map(p => p[1]), ...A.map(a => a[1]), ...(fora ? [] : [q[1]])];
+  const pt = q;
   const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
   const narrow = (cv.clientWidth || 600) < 560, MT = narrow ? 74 : 50;
   const F = frame(cv, extent([xs], 0.12), extent([ys], 0.12), { xlabel: LBL(kx), ylabel: LBL(ky), ml: 52, mt: MT }), { c, X, Y, P } = F;
@@ -1120,14 +1140,15 @@ function drawMaha(cv, t = 1) {
   }
   // 3) linha da média até a questionada
   const L = ph(t, 0.62, 0.82), col = atip ? P.red : P.grn;
-  if (L > 0) {
+  { const qx0 = X(q[0]), qy0 = Y(q[1]); if (!fora && !(qx0 >= F.m.l - 0.5 && qx0 <= F.w - F.m.r + 0.5 && qy0 >= F.m.t - 0.5 && qy0 <= F.h - F.m.b + 0.5)) fora = true; }
+  if (fora) offArrow(c, X(mu[0]), Y(mu[1]), X(q[0]), Y(q[1]), { l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b }, L, ph(t, 0.8, 0.9), col, P, [`${LBL(kx)}: ${br(q[0], dec(kx))}`, `${LBL(ky)}: ${br(q[1], dec(ky))}`]);
+  if (L > 0 && !fora) {
     const ex = mu[0] + (pt[0] - mu[0]) * L, ey = mu[1] + (pt[1] - mu[1]) * L;
     c.strokeStyle = P.mut; c.setLineDash([3, 3]); c.lineWidth = 1; c.beginPath(); c.moveTo(X(mu[0]), Y(mu[1])); c.lineTo(X(ex), Y(ey)); c.stroke(); c.setLineDash([]);
-    if (r > rmax && L > 0.86) { c.fillStyle = P.fg; c.font = 'bold 13px ' + css('--sans'); c.textAlign = 'center'; c.fillText('//', X(mu[0] + (pt[0] - mu[0]) * 0.86), Y(mu[1] + (pt[1] - mu[1]) * 0.86) + 4); }
   }
   // 4) ponto da questionada com pulso
   const D = ph(t, 0.8, 0.9);
-  if (D > 0) {
+  if (D > 0 && !fora) {
     const pu = t < 1 ? Math.max(0, Math.sin(Math.PI * Math.min(1, (t - 0.8) / 0.2))) : 0;
     if (pu > 0) { c.strokeStyle = col; c.globalAlpha = 0.5 * pu; c.lineWidth = 2; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 6 + 14 * pu, 0, 7); c.stroke(); c.globalAlpha = 1; }
     c.fillStyle = col; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 5.5 * D, 0, 7); c.fill();
@@ -1148,7 +1169,9 @@ function drawMaha(cv, t = 1) {
       c.textAlign = 'left'; c.font = 'bold 22px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.m.l, 30);
       c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, F.w - F.m.r, 20); c.fillStyle = P.mut; c.fillText(L2, F.w - F.m.r, 36);
     }
-    if (r > rmax) { c.fillStyle = P.mut; c.textAlign = 'left'; c.font = '10px ' + sans; halo('// distância encurtada no desenho; valores reais no rótulo', F.m.l + 6, F.h - F.m.b - 6); }
+    c.fillStyle = P.mut; c.textAlign = 'left'; c.font = '10px ' + sans;
+    if (fora) halo(narrow ? 'Seta: fora da escala, só indica a direção' : 'Seta = questionada fora da escala; indica só a direção. Valores reais no rótulo; veja em "escala real".', F.m.l + 6, F.h - F.m.b - 6);
+    else if (S.mahaReal) halo(narrow ? 'Escala real: posições verdadeiras' : 'Escala real: eixos abertos até a questionada; todas as posições são as verdadeiras.', F.m.l + 6, F.h - F.m.b - 6);
     c.globalAlpha = 1;
   }
 }
@@ -1194,8 +1217,8 @@ function drawM3(cv, t = 1) {
   const P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), mono = css('--mono'), MH = V.MH, atip = MH.d2 > MH.lim99, col = atip ? P.red : P.grn;
   const M = maha3(), narrow = w < 560, top = narrow ? 70 : 46;
   if (!M.ok) { c.fillStyle = P.mut; c.font = '12px ' + sans; c.textAlign = 'center'; c.fillText('Uma das medidas não varia nos padrões ou duas são iguais: escolha outro trio.', w / 2, h / 2); return M; }
-  const { eg, Z, zq, r, l95, l99 } = M, rmax = 1.3 * Math.sqrt(l99), clip = r > rmax, q = clip ? zq.map(v => v * rmax / r) : zq;
-  const B = 1.06 * Math.max(Math.sqrt(l99), ...Z.flat().map(Math.abs), ...q.map(Math.abs));
+  const { eg, Z, zq, r, l95, l99 } = M, rmax = 1.3 * Math.sqrt(l99), clip = !S.mahaReal && r > rmax, q = zq; // nunca desloca a questionada: fora da escala vira seta
+  const B = 1.06 * Math.max(Math.sqrt(l99), ...Z.flat().map(Math.abs), ...(clip ? [] : q.map(Math.abs)));
   const cy_ = Math.cos(M3.yaw), sy_ = Math.sin(M3.yaw), cp = Math.cos(M3.pitch), sp = Math.sin(M3.pitch);
   const view = p => { const x1 = p[0] * cy_ - p[1] * sy_, y1 = p[0] * sy_ + p[1] * cy_; return [x1, y1 * cp - p[2] * sp, y1 * sp + p[2] * cp]; }; // [tela x, profundidade, tela cima]
   const bot = narrow ? 66 : 26, cx = w / 2, cyy = top + (h - top - bot) / 2, sc = Math.min(w * 0.82, h - top - bot - 8) / (2 * B * (narrow ? 1.35 : 1.5));
@@ -1266,21 +1289,32 @@ function drawM3(cv, t = 1) {
   if (g > 0.6) { c.strokeStyle = P.acc; c.globalAlpha = 0.45 * g; c.setLineDash([3, 3]); c.lineWidth = 1; for (const a of ax) { const p0 = S2(a.map(x => -x)), p1 = S2(a); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.stroke(); } c.setLineDash([]); c.globalAlpha = 1; }
   const m0 = S2([0, 0, 0]); c.fillStyle = P.acc; c.beginPath(); c.arc(m0[0], m0[1], 3, 0, 7); c.fill();
   // questionada: linha da média, haste até o chão e ponto
-  if (qa > 0) {
+  const dec3 = k => (k.includes('impulso') || k.includes('energia') ? 3 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
+  if (qa > 0 && clip) {
+    // fora da escala: seta da média até a face da caixa, na direção verdadeira; sem ponto, sem haste
+    const f = 0.98 * B / Math.max(...q.map(Math.abs)), e = q.map(v => v * f * qa), se = S2(e);
+    c.strokeStyle = col; c.globalAlpha = 0.75; c.setLineDash([5, 4]); c.lineWidth = 1.3; c.beginPath(); c.moveTo(m0[0], m0[1]); c.lineTo(se[0], se[1]); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+    if (qa > 0.9) {
+      const ang = Math.atan2(se[1] - m0[1], se[0] - m0[0]); c.fillStyle = col; c.save(); c.translate(se[0], se[1]); c.rotate(ang); c.beginPath(); c.moveTo(9, 0); c.lineTo(-7, -7); c.lineTo(-3, 0); c.lineTo(-7, 7); c.closePath(); c.fill(); c.restore();
+      const txt = ['questionada fora da escala', ...M.ks.map((k, j) => `${['X', 'Y', 'Z'][j]}: ${br(V.MQ[k], dec3(k))}`)];
+      c.font = 'bold 11px ' + sans; const tw = Math.max(...txt.map(t => c.measureText(t).width)) + 4, th = 13 * txt.length;
+      const lx = 10, ly = top + 4; // rótulo fixo no canto: em 3D a seta pode cruzar o elipsoide na projeção
+      c.textAlign = 'left'; txt.forEach((t, i) => { const yy = ly + 10 + 13 * i; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(t, lx, yy); c.restore(); c.fillStyle = col; c.fillText(t, lx, yy); });
+    }
+  } else if (qa > 0) {
     const qq = q.map(v => v * qa), sq = S2(qq), fl = S2([qq[0], qq[1], -B]);
     c.strokeStyle = col; c.globalAlpha = 0.5; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(sq[0], sq[1]); c.lineTo(fl[0], fl[1]); c.stroke();
     c.fillStyle = col; c.globalAlpha = 0.3; c.beginPath(); c.ellipse(fl[0], fl[1], 4, 2, 0, 0, 7); c.fill();
     c.globalAlpha = 1; c.strokeStyle = P.mut; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(m0[0], m0[1]); c.lineTo(sq[0], sq[1]); c.stroke(); c.setLineDash([]);
-    if (clip && qa > 0.9) { const mk = S2(q.map(v => v * 0.86)); c.fillStyle = P.fg; c.font = 'bold 13px ' + sans; c.textAlign = 'center'; c.fillText('//', mk[0], mk[1] + 4); }
     const grd = c.createRadialGradient(sq[0] - 2, sq[1] - 2, 1, sq[0], sq[1], 7); grd.addColorStop(0, P.panel); grd.addColorStop(0.35, col); grd.addColorStop(1, col);
     c.fillStyle = grd; c.beginPath(); c.arc(sq[0], sq[1], 6.5 * qa, 0, 7); c.fill();
     if (qa > 0.95) {
       c.font = 'bold 11px ' + sans; c.textAlign = 'center'; const tx = Math.max(60, Math.min(w - 60, sq[0]));
-      const dec = k => (k.includes('impulso') || k.includes('energia') ? 3 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
-      const L1 = 'questionada', L2 = M.ks.map(k => br(V.MQ[k], dec(k))).join(' · ');
+      const L1 = 'questionada', L2 = M.ks.map(k => br(V.MQ[k], dec3(k))).join(' · ');
       for (const [s, dy] of [[L1, -16], [L2, -3]]) { c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(s, tx, sq[1] + dy - 6); c.restore(); c.fillStyle = col; c.fillText(s, tx, sq[1] + dy - 6); }
     }
   }
+
   // cabeçalho: veredito do modelo (4 medidas) e D² deste trio
   if (hd > 0) {
     c.globalAlpha = hd; const L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`;
@@ -1288,7 +1322,7 @@ function drawM3(cv, t = 1) {
     c.fillStyle = col; c.textAlign = 'left';
     if (narrow) { c.font = 'bold 20px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', 10, 22); c.font = '11px ' + sans; c.fillText(L1, 10, 40); c.fillStyle = P.mut; c.fillText(L2, 10, 54); c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
     else { c.font = 'bold 22px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', 10, 30); c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, w - 10, 18); c.fillStyle = P.mut; c.fillText(L2, w - 10, 33); c.textAlign = 'left'; c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
-    c.textAlign = 'right'; c.font = '10px ' + sans; c.fillStyle = P.mut; if (!narrow) c.fillText(clip ? '// distância encurtada no desenho · arraste para girar' : 'arraste para girar', w - 10, h - 8);
+    c.textAlign = 'right'; c.font = '10px ' + sans; c.fillStyle = P.mut; if (!narrow) c.fillText(clip ? 'seta = só direção · arraste para girar' : S.mahaReal ? 'escala real · arraste para girar' : 'arraste para girar', w - 10, h - 8);
     c.globalAlpha = 1;
   }
   return M;
@@ -1651,6 +1685,9 @@ function bind() {
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
+  const realUI = () => { for (const id of ['#mh-real', '#m3-real']) { const b = $(id); b.classList.toggle('on', !!S.mahaReal); b.textContent = S.mahaReal ? '⤡ escala da pessoa' : '⤢ escala real'; } };
+  for (const id of ['#mh-real', '#m3-real']) $(id).addEventListener('click', () => { S.mahaReal = !S.mahaReal; realUI(); log('Mahalanobis: escala', S.mahaReal ? 'real (eixos até a questionada)' : 'da pessoa (questionada fora da escala vira seta)'); drawMaha($('#cv-maha'), 1); drawM3($('#cv-m3'), M3.tAnim); if (BIG === 'cv-maha') drawMaha($('#cv-big'), 1); });
+  realUI();
   let lastTap = { t: 0, id: '', x: 0, y: 0 };
   $$('.card canvas').forEach(cv => {
     cv.addEventListener('dblclick', e => { e.preventDefault(); openBig(cv.id); });
