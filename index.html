@@ -147,6 +147,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas></div>
       <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 rows3"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. A palavra TÍPICA/ATÍPICA, o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado.</p></div>
+      <div class="card span2 rows3"><h3><span>Mahalanobis 3D · elipsoide de 3 medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button></span></h3><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = elipsoide de 95% da pessoa (zᵀR⁻¹z = limite de Hotelling com p = 3); contorno tracejado = 95%, pontilhado = 99%. O alongamento e a inclinação mostram como as três medidas variam juntas (matriz de correlação R); as linhas tracejadas internas são os eixos principais (autovetores de R). As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★.</p></div>
       <div class="card span2"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
     </div>
@@ -788,7 +789,7 @@ const PERITO = 'Nome do Perito', CPFP = '***.456.789-**';
 
 const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira' : n.startsWith('João') ? 'construção' : 'imitação');
 const DADOS_ = null;
-const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'tempo total (s)', my: 'impulso total (kgf·s)',
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'tempo total (s)', my: 'impulso total (kgf·s)', m3: ['tempo total (s)', 'velocidade média (mm/s)', 'impulso total (kgf·s)'],
   crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false };
 let D = null, V = null;
 const cache = {};
@@ -1011,7 +1012,7 @@ function drawCompass(cv) {
   for (let i = 0; i < D.Q.t.length; i++) { if (!(V.selq[i] && D.Q.C[i])) { pen = false; continue; } const [x, y] = pt(D.Q.rot[i], D.Q.tilt[i]); if (pen) c.lineTo(x, y); else { c.moveTo(x, y); pen = true; } } c.stroke();
   const mr = TH.mean(V.M.map(m => m['rotação média (°)'])), mt = TH.mean(V.M.map(m => m['inclinação média (°)'])), [x, y] = pt(mr, mt);
   c.strokeStyle = P.fg; c.lineWidth = 1.5; c.beginPath(); c.moveTo(x - 4, y - 4); c.lineTo(x + 4, y + 4); c.moveTo(x + 4, y - 4); c.lineTo(x - 4, y + 4); c.stroke();
-  c.fillStyle = P.mut; c.fillText('ângulo: rotação no eixo · raio: inclinação · ✕ média', cx, h - 4);
+  c.fillStyle = P.mut; c.fillText('ângulo: rotação no eixo (a validar) · raio: inclinação · ✕ média', cx, h - 4);
 }
 function drawHist(cv) {
   const g = S.g, sels = V.sels, selq = V.selq, vals = []; D.PP.forEach((p, k) => { const v = TH.comp(p, g, 1); for (let i = 0; i < v.length; i++) if (sels[k][i] && p.C[i]) vals.push(v[i]); });
@@ -1161,6 +1162,184 @@ function playMaha(force) {
   mahaRaf = requestAnimationFrame(step);
 }
 
+/* ---------------- Mahalanobis 3D: elipsoide de 3 medidas ----------------
+   Cada medida é padronizada pelos 20 padrões (z = (x − média)/desvio); a forma do elipsoide vem da matriz de
+   correlação R (3×3) dos padrões. Superfície: zᵀR⁻¹z = k, com k = limite de Hotelling para p = 3 (95% e 99%).
+   Eixos do elipsoide = autovetores de R; semi-eixos = √(k·λ). Projeção ortográfica, giro por arraste. */
+const M3 = { yaw: -0.75, pitch: 0.38, auto: true, drag: null, raf: 0, t0: 0, tAnim: 1, last: 0, vis: false };
+function jacobi3(A) {
+  const a = A.map(r => r.slice()), E = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+  for (let sw = 0; sw < 60; sw++) {
+    if (a[0][1] ** 2 + a[0][2] ** 2 + a[1][2] ** 2 < 1e-22) break;
+    for (const [p, q] of [[0, 1], [0, 2], [1, 2]]) {
+      if (Math.abs(a[p][q]) < 1e-300) continue;
+      const th = 0.5 * Math.atan2(2 * a[p][q], a[q][q] - a[p][p]), c = Math.cos(th), s = Math.sin(th);
+      for (let k = 0; k < 3; k++) { const x = a[k][p], y = a[k][q]; a[k][p] = c * x - s * y; a[k][q] = s * x + c * y; }
+      for (let k = 0; k < 3; k++) { const x = a[p][k], y = a[q][k]; a[p][k] = c * x - s * y; a[q][k] = s * x + c * y; }
+      for (let k = 0; k < 3; k++) { const x = E[k][p], y = E[k][q]; E[k][p] = c * x - s * y; E[k][q] = s * x + c * y; }
+    }
+  }
+  return { val: [a[0][0], a[1][1], a[2][2]], vec: [0, 1, 2].map(j => [E[0][j], E[1][j], E[2][j]]) };
+}
+function maha3() {
+  const ks = S.m3, n = V.M.length, A = V.M.map(m => ks.map(k => m[k]));
+  const mu = [0, 1, 2].map(j => TH.mean(A.map(a => a[j]))), sd = [0, 1, 2].map(j => Math.sqrt(A.reduce((s, a) => s + (a[j] - mu[j]) ** 2, 0) / (n - 1)));
+  if (sd.some(s => !(s > 1e-12))) return { ok: false, ks };
+  const Z = A.map(a => a.map((v, j) => (v - mu[j]) / sd[j])), R = [0, 1, 2].map(i => [0, 1, 2].map(j => Z.reduce((s, z) => s + z[i] * z[j], 0) / (n - 1)));
+  const eg = jacobi3(R); if (Math.min(...eg.val) < 1e-9) return { ok: false, ks };
+  const zq = ks.map((k, j) => (V.MQ[k] - mu[j]) / sd[j]), d2 = eg.vec.reduce((s, v, i) => s + (v[0] * zq[0] + v[1] * zq[1] + v[2] * zq[2]) ** 2 / eg.val[i], 0);
+  return { ok: true, ks, A, Z, mu, sd, R, eg, zq, d2, r: Math.sqrt(d2), l95: TH.hotLim(0.95, n, 3), l99: TH.hotLim(0.99, n, 3), n };
+}
+function drawM3(cv, t = 1) {
+  const P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), mono = css('--mono'), MH = V.MH, atip = MH.d2 > MH.lim99, col = atip ? P.red : P.grn;
+  const M = maha3(), narrow = w < 560, top = narrow ? 70 : 46;
+  if (!M.ok) { c.fillStyle = P.mut; c.font = '12px ' + sans; c.textAlign = 'center'; c.fillText('Uma das medidas não varia nos padrões ou duas são iguais: escolha outro trio.', w / 2, h / 2); return M; }
+  const { eg, Z, zq, r, l95, l99 } = M, rmax = 1.3 * Math.sqrt(l99), clip = r > rmax, q = clip ? zq.map(v => v * rmax / r) : zq;
+  const B = 1.06 * Math.max(Math.sqrt(l99), ...Z.flat().map(Math.abs), ...q.map(Math.abs));
+  const cy_ = Math.cos(M3.yaw), sy_ = Math.sin(M3.yaw), cp = Math.cos(M3.pitch), sp = Math.sin(M3.pitch);
+  const view = p => { const x1 = p[0] * cy_ - p[1] * sy_, y1 = p[0] * sy_ + p[1] * cy_; return [x1, y1 * cp - p[2] * sp, y1 * sp + p[2] * cp]; }; // [tela x, profundidade, tela cima]
+  const bot = narrow ? 66 : 26, cx = w / 2, cyy = top + (h - top - bot) / 2, sc = Math.min(w * 0.82, h - top - bot - 8) / (2 * B * (narrow ? 1.35 : 1.5));
+  const S2 = p => { const v = view(p); return [cx + sc * v[0], cyy - sc * v[2], v[1]]; };
+  const g = ph(t, 0.15, 0.6), dots = ph(t, 0, 0.35), qa = ph(t, 0.62, 0.85), hd = ph(t, 0.8, 1);
+  // caixa e chão
+  const corners = [-1, 1].flatMap(a => [-1, 1].flatMap(b => [-1, 1].map(d => [a * B, b * B, d * B])));
+  c.lineWidth = 1; c.strokeStyle = P.grid;
+  for (let i = 0; i < 8; i++) for (let j = i + 1; j < 8; j++) { const dd = [0, 1, 2].filter(k => corners[i][k] !== corners[j][k]); if (dd.length !== 1) continue; const a = S2(corners[i]), b = S2(corners[j]); c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); }
+  c.globalAlpha = 0.55;
+  for (let k = -2; k <= 2; k++) { const v = k * B / 2.5; for (const [p0, p1] of [[[v, -B, -B], [v, B, -B]], [[-B, v, -B], [B, v, -B]]]) { const a = S2(p0), b = S2(p1); c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); } }
+  c.globalAlpha = 1;
+  // eixos: rótulo e valores nas três arestas que saem do canto de baixo mais próximo do observador
+  const base = corners.filter(p => p[2] === -B).sort((a, b) => S2(a)[2] - S2(b)[2])[0];
+  c.font = '10px ' + mono;
+  for (let j = 0; j < 3; j++) {
+    const e = base.slice(); e[j] = -base[j]; const a = S2(base), b = S2(e), mid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+    const out = [mid[0] - cx, mid[1] - cyy], L = Math.hypot(...out) || 1, off = j === 2 ? [-1, 0] : [out[0] / L, out[1] / L];
+    c.strokeStyle = P.mut; c.lineWidth = 1.2; c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+    const val = s => M.mu[j] + s * M.sd[j], dec = M.ks[j].includes('impulso') || M.ks[j].includes('energia') ? 3 : M.ks[j].includes('tempo') || M.ks[j].includes('trocas') ? 2 : 1;
+    const full = ['X', 'Y', 'Z'][j] + ' · ' + LBL(M.ks[j]).replace(' · a validar', ' (a validar)'), lab = narrow ? ['X', 'Y', 'Z'][j] : full, rng = narrow ? '' : `${br(val(-B), dec)} a ${br(val(B), dec)}`;
+    if (narrow) { c.textAlign = 'left'; c.fillStyle = P.fg; c.font = '600 10.5px ' + sans; c.fillText(full, 10, h - 52 + 12 * j); c.fillStyle = P.mut; c.font = '10px ' + mono; c.textAlign = 'right'; c.fillText(`${br(val(-B), dec)} a ${br(val(B), dec)}`, w - 10, h - 52 + 12 * j); }
+    const lx = mid[0] + off[0] * 22, ly = mid[1] + off[1] * 18, al = j === 2 ? 'right' : off[0] > 0.35 ? 'left' : off[0] < -0.35 ? 'right' : 'center';
+    c.font = '600 11px ' + sans; const tw = Math.max(c.measureText(lab).width, rng.length * 6.2), x0 = al === 'left' ? lx : al === 'right' ? lx - tw : lx - tw / 2, fx = lx + Math.max(4 - x0, Math.min(0, w - 4 - (x0 + tw)));
+    c.textAlign = al; c.fillStyle = P.fg; c.fillText(lab, fx, ly); c.fillStyle = P.mut; c.font = '10px ' + mono; c.fillText(rng, fx, ly + 12);
+  }
+  // sombras no chão (ajudam a ler a profundidade)
+  c.fillStyle = P.fg; c.globalAlpha = 0.12 * dots;
+  for (const z of Z) { const s = S2([z[0], z[1], -B]); c.beginPath(); c.ellipse(s[0], s[1], 3, 1.6, 0, 0, 7); c.fill(); }
+  c.globalAlpha = 1;
+  // superfície do elipsoide de 95% (malha sombreada) + pontos, desenhados de trás para a frente
+  const items = [], NU = 26, NV = 14, k95 = l95 * g * g, ax = eg.vec.map((v, i) => v.map(x => x * Math.sqrt(k95 * eg.val[i])));
+  const surf = (u, v) => { const a = Math.cos(u) * Math.sin(v), b = Math.sin(u) * Math.sin(v), d = Math.cos(v); return [0, 1, 2].map(k => a * ax[0][k] + b * ax[1][k] + d * ax[2][k]); };
+  const Rinv = [0, 1, 2].map(i => [0, 1, 2].map(j => eg.vec.reduce((s, v, m) => s + v[i] * v[j] / eg.val[m], 0)));
+  const lightV = [-0.45, -0.75, 0.5]; // luz vinda da frente, de cima e da esquerda (coordenadas de vista)
+  if (g > 0.02) for (let i = 0; i < NU; i++) for (let j = 0; j < NV; j++) {
+    const u0 = 2 * Math.PI * i / NU, u1 = 2 * Math.PI * (i + 1) / NU, v0 = Math.PI * j / NV, v1 = Math.PI * (j + 1) / NV;
+    const ps = [surf(u0, v0), surf(u1, v0), surf(u1, v1), surf(u0, v1)], ctr = surf((u0 + u1) / 2, (v0 + v1) / 2);
+    const nw = [0, 1, 2].map(k => Rinv[k][0] * ctr[0] + Rinv[k][1] * ctr[1] + Rinv[k][2] * ctr[2]), nv = view(nw), nl = Math.hypot(...nv) || 1;
+    const lam = Math.max(0, (nv[0] * lightV[0] + nv[1] * lightV[1] + nv[2] * lightV[2]) / nl / Math.hypot(...lightV));
+    items.push({ d: view(ctr)[1], quad: ps.map(S2), lam, facing: nv[1] < 0 });
+  }
+  Z.forEach((z, i) => items.push({ d: view(z)[1], pt: S2(z), i }));
+  items.sort((a, b) => b.d - a.d);
+  for (const it of items) {
+    if (it.quad) {
+      c.beginPath(); it.quad.forEach(([x, y], k) => (k ? c.lineTo(x, y) : c.moveTo(x, y))); c.closePath();
+      c.fillStyle = P.acc; c.globalAlpha = (it.facing ? 0.07 : 0.035) + 0.16 * it.lam * (it.facing ? 1 : 0.4); c.fill();
+      c.strokeStyle = P.acc; c.globalAlpha = it.facing ? 0.22 : 0.08; c.lineWidth = 0.6; c.stroke(); c.globalAlpha = 1;
+    } else {
+      const al = ph(t, 0.01 + it.i * 0.012, 0.08 + it.i * 0.012); if (al <= 0) continue;
+      const rr = 3.4 - 1.2 * Math.max(-1, Math.min(1, it.d / B)) * 0.5;
+      c.globalAlpha = al; c.fillStyle = P.fg; c.beginPath(); c.arc(it.pt[0], it.pt[1], rr, 0, 7); c.fill();
+      c.strokeStyle = P.panel; c.lineWidth = 0.8; c.stroke(); c.globalAlpha = 1;
+    }
+  }
+  // contorno exato dos elipsoides projetados (95% tracejado, 99% pontilhado): elipse da submatriz de vista
+  const Q = [view([1, 0, 0]), view([0, 1, 0]), view([0, 0, 1])]; // colunas = imagem dos eixos
+  const Rv = (k) => { const C = [[0, 0], [0, 0]], rows = [0, 2]; for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) { let s = 0; for (let i = 0; i < 3; i++) for (let j = 0; j < 3; j++) s += Q[i][rows[a]] * M.R[i][j] * Q[j][rows[b]]; C[a][b] = k * s; } return C; };
+  if (g > 0.02) for (const [k, dash, lab] of [[l95 * g * g, [6, 4], '95%'], [l99 * g * g, [2, 3], '99%']]) {
+    const C = Rv(k), E = ellipsePts([0, 0], C, 1);
+    c.strokeStyle = P.acc; c.lineWidth = 1.3; c.setLineDash(dash); c.globalAlpha = g; c.beginPath();
+    E.forEach(([x, y], i) => { const X = cx + sc * x, Y = cyy - sc * y; i ? c.lineTo(X, Y) : c.moveTo(X, Y); }); c.stroke(); c.setLineDash([]);
+    if (g > 0.95) { const tp = E.reduce((a, p) => (p[1] > a[1] ? p : a)); c.fillStyle = P.acc; c.font = 'bold 11px ' + sans; c.textAlign = 'center'; c.fillText(lab, cx + sc * tp[0], cyy - sc * tp[1] - 5); }
+    c.globalAlpha = 1;
+  }
+  // eixos principais do elipsoide
+  if (g > 0.6) { c.strokeStyle = P.acc; c.globalAlpha = 0.45 * g; c.setLineDash([3, 3]); c.lineWidth = 1; for (const a of ax) { const p0 = S2(a.map(x => -x)), p1 = S2(a); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.stroke(); } c.setLineDash([]); c.globalAlpha = 1; }
+  const m0 = S2([0, 0, 0]); c.fillStyle = P.acc; c.beginPath(); c.arc(m0[0], m0[1], 3, 0, 7); c.fill();
+  // questionada: linha da média, haste até o chão e ponto
+  if (qa > 0) {
+    const qq = q.map(v => v * qa), sq = S2(qq), fl = S2([qq[0], qq[1], -B]);
+    c.strokeStyle = col; c.globalAlpha = 0.5; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(sq[0], sq[1]); c.lineTo(fl[0], fl[1]); c.stroke();
+    c.fillStyle = col; c.globalAlpha = 0.3; c.beginPath(); c.ellipse(fl[0], fl[1], 4, 2, 0, 0, 7); c.fill();
+    c.globalAlpha = 1; c.strokeStyle = P.mut; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(m0[0], m0[1]); c.lineTo(sq[0], sq[1]); c.stroke(); c.setLineDash([]);
+    if (clip && qa > 0.9) { const mk = S2(q.map(v => v * 0.86)); c.fillStyle = P.fg; c.font = 'bold 13px ' + sans; c.textAlign = 'center'; c.fillText('//', mk[0], mk[1] + 4); }
+    const grd = c.createRadialGradient(sq[0] - 2, sq[1] - 2, 1, sq[0], sq[1], 7); grd.addColorStop(0, P.panel); grd.addColorStop(0.35, col); grd.addColorStop(1, col);
+    c.fillStyle = grd; c.beginPath(); c.arc(sq[0], sq[1], 6.5 * qa, 0, 7); c.fill();
+    if (qa > 0.95) {
+      c.font = 'bold 11px ' + sans; c.textAlign = 'center'; const tx = Math.max(60, Math.min(w - 60, sq[0]));
+      const dec = k => (k.includes('impulso') || k.includes('energia') ? 3 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
+      const L1 = 'questionada', L2 = M.ks.map(k => br(V.MQ[k], dec(k))).join(' · ');
+      for (const [s, dy] of [[L1, -16], [L2, -3]]) { c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(s, tx, sq[1] + dy - 6); c.restore(); c.fillStyle = col; c.fillText(s, tx, sq[1] + dy - 6); }
+    }
+  }
+  // cabeçalho: veredito do modelo (4 medidas) e D² deste trio
+  if (hd > 0) {
+    c.globalAlpha = hd; const L1 = `modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`;
+    const L2 = `este trio: D² = ${br(M.d2, M.d2 > 100 ? 0 : 1)} · limite 99% (p = 3) = ${br(l99, 1)}`, L3 = `correlações: r(X,Y) = ${br(M.R[0][1], 2)} · r(X,Z) = ${br(M.R[0][2], 2)} · r(Y,Z) = ${br(M.R[1][2], 2)}`;
+    c.fillStyle = col; c.textAlign = 'left';
+    if (narrow) { c.font = 'bold 20px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', 10, 22); c.font = '11px ' + sans; c.fillText(L1, 10, 40); c.fillStyle = P.mut; c.fillText(L2, 10, 54); c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
+    else { c.font = 'bold 22px ' + sans; c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', 10, 30); c.font = '11px ' + sans; c.textAlign = 'right'; c.fillText('para a pessoa · ' + L1, w - 10, 18); c.fillStyle = P.mut; c.fillText(L2, w - 10, 33); c.textAlign = 'left'; c.font = '10px ' + sans; c.fillText(L3, 10, h - 8); }
+    c.textAlign = 'right'; c.font = '10px ' + sans; c.fillStyle = P.mut; if (!narrow) c.fillText(clip ? '// distância encurtada no desenho · arraste para girar' : 'arraste para girar', w - 10, h - 8);
+    c.globalAlpha = 1;
+  }
+  return M;
+}
+function m3Frame(now) {
+  M3.raf = 0; const dt = M3.last ? Math.min(0.1, (now - M3.last) / 1000) : 0; M3.last = now;
+  if (M3.auto && !M3.drag) M3.yaw += dt * 0.32;
+  const t = M3.tAnim < 1 ? Math.min(1, (now - M3.t0) / 2600) : 1; M3.tAnim = t;
+  if (M3.vis) drawM3($('#cv-m3'), t); if (BIG === 'cv-m3') drawM3($('#cv-big'), t);
+  if ((M3.auto || t < 1) && (M3.vis || BIG === 'cv-m3')) M3.raf = requestAnimationFrame(m3Frame); else M3.last = 0;
+}
+function m3Kick() { if (!M3.raf) { M3.last = 0; M3.raf = requestAnimationFrame(m3Frame); } }
+function m3Play() { M3.t0 = performance.now(); M3.tAnim = 0; m3Kick(); }
+function m3Auto(on) { M3.auto = on; $('#m3-spin').textContent = on ? '❚❚ parar' : '⟳ girar'; $('#m3-spin').classList.toggle('on', on); if (on) m3Kick(); }
+function m3Bind(cv) {
+  cv.addEventListener('pointerdown', e => { M3.drag = { x: e.clientX, y: e.clientY, id: e.pointerId, moved: false }; });
+  cv.addEventListener('pointermove', e => {
+    const d = M3.drag; if (!d || d.id !== e.pointerId) return; const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    if (!d.moved && Math.hypot(dx, dy) < 4) return; if (!d.moved) { d.moved = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} if (M3.auto) m3Auto(false); }
+    M3.yaw += dx * 0.01; M3.pitch = Math.max(-0.1, Math.min(1.15, M3.pitch + dy * 0.008)); d.x = e.clientX; d.y = e.clientY;
+    if (cv.id === 'cv-big') drawM3(cv, M3.tAnim); else drawM3(cv, M3.tAnim);
+  });
+  const end = () => { M3.drag = null; }; cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+}
+function m3Init() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) M3.auto = false;
+  m3Bind($('#cv-m3')); m3Bind($('#cv-big'));
+  $('#m3-spin').addEventListener('click', () => m3Auto(!M3.auto)); $('#m3-anim').addEventListener('click', m3Play);
+  ['x', 'y', 'z'].forEach((a, j) => $('#m3-' + a).addEventListener('change', e => {
+    const v = e.target.value, o = S.m3.indexOf(v); if (o >= 0 && o !== j) S.m3[o] = S.m3[j]; S.m3[j] = v; S.m3user = true; m3Selects(); m3Play();
+  }));
+  new IntersectionObserver(es => { M3.vis = es[0].isIntersecting; if (M3.vis) m3Kick(); }, { threshold: 0.05 }).observe($('#cv-m3'));
+  m3Auto(M3.auto);
+}
+function m3Best() {
+  const K = KEYS.filter(k => !k.startsWith('rotação')), n = V.M.length, Zs = {};
+  for (const k of K) { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = Math.sqrt(a.reduce((s, x) => s + (x - mu) ** 2, 0) / (n - 1)); if (sd > 1e-12) Zs[k] = a.map(x => (x - mu) / sd); }
+  const ks = Object.keys(Zs), r = (a, b) => Zs[a].reduce((s, x, i) => s + x * Zs[b][i], 0) / (n - 1); let best = null, bv = -1;
+  for (let i = 0; i < ks.length; i++) for (let j = i + 1; j < ks.length; j++) for (let k = j + 1; k < ks.length; k++) {
+    const v = Math.abs(r(ks[i], ks[j])) + Math.abs(r(ks[i], ks[k])) + Math.abs(r(ks[j], ks[k]));
+    const R = [[1, r(ks[i], ks[j]), r(ks[i], ks[k])], [0, 1, r(ks[j], ks[k])], [0, 0, 1]]; R[1][0] = R[0][1]; R[2][0] = R[0][2]; R[2][1] = R[1][2];
+    if (Math.min(...jacobi3(R).val) < 0.02) continue; // evita trio quase degenerado (duas medidas que são quase a mesma coisa)
+    if (v > bv) { bv = v; best = [ks[i], ks[j], ks[k]]; }
+  }
+  return best || S.m3;
+}
+function m3Selects() {
+  const opt = sel => KEYS.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${LBL(k)}${V.MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
+  ['x', 'y', 'z'].forEach((a, j) => ($('#m3-' + a).innerHTML = opt(S.m3[j])));
+}
+
 /* ---------------- medidas ---------------- */
 const DEC = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
 const GROUPS = [['Lentidão', [0, 1, 2]], ['Segmentação', [3]], ['Pressão', [4, 5]], ['Forma', [6]], ['Postura da caneta', [7, 8]], ['Fluência (Phillips et al. 1991)', [9, 10, 11]]];
@@ -1209,12 +1388,13 @@ function renderAnalise() {
     'cv-en': cv => drawEnergy(cv), 'cv-fft': cv => drawFFT(cv),
     'cv-d4': cv => drawCurve(cv, p => TH.comp(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4], 1e-6),
     'cv-d5': cv => drawCurve(cv, p => TH.comp(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5], 1e-8),
-    'cv-maha': cv => drawMaha(cv, 1),
+    'cv-maha': cv => drawMaha(cv, 1), 'cv-m3': cv => { drawM3(cv, M3.tAnim); m3Kick(); },
   };
   requestAnimationFrame(() => {
     animUI(); drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom'));
     for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id));
     playMaha(false);
+    m3Selects(); { const k3 = [D.name, D.mode, S.trecho].join('|'); if (k3 !== M3.key) { M3.key = k3; if (!S.m3user) { S.m3 = m3Best(); } m3Selects(); m3Play(); } else m3Kick(); }
     if (BIG) DRAW[BIG]($('#cv-big'));
   });
 }
@@ -1224,7 +1404,7 @@ let DRAW = {}, BIG = null;
 function openBig(id) {
   if (!DRAW[id]) return;
   BIG = id; const card = $('#' + id).closest('.card'), h = card.querySelector('h3');
-  $('#big-title').textContent = (h ? h.textContent : '').replace(/eixo X.*$/, '').trim();
+  $('#big-title').textContent = (h ? (h.querySelector('span') || h).textContent : '').replace(/eixo X.*$/, '').trim();
   $('#bigview').hidden = false; document.body.style.overflow = 'hidden';
   log('ampliou gráfico', $('#big-title').textContent);
   requestAnimationFrame(() => DRAW[id]($('#cv-big')));
@@ -1253,7 +1433,7 @@ function clipTable(r, page, pk, gaps) {
   }
   const gl = gaps.find(g => g.i === Math.min(n, a + PG) - 1);
   if (gl) rows.push(`<tr class="gap"><td colspan="10">⚠ lacuna: ${br(gl.ms, 1)} ms sem amostras (${Math.round(gl.ms / 2.5) - 1} perdidas, pacote BLE) · continua na próxima página</td></tr>`);
-  return `<div class="tw"><table class="raw"><thead><tr><th>t Clip (µs)</th><th>t ajust. (µs)</th><th>ax</th><th>ay</th><th>az</th><th>gx</th><th>gy</th><th>gz</th><th>∠ incl.</th><th>∠ rot.</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
+  return `<div class="tw"><table class="raw"><thead><tr><th>t Clip (µs)</th><th>t ajust. (µs)</th><th>ax</th><th>ay</th><th>az</th><th>gx</th><th>gy</th><th>gz</th><th>∠ incl.</th><th title="rotação no eixo: a validar em bancada">∠ rot. (a validar)</th></tr></thead><tbody>${rows.join('')}</tbody></table></div>`;
 }
 const pager = (id, page, n) => `<div class="pager"><button data-pg="${id}" data-d="-1" aria-label="Página anterior">◀</button><span>página ${page + 1} de ${Math.ceil(n / PG)}</span><button data-pg="${id}" data-d="1" aria-label="Próxima página">▶</button></div>`;
 function renderCrus() {
@@ -1324,7 +1504,7 @@ function integrity() {
     ['Mesmo aparelho', P.every(p => p.cab.aparelho_sn === P[0].cab.aparelho_sn) ? 'ok' : 'warn', `${P.filter(p => p.cab.aparelho_sn === P[0].cab.aparelho_sn).length} de 21`, P[0].cab.aparelho_sn],
     ['Sincronização mesa × Clip', Math.max(...res) <= 2.5 ? 'ok' : 'warn', `≤ ${br(Math.max(...res), 1)} ms`, 'resíduo após o ajuste pelos pousos'],
     ['Lacunas de amostras', gaps.length ? 'warn' : 'ok', gaps.length ? `${gaps.length} em ${gaps.map(([i]) => (i ? 'P' + String(i).padStart(2, '0') : 'Q')).join(', ')}` : 'nenhuma', gaps.length ? `${br(gaps[0][1][0].ms, 1)} ms no Clip; mostrada, não preenchida` : ''],
-    ['Posição do clip na caneta', Math.abs(drot) > 10 ? 'warn' : 'ok', Math.abs(drot) > 10 ? 'conferir' : 'coerente', `rotação da questionada difere ${br(drot, 0)}° dos padrões`]];
+    ['Posição do clip na caneta', Math.abs(drot) > 10 ? 'warn' : 'ok', Math.abs(drot) > 10 ? 'conferir' : 'coerente', `rotação no eixo (a validar) da questionada difere ${br(drot, 0)}° dos padrões`]];
 }
 function params() {
   return [['Derivadas', `Savitzky-Golay · janela ${TH.SGW} (70 ms) · grau ${TH.SGO} · corte ~24,5 Hz`], ['Ruído (caneta parada)', `σ velocidade ${br(D.NF[1])} mm/s · σ 5ª derivada ${br(D.NF[5] / 1e7, 1)}×10⁷ mm/s⁵`],
@@ -1456,6 +1636,7 @@ function bind() {
   $('#hip-c').addEventListener('change', e => { S.hip.c = e.target.value; });
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
+  m3Init();
   let lastTap = { t: 0, id: '', x: 0, y: 0 };
   $$('.card canvas').forEach(cv => {
     cv.addEventListener('dblclick', e => { e.preventDefault(); openBig(cv.id); });
