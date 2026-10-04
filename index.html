@@ -137,7 +137,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas></div>
       <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
-      <div class="card span2 rows3"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling). O D² e o valor p usam todas as medidas do modelo, qualquer que seja o par desenhado.</p></div>
+      <div class="card span2 rows3"><h3><span id="t-maha">Mahalanobis</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99% da própria pessoa (Hotelling) para o par escolhido, com a correlação real dos 20 padrões: a inclinação da elipse mostra como as duas medidas variam juntas. ★ = medida do modelo. A palavra TÍPICA/ATÍPICA, o D² e o valor p do modelo usam sempre as 4 medidas ★, qualquer que seja o par desenhado.</p></div>
       <div class="card span2"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
     </div>
@@ -754,7 +754,7 @@ const PERITO = 'Nome do Perito', CPFP = '***.456.789-**';
 
 const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira' : 'imitação');
 const DADOS_ = null;
-const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 0, my: 1,
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'tempo total (s)', my: 'impulso total (kgf·s)',
   crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false };
 let D = null, V = null;
 const cache = {};
@@ -793,7 +793,6 @@ function view() {
   const prof = (p, s) => { let a = -1, b = -1; for (let i = 0; i < s.length; i++) if (s[i]) { if (a < 0) a = i; b = i; } const g = new Float64Array(400); for (let i = 0; i < 400; i++) g[i] = a + (b - a) * i / 399; return TH.interp(g, p._ix, p.vabs); };
   const PR = D.PP.map((p, i) => prof(p, sels[i])), avg = ex => { const o = new Float64Array(400); let n = 0; PR.forEach((r, j) => { if (j === ex) return; n++; for (let i = 0; i < 400; i++) o[i] += r[i]; }); return o.map(v => v / n); };
   const dtwP = PR.map((r, i) => TH.dtwPath(r, avg(i), 40).dist), dtwQ = TH.dtwPath(prof(D.Q, selq), avg(-1), 40).dist;
-  if (S.mx >= MH.keys.length) S.mx = 0; if (S.my >= MH.keys.length || S.my === S.mx) S.my = S.mx === 0 ? 1 : 0;
   return (V = { sels, selq, M, MQ, MH, dtwP, dtwQ });
 }
 
@@ -996,29 +995,78 @@ function ellipsePts(mu, S2, k) {
   const a = S2[0][0], b = S2[0][1], d = S2[1][1], tr = (a + d) / 2, det = Math.sqrt(((a - d) / 2) ** 2 + b * b), l1 = tr + det, l2 = tr - det, th = Math.atan2(l1 - a, b || 1e-12);
   return Array.from({ length: 121 }, (_, i) => { const t = 2 * Math.PI * i / 120, u = Math.sqrt(k * l1) * Math.cos(t), v = Math.sqrt(k * l2) * Math.sin(t); return [mu[0] + u * Math.cos(th) - v * Math.sin(th), mu[1] + u * Math.sin(th) + v * Math.cos(th)]; });
 }
-function drawMaha(cv) {
-  const MH = V.MH, i = S.mx, j = S.my, mu = [MH.mu[i], MH.mu[j]], sd = [MH.sd[i], MH.sd[j]];
-  const S2 = [[MH.S[i][i] * sd[0] * sd[0], MH.S[i][j] * sd[0] * sd[1]], [MH.S[j][i] * sd[1] * sd[0], MH.S[j][j] * sd[1] * sd[1]]];
-  const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
-  const q = [MH.q[i], MH.q[j]], det = S2[0][0] * S2[1][1] - S2[0][1] ** 2, Si = [[S2[1][1] / det, -S2[0][1] / det], [-S2[1][0] / det, S2[0][0] / det]];
-  const dq = [q[0] - mu[0], q[1] - mu[1]], r = Math.sqrt(dq[0] * (Si[0][0] * dq[0] + Si[0][1] * dq[1]) + dq[1] * (Si[1][0] * dq[0] + Si[1][1] * dq[1])), rmax = 1.7 * Math.sqrt(l99);
+function mahaPair() {
+  const kx = S.mx, ky = S.my, A = V.M.map(m => [m[kx], m[ky]]), n = A.length;
+  const mu = [TH.mean(A.map(a => a[0])), TH.mean(A.map(a => a[1]))];
+  let sxx = 0, syy = 0, sxy = 0; for (const [x, y] of A) { sxx += (x - mu[0]) ** 2; syy += (y - mu[1]) ** 2; sxy += (x - mu[0]) * (y - mu[1]); }
+  const S2 = [[sxx / (n - 1), sxy / (n - 1)], [sxy / (n - 1), syy / (n - 1)]], det = S2[0][0] * S2[1][1] - S2[0][1] ** 2;
+  const q = [V.MQ[kx], V.MQ[ky]], dq = [q[0] - mu[0], q[1] - mu[1]];
+  if (!(det > 1e-18 * Math.max(1e-300, S2[0][0] * S2[1][1]))) return { A, mu, S2, q, ok: false };
+  const Si = [[S2[1][1] / det, -S2[0][1] / det], [-S2[1][0] / det, S2[0][0] / det]];
+  const d2 = dq[0] * (Si[0][0] * dq[0] + Si[0][1] * dq[1]) + dq[1] * (Si[1][0] * dq[0] + Si[1][1] * dq[1]);
+  return { A, mu, S2, q, dq, d2, r: Math.sqrt(d2), corr: S2[0][1] / Math.sqrt(S2[0][0] * S2[1][1]), ok: true };
+}
+const ease = x => 1 - (1 - Math.min(1, Math.max(0, x))) ** 3;
+const ph = (t, a, b) => ease((t - a) / (b - a));
+function drawMaha(cv, t = 1) {
+  const MH = V.MH, pr = mahaPair(), kx = S.mx, ky = S.my;
+  const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), atip = MH.d2 > MH.lim99;
+  if (!pr.ok) { const F = frame(cv, [0, 1], [0, 1], { xlabel: kx, ylabel: ky, ml: 52 }); F.done(); F.c.fillStyle = F.P.mut; F.c.textAlign = 'center'; F.c.font = '12px ' + css('--sans'); F.c.fillText('Uma das medidas não varia nos padrões: escolha outro par.', F.w / 2, F.h / 2); return; }
+  const { A, mu, S2, q, dq, r } = pr, rmax = 1.7 * Math.sqrt(l99);
   const pt = r <= rmax ? q : [mu[0] + dq[0] * rmax / r, mu[1] + dq[1] * rmax / r];
-  const xs = [...e99.map(p => p[0]), pt[0], ...MH.A.map(a => a[i])], ys = [...e99.map(p => p[1]), pt[1], ...MH.A.map(a => a[j])];
-  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.16), { xlabel: MH.keys[i], ylabel: MH.keys[j], ml: 52 }), { c, X, Y, P } = F;
-  for (const [E, dsh] of [[e99, [2, 3]], [e95, [6, 4]]]) { c.fillStyle = P.acc; c.globalAlpha = 0.07; c.beginPath(); E.forEach(([x, y]) => c.lineTo(X(x), Y(y))); c.fill(); c.globalAlpha = 1; c.strokeStyle = P.acc; c.setLineDash(dsh); c.lineWidth = 1.2; c.stroke(); c.setLineDash([]); }
-  c.fillStyle = P.acc; c.font = 'bold 11px ' + css('--sans'); c.textAlign = 'center';
-  c.fillText('99%', X(mu[0]), Y(Math.max(...e99.map(p => p[1]))) - 4); c.fillText('95%', X(mu[0]), Y(Math.max(...e95.map(p => p[1]))) - 4);
-  c.fillStyle = P.fg; MH.A.forEach(a => { c.beginPath(); c.arc(X(a[i]), Y(a[j]), 3, 0, 7); c.fill(); });
-  const atip = MH.d2 > MH.lim99, col = atip ? P.red : P.grn;
-  c.strokeStyle = P.mut; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(X(mu[0]), Y(mu[1])); c.lineTo(X(pt[0]), Y(pt[1])); c.stroke(); c.setLineDash([]);
-  if (r > rmax) { const mx = X(mu[0] + (pt[0] - mu[0]) * 0.86), my = Y(mu[1] + (pt[1] - mu[1]) * 0.86); c.fillStyle = P.fg; c.font = 'bold 13px ' + css('--sans'); c.fillText('//', mx, my + 4); }
-  c.fillStyle = col; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 5.5, 0, 7); c.fill();
-  c.font = 'bold 11px ' + css('--sans'); c.textAlign = X(pt[0]) > F.w * 0.7 ? 'right' : 'left';
-  c.fillText(`questionada: ${br(q[0], MH.keys[i].includes('tempo') || MH.keys[i].includes('trocas') ? 2 : 1)} · ${br(q[1], MH.keys[j].includes('tempo') || MH.keys[j].includes('trocas') ? 2 : 1)}`, X(pt[0]) + (c.textAlign === 'right' ? -9 : 9), Y(pt[1]) - 9);
+  const e95 = ellipsePts(mu, S2, l95), e99 = ellipsePts(mu, S2, l99);
+  const xs = [...e99.map(p => p[0]), pt[0], ...A.map(a => a[0])], ys = [...e99.map(p => p[1]), pt[1], ...A.map(a => a[1])];
+  const dec = k => (k.includes('energia') || k.includes('impulso') ? 3 : k.includes('levant') ? 0 : k.includes('tempo') || k.includes('trocas') ? 2 : 1);
+  const F = frame(cv, extent([xs], 0.12), extent([ys], 0.16), { xlabel: kx, ylabel: ky, ml: 52 }), { c, X, Y, P } = F;
+  // 1) padrões aparecem um a um
+  A.forEach((a, k) => { const al = ph(t, 0.02 + k * 0.012, 0.1 + k * 0.012); if (al <= 0) return; c.globalAlpha = al; c.fillStyle = P.fg; c.beginPath(); c.arc(X(a[0]), Y(a[1]), 3 * (0.6 + 0.4 * al), 0, 7); c.fill(); });
+  c.globalAlpha = 1;
+  // 2) elipses crescem a partir da média, já inclinadas pela correlação
+  const g = ph(t, 0.3, 0.62);
+  if (g > 0) {
+    for (const [lim, dsh, lab] of [[l99, [2, 3], '99%'], [l95, [6, 4], '95%']]) {
+      const E = ellipsePts(mu, S2, lim * g * g); c.fillStyle = P.acc; c.globalAlpha = 0.08 * g; c.beginPath(); E.forEach(([x, y]) => c.lineTo(X(x), Y(y))); c.fill();
+      c.globalAlpha = g; c.strokeStyle = P.acc; c.setLineDash(dsh); c.lineWidth = 1.3; c.stroke(); c.setLineDash([]);
+      if (g > 0.95) { c.fillStyle = P.acc; c.font = 'bold 11px ' + css('--sans'); c.textAlign = 'center'; c.fillText(lab, X(mu[0]), Y(Math.max(...E.map(p => p[1]))) - 4); }
+    }
+    c.globalAlpha = 1; c.fillStyle = P.acc; c.beginPath(); c.arc(X(mu[0]), Y(mu[1]), 2.5, 0, 7); c.fill();
+  }
+  // 3) linha da média até a questionada
+  const L = ph(t, 0.62, 0.82), col = atip ? P.red : P.grn;
+  if (L > 0) {
+    const ex = mu[0] + (pt[0] - mu[0]) * L, ey = mu[1] + (pt[1] - mu[1]) * L;
+    c.strokeStyle = P.mut; c.setLineDash([3, 3]); c.lineWidth = 1; c.beginPath(); c.moveTo(X(mu[0]), Y(mu[1])); c.lineTo(X(ex), Y(ey)); c.stroke(); c.setLineDash([]);
+    if (r > rmax && L > 0.86) { c.fillStyle = P.fg; c.font = 'bold 13px ' + css('--sans'); c.textAlign = 'center'; c.fillText('//', X(mu[0] + (pt[0] - mu[0]) * 0.86), Y(mu[1] + (pt[1] - mu[1]) * 0.86) + 4); }
+  }
+  // 4) ponto da questionada com pulso
+  const D = ph(t, 0.8, 0.9);
+  if (D > 0) {
+    const pu = t < 1 ? Math.max(0, Math.sin(Math.PI * Math.min(1, (t - 0.8) / 0.2))) : 0;
+    if (pu > 0) { c.strokeStyle = col; c.globalAlpha = 0.5 * pu; c.lineWidth = 2; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 6 + 14 * pu, 0, 7); c.stroke(); c.globalAlpha = 1; }
+    c.fillStyle = col; c.beginPath(); c.arc(X(pt[0]), Y(pt[1]), 5.5 * D, 0, 7); c.fill();
+    c.globalAlpha = D; c.font = 'bold 11px ' + css('--sans'); c.textAlign = X(pt[0]) > F.w * 0.7 ? 'right' : 'left';
+    c.fillText(`questionada: ${br(q[0], dec(kx))} · ${br(q[1], dec(ky))}`, X(pt[0]) + (c.textAlign === 'right' ? -9 : 9), Y(pt[1]) - 9); c.globalAlpha = 1;
+  }
   F.done();
-  c.textAlign = 'right'; c.fillStyle = col; c.font = 'bold 22px ' + css('--sans'); c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.w - 16, 34);
-  c.font = '11px ' + css('--sans'); c.fillText('para a pessoa', F.w - 16, 50); c.fillText(`D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, F.w - 16, 64);
-  if (r > rmax) { c.textAlign = 'left'; c.fillStyle = P.mut; c.font = '10px ' + css('--sans'); c.fillText('// distância encurtada no desenho; valores reais no rótulo', F.m.l + 6, F.h - F.m.b - 6); }
+  // 5) veredito (sempre do modelo de 4 medidas) e D² do par desenhado
+  const V5 = ph(t, 0.88, 1);
+  if (V5 > 0) {
+    c.globalAlpha = V5; c.textAlign = 'right'; c.fillStyle = col; c.font = 'bold 22px ' + css('--sans'); c.fillText(atip ? 'ATÍPICA' : 'TÍPICA', F.w - 16, 34);
+    c.font = '11px ' + css('--sans'); c.fillText('para a pessoa', F.w - 16, 50);
+    c.fillText(`modelo (${MH.keys.length} medidas): D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 1)} · p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}`, F.w - 16, 64);
+    c.fillStyle = P.mut; c.fillText(`só este par: D² = ${br(pr.d2, pr.d2 > 100 ? 0 : 1)} · correlação r = ${br(pr.corr, 2)}`, F.w - 16, 79);
+    if (r > rmax) { c.textAlign = 'left'; c.font = '10px ' + css('--sans'); c.fillText('// distância encurtada no desenho; valores reais no rótulo', F.m.l + 6, F.h - F.m.b - 6); }
+    c.globalAlpha = 1;
+  }
+}
+let mahaKey = '', mahaRaf = 0;
+function playMaha(force) {
+  const cv = $('#cv-maha'), key = [D.name, D.mode, S.trecho, S.mx, S.my].join('|');
+  cancelAnimationFrame(mahaRaf);
+  if ((!force && key === mahaKey) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { mahaKey = key; drawMaha(cv, 1); return; }
+  mahaKey = key; const t0 = performance.now(), dur = 2200;
+  const step = now => { const t = Math.min(1, (now - t0) / dur); drawMaha(cv, t); if (t < 1) mahaRaf = requestAnimationFrame(step); };
+  mahaRaf = requestAnimationFrame(step);
 }
 
 /* ---------------- medidas ---------------- */
@@ -1040,8 +1088,8 @@ function renderMeasures() {
   <tr><td>DTW dos perfis</td><td>${br(Math.min(...dtwP))}–${br(Math.max(...dtwP))}</td><td class="q">${br(dtwQ)}</td><td></td></tr></tbody></table>
   <p class="fine">Ledoit-Wolf: encolhimento ${br(MH.shrink)}. Com 20 amostras o z é indicativo; medidas do mesmo grupo contam como um só indício.${MH.dropped.length ? ' Sem variação nos padrões, fora do modelo: ' + MH.dropped.join(', ') + '.' : ''}</p>`;
   $('#measures').innerHTML = h;
-  $('#mh-x').innerHTML = MH.keys.map((k, i) => `<option value="${i}" ${i === S.mx ? 'selected' : ''}>${k}</option>`).join('');
-  $('#mh-y').innerHTML = MH.keys.map((k, i) => `<option value="${i}" ${i === S.my ? 'selected' : ''}>${k}</option>`).join('');
+  const opt = sel => KEYS.map(k => `<option value="${k}" ${k === sel ? 'selected' : ''}>${k}${MH.keys.includes(k) ? ' ★' : ''}</option>`).join('');
+  $('#mh-x').innerHTML = opt(S.mx); $('#mh-y').innerHTML = opt(S.my);
 }
 
 /* ---------------- aba Análise ---------------- */
@@ -1068,7 +1116,7 @@ function renderAnalise() {
     drawEnergy($('#cv-en')); drawFFT($('#cv-fft'));
     drawCurve($('#cv-d4'), p => TH.comp(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4], 1e-6);
     drawCurve($('#cv-d5'), p => TH.comp(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5], 1e-8);
-    drawMaha($('#cv-maha'));
+    playMaha(false);
   });
 }
 
@@ -1267,8 +1315,9 @@ function bind() {
   $('#btn-inteira').addEventListener('click', () => { if (!S.trecho) return; S.trecho = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
   $('#btn-zero').addEventListener('click', () => { S.shifts = {}; renderAnalise(); });
   $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); renderAnalise(); }));
-  $('#mh-x').addEventListener('change', e => { S.mx = +e.target.value; if (S.my === S.mx) S.my = (S.mx + 1) % V.MH.keys.length; renderAnalise(); });
-  $('#mh-y').addEventListener('change', e => { S.my = +e.target.value; if (S.my === S.mx) S.mx = (S.my + 1) % V.MH.keys.length; renderAnalise(); });
+  $('#mh-x').addEventListener('change', e => { S.mx = e.target.value; if (S.my === S.mx) S.my = KEYS[(KEYS.indexOf(S.mx) + 1) % KEYS.length]; renderAnalise(); });
+  $('#mh-y').addEventListener('change', e => { S.my = e.target.value; if (S.my === S.mx) S.mx = KEYS[(KEYS.indexOf(S.my) + 1) % KEYS.length]; renderAnalise(); });
+  $('#btn-anim').addEventListener('click', () => playMaha(true));
   const cv = $('#cv-sig'); let start = null;
   const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
   cv.addEventListener('pointerdown', e => { start = pos(e); dragRect = [...start, ...start]; cv.setPointerCapture(e.pointerId); });
