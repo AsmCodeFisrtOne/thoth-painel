@@ -23,6 +23,7 @@ header.dev { background: var(--navy); color: var(--navy-ink); border-radius: 10p
 header.dev h1 { font-size: 17px; margin: 0; font-weight: 600; letter-spacing: .01em }
 header.dev .sub { color: var(--navy-mut); font-size: 12px; font-family: var(--mono) }
 header.dev .r { text-align: right; font-size: 12px; font-family: var(--mono); min-width: 0 }
+.modo { display: inline-block; margin-top: 4px; font: 600 11.5px var(--sans); color: var(--navy); background: var(--sel); border-radius: 4px; padding: 1px 8px }
 .ghost { position: absolute; right: 6px; bottom: 3px; display: flex; gap: 4px }
 .ghost button { background: none; border: 0; color: var(--navy-mut); opacity: .28; font: 10px var(--mono); padding: 2px 4px; cursor: pointer }
 .ghost button:hover, .ghost button:focus-visible { opacity: .9 }
@@ -109,7 +110,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   <div id="wm" aria-hidden="true"></div>
   <header class="dev">
     <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
-    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div class="sub">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
+    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"></div><div class="sub">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
     <div class="ghost"><button type="button" id="btn-mode" title="Alternar a questionada: imitação, verdadeira ou mesma forma com construção diferente">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
   </header>
   <nav class="tabs" aria-label="Abas do painel">
@@ -1373,6 +1374,7 @@ function render() {
   const pq = D.packs[0];
   $('#h-q').textContent = `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · Thoth nº 0123A1B2C3D4E5F6EE · 03/10/2026 14:32:07 UTC (GNSS)`;
   $('#h-sig').textContent = `Signatário declarado: ${D.name}`;
+  $('#h-modo').textContent = 'Simulação · questionada: ' + { 'imitação': 'imitação por outra pessoa', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente' }[D.mode];
   if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else renderInteg();
 }
 async function loadCase() {
