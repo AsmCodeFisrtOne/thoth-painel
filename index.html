@@ -69,6 +69,8 @@ table.tv tr[data-tv] { cursor: pointer } table.tv tr[data-tv]:hover td, table.tv
 .chip-r.r-at { background: var(--red) } .chip-r.r-ty { background: var(--green) } .chip-r.r-in { background: var(--amber) }
 b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(--amber) }
 .dica.warnt { color: var(--amber); font-weight: 600 }
+.grp.suavg { width: min(480px, 100%); flex: 0 0 auto } /* largura fixa: o texto do aviso não muda o resto da barra */
+#suav-dica { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.4em; max-width: 100% } /* uma linha só: o aviso nunca empurra o layout */
 .m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
@@ -152,7 +154,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn" data-eixo="tempo" title="Cada assinatura no próprio relógio: mostra o ritmo e a duração; os traços podem não coincidir.">tempo real</button><button type="button" class="btn on" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
       <div class="grp hl"><span>Grandeza:</span><button type="button" class="btn" data-g="x">X</button><button type="button" class="btn" data-g="y">Y</button><button type="button" class="btn on" data-g="r">resultante</button></div>
       <div class="grp"><span id="trecho-txt">Trecho: arraste sobre o desenho</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button></div>
-      <div class="grp"><label for="suav"><span>Suavizar as curvas:</span></label><input type="range" id="suav" min="0" max="10" step="1" value="0"><b id="suav-o" style="font-size:12px">0 de 10 · nenhuma</b><span class="dica" id="suav-dica"></span></div>
+      <div class="grp suavg"><label for="suav"><span>Suavizar as curvas:</span></label><input type="range" id="suav" min="0" max="10" step="1" value="0"><b id="suav-o" style="font-size:12px">0 de 10 · nenhuma</b><span class="dica" id="suav-dica"></span></div>
       <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
       <div class="grp"><span>Deslocar padrões:</span><button type="button" class="btn" id="btn-zero">zerar todos</button></div>
       <span class="note">duplo clique num gráfico para ampliar · dados não saem do sistema</span>
@@ -166,10 +168,12 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3>Impulso por traço (∫ pressão dt)</h3><canvas id="cv-imp" class="ch"></canvas></div>
       <div class="card"><h3>Curva de deformação: tempo × caminho</h3><canvas id="cv-def" class="ch"></canvas><div class="shift" data-k="def">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-vel">Velocidade</h3><canvas id="cv-vel" class="ch"></canvas><div class="shift" data-k="vel">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas></div>
-      <div class="card span2 c-full"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
+      <div class="card"><h3 class="var" id="t-area">Área sob a velocidade</h3><canvas id="cv-area" class="ch"></canvas><p class="fine" style="margin:0">Área sob a curva de velocidade = distância que a ponta da caneta percorreu. Parte escura: caneta no papel; clara: no ar. Faixa: média ± 2 desvios dos padrões. Não muda com a suavização.</p></div>
+      <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos 20 padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). ★ = medida do modelo. Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa 48 combinações; entre o pontilhado de 99% e essa linha a combinação fica "na borda". O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), a distância e a raridade usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
@@ -1110,6 +1114,22 @@ function drawImpulse(cv) {
   }
   F.done();
 }
+// área sob a velocidade = distância percorrida (mm) em cada uma das 21 assinaturas: parte com a caneta no papel e parte no ar
+function velArea(p, sel, g) {
+  const [a, b] = selRange(sel), [vx, vy] = p.D[1]; let cont = 0, ar = 0;
+  for (let i = a; i <= b; i++) { const v = g === 'x' ? Math.abs(vx[i]) : g === 'y' ? Math.abs(vy[i]) : Math.hypot(vx[i], vy[i]); if (p.C[i]) cont += v / FS; else ar += v / FS; }
+  return [cont, ar];
+}
+function drawArea(cv) {
+  const g = S.g, A = D.PP.map((p, k) => velArea(p, V.sels[k], g)), Q = velArea(D.Q, V.selq, g), tot = A.map(([c, a]) => c + a);
+  const mu = TH.mean(tot), sd = TH.std(tot, 1), ymax = Math.max(...tot, Q[0] + Q[1], mu + 2 * sd) * 1.12;
+  const F = frame(cv, [0.3, 22.7], [0, ymax], { xlabel: 'padrões P1–P20 · Q = questionada', ylabel: 'mm', xfmt: v => (v === 22 ? 'Q' : v === 1 || v % 5 === 0 ? 'P' + v : '') }), { c, X, Y, P } = F;
+  c.fillStyle = P.band; c.globalAlpha = 0.18; c.fillRect(X(0.3), Y(mu + 2 * sd), X(22.7) - X(0.3), Y(mu - 2 * sd) - Y(mu + 2 * sd)); c.globalAlpha = 1;
+  c.strokeStyle = P.band; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(X(0.3), Y(mu)); c.lineTo(X(22.7), Y(mu)); c.stroke(); c.setLineDash([]);
+  const bw = (X(1) - X(0)) * 0.7, bar = (x, [cn, ar], col) => { c.fillStyle = col; c.fillRect(X(x) - bw / 2, Y(cn), bw, Y(0) - Y(cn)); c.globalAlpha = 0.4; c.fillRect(X(x) - bw / 2, Y(cn + ar), bw, Y(cn) - Y(cn + ar)); c.globalAlpha = 1; };
+  A.forEach((v, k) => bar(k + 1, v, P.band)); bar(22, Q, P.acc);
+  F.done();
+}
 function drawEnergy(cv) {
   const en = (p, s) => { const pw = TH.power(p, S.g); let a = 0, b = 0; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { if (pw[i] > 0) a += pw[i] / FS; else b += pw[i] / FS; } return [a, b]; };
   const E = D.PP.map((p, k) => en(p, V.sels[k])), q = en(D.Q, V.selq), m = [0, 1].map(j => TH.mean(E.map(e => e[j]))), s = [0, 1].map(j => TH.std(E.map(e => e[j])));
@@ -1156,8 +1176,8 @@ const suavN = () => S.suav || 0;
 const suavFc = n => (n ? 1.1774 / (2 * Math.PI * SUAV_SIG[n] / TH.FS) : 28); // frequência em que a curva cai à metade
 const SUAV_NOME = ['nenhuma', 'muito leve', 'leve', 'leve', 'média', 'média', 'forte', 'forte', 'muito forte', 'muito forte', 'máxima'];
 function suavDica() { const n = suavN();
-  if (!n) return 'Curvas com todo o detalhe do movimento (é o que os números usam).';
-  return (suavFc(n) < 13 ? '⚠ Esconde o tremor e as pequenas correções do movimento; use só para ver o desenho geral. ' : 'Desenho mais limpo. ') + 'Só muda o desenho: os números e o veredito não mudam.'; }
+  if (!n) return 'Todo o detalhe do movimento (é o que os números usam).';
+  return suavFc(n) < 13 ? '⚠ Esconde o tremor e as microcorreções · números e veredito não mudam' : 'Desenho mais limpo · números e veredito não mudam'; }
 function gsmooth(a, sig, skip = 0) { // média gaussiana só com as amostras válidas (sem espelhar nem inventar nas pontas)
   if (!sig) return a; const r = Math.ceil(3 * sig), ker = []; for (let i = -r; i <= r; i++) ker.push(Math.exp(-0.5 * (i / sig) ** 2));
   const n = a.length, o = new Float64Array(n);
@@ -1615,7 +1635,7 @@ function renderAnalise() {
   $('#t-sig').textContent = S.trecho ? 'Desenho · seleção do trecho' : 'Desenho: 20 padrões + questionada, registrados';
   $('#t-zoom').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : '';
   const sv = suavN() ? ` · suavizado ${suavN()}/10` : '';
-  const T = { hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${z}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${z}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${z}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${z}${sv}` };
+  const T = { vel: `Velocidade · ${v}${z}${sv}`, area: `Área sob a velocidade (distância percorrida) · ${v}${z}`, hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${z}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${z}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${z}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${z}${sv}` };
   for (const k in T) $('#t-' + k).textContent = T[k];
   $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}%` : 'Medidas globais';
   $('#t-maha').textContent = `Distância à pessoa${z} · ${V.MH.keys.length} medidas ★`;
@@ -1624,6 +1644,7 @@ function renderAnalise() {
   DRAW = {
     'cv-sig': cv => drawSignature(cv), 'cv-zoom': cv => drawZoom(cv), 'cv-comp': cv => drawCompass(cv), 'cv-hist': cv => drawHist(cv),
     'cv-pres': cv => drawPressure(cv), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
+    'cv-vel': cv => drawCurve(cv, p => compV(p, g, 1), 'vel', 'mm/s', D.NF[1] * noiseScale(1)), 'cv-area': cv => drawArea(cv),
     'cv-acc': cv => drawCurve(cv, p => compV(p, g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3),
     'cv-pow': cv => drawCurve(cv, p => powerV(p, g), 'pow', 'W/kg'),
     'cv-en': cv => drawEnergy(cv), 'cv-fft': cv => drawFFT(cv),
@@ -1633,7 +1654,7 @@ function renderAnalise() {
   };
   requestAnimationFrame(() => {
     animUI(); drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom'));
-    for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id));
+    for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id));
     playMaha(false);
     m3Selects(); { const k3 = [D.name, D.mode, S.trecho].join('|'); if (k3 !== M3.key) { M3.key = k3; if (!S.m3user) { S.m3 = m3Best(); } m3Selects(); m3Record(S.m3user ? 'perito (mantido)' : 'auto'); m3Play(); } else m3Kick(); }
     if (BIG) DRAW[BIG]($('#cv-big'));
@@ -1893,9 +1914,9 @@ function bind() {
   $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
-  const suavUI = () => { $('#suav').value = suavN(); $('#suav-o').textContent = `${suavN()} de 10 · ${SUAV_NOME[suavN()]}`; $('#suav-dica').textContent = suavDica(); $('#suav-dica').classList.toggle('warnt', suavFc(suavN()) < 13); };
+  const suavUI = () => { $('#suav').value = suavN(); $('#suav-o').textContent = `${suavN()} de 10 · ${SUAV_NOME[suavN()]}`; $('#suav-dica').textContent = suavDica(); $('#suav-dica').title = suavDica(); $('#suav-dica').classList.toggle('warnt', suavFc(suavN()) < 13); };
   let suavRaf = 0;
-  $('#suav').addEventListener('input', e => { S.suav = +e.target.value; suavUI(); cancelAnimationFrame(suavRaf); suavRaf = requestAnimationFrame(() => { for (const id of ['cv-acc', 'cv-pow', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id)); const sv = suavN() ? ` · suavizado ${suavN()}/10` : ''; for (const [id, base] of [['t-acc', /^(Aceleração[^·]*·[^·]*)/], ['t-pow', null], ['t-d4', null], ['t-d5', null]]) { const el = $('#' + id); el.textContent = el.textContent.replace(/ · suavizado \d+\/10$/, '') + sv; } if (BIG && ['cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(BIG)) DRAW[BIG]($('#cv-big')); }); });
+  $('#suav').addEventListener('input', e => { S.suav = +e.target.value; suavUI(); cancelAnimationFrame(suavRaf); suavRaf = requestAnimationFrame(() => { for (const id of ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id)); const sv = suavN() ? ` · suavizado ${suavN()}/10` : ''; for (const [id, base] of [['t-vel', null], ['t-acc', null], ['t-pow', null], ['t-d4', null], ['t-d5', null]]) { const el = $('#' + id); el.textContent = el.textContent.replace(/ · suavizado \d+\/10$/, '') + sv; } if (BIG && ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(BIG)) DRAW[BIG]($('#cv-big')); }); });
   $('#suav').addEventListener('change', () => log('Suavização das curvas', `${suavN()} de 10 (${SUAV_NOME[suavN()]}), só o desenho`));
   suavUI();
   $('#tv').addEventListener('click', e => {
