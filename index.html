@@ -103,6 +103,9 @@ table.tq td { padding: 3px 6px; border-bottom: 1px solid var(--grid); vertical-a
 .trwarn { color: var(--amber); font-weight: 600 } .trwarn:empty { display: none }
 #ztoast { position: fixed; z-index: 7; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--sel); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; font-weight: 600; max-width: min(420px, calc(100vw - 24px)) }
 #ztoast .zb { display: flex; flex-wrap: wrap; gap: 6px; align-items: center } #ztoast .zx { border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; margin-left: auto }
+.ampl { margin-left: auto; font: 600 11.5px var(--sans); color: var(--accent); background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 2px 8px; cursor: pointer; white-space: nowrap; flex: 0 0 auto }
+.ampl:hover, .ampl:focus-visible { border-color: var(--accent); background: var(--soft) }
+.card.has-ampl { position: relative } .card.has-ampl > h3 { padding-right: 84px } .ampl.abs { position: absolute; top: 8px; right: 10px }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
 .cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
@@ -153,7 +156,7 @@ textarea { width: 100%; min-height: 90px; font: 13px var(--sans); background: va
 .bigbox { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; width: min(1500px, 100%); height: min(860px, 100%); display: flex; flex-direction: column; padding: 10px 12px; gap: 6px }
 .bighead { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap } .bighead .btn { margin-left: auto }
 .bigcv { position: relative; flex: 1 1 auto; min-height: 0 } .bigcv canvas { position: absolute; inset: 0; width: 100%; height: 100% }
-.card canvas { cursor: zoom-in } #cv-sig { cursor: crosshair }
+.card canvas { cursor: default } #cv-sig { cursor: crosshair } #cv-vel, #cv-acc, #cv-pow, #cv-d4, #cv-d5 { cursor: col-resize }
 #loading { position: fixed; inset: 0; background: color-mix(in srgb, var(--bg) 88%, transparent); display: grid; place-items: center; z-index: 9 }
 #loading .box { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 22px; width: min(420px, 90vw); display: grid; gap: 10px }
 #loading .track { height: 6px; background: var(--grid); border-radius: 3px; overflow: hidden } #loadbar { height: 100%; width: 0; background: var(--accent); transition: width .2s }
@@ -190,10 +193,10 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="grp suavg"><label for="suav"><span>Suavizar as curvas:</span></label><input type="range" id="suav" min="0" max="10" step="1" value="0"><b id="suav-o" style="font-size:12px">0 de 10 · nenhuma</b><span class="dica" id="suav-dica"></span></div>
       <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
       <div class="grp"><span>Deslocar padrões:</span><button type="button" class="btn" id="btn-zero">zerar todos</button></div>
-      <span class="note">duplo clique num gráfico para ampliar · dados não saem do sistema</span>
+      <span class="note">⤢ no canto de um gráfico para ampliar · dados não saem do sistema</span>
     </div>
     <div class="grid">
-      <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. Na animação: a espessura do traço segue a pressão, o ponto vermelho é a caneta no papel e os números marcam a ordem dos traços.</p></div>
+      <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. Na animação: a espessura do traço segue a pressão, o ponto vermelho é a caneta no papel e os números marcam a ordem dos traços; nos gráficos de curvas, pressão e deformação, a faixa verde cresce junto, mostrando o trecho já desenhado.</p></div>
       <div class="card" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas></div>
       <div class="card rows2"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
@@ -210,7 +213,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos 20 padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). ★ = medida do modelo. Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa 47 combinações além do veredito; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), a distância e a raridade usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
-      <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
+      <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
       <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os 20 padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos 20 padrões sai quando testado contra os outros 19). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Só a linha do veredito decide; as demais mostram onde a assinatura se afasta. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
     </div>
   </section>
@@ -420,7 +423,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   </section>
   <footer class="f">Simulação: assinaturas sintéticas em letra cursiva, com instrumentação do Thoth 1 (mesa 300 Hz · 0,005 mm · pressão 0–8191; clip 400 Hz). Todos os números são calculados no navegador a partir dos dados crus. O painel mede e mostra; a conclusão é do perito.</footer>
 </div>
-<div id="bigview" hidden role="dialog" aria-modal="true" aria-labelledby="big-title"><div class="bigbox"><div class="bighead"><b id="big-title"></b><span class="fine">duplo clique ou Esc para fechar</span><button type="button" class="btn" id="big-close" aria-label="Fechar">✕ fechar</button></div><div class="bigcv"><canvas id="cv-big"></canvas></div></div></div>
+<div id="bigview" hidden role="dialog" aria-modal="true" aria-labelledby="big-title"><div class="bigbox"><div class="bighead"><b id="big-title"></b><span class="fine" id="big-hint">Esc ou ✕ para fechar</span><button type="button" class="btn" id="big-close" aria-label="Fechar">✕ fechar</button></div><div class="bigcv"><canvas id="cv-big"></canvas></div></div></div>
 <div id="ztoast" hidden role="status"><span id="ztoast-t"></span><span class="zb"><button type="button" class="btn on" id="ztoast-a">analisar só este trecho</button><button type="button" class="btn" id="ztoast-i">assinatura inteira</button><button type="button" class="zx" id="ztoast-x" aria-label="Fechar">×</button></span></div>
 <div id="trinv" hidden role="dialog" aria-modal="true" aria-labelledby="trinv-t"><div class="tibox">
   <b class="tt" id="trinv-t">Analisar só este trecho?</b>
@@ -1204,7 +1207,8 @@ function drawCurve(cv, sigf, shiftKey, ylabel, noise, scale = 1) {
   airBands(F, d); bandFill(F, d.gx, d.lo, d.hi, F.P.band); polyline(F, d.gx, d.m, F.P.band, 1);
   if (noise) for (const sg of [1, -1]) polyline(F, d.xr, [sg * 2 * noise * scale, sg * 2 * noise * scale], F.P.noise, 1, Infinity, [2, 3]);
   cv._csel = { xr: d.xr, l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b, qx: d.qx, qi: d.qi }; // para escolher o trecho arrastando sobre a curva
-  polyline(F, d.qx, d.qy, F.P.acc, 1, Infinity); F.done(); // contínua (sem buracos); as faixas claras mostram onde a caneta estava no ar —: inclui o movimento no ar medido pela mesa (até ~10 mm do papel), como a faixa dos padrões
+  polyline(F, d.qx, d.qy, F.P.acc, 1, Infinity); F.done();
+  abMark(cv, F, d.xr, 'curva', (S.shifts[shiftKey] || 0) * (d.xr[1] - d.xr[0]) / 100); // contínua (sem buracos); as faixas claras mostram onde a caneta estava no ar —: inclui o movimento no ar medido pela mesa (até ~10 mm do papel), como a faixa dos padrões
 }
 
 /* ---------------- gráficos do painel ---------------- */
@@ -1233,7 +1237,7 @@ function drawSignature(cv) {
   if (dragRect) { c.strokeStyle = P.amb; c.setLineDash([4, 3]); c.lineWidth = 1.2; c.strokeRect(Math.min(dragRect[0], dragRect[2]), Math.min(dragRect[1], dragRect[3]), Math.abs(dragRect[2] - dragRect[0]), Math.abs(dragRect[3] - dragRect[1])); c.setLineDash([]); }
 }
 /* ---------------- animação da construção da assinatura ---------------- */
-const ANIM = { k: 20, upto: null, raf: 0 };
+const ANIM = { k: 20, upto: null, raf: 0, mx: {} };
 function drawSigAnim(c, X, Y, P, R) {
   const k = ANIM.k, p = k < 20 ? D.PP[k] : D.Q, [RX, RY] = R[k], n = Math.min(ANIM.upto, RX.length - 1), col = k < 20 ? P.fg : P.acc;
   // fundo: todas as assinaturas bem claras, para dar a referência da forma
@@ -1260,16 +1264,37 @@ function drawSigAnim(c, X, Y, P, R) {
   const l1 = `${k < 20 ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · ${br(tt, 2)} s de ${br(T, 2)} s · traço ${nt} de ${p.segs.length}`, l2 = down ? `caneta no papel · ${br(p.gf[n], 0)} gf` : 'caneta no ar';
   if (narrow) { c.fillText(l1, 8, 15); c.fillText(l2, 8, 30); } else c.fillText(l1 + ' · ' + l2, 8, 16);
 }
-function stopAnim(redraw = true) { cancelAnimationFrame(ANIM.raf); ANIM.raf = 0; ANIM.upto = null; $('#an-play').textContent = '▶ animar'; if (redraw && D) drawSignature($('#cv-sig')); }
+/* faixa nos gráficos durante a animação: mostra, em cada gráfico, o trecho já percorrido pela assinatura animada */
+const AB_IDS = ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5', 'cv-pres', 'cv-def', 'cv-big'];
+function abMark(cv, F, xr, kind, shift) { cv._ab = { xr, kind, shift, l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b }; cv._snap = null; if (ANIM.upto !== null) abDraw(cv); }
+function abX(cv) { // posição, no eixo deste gráfico, da amostra que está sendo animada
+  const a = cv._ab, k = ANIM.k, p = k < 20 ? D.PP[k] : D.Q, i = Math.min(ANIM.upto, p.t.length - 1), sh = k < 20 ? a.shift : 0;
+  if (a.kind === 'caminho' || S.eixo === 'caminho') return pathPct(p)[i] + sh;
+  if (S.eixo === 'alinhado') return p.u[i] + sh;
+  const i0 = selRange(k < 20 ? V.zs[k] : V.zq)[0]; return (i - i0) / FS + sh;
+}
+function abDraw(cv) {
+  const a = cv._ab; if (!a || !cv.width || (cv.id === 'cv-big' && !AB_IDS.includes(BIG))) return;
+  const ctx = cv.getContext('2d'); if (!cv._snap) cv._snap = ctx.getImageData(0, 0, cv.width, cv.height); else ctx.putImageData(cv._snap, 0, 0);
+  const id = cv.id === 'cv-big' ? 'big:' + BIG : cv.id, x = abX(cv); if (Number.isFinite(x)) ANIM.mx[id] = Math.max(ANIM.mx[id] ?? -Infinity, x);
+  const v = ANIM.mx[id]; if (!Number.isFinite(v) || v <= a.xr[0]) return;
+  const toPx = u => a.l + (Math.min(a.xr[1], u) - a.xr[0]) / (a.xr[1] - a.xr[0]) * (a.r - a.l), x1 = toPx(v), r = cv.width / (cv.clientWidth || 1);
+  ctx.save(); ctx.setTransform(r, 0, 0, r, 0, 0); ctx.fillStyle = css('--green'); ctx.globalAlpha = 0.16; ctx.fillRect(a.l, a.t, x1 - a.l, a.b - a.t);
+  if (v < a.xr[1]) { ctx.globalAlpha = 1; ctx.strokeStyle = css('--green'); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, a.t); ctx.lineTo(x1, a.b); ctx.stroke(); }
+  ctx.restore();
+}
+function abAll() { AB_IDS.forEach(id => { const cv = $('#' + id); if (cv && cv._ab) abDraw(cv); }); }
+function abClear() { AB_IDS.forEach(id => { const cv = $('#' + id); if (cv && cv._snap) { cv.getContext('2d').putImageData(cv._snap, 0, 0); cv._snap = null; } }); ANIM.mx = {}; }
+function stopAnim(redraw = true) { cancelAnimationFrame(ANIM.raf); ANIM.raf = 0; ANIM.upto = null; abClear(); $('#an-play').textContent = '▶ animar'; if (redraw && D) drawSignature($('#cv-sig')); }
 function playAnim() {
   if (ANIM.raf) { stopAnim(); return; }
   const k = +$('#an-sel').value, p = k < 20 ? D.PP[k] : D.Q, dur = +$('#an-ms').value, T = p.t[p.t.length - 1], n = p.t.length - 1;
-  ANIM.k = k; ANIM.upto = 0; $('#an-play').textContent = '■ parar';
+  abClear(); ANIM.k = k; ANIM.upto = 0; $('#an-play').textContent = '■ parar';
   log('animou a assinatura', `${k < 20 ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} em ${dur} ms`);
   const t0 = performance.now(), cv = $('#cv-sig');
   const step = now => {
     const f = Math.min(1, (now - t0) / dur), tt = f * T; let i = Math.min(n, Math.floor(tt * TH.FS));
-    ANIM.upto = i; drawSignature(cv);
+    ANIM.upto = i; drawSignature(cv); abAll();
     if (f < 1) ANIM.raf = requestAnimationFrame(step); else { ANIM.raf = 0; $('#an-play').textContent = '▶ de novo'; }
   };
   ANIM.raf = requestAnimationFrame(step);
@@ -1331,12 +1356,14 @@ function drawPressure(cv) {
   const lo = m.map((v, i) => v - 2 * s[i]), hi = m.map((v, i) => v + 2 * s[i]);
   const F = frame(cv, [PA, PB], extent([lo, hi, q]), { xlabel: 'posição no traçado (%)', ylabel: 'gf' });
   const gs = gx.map(v => v + sh); bandFill(F, gs, lo, hi, F.P.band); polyline(F, gs, m, F.P.band); polyline(F, gx, q, F.P.acc, 1.1); F.done();
+  abMark(cv, F, [PA, PB], 'caminho', sh);
 }
 function drawDeform(cv) {
   const { gx, rows, q, PA, PB } = byPathRows(p => p.t), sh = (S.shifts.def || 0) * (PB - PA) / 100;
   const st = (p, s) => p.t[selRange(s)[0]], R = rows.map((r, k) => r.map(v => v - st(D.PP[k], V.zs[k]))), qq = q.map(v => v - st(D.Q, V.zq));
   const F = frame(cv, [PA, PB], [Math.min(0, ...R.map(r => Math.min(...r))), Math.max(...qq, ...R.map(r => Math.max(...r))) * 1.05], { xlabel: 'posição no traçado (%)', ylabel: 'tempo real (s)' });
   R.forEach(r => polyline(F, gx.map(v => v + sh), r, F.P.band, 0.6)); polyline(F, gx, qq, F.P.acc, 1.4); F.done();
+  abMark(cv, F, [PA, PB], 'caminho', sh);
 }
 function segsIn(p, s) { const o = []; let st = -1; for (let i = 0; i <= s.length; i++) { const c = i < s.length && s[i] && p.C[i]; if (c && st < 0) st = i; else if (!c && st >= 0) { if (i - st > 3) o.push([st, i]); st = -1; } } return o; }
 function drawImpulse(cv) {
@@ -1909,12 +1936,12 @@ function renderAnalise() {
   });
 }
 
-/* ---------------- ampliar um gráfico (duplo clique ou toque duplo) ---------------- */
+/* ---------------- ampliar um gráfico (botão ⤢ no canto do gráfico) ---------------- */
 let DRAW = {}, BIG = null;
 function openBig(id) {
   if (!DRAW[id]) return;
-  BIG = id; const card = $('#' + id).closest('.card'), h = card.querySelector('h3');
-  $('#big-title').textContent = (h ? (h.querySelector('span') || h).textContent : '').replace(/eixo X.*$/, '').trim();
+  BIG = id; const zz = ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(id); $('#cv-big').style.cursor = zz ? 'col-resize' : 'default'; $('#big-hint').textContent = 'Esc ou ✕ para fechar' + (zz ? ' · arraste na curva para dar zoom' : ''); const card = $('#' + id).closest('.card'), h = card.querySelector('h3');
+  $('#big-title').textContent = (h ? (h.querySelector('span') || h).textContent : '').replace('⤢ ampliar', '').replace(/eixo X.*$/, '').trim();
   $('#bigview').hidden = false; document.body.style.overflow = 'hidden';
   log('ampliou gráfico', $('#big-title').textContent);
   requestAnimationFrame(() => DRAW[id]($('#cv-big')));
@@ -2216,19 +2243,15 @@ function bind() {
   const realUI = () => { for (const id of ['#mh-real', '#m3-real']) { const b = $(id); b.classList.toggle('on', !!S.mahaReal); b.textContent = S.mahaReal ? '⤡ escala da pessoa' : '⤢ escala real'; } };
   for (const id of ['#mh-real', '#m3-real']) $(id).addEventListener('click', () => { S.mahaReal = !S.mahaReal; realUI(); log('Mahalanobis: escala', S.mahaReal ? 'real (eixos até a questionada)' : 'da pessoa (questionada fora da escala vira seta)'); drawMaha($('#cv-maha'), 1); drawM3($('#cv-m3'), M3.tAnim); if (BIG === 'cv-maha') drawMaha($('#cv-big'), 1); });
   realUI();
-  let lastTap = { t: 0, id: '', x: 0, y: 0 };
-  $$('.card canvas').forEach(cv => {
-    cv.addEventListener('dblclick', e => { e.preventDefault(); openBig(cv.id); });
-    cv.addEventListener('pointerup', e => {
-      if (e.pointerType !== 'touch') return;
-      const now = performance.now();
-      if (lastTap.id === cv.id && now - lastTap.t < 350 && Math.hypot(e.clientX - lastTap.x, e.clientY - lastTap.y) < 30) { lastTap.t = 0; openBig(cv.id); }
-      else lastTap = { t: now, id: cv.id, x: e.clientX, y: e.clientY };
-    });
+  // ampliar: botão "⤢" no canto de cada gráfico (o arrasto fica livre para zoom, giro e seleção)
+  $$('#pane-analise .card canvas').forEach(cv => {
+    if (!cv.id || cv.id === 'cv-big') return; const card = cv.closest('.card'), h = card && card.querySelector('h3'); if (!h || card.querySelector('.ampl')) return;
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'ampl'; b.title = 'Ampliar este gráfico na tela inteira'; b.setAttribute('aria-label', 'Ampliar gráfico'); b.textContent = '⤢ ampliar';
+    b.addEventListener('click', e => { e.stopPropagation(); openBig(cv.id); });
+    if (h.id) { b.classList.add('abs'); card.classList.add('has-ampl'); card.appendChild(b); } else h.appendChild(b); // títulos reescritos pelo painel: botão fora do título
   });
   $('#big-close').addEventListener('click', closeBig);
   $('#bigview').addEventListener('click', e => { if (e.target.id === 'bigview') closeBig(); });
-  $('#cv-big').addEventListener('dblclick', closeBig);
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeBig(); });
   $('#an-ms').addEventListener('input', animUI);
   $('#an-sel').addEventListener('change', () => { stopAnim(false); animUI(); drawSignature($('#cv-sig')); });
