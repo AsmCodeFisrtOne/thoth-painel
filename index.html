@@ -98,6 +98,15 @@ b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(
 table.tq { border-collapse: collapse; width: 100%; font-size: 11.5px; line-height: 1.35; table-layout: fixed } table.tq th:nth-child(1) { width: 46% } table.tq th:nth-child(2) { width: 18% } table.tq th { text-align: left; color: var(--muted); font-weight: 600; padding: 3px 6px; border-bottom: 1px solid var(--accent) }
 table.tq td { padding: 3px 6px; border-bottom: 1px solid var(--grid); vertical-align: top } table.tq td:nth-child(2) { font-weight: 600; overflow-wrap: anywhere } table.tq td:first-child { width: 46% }
 @media (max-width: 680px) { table.tq td:nth-child(2) { white-space: normal } table.tq th:nth-child(1) { width: 40% } table.tq th:nth-child(2) { width: 22% } }
+.vista { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 7px 12px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; font-size: 12.5px; background: var(--panel) }
+.vista.ok { border-left: 5px solid var(--green) } .vista.ok b { color: var(--green) }
+.vista.aj { border: 1px solid var(--red); border-left: 5px solid var(--red); background: var(--warnbg) } .vista.aj > span > b { color: var(--red) }
+.vista .vc { margin-left: auto; color: var(--muted); font-size: 11.5px } .vista .vc b { font: 600 11.5px var(--mono); color: var(--ink) }
+.obs { border: 1px solid var(--line); border-left: 5px solid var(--accent); border-radius: 8px; padding: 8px 12px; margin-bottom: 8px; background: var(--panel); font-size: 12.5px }
+.obs textarea { min-height: 58px; margin: 4px 0 6px } .obs .grp { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center }
+.obs.done { border-left-color: var(--green) } .obs blockquote { margin: 6px 0 2px; padding: 4px 10px; border-left: 3px solid var(--line); font-style: italic; white-space: pre-wrap }
+.lnk { background: none; border: 0; padding: 0 0 0 6px; font: 600 11px var(--sans); color: var(--navy); text-decoration: underline; cursor: pointer }
+#vcode { font: 12px var(--mono); padding: 5px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); min-width: 0; flex: 1 1 220px }
 .trban { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; background: var(--warnbg); border: 1px solid var(--amber); border-left: 5px solid var(--amber); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px }
 #trinv { position: fixed; inset: 0; z-index: 9; background: color-mix(in srgb, var(--bg) 72%, transparent); display: grid; place-items: center; padding: 16px }
 .trwarn { color: var(--amber); font-weight: 600 } .trwarn:empty { display: none }
@@ -174,7 +183,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   <div id="wm" aria-hidden="true"></div>
   <header class="dev">
     <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
-    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"></div><div class="sub">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
+    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no laudo.">revelar (fica registrado)</button></div><div class="sub">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
     <div class="ghost"><button type="button" id="btn-mode" title="Alternar a questionada: imitação, verdadeira ou mesma forma com construção diferente">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
   </header>
   <nav class="tabs" aria-label="Abas do painel">
@@ -185,9 +194,11 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   </nav>
 
   <section class="pane" id="pane-analise">
+    <div id="vista" class="vista ok" role="status"><span id="vista-t"></span><span class="vc">código da vista <b id="vista-c"></b></span><button type="button" class="btn" id="btn-padrao" hidden>voltar à vista padrão</button></div>
+    <div id="obs" class="obs"><div id="obs-form"><label for="obs-txt"><b>1º passo · Observações iniciais na vista padrão</b></label><textarea id="obs-txt" placeholder="Ex.: na questionada o ritmo é mais lento e regular, com pausas antes do S e do d; 17 levantamentos contra 11 nos padrões; a pressão cai no fim dos traços…"></textarea><div class="grp"><button type="button" class="primary" id="obs-reg">registrar observações</button><span class="fine" id="obs-hint"></span></div></div><div id="obs-done" hidden></div></div>
     <div id="tr-banner" class="trban" hidden><span id="tr-banner-t"></span><button type="button" class="btn" id="tr-banner-x">voltar à assinatura inteira</button></div>
     <div class="bar">
-      <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn" data-eixo="tempo" title="Cada assinatura no próprio relógio: mostra o ritmo e a duração; os traços podem não coincidir.">tempo real</button><button type="button" class="btn on" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
+      <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn on" data-eixo="tempo" title="Vista padrão. Cada assinatura no próprio relógio: mostra o ritmo, as pausas e a duração, como a assinatura foi feita.">tempo real (padrão)</button><button type="button" class="btn" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
       <div class="grp hl"><span>Grandeza:</span><button type="button" class="btn" data-g="x">X</button><button type="button" class="btn" data-g="y">Y</button><button type="button" class="btn on" data-g="r">resultante</button></div>
       <div class="grp"><span id="trecho-txt">Zoom: arraste sobre o desenho ou sobre uma curva</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button><button type="button" class="btn" id="btn-anal" hidden title="Calcula medidas, elipses e tabela só neste pedaço, como exploração. O veredito continua o da assinatura inteira.">analisar só este trecho</button></div>
       <div class="grp suavg"><label for="suav"><span>Suavizar as curvas:</span></label><input type="range" id="suav" min="0" max="10" step="1" value="0"><b id="suav-o" style="font-size:12px">0 de 10 · nenhuma</b><span class="dica" id="suav-dica"></span></div>
@@ -230,13 +241,16 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   <section class="pane" id="pane-integ" hidden>
     <div class="two">
       <div class="card"><h3>Verificação de integridade <button type="button" class="btn" id="btn-verify2">Verificar agora</button></h3><div class="tw"><table class="it"><tbody id="integ"></tbody></table></div>
-        <h3 style="margin-top:8px">Parâmetros de cálculo (vão para o laudo)</h3><div class="tw"><table class="it"><tbody id="params"></tbody></table></div></div>
+        <h3 style="margin-top:8px">Parâmetros de cálculo (vão para o laudo)</h3><div class="tw"><table class="it"><tbody id="params"></tbody></table></div>
+        <h3 style="margin-top:8px">Abrir vista pelo código</h3><p class="fine" style="margin:0 0 4px">O código aparece em cada gráfico e em cada figura do laudo. Ele abre exatamente a mesma vista, para qualquer pessoa conferir uma figura.</p>
+        <div class="grp" style="display:flex;flex-wrap:wrap;gap:6px"><label for="vcode" class="sr">Código da vista</label><input id="vcode" placeholder="ex.: 3F9A1C/tr_s0_r/7C1E" spellcheck="false" autocomplete="off"><button type="button" class="btn" id="vcode-go">abrir</button><button type="button" class="btn" id="vcode-ana">ir para a Análise</button></div><p class="fine" id="vcode-st" role="status"></p>
+        <h3 style="margin-top:8px">Vistas consultadas nesta sessão (vão para o laudo)</h3><div class="tw"><table class="it"><tbody id="vistas"></tbody></table></div></div>
       <div class="card"><h3>Hipóteses e conclusão</h3><p class="fine" style="margin:0">O painel não sugere conclusão: nenhum campo vem marcado.</p>
         <div class="hyp"><div><b>Variação natural</b><span>medidas dentro da faixa dos padrões</span></div><div><b>Condição motora (idade, doença, medicação)</b><span>lentidão e mais trocas de aceleração e jerk, sem padrão de cópia</span></div><div><b>Disfarce pelo próprio autor</b><span>forma alterada, com traços motores residuais do autor</span></div><div><b>Imitação por terceiro</b><span>forma copiada, dinâmica de outro motor</span></div></div>
         <div class="grp"><label for="hip-h"><b>Hipótese</b></label><select id="hip-h"></select><label for="hip-c"><b>contra</b></label><select id="hip-c"></select></div>
         <div><b style="font-size:12.5px">Grau de suporte (escala verbal ENFSI / SWGDOC)</b><div class="grp" id="grau" style="margin-top:4px"></div></div>
         <label for="fund" class="fine">Fundamentação do perito</label><textarea id="fund" placeholder="Ex.: a questionada preserva a forma, mas leva quase o dobro do tempo, com mais levantamentos e menos energia na faixa de 5–8 Hz…"></textarea>
-        <div class="laudo"><b>Laudo</b><span>Leva gráficos, medidas, parâmetros, os hashes dos 21 pacotes, a verificação de integridade, a conclusão e o registro de acessos. Não leva amostras cruas.</span>
+        <div class="laudo"><b>Laudo</b><span>Leva as observações iniciais, a conclusão, medidas, parâmetros, os hashes dos 21 pacotes, a verificação de integridade, o registro de acessos e todas as vistas consultadas. Os gráficos do corpo do laudo são sempre da vista padrão; uma vista ajustada só entra em anexo, marcada. Não leva amostras cruas. Exige as observações iniciais.</span><span class="fine" id="obs-st"></span>
           <button type="button" class="primary" id="btn-pdf">Gerar laudo em PDF</button><span class="fine" id="pdf-status" role="status"></span></div>
       </div>
     </div>
@@ -1060,9 +1074,12 @@ const SES = Math.floor(Math.random() * 0xffff).toString(16).toUpperCase().padSta
 const PERITO = 'Nome do Perito', CPFP = '***.456.789-**';
 
 const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira' : n.startsWith('João') ? 'construção' : 'imitação');
+const MODE_NOME = { 'imitação': 'imitação por outra pessoa', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente (ordem e sentido dos traços trocados), ritmo da pessoa' };
 const DADOS_ = null;
-const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['velocidade média (mm/s)', 'aceleração RMS (m/s²)', 'pressão média (gf)'],
-  crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false };
+// o painel sempre parte da vista padrão: tempo real, assinatura inteira, sem suavização e sem deslocamento
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'tempo', g: 'r', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['velocidade média (mm/s)', 'aceleração RMS (m/s²)', 'pressão média (gf)'],
+  crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false,
+  obs: null, firstAdj: null, vistas: [], blind: true, revealed: null };
 let D = null, V = null;
 const cache = {};
 
@@ -1119,7 +1136,7 @@ function pal() {
 }
 function setup(cv, h) {
   const r = S.printing ? 2 : (window.devicePixelRatio || 1), w = cv.clientWidth || 600; h = h || cv.clientHeight || 200;
-  cv.width = Math.round(w * r); cv.height = Math.round(h * r); const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0);
+  cv.width = Math.round(w * r); cv.height = Math.round(h * r); cv._stamped = false; const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0);
   c.clearRect(0, 0, w, h); return { c, w, h };
 }
 function nice(lo, hi, n = 5) {
@@ -1205,6 +1222,8 @@ function drawCurve(cv, sigf, shiftKey, ylabel, noise, scale = 1) {
   const yr = robust([d.lo, d.hi, d.qy]);
   const F = frame(cv, d.xr, yr, { xlabel: d.xlabel, ylabel });
   airBands(F, d); bandFill(F, d.gx, d.lo, d.hi, F.P.band); polyline(F, d.gx, d.m, F.P.band, 1);
+  const sh0 = (S.shifts[shiftKey] || 0) * (d.xr[1] - d.xr[0]) / 100;
+  if (sh0) { const g0 = d.gx.map(v => v - sh0); polyline(F, g0, d.lo, F.P.mut, 0.8, Infinity, [3, 3]); polyline(F, g0, d.hi, F.P.mut, 0.8, Infinity, [3, 3]); } // posição original da faixa, sempre visível
   if (noise) for (const sg of [1, -1]) polyline(F, d.xr, [sg * 2 * noise * scale, sg * 2 * noise * scale], F.P.noise, 1, Infinity, [2, 3]);
   cv._csel = { xr: d.xr, l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b, qx: d.qx, qi: d.qi }; // para escolher o trecho arrastando sobre a curva
   polyline(F, d.qx, d.qy, F.P.acc, 1, Infinity); F.done();
@@ -1266,14 +1285,15 @@ function drawSigAnim(c, X, Y, P, R) {
 }
 /* faixa nos gráficos durante a animação: mostra, em cada gráfico, o trecho já percorrido pela assinatura animada */
 const AB_IDS = ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5', 'cv-pres', 'cv-def', 'cv-big'];
-function abMark(cv, F, xr, kind, shift) { cv._ab = { xr, kind, shift, l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b }; cv._snap = null; if (ANIM.upto !== null) abDraw(cv); }
+function abMark(cv, F, xr, kind, shift) { cv._ab = { xr, kind, shift, l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b }; cv._snap = cv.width ? cv.getContext('2d').getImageData(0, 0, cv.width, cv.height) : null; if (ANIM.upto !== null) abDraw(cv); } // base sem marca d'água: a marca é refeita por cima a cada quadro
 function abX(cv) { // posição, no eixo deste gráfico, da amostra que está sendo animada
   const a = cv._ab, k = ANIM.k, p = k < 20 ? D.PP[k] : D.Q, i = Math.min(ANIM.upto, p.t.length - 1), sh = k < 20 ? a.shift : 0;
   if (a.kind === 'caminho' || S.eixo === 'caminho') return pathPct(p)[i] + sh;
   if (S.eixo === 'alinhado') return p.u[i] + sh;
   const i0 = selRange(k < 20 ? V.zs[k] : V.zq)[0]; return (i - i0) / FS + sh;
 }
-function abDraw(cv) {
+function abDraw(cv) { abBand(cv); cv._stamped = false; stamp(cv); }
+function abBand(cv) {
   const a = cv._ab; if (!a || !cv.width || (cv.id === 'cv-big' && !AB_IDS.includes(BIG))) return;
   const ctx = cv.getContext('2d'); if (!cv._snap) cv._snap = ctx.getImageData(0, 0, cv.width, cv.height); else ctx.putImageData(cv._snap, 0, 0);
   const id = cv.id === 'cv-big' ? 'big:' + BIG : cv.id, x = abX(cv); if (Number.isFinite(x)) ANIM.mx[id] = Math.max(ANIM.mx[id] ?? -Infinity, x);
@@ -1284,7 +1304,7 @@ function abDraw(cv) {
   ctx.restore();
 }
 function abAll() { AB_IDS.forEach(id => { const cv = $('#' + id); if (cv && cv._ab) abDraw(cv); }); }
-function abClear() { AB_IDS.forEach(id => { const cv = $('#' + id); if (cv && cv._snap) { cv.getContext('2d').putImageData(cv._snap, 0, 0); cv._snap = null; } }); ANIM.mx = {}; }
+function abClear() { AB_IDS.forEach(id => { const cv = $('#' + id); if (cv && cv._snap) { cv.getContext('2d').putImageData(cv._snap, 0, 0); cv._stamped = false; stamp(cv); } }); ANIM.mx = {}; }
 function stopAnim(redraw = true) { cancelAnimationFrame(ANIM.raf); ANIM.raf = 0; ANIM.upto = null; abClear(); $('#an-play').textContent = '▶ animar'; if (redraw && D) drawSignature($('#cv-sig')); }
 function playAnim() {
   if (ANIM.raf) { stopAnim(); return; }
@@ -1355,13 +1375,16 @@ function drawPressure(cv) {
   const m = gx.map((_, i) => TH.mean(rows.map(r => r[i]))), s = gx.map((_, i) => TH.std(rows.map(r => r[i])));
   const lo = m.map((v, i) => v - 2 * s[i]), hi = m.map((v, i) => v + 2 * s[i]);
   const F = frame(cv, [PA, PB], extent([lo, hi, q]), { xlabel: 'posição no traçado (%)', ylabel: 'gf' });
-  const gs = gx.map(v => v + sh); bandFill(F, gs, lo, hi, F.P.band); polyline(F, gs, m, F.P.band); polyline(F, gx, q, F.P.acc, 1.1); F.done();
+  const gs = gx.map(v => v + sh); bandFill(F, gs, lo, hi, F.P.band); polyline(F, gs, m, F.P.band);
+  if (sh) { polyline(F, gx, lo, F.P.mut, 0.8, Infinity, [3, 3]); polyline(F, gx, hi, F.P.mut, 0.8, Infinity, [3, 3]); }
+  polyline(F, gx, q, F.P.acc, 1.1); F.done();
   abMark(cv, F, [PA, PB], 'caminho', sh);
 }
 function drawDeform(cv) {
   const { gx, rows, q, PA, PB } = byPathRows(p => p.t), sh = (S.shifts.def || 0) * (PB - PA) / 100;
   const st = (p, s) => p.t[selRange(s)[0]], R = rows.map((r, k) => r.map(v => v - st(D.PP[k], V.zs[k]))), qq = q.map(v => v - st(D.Q, V.zq));
   const F = frame(cv, [PA, PB], [Math.min(0, ...R.map(r => Math.min(...r))), Math.max(...qq, ...R.map(r => Math.max(...r))) * 1.05], { xlabel: 'posição no traçado (%)', ylabel: 'tempo real (s)' });
+  if (sh) R.forEach(r => polyline(F, gx, r, F.P.mut, 0.4, Infinity, [2, 3])); // posição original dos padrões
   R.forEach(r => polyline(F, gx.map(v => v + sh), r, F.P.band, 0.6)); polyline(F, gx, qq, F.P.acc, 1.4); F.done();
   abMark(cv, F, [PA, PB], 'caminho', sh);
 }
@@ -1916,7 +1939,7 @@ function renderAnalise() {
   $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% (exploratório)` : 'Medidas globais';
   $('#t-maha').textContent = `Distância à pessoa${z} · ${V.MH.keys.length} medidas ★`;
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
-  renderMeasures(); renderTV();
+  renderMeasures(); renderTV(); noteVista(); vistaUI();
   DRAW = {
     'cv-sig': cv => drawSignature(cv), 'cv-zoom': cv => drawZoom(cv), 'cv-comp': cv => drawCompass(cv), 'cv-hist': cv => drawHist(cv),
     'cv-pres': cv => drawPressure(cv), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
@@ -2049,7 +2072,9 @@ function params() {
     ['Alinhamento', 'marcos (levantamentos casados primeiro) + DTW limitado, banda de 10%'], ['Padrão médio', `DBA dos 20 padrões · referência P${String(D.ri + 1).padStart(2, '0')}`],
     ['Mahalanobis', `${V.MH.keys.length} medidas: ${V.MH.keys.join(', ')}`], ['Covariância', `Ledoit-Wolf (encolhimento ${br(V.MH.shrink)}) · limite de Hotelling (n = 20)`],
     ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura (análise exploratória; veredito da assinatura inteira)` : 'assinatura inteira'], ['Zoom visual dos gráficos', S.zoom ? `${br(S.zoom[0], 0)}–${br(S.zoom[1], 0)}% (só visual)` : 'nenhum'], ['Grandeza', SYM[S.g][3]], ['Comparação das curvas (normalização do tempo)', { alinhado: 'traço a traço (marcos + DTW limitado)', tempo: 'tempo real (sem normalização)', caminho: 'posição no traçado (normalização pelo caminho percorrido)' }[S.eixo]],
-    ['Deslocamentos dos padrões', Object.keys(S.shifts).filter(k => S.shifts[k]).map(k => `${k} ${br(S.shifts[k], 1)}%`).join(' · ') || 'todos +0,0%'], ['Questionada (simulação)', { 'imitação': 'imitação por terceiro', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente (ordem e sentido dos traços trocados), ritmo da pessoa' }[S.mode]]];
+    ['Deslocamentos dos padrões', Object.keys(S.shifts).filter(k => S.shifts[k]).map(k => `${SH_NOME[k] || k} ${br(S.shifts[k], 1)}%`).join(' · ') || `todos +0,0% (limite ±${SH_MAX}%)`], ['Suavização do desenho das curvas', `${suavN()} de 10 (${SUAV_NOME[suavN()]}) · só o desenho; os números usam sempre o filtro padrão`],
+    ['Vista atual', `${isPadrao() ? 'padrão' : 'ajustada'} · código ${vistaCode()}`],
+    ['Questionada (simulação)', S.blind ? 'tipo oculto (modo cego)' : `${MODE_NOME[S.mode]} · revelado às ${S.revealed}`]];
 }
 function renderInteg() {
   $('#integ').innerHTML = integrity().map(([a, s, b, c]) => `<tr><td>${a}</td><td class="${{ ok: 'ok', bad: 'bad', warn: 'warn', sim: 'sim', na: 'sim' }[s]}">${{ ok: '✓ ', bad: '✗ ', warn: '⚠ ', sim: '◦ ', na: '◦ ' }[s]}${b}</td><td>${c}</td></tr>`).join('');
@@ -2057,6 +2082,8 @@ function renderInteg() {
   $('#hip-h').innerHTML = '<option value="">escolher…</option>' + HIP.map(h => `<option ${S.hip.h === h ? 'selected' : ''}>${h}</option>`).join('');
   $('#hip-c').innerHTML = '<option value="">escolher…</option>' + HIP.map(h => `<option ${S.hip.c === h ? 'selected' : ''}>${h}</option>`).join('');
   $('#grau').innerHTML = GRAU.map(g => `<button type="button" class="chip ${S.hip.grau === g ? 'on' : ''}" data-grau="${g}">${g}</button>`).join('');
+  $('#vistas').innerHTML = S.vistas.map(v => `<tr><td>${v.ts}</td><td class="mono">${v.code}</td><td class="${v.padrao ? 'ok' : 'bad'}">${v.padrao ? '● padrão' : '▲ ajustada'}</td><td>${escH(v.padrao ? 'tempo real, assinatura inteira, sem suavização' : v.desc)}${v.origem === 'código' ? ' · aberta pelo código' : ''}${v.passos ? ` · ajustada em ${v.passos} passos` : ''}${v.n > 1 ? ` · ${v.n}×` : ''}</td></tr>`).join('') || '<tr><td class="sim">nenhuma ainda</td></tr>';
+  $('#obs-st').innerHTML = S.obs ? `<span class="ok">✓ observações iniciais registradas às ${S.obs.ts}${S.obs.antes ? ' (antes de qualquer ajuste)' : ' (depois de ajustes)'}</span>` : '<span class="bad">✗ faltam as observações iniciais (aba Análise, no alto, na vista padrão)</span>';
   renderLog();
 }
 function renderLog() { $('#log').innerHTML = S.log.slice().reverse().map(l => `<tr><td>${l.ts}</td><td>${l.user}</td><td>${l.acao}</td><td>${l.det}</td><td class="mono">${l.h.slice(0, 10)}…</td></tr>`).join(''); }
@@ -2072,10 +2099,14 @@ async function chartImg(fn, w, h) {
 async function makePDF() {
   const st = $('#pdf-status'); st.textContent = 'Montando o laudo…';
   if (D.packs.some(p => p.recalc === null)) await verifyAll();
+  // o corpo do laudo é sempre feito na vista padrão; a vista ajustada do momento (se houver) vai só para o Anexo B
+  const saved = { eixo: S.eixo, suav: S.suav, trecho: S.trecho, zoom: S.zoom, shifts: { ...S.shifts } }, adjNow = ajustes(), codeNow = vistaCode();
+  resetPadrao(); view(); renderTV(); const codePad = vistaCode();
+  try {
   const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4' }), K = await keys();
   const W = 210, L = 18, R = W - 18; let y = 20;
   const MH = V.MH, atip = MH.d2 > MH.lim99, now = new Date();
-  const body = JSON.stringify({ processo: '0001234-56.2026.8.26.0100', signatario: D.name, questionada: D.packs[0].sha, padroes: D.packs.slice(1).map(p => p.sha), trecho: S.trecho, grandeza: S.g, D2: MH.d2, p: MH.p, hip: S.hip, fund: $('#fund').value, data: now.toISOString() });
+  const body = JSON.stringify({ processo: '0001234-56.2026.8.26.0100', signatario: D.name, questionada: D.packs[0].sha, padroes: D.packs.slice(1).map(p => p.sha), vista_padrao: codePad, vista_anexo: adjNow.length ? codeNow : null, vistas: S.vistas.map(v => v.code), obs: S.obs && S.obs.h, cego: S.blind ? 'mantido' : 'revelado ' + S.revealed, grandeza: S.g, D2: MH.d2, p: MH.p, hip: S.hip, fund: $('#fund').value, data: now.toISOString() });
   const hb = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(body)), hh = hex(hb);
   const sig = hex(await crypto.subtle.sign({ name: 'ECDSA', hash: 'SHA-256' }, K.perito.privateKey, new TextEncoder().encode(body)));
   const code = hh.slice(0, 16).toUpperCase().match(/.{4}/g).join('-');
@@ -2087,7 +2118,10 @@ async function makePDF() {
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text('SIMULAÇÃO · dados sintéticos para demonstração', R, 9, { align: 'right' });
   y = 24; y = T(`Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: ${PERITO} · emitido em ${now.toLocaleString('pt-BR')}`, L, y, { s: 8.5, c: [93, 104, 120] });
   y = T(`Signatário declarado: ${D.name} · Thoth nº 0123A1B2C3D4E5F6EE · questionada: contador 184 · padrões: 20 colheitas (contadores 201–220)`, L, y, { s: 8.5, c: [93, 104, 120], gap: 4 });
-  H2('1. Conclusão do perito');
+  H2('1. Observações iniciais e conclusão do perito');
+  y = T(`Observações iniciais, registradas às ${S.obs.ts} na vista padrão (tempo real, assinatura inteira, sem suavização)${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de o perito já ter usado ajustes (o primeiro às ${S.obs.adjTs})`} · hash ${S.obs.h.slice(0, 16)}:`, L, y, { b: true, s: 8.5 });
+  y = T(S.obs.txt, L + 3, y, { i: true, gap: 2.5 });
+  y = T(`Modo cego: ${S.blind ? 'o tipo da questionada não foi revelado ao perito durante a análise.' : `o perito revelou o tipo da questionada às ${S.revealed}${S.obs && S.obs.ts ? '' : ''} (ação registrada na seção 7).`}`, L, y, { s: 8.5, c: [93, 104, 120], gap: 3 });
   y = T(`Hipótese: ${S.hip.h || '(não escolhida)'}   ·   contra: ${S.hip.c || '(não escolhida)'}`, L, y, { b: true });
   y = T(`Grau de suporte (escala verbal ENFSI / SWGDOC): ${S.hip.grau || '(não escolhido)'}`, L, y, { b: true });
   y = T('Fundamentação: ' + ($('#fund').value.trim() || '(não preenchida)'), L, y, { gap: 3 });
@@ -2101,12 +2135,14 @@ async function makePDF() {
   }
   const rows = [['Medida', 'Padrões (média ± dp)', 'Questionada', 'z']].concat(KEYS.map(k => { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k); return [LBL(k), `${br(mu, d)} ± ${br(sd, d)}`, br(V.MQ[k], d), sd > 1e-9 ? br((V.MQ[k] - mu) / sd, 1) : '—']; }));
   table(rows, [70, 50, 35, 19], { head: true });
-  H2('3. Gráficos');
-  y = T(`Suavização das curvas nos gráficos: ${suavN()} de 10 (${SUAV_NOME[suavN()]})${suavN() ? ' — só o desenho; os números e o veredito usam o filtro padrão' : ''}.`, L, y, { s: 8.5, c: [93, 104, 120], gap: 2 });
-  const imgs = [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
-    [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => TH.comp(p, S.g, 2), 'acc', 'm/s²', D.NF[2], 1e-3), 174, 50], [`5ª derivada · ${SYM[S.g][3]}`, cv => drawCurve(cv, p => TH.comp(p, S.g, 5), 'd5', 'x10^8 mm/s^5', D.NF[5], 1e-8), 174, 50],
-    [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50], ['Mahalanobis 3D (exploratório, vista atual)', cv => drawM3(cv, 1), 174, 95]];
-  for (const [cap, fn, wmm, hmm] of imgs) { need(hmm + 8); y = T(cap, L, y, { b: true, s: 8.5 }); const url = await chartImg(fn, wmm * 4, hmm * 4); doc.addImage(url, 'PNG', L, y, wmm, hmm); y += hmm + 3; }
+  H2('3. Gráficos (vista padrão)');
+  y = T(`Todas as figuras desta seção estão na vista padrão: tempo real, assinatura inteira, sem suavização, sem deslocamento (código da vista ${codePad}). O código vem impresso em cada figura. Para conferir, qualquer pessoa com acesso ao caso abre o painel, aba Integridade e laudo, "abrir vista pelo código", e vê exatamente a mesma figura. Figura sem código, ou cujo código não confira, não pertence a este laudo.`, L, y, { s: 8.5, c: [93, 104, 120], gap: 2 });
+  const IMGS = () => [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
+    [`Velocidade · ${SYM[S.g][0]}`, cv => drawCurve(cv, p => compV(p, S.g, 1), 'vel', 'mm/s', D.NF[1] * noiseScale(1)), 174, 50],
+    [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => compV(p, S.g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3), 174, 50], [`5ª derivada · ${SYM[S.g][3]}`, cv => drawCurve(cv, p => compV(p, S.g, 5), 'd5', 'x10^8 mm/s^5', D.NF[5] * noiseScale(5), 1e-8), 174, 50],
+    [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50], ['Mahalanobis 3D (exploratório)', cv => drawM3(cv, 1), 174, 95]];
+  const putImgs = async (list, code) => { for (const [cap, fn, wmm, hmm] of list) { need(hmm + 8); y = T(`${cap} · vista ${code}`, L, y, { b: true, s: 8.5 }); const url = await chartImg(fn, wmm * 4, hmm * 4); doc.addImage(url, 'PNG', L, y, wmm, hmm); y += hmm + 3; } };
+  await putImgs(IMGS(), codePad);
   if (H3.length) { y = T('Trios do Mahalanobis 3D consultados (todos, na ordem; exploratórios, não entram no veredito)', L, y, { b: true, s: 8.5 });
     table([['Hora', 'Caso', 'Origem', 'X · Y · Z', 'D² / limite 99%']].concat(H3.map(h => [h.ts, h.caso, h.origem === 'auto' ? 'automático (só padrões)' : h.origem, h.ks.map(LBL).join(' · '), `${br(h.d2, h.d2 > 100 ? 0 : 1)} / ${br(h.l99, 1)}`])), [16, 34, 30, 70, 24], { head: true, s: 7 }); }
   if (TVROWS.length) { need(20); y = T('Tabela verdade (todas as combinações; só a linha do veredito decide; números no Anexo A)', L, y, { b: true, s: 8.5 });
@@ -2120,10 +2156,21 @@ async function makePDF() {
   y = T('O laudo não contém amostras cruas: elas não saem do sistema (6.10.3). Quem precisar conferir recebe acesso próprio ao caso.', L, y, { i: true, s: 8, c: [93, 104, 120], gap: 3 });
   H2('7. Registro de acessos (encadeado por hash)');
   table([['Data/hora', 'Ação', 'Detalhe', 'Hash']].concat(S.log.map(l => [l.ts, l.acao, l.det, l.h.slice(0, 16)])), [32, 36, 76, 30], { head: true, s: 7 });
+  H2('8. Vistas consultadas nesta sessão');
+  y = T('Todas as vistas abertas pelo perito, não só as que ele escolheu mostrar. Qualquer uma pode ser reaberta pelo código. Vistas ajustadas são exploratórias: não mudam os números nem o veredito, mas mudam a aparência dos gráficos.', L, y, { s: 8, c: [93, 104, 120], gap: 2 });
+  table([['Primeira vez', 'Código da vista', 'O que mostra', 'Vezes']].concat(S.vistas.map(v => [v.ts, v.code, (v.padrao ? 'PADRÃO · ' : 'AJUSTADA · ') + v.desc + (v.origem === 'código' ? ' (aberta pelo código)' : '') + (v.passos ? ` (em ${v.passos} passos)` : ''), String(v.n)])), [20, 48, 94, 12], { head: true, s: 7 });
   if (TVROWS.length) { H2('Anexo A. Números da tabela verdade');
     y = T('D² com a covariância simples dos 20 padrões (a mesma das elipses); D² diag = soma dos z² (sem correlação). Limite corrigido = Hotelling a 1 − 0,01/k, com k = ' + TV_K() + ' linhas. Padrões fora = quantos dos 20 saem do limite de 99% quando testados contra os outros 19. A linha do veredito usa o modelo de 4 medidas (Ledoit-Wolf) sem correção.', L, y, { s: 7.5, c: [93, 104, 120], gap: 2 });
     const f = (v, d = 1) => (Number.isFinite(v) ? br(v, v > 100 ? 0 : d) : '—'), nm = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
     table([['Combinação', 'D²', 'D² diag', 'lim. 95%', 'lim. corrigido', 'p', 'padrões fora', 'Resultado']].concat(TVROWS.map(r => [nm(r.ks), f(r.L.d2), f(r.L.d2diag), f(r.L.lim95), r.main ? f(r.L.lim99) + ' (99%)' : f(r.L.limC), Number.isFinite(r.L.pval) ? (r.L.pval < 1e-4 ? '< 0,0001' : br(r.L.pval, 4)) : '—', Number.isFinite(r.L.out) ? String(r.L.out) : '—', r.L.res])), [58, 15, 15, 14, 18, 16, 14, 24], { head: true, s: 6.5 }); }
+  // Anexo B: a vista ajustada que estava na tela, se houver — sempre marcada e separada do corpo do laudo
+  if (adjNow.length) {
+    Object.assign(S, saved); view();
+    H2('Anexo B. Vista ajustada no momento do laudo (exploratória)');
+    y = T(`Ajustes ativos: ${adjNow.join(' · ')}. Código da vista ${codeNow}. Estas figuras levam a marca "VISTA AJUSTADA" e não substituem as da seção 3. Os números e o veredito são os da assinatura inteira, na seção 2.${S.trecho ? ` As medidas do trecho ${S.trecho[0]}–${S.trecho[1]}% são exploratórias.` : ''}`, L, y, { s: 8.5, gap: 2 });
+    await putImgs(IMGS(), codeNow);
+    resetPadrao(); view();
+  }
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(93, 104, 120); doc.text(latin(`Assinado digitalmente (simulado, ECDSA P-256 da sessão ${SES}) · código de verificação ${code}`), L, 287); doc.text(latin(`SHA-256 do conteúdo ${hh.slice(0, 32)}… · assinatura ${sig.slice(0, 24)}…`), L, 290.5); doc.text(`${i}/${n}`, R, 290.5, { align: 'right' }); }
   const blob = doc.output('blob'), fname = `laudo_thoth_${D.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
@@ -2131,7 +2178,112 @@ async function makePDF() {
   const dl = window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null;
   if (dl) { try { await dl.save({ filename: fname, data: blob }); st.textContent = `Laudo salvo · código de verificação ${code}`; } catch (e) { st.textContent = e && e.code === 'declined' ? 'Você recusou o salvamento. O laudo pode ser gerado de novo.' : 'Não foi possível salvar o arquivo neste visualizador.'; } }
   else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); st.textContent = `Laudo gerado · código de verificação ${code}`; }
+  } finally { Object.assign(S, saved); view(); renderTV(); if (S.tab === 'analise') renderAnalise(); }
 }
+
+/* ---------------- vista padrão, ajustes ativos e código da vista ----------------
+   Vista padrão = tempo real, assinatura inteira, sem suavização, sem deslocamento: mostra a assinatura como foi feita.
+   Qualquer outra coisa é "vista ajustada": todo gráfico ganha marca d'água e todo ajuste entra no registro e no laudo.
+   O código da vista (caso/vista/verificador) permite a qualquer pessoa reabrir exatamente a mesma vista. */
+const SH_KEYS = ['vel', 'acc', 'pow', 'd4', 'd5', 'pres', 'def'], SH_MAX = 5;
+const SH_NOME = { vel: 'velocidade', acc: 'aceleração', pow: 'potência', d4: '4ª derivada', d5: '5ª derivada', pres: 'pressão', def: 'deformação' };
+const EIXO_COD = { tempo: 'tr', alinhado: 'tt', caminho: 'pt' }, COD_EIXO = { tr: 'tempo', tt: 'alinhado', pt: 'caminho' };
+const EIXO_NOME = { tempo: 'tempo real', alinhado: 'traço a traço (tempo normalizado)', caminho: 'posição no traçado (tempo normalizado)' };
+function ajustes() {
+  const a = [];
+  if (S.eixo !== 'tempo') a.push(EIXO_NOME[S.eixo]);
+  if (suavN()) a.push(`suavização ${suavN()}/10`);
+  if (S.trecho) a.push(`trecho ${S.trecho[0]}–${S.trecho[1]}% (exploratório)`); else if (S.zoom) a.push(`zoom ${S.zoom[0]}–${S.zoom[1]}%`);
+  const sh = SH_KEYS.filter(k => S.shifts[k]); if (sh.length) a.push('padrões deslocados: ' + sh.map(k => `${SH_NOME[k]} ${S.shifts[k] > 0 ? '+' : ''}${br(S.shifts[k], 1)}%`).join(', '));
+  return a;
+}
+const isPadrao = () => !ajustes().length;
+function fnv(s) { let h = 0x811c9dc5; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; } return h.toString(16).toUpperCase().padStart(8, '0'); }
+function vistaStr() {
+  const p = [EIXO_COD[S.eixo], 's' + suavN(), S.g];
+  if (S.trecho) p.push(`e${S.trecho[0]}-${S.trecho[1]}`); else if (S.zoom) p.push(`z${S.zoom[0]}-${S.zoom[1]}`);
+  for (const k of SH_KEYS) if (S.shifts[k]) p.push(`d${k}${S.shifts[k] > 0 ? '+' : ''}${S.shifts[k]}`);
+  return p.join('_');
+}
+const casoId = () => D.packs[0].sha.slice(0, 6).toUpperCase();
+const vistaCode = () => { const c = casoId(), v = vistaStr(); return `${c}/${v}/${fnv(c + '/' + v).slice(0, 4)}`; };
+const PADRAO_STR = 'tr_s0_r';
+function vistaDesc(v) { // descrição em palavras de uma vista (só a parte do meio do código)
+  const t = v.split('_'), o = [EIXO_NOME[COD_EIXO[t[0]]] || t[0]], s = +t[1].slice(1); if (s) o.push(`suavização ${s}/10`); o.push({ r: 'resultante', x: 'X', y: 'Y' }[t[2]] || t[2]);
+  for (const x of t.slice(3)) { if (x[0] === 'e') o.push(`trecho ${x.slice(1).replace('-', '–')}% (exploratório)`); else if (x[0] === 'z') o.push(`zoom ${x.slice(1).replace('-', '–')}%`); else if (x[0] === 'd') { const m = x.match(/^d([a-z0-9]+)([+-][\d.]+)$/); if (m) o.push(`${SH_NOME[m[1]] || m[1]} deslocada ${m[2].replace('.', ',')}%`); } }
+  return o.join(' · ');
+}
+function applyVista(code) { // reabre uma vista pelo código; devolve um erro em palavras ou null
+  const parts = String(code).trim().split('/'); if (parts.length !== 3) return 'formato inválido (esperado CASO/vista/verificador)';
+  const [c, v, k] = parts; if (c.toUpperCase() !== casoId()) return `o código é de outro caso (${c.toUpperCase()}); este caso é ${casoId()}`;
+  if (fnv(casoId() + '/' + v).slice(0, 4) !== k.toUpperCase()) return 'verificador não confere: o código foi digitado errado ou alterado';
+  const t = v.split('_'); if (t.length < 3 || !COD_EIXO[t[0]] || !/^s\d+$/.test(t[1]) || !'rxy'.includes(t[2])) return 'vista ilegível';
+  const st = { eixo: COD_EIXO[t[0]], suav: Math.min(10, +t[1].slice(1)), g: t[2], trecho: null, zoom: null, shifts: {} };
+  for (const x of t.slice(3)) {
+    let m;
+    if ((m = x.match(/^([ez])(\d+)-(\d+)$/))) st[m[1] === 'e' ? 'trecho' : 'zoom'] = [+m[2], +m[3]];
+    else if ((m = x.match(/^d([a-z0-9]+)([+-][\d.]+)$/)) && SH_KEYS.includes(m[1])) st.shifts[m[1]] = Math.max(-SH_MAX, Math.min(SH_MAX, +m[2]));
+    else return 'vista ilegível';
+  }
+  Object.assign(S, st); if (S.trecho) S.zoom = S.trecho.slice(); return null;
+}
+function noteVista(origem) { // guarda cada vista diferente consultada (vai para o laudo) e o momento do primeiro ajuste
+  if (!D) return; const code = vistaCode(), now = new Date(), ts = now.toLocaleTimeString('pt-BR');
+  if (!isPadrao() && !S.firstAdj) S.firstAdj = { ts, t: now.getTime() };
+  const v = S.vistas.find(x => x.code === code); if (v) { v.n++; return; }
+  // vários cliques seguidos no mesmo deslocamento viram uma linha só (cada passo continua no registro de acessos)
+  const last = S.vistas[S.vistas.length - 1], base = c => c.split('/')[1].replace(/_d([a-z0-9]+)[+-][\d.]+/g, '_d$1');
+  if (last && !last.padrao && origem !== 'código' && last.origem !== 'código' && base(last.code) === base(code) && /_d[a-z0-9]+[+-]/.test(code)) { last.code = code; last.desc = ajustes().join(' · '); last.passos = (last.passos || 1) + 1; return; }
+  S.vistas.push({ code, ts, n: 1, padrao: isPadrao(), desc: isPadrao() ? 'vista padrão (tempo real, assinatura inteira, sem suavização)' : ajustes().join(' · '), origem: origem || 'painel' });
+}
+function alignInfo() { // qualidade do casamento usado no modo traço a traço
+  const inf = D.A.info, nq = D.Q.segs.length, ns = D.PP.map(p => p.segs.length).sort((a, b) => a - b), med = ns[ns.length >> 1];
+  const q = inf.q_casados / Math.max(1, Math.max(inf.q_marcos, inf.ref_marcos));
+  return { pct: Math.round(100 * q), cas: inf.q_casados, qm: inf.q_marcos, rm: inf.ref_marcos, nq, med, ruim: q < 0.6 || Math.abs(nq - med) > 2 };
+}
+// marca desenhada DENTRO de cada gráfico: aparece em qualquer print, exportação ou ampliação
+function stamp(cv) {
+  if (!cv || !cv.width || !D || cv._stamped) return; cv._stamped = true;
+  const ctx = cv.getContext('2d'), r = cv.width / (cv.clientWidth || cv.width), w = cv.width / r, h = cv.height / r, aj = ajustes(), P = pal(), code = vistaCode();
+  ctx.save(); ctx.setTransform(r, 0, 0, r, 0, 0); ctx.globalCompositeOperation = 'source-over'; ctx.setLineDash([]);
+  if (!aj.length) {
+    ctx.font = '9px ' + css('--mono'); const t = `vista padrão · tempo real · ${code}`, tw = ctx.measureText(t).width;
+    ctx.globalAlpha = 0.85; ctx.fillStyle = P.panel; ctx.fillRect(1, h - 12, tw + 6, 11); ctx.fillStyle = P.mut; ctx.textAlign = 'left'; ctx.fillText(t, 4, h - 3.5);
+  } else {
+    // marca d'água diagonal no meio do gráfico, repetida: recortar a borda não a remove
+    const fs = Math.max(13, Math.min(24, w / 24));
+    ctx.save(); ctx.globalAlpha = 0.13; ctx.fillStyle = P.red; ctx.font = `bold ${fs}px ` + css('--sans'); ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.translate(w / 2, h / 2); ctx.rotate(-0.3); const L = 'VISTA AJUSTADA', sx = ctx.measureText(L).width + fs * 2.2, sy = fs * 3.2;
+    for (let j = -Math.ceil(h / sy) - 1, row = 0; j <= Math.ceil(h / sy) + 1; j++, row++) for (let i = -Math.ceil(w / sx) - 1; i <= Math.ceil(w / sx) + 1; i++) ctx.fillText(L, i * sx + (row % 2) * sx / 2, j * sy);
+    ctx.restore();
+    // faixa no topo com a lista dos ajustes e o código da vista
+    // gráfico largo: a lista dos ajustes por extenso; gráfico estreito: só o código (que também diz os ajustes), para não cobrir os dados
+    let f = 9.5, t = `VISTA AJUSTADA · ${aj.join(' · ')} · não é a assinatura como foi feita · ${code}`; ctx.font = `bold ${f}px ` + css('--sans');
+    if (ctx.measureText(t).width > w - 8) { t = `VISTA AJUSTADA · ${code}`; while (ctx.measureText(t).width > w - 8 && f > 7) { f -= 0.5; ctx.font = `bold ${f}px ` + css('--sans'); } }
+    const lines = [t];
+    const bh = lines.length * (f + 3) + 3; ctx.globalAlpha = 0.9; ctx.fillStyle = P.red; ctx.fillRect(0, 0, w, bh); ctx.globalAlpha = 1; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    lines.forEach((l, i) => ctx.fillText(l, 4, (i + 1) * (f + 3)));
+  }
+  ctx.restore();
+}
+function vistaUI() { // faixa de estado da vista na barra de controles
+  const el = $('#vista'); if (!el || !D) return; const aj = ajustes(), code = vistaCode();
+  el.className = 'vista ' + (aj.length ? 'aj' : 'ok');
+  $('#vista-t').innerHTML = aj.length ? `<b>▲ Vista ajustada</b> · ${aj.join(' · ')} · <span class="fine">os gráficos levam marca d'água; números e veredito não mudam</span>` : '<b>● Vista padrão</b> · tempo real, assinatura inteira, sem suavização: a assinatura como foi feita';
+  $('#vista-c').textContent = code; $('#btn-padrao').hidden = !aj.length;
+  if (S.eixo === 'alinhado') { const a = alignInfo(); $('#eixo-dica').textContent = `Traço a traço: início e fim de cada traço coincidem com os dos padrões. Casamento: ${a.cas} de ${Math.max(a.qm, a.rm)} marcos (${a.pct}%) · traços: questionada ${a.nq}, padrões ${a.med} (mediana).` + (a.ruim ? ' ⚠ Casamento fraco ou número de traços diferente: a comparação traço a traço fica artificial; use o tempo real.' : ''); $('#eixo-dica').classList.toggle('warnt', a.ruim); }
+  else $('#eixo-dica').classList.remove('warnt');
+  renderObs();
+}
+const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+function renderObs() { // observações iniciais: feitas na vista padrão, registradas com hora e hash, depois só leitura
+  const box = $('#obs'); if (!box || !D) return; const aj = ajustes().length > 0;
+  $('#obs-form').hidden = !!S.obs; $('#obs-done').hidden = !S.obs;
+  if (S.obs) $('#obs-done').innerHTML = `<b>Observações iniciais registradas</b> às ${S.obs.ts}, na vista padrão${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de já ter usado ajustes (o primeiro às ${S.obs.adjTs})`} · hash ${S.obs.h.slice(0, 12)}…<blockquote>${escH(S.obs.txt)}</blockquote>`;
+  else { $('#obs-reg').disabled = aj; $('#obs-hint').textContent = aj ? 'Volte à vista padrão para registrar: as observações iniciais são sobre a assinatura como foi feita.' : 'Descreva o que vê na vista padrão (ritmo, pausas, ordem dos traços, pressão) antes de usar outros ajustes. O laudo só é gerado com este registro.'; }
+  box.classList.toggle('done', !!S.obs);
+}
+function resetPadrao() { S.eixo = 'tempo'; S.suav = 0; S.trecho = null; S.zoom = null; S.shifts = {}; }
 
 /* ---------------- controle geral ---------------- */
 function render() {
@@ -2139,14 +2291,19 @@ function render() {
   const pq = D.packs[0];
   $('#h-q').textContent = `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · Thoth nº 0123A1B2C3D4E5F6EE · 03/10/2026 14:32:07 UTC (GNSS)`;
   $('#h-sig').textContent = `Signatário declarado: ${D.name}`;
-  $('#h-modo').textContent = 'Simulação · questionada: ' + { 'imitação': 'imitação por outra pessoa', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente' }[D.mode];
+  // modo cego: o tipo da questionada (só existe na simulação) fica oculto; revelar é uma ação registrada
+  $('#h-modo-t').textContent = S.blind ? 'Simulação · tipo da questionada oculto (modo cego)' : 'Simulação · questionada: ' + MODE_NOME[D.mode] + ` (revelado às ${S.revealed})`;
+  $('#btn-reveal').hidden = !S.blind;
   if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else if (S.tab === 'tut') renderTut(); else renderInteg();
 }
 async function loadCase() {
   if (ANIM.upto !== null) stopAnim(false);
   $('#loading').hidden = false; await tick();
-  D = await build(S.name, S.mode); S.trecho = null; S.zoom = null; S.shifts = {}; S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 }; view();
-  $('#loading').hidden = true; log('abriu o caso', `${S.name} · questionada: ${S.mode}`); render(); tutInvite();
+  D = await build(S.name, S.mode); resetPadrao(); S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 };
+  S.obs = null; S.firstAdj = null; S.vistas = []; S.blind = true; S.revealed = null; S.hip = { h: '', c: '', grau: '' }; const fd = $('#fund'); if (fd) fd.value = ''; const ot = $('#obs-txt'); if (ot) ot.value = '';
+  if ($('#suav')) { $('#suav').value = 0; $('#suav').dispatchEvent(new Event('sync')); }
+  view();
+  $('#loading').hidden = true; log('abriu o caso', `${S.name} · vista padrão (tempo real) · tipo da questionada oculto`); render(); tutInvite();
 }
 function watermark() {
   const c = document.createElement('canvas'); c.width = 420; c.height = 220; const x = c.getContext('2d'); x.translate(210, 110); x.rotate(-0.42);
@@ -2176,7 +2333,7 @@ function bind() {
   $$('.tab').forEach(t => t.addEventListener('click', zToastHide));
   $('#ztoast').addEventListener('pointerenter', () => clearTimeout(ZT_T)); $('#ztoast').addEventListener('pointerleave', () => { ZT_T = setTimeout(zToastHide, 4000); });
   $('#btn-zero').addEventListener('click', () => { S.shifts = {}; log('Deslocar padrões', 'zerar todos'); renderAnalise(); });
-  $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); log('Deslocar padrões', `${k}: ${S.shifts[k] >= 0 ? '+' : ''}${br(S.shifts[k], 1)}%`); renderAnalise(); }));
+  $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; const nv = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); if (Math.abs(nv) > SH_MAX) { log('Deslocar padrões: limite', `${SH_NOME[k]}: já em ${br(S.shifts[k], 1)}% (limite ±${SH_MAX}%)`); return; } S.shifts[k] = nv; log('Deslocar padrões (exploratório)', `${SH_NOME[k]}: ${S.shifts[k] >= 0 ? '+' : ''}${br(S.shifts[k], 1)}% · vista ${vistaCode()}`); renderAnalise(); }));
   const fixPair = moved => { const other = moved === 'x' ? 'my' : 'mx', me = moved === 'x' ? 'mx' : 'my'; let i = TV_SET.indexOf(S[other]); while (S[other] === S[me] || tvForbidden([S[other], S[me]])) { i = (i + 1) % TV_SET.length; S[other] = TV_SET[i]; } };
   $('#mh-x').addEventListener('change', e => { S.mx = e.target.value; fixPair('x'); renderAnalise(); });
   $('#mh-y').addEventListener('change', e => { S.my = e.target.value; fixPair('y'); renderAnalise(); });
@@ -2224,14 +2381,31 @@ function bind() {
   $('#btn-verify2').addEventListener('click', async () => { await verifyAll(); renderInteg(); });
   $('#hip-h').addEventListener('change', e => { S.hip.h = e.target.value; });
   $('#hip-c').addEventListener('change', e => { S.hip.c = e.target.value; });
-  $('#btn-pdf').addEventListener('click', async e => { e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
+  $('#btn-pdf').addEventListener('click', async e => { if (!S.obs) { $('#pdf-status').textContent = 'O laudo exige as observações iniciais, registradas na vista padrão (aba Análise, no alto).'; return; } e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
   const suavUI = () => { $('#suav').value = suavN(); $('#suav-o').textContent = `${suavN()} de 10 · ${SUAV_NOME[suavN()]}`; $('#suav-dica').textContent = suavDica(); $('#suav-dica').title = suavDica(); $('#suav-dica').classList.toggle('warnt', suavFc(suavN()) < 13); };
   let suavRaf = 0;
   $('#suav').addEventListener('input', e => { S.suav = +e.target.value; suavUI(); cancelAnimationFrame(suavRaf); suavRaf = requestAnimationFrame(() => { for (const id of ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id)); const sv = suavN() ? ` · suavizado ${suavN()}/10` : ''; for (const [id, base] of [['t-vel', null], ['t-acc', null], ['t-pow', null], ['t-d4', null], ['t-d5', null]]) { const el = $('#' + id); el.textContent = el.textContent.replace(/ · suavizado \d+\/10$/, '') + sv; } if (BIG && ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(BIG)) DRAW[BIG]($('#cv-big')); }); });
-  $('#suav').addEventListener('change', () => log('Suavização das curvas', `${suavN()} de 10 (${SUAV_NOME[suavN()]}), só o desenho`));
+  $('#suav').addEventListener('change', () => { log('Suavização das curvas', `${suavN()} de 10 (${SUAV_NOME[suavN()]}), só o desenho · vista ${vistaCode()}`); renderAnalise(); });
+  $('#suav').addEventListener('sync', suavUI);
   suavUI();
+  // vista padrão: um clique desfaz todos os ajustes
+  $('#btn-padrao').addEventListener('click', () => { const antes = ajustes().join(' · '); resetPadrao(); suavUI(); view(); log('voltou à vista padrão', `desfez: ${antes}`); renderAnalise(); });
+  // observações iniciais: só na vista padrão; depois de registradas, não mudam
+  $('#obs-reg').addEventListener('click', async () => {
+    const txt = $('#obs-txt').value.trim(); if (!isPadrao()) return; if (txt.length < 20) { $('#obs-hint').textContent = 'Escreva ao menos uma frase (20 caracteres) sobre o que vê na vista padrão.'; return; }
+    const now = new Date(), ts = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR'), h = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode([casoId(), ts, txt].join('|'))));
+    S.obs = { txt, ts, h, antes: !S.firstAdj, adjTs: S.firstAdj ? S.firstAdj.ts : null, vista: vistaCode() };
+    log('registrou observações iniciais', `na vista padrão (${S.obs.antes ? 'antes de qualquer ajuste' : 'depois de ajustes'}) · ${txt.length} caracteres · hash ${h.slice(0, 12)}`); renderObs(); if (S.tab === 'integ') renderInteg();
+  });
+  // modo cego: revelar o tipo da questionada fica registrado e aparece no laudo
+  $('#btn-reveal').addEventListener('click', () => { const now = new Date(); S.blind = false; S.revealed = now.toLocaleTimeString('pt-BR'); log('revelou o tipo da questionada', `${MODE_NOME[S.mode]}${S.obs ? '' : ' · antes das observações iniciais'}`); render(); });
+  // reabrir uma vista pelo código (o mesmo que aparece em cada gráfico e no laudo)
+  const openCode = () => { const code = $('#vcode').value, err = applyVista(code); if (err) { $('#vcode-st').textContent = '✗ ' + err; $('#vcode-st').className = 'fine bad'; return; }
+    suavUI(); view(); log('abriu vista pelo código', `${code.trim()} · ${vistaDesc(code.trim().split('/')[1])}`); $('#vcode-st').textContent = '✓ vista aberta na aba Análise: ' + vistaDesc(code.trim().split('/')[1]); $('#vcode-st').className = 'fine ok'; noteVista('código'); };
+  $('#vcode-go').addEventListener('click', openCode); $('#vcode').addEventListener('keydown', e => { if (e.key === 'Enter') openCode(); });
+  $('#vcode-ana').addEventListener('click', () => { S.tab = 'analise'; render(); });
   $('#tv').addEventListener('click', e => {
     if (e.target.closest('#tv-list')) { TVLIST = !TVLIST; renderTV(); return; }
     if (e.target.closest('#tv-open')) { tvOpen(TVSEL); return; }
@@ -2265,6 +2439,11 @@ function bind() {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { watermark(); D && render(); });
   new MutationObserver(() => { watermark(); D && render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
+// todo gráfico da análise recebe a marca da vista (padrão ou ajustada) ao terminar de ser desenhado — inclusive os do laudo e os ampliados
+const stampWrap = f => function (cv, ...a) { const r = f.call(this, cv, ...a); stamp(cv); return r; };
+drawSignature = stampWrap(drawSignature); drawZoom = stampWrap(drawZoom); drawCompass = stampWrap(drawCompass); drawHist = stampWrap(drawHist);
+drawPressure = stampWrap(drawPressure); drawDeform = stampWrap(drawDeform); drawImpulse = stampWrap(drawImpulse); drawArea = stampWrap(drawArea);
+drawEnergy = stampWrap(drawEnergy); drawFFT = stampWrap(drawFFT); drawCurve = stampWrap(drawCurve); drawMaha = stampWrap(drawMaha); drawM3 = stampWrap(drawM3);
 $$('.card > canvas').forEach(cv => { const d = document.createElement('div'); d.className = 'cw' + (cv.classList.contains('ch-l') ? ' l' : cv.classList.contains('ch-m') ? ' m' : cv.id === 'cv-sig' ? ' sig' : ''); cv.replaceWith(d); d.appendChild(cv); });
 
 /* ---------------- Tutorial: animações didáticas (valores ilustrativos, não são do caso) ----------------
