@@ -1903,6 +1903,7 @@ function renderAnalise() {
   $$('[data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === g));
   $('#btn-inteira').classList.toggle('on', !Z);
   $('#trecho-txt').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em análise (exploratória; o veredito continua o da assinatura inteira)` : Z ? `Zoom ${br(Z[0], 0)}–${br(Z[1], 0)}% (só visual; nada é recalculado)` : 'Zoom: arraste sobre o desenho ou sobre uma curva';
+  $('#trecho-txt').parentElement.hidden = !!S.trecho; // com o trecho em análise, a faixa do topo já diz tudo e tem o botão de voltar
   $('#btn-anal').hidden = true; // a ação aparece no balão junto da seleção
   if (!S.zoom || S.trecho) zToastHide();
   $('#tr-banner').hidden = !S.trecho; if (S.trecho) $('#tr-banner-t').textContent = `Análise do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% · exploratória · medidas, elipses e tabela só deste pedaço · o veredito continua o da assinatura inteira`;
