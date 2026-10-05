@@ -72,6 +72,27 @@ b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(
 .grp.suavg { width: min(480px, 100%); flex: 0 0 auto } /* largura fixa: o texto do aviso não muda o resto da barra */
 #suav-dica { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.4em; max-width: 100% } /* uma linha só: o aviso nunca empurra o layout */
 .m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
+.tut { gap: 8px } .tutintro { font-size: 13px } .tutintro b { margin-right: 4px }
+.tutcap { margin: 0; font-size: 15px; line-height: 1.4; min-height: 4.2em; display: flex; gap: 10px; align-items: baseline }
+.tutcap b { flex: 0 0 auto; font: 600 12px var(--mono); color: var(--accent); background: var(--soft); border-radius: 999px; padding: 2px 9px }
+.cw.tutw { min-height: 400px } @media (max-width: 680px) { .cw.tutw { min-height: 320px } .cw.tutw.tall { min-height: 560px } .tutcap { font-size: 14px; min-height: 10.2em } }
+.tutctl { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center }
+.tuttrack { flex: 1 1 120px; height: 4px; background: var(--grid); border-radius: 2px; overflow: hidden; min-width: 80px } .tut-bar { display: block; height: 100%; width: 0; background: var(--accent) }
+.tutsteps { display: flex; flex-wrap: wrap; gap: 3px } .tutsteps .chip { font: 600 11px var(--mono); min-width: 26px; height: 24px; border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 6px; cursor: pointer }
+.tutsteps .chip.on { background: var(--accent); border-color: var(--accent); color: var(--panel) }
+.tuttxt { font-size: 14px; line-height: 1.55; max-width: 78ch } .tuttxt p { margin: 0 0 6px }
+.tutwarn { font-size: 13px; background: var(--warnbg); border: 1px solid var(--amber); border-radius: 8px; padding: 8px 12px; max-width: 78ch } .tutwarn ul { margin: 4px 0 0; padding-left: 18px } .tutwarn li { margin-bottom: 3px }
+#pane-tut { counter-reset: tutc }
+.tut { counter-increment: tutc; border-top: 3px solid var(--accent); padding-top: 12px }
+.tut > h3 { align-items: center; padding-bottom: 6px; border-bottom: 1px solid var(--line) }
+.tut > h3 > span:first-child { font-size: 18px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 10px; line-height: 1.25 }
+.tut > h3 > span:first-child::before { content: counter(tutc); flex: 0 0 auto; display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: var(--accent); color: var(--panel); font: 700 14px var(--sans) }
+@media (max-width: 680px) { .tut > h3 > span:first-child { font-size: 16px } }
+#tutinv { position: fixed; inset: 0; z-index: 9; background: color-mix(in srgb, var(--bg) 72%, transparent); display: grid; place-items: center; padding: 16px }
+.tibox { background: var(--panel); border: 1px solid var(--line); border-top: 4px solid var(--accent); border-radius: 12px; width: min(460px, 100%); padding: 18px 20px; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 12px 40px rgba(0,0,0,.18) }
+.tibox b.tt { font-size: 18px } .tibox p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink) }
+.tibox .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px } .tibox .row .btn { font-size: 13.5px; padding: 7px 14px }
+.tibox label { font-size: 12.5px; color: var(--muted); display: flex; gap: 6px; align-items: center }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
 .cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
@@ -147,6 +168,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
     <button type="button" class="tab on" data-tab="analise">Análise</button>
     <button type="button" class="tab" data-tab="crus">Dados crus (somente leitura)</button>
     <button type="button" class="tab" data-tab="integ">Integridade e laudo</button>
+    <button type="button" class="tab" data-tab="tut">Tutorial</button>
   </nav>
 
   <section class="pane" id="pane-analise">
@@ -172,11 +194,11 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas></div>
-      <div class="card"><h3 class="var" id="t-area">Área sob a velocidade</h3><canvas id="cv-area" class="ch"></canvas><p class="fine" style="margin:0">Área sob a curva de velocidade = distância que a ponta da caneta percorreu. Parte escura: caneta no papel; clara: no ar. Faixa: média ± 2 desvios dos padrões. Não muda com a suavização.</p></div>
+      <div class="card"><h3 class="var" id="t-area">Área sob a velocidade</h3><canvas id="cv-area" class="ch"></canvas><p class="fine" style="margin:0">Área sob a curva de velocidade: na resultante, a distância que a ponta da caneta percorreu; em X ou Y, o quanto andou naquela direção. Parte escura: caneta no papel; clara: no ar. Faixa: média ± 2 desvios dos padrões. Não muda com a suavização.</p></div>
       <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
-      <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos 20 padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). ★ = medida do modelo. Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa 48 combinações; entre o pontilhado de 99% e essa linha a combinação fica "na borda". O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), a distância e a raridade usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
+      <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos 20 padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). ★ = medida do modelo. Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa 47 combinações além do veredito; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O veredito (TÍPICA, ATÍPICA ou INCONCLUSIVA), a distância e a raridade usam sempre as 4 medidas ★, qualquer que seja o par desenhado. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos 20 padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; duplo clique amplia. O veredito continua sendo o do modelo de 4 medidas ★. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
       <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os 20 padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos 20 padrões sai quando testado contra os outros 19). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Só a linha do veredito decide; as demais mostram onde a assinatura se afasta. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
     </div>
@@ -206,9 +228,152 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
     </div>
     <div class="card"><h3>Registro de acessos · encadeado por hash (ninguém apaga nem altera)</h3><div class="tw"><table class="raw"><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Detalhe</th><th>Hash</th></tr></thead><tbody id="log"></tbody></table></div></div>
   </section>
+
+  <section class="pane" id="pane-tut" hidden>
+    <div class="bar tutintro"><b>Tutorial</b><span>Cada cartão mostra, com uma animação curta, como ler um ajuste do painel. Os exemplos usam valores inventados para ensinar; os dados do caso estão na aba Análise.</span></div>
+    <article class="card tut" id="tut-modos" data-card="modos">
+      <h3><span>Comparar as curvas por: tempo real · traço a traço · posição no traçado</span><span class="fine">exemplo ilustrativo, curvas inventadas · no caso: barra de ajustes da aba Análise</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 9</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a mesma curva de velocidade nos três modos de comparação"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt">
+        <p><b>O que é.</b> Os gráficos de velocidade, aceleração, potência e 4ª e 5ª derivadas comparam a curva da questionada com a faixa dos padrões. Para isso, é preciso decidir o que fica "embaixo" do quê. Esse botão escolhe a régua do eixo de baixo.</p>
+        <p><b>Tempo real.</b> Ninguém é mexido: cada assinatura no seu próprio relógio, sem esticar nada. É o único modo que mostra o ritmo como aconteceu: duração, lentidão e paradas para olhar o modelo. Use primeiro.</p>
+        <p><b>Traço a traço</b> (o modo que o painel abre). Os padrões são a referência e ficam onde estão; quem é encaixada é a questionada: o começo e o fim de cada traço dela são levados ao começo e ao fim do traço correspondente da pessoa. Serve para responder: é o mesmo movimento, só mais devagar, ou é outro movimento?</p>
+        <p><b>Posição no traçado.</b> Pense no desenho da assinatura como uma estrada: o começo é o quilômetro 0 e o fim é o quilômetro 100. Neste modo, o eixo de baixo é essa estrada. Cada ponto do gráfico é um lugar do desenho, e mostra com que velocidade a caneta passou por ali. Como a caneta parada não avança na estrada, as paradas não aparecem. Serve para ver se a questionada acelera e freia nos mesmos lugares da letra que a pessoa, por mais devagar que tenha escrito.</p>
+        <p><b>O que não muda.</b> As medidas, as elipses, a tabela verdade e o resultado são os mesmos nos três modos. O modo muda só o desenho das curvas.</p>
+      </div>
+      <div class="tutwarn"><b>Cuidados</b><ul>
+        <li>Traço a traço e posição no traçado supõem que a questionada fez os mesmos traços, na mesma ordem. Se ela tiver traços a mais ou feitos em outra ordem, o encaixe pode juntar pedaços que não se correspondem. Confira a ordem dos traços na animação do desenho, em tempo real.</li>
+        <li>Nos gráficos de pressão e na curva de deformação o eixo é sempre a posição no traçado, em qualquer modo.</li>
+        <li>No laudo, registre como conclusão o que se confirma em pelo menos dois modos, e diga qual modo sustenta cada observação.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-gxy" data-card="gxy">
+      <h3><span>Grandeza: X, Y ou resultante</span><span class="fine">exemplo ilustrativo · no caso: barra de ajustes da aba Análise</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 7</b><span class="tc-t"></span></p>
+      <div class="cw tutw tall"><canvas class="tutcv" role="img" aria-label="Animação: o movimento da caneta dividido em horizontal (X), vertical (Y) e tamanho (resultante)"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt">
+        <p><b>O que é.</b> Em cada instante, a caneta anda numa direção e com uma rapidez. Esse botão escolhe qual parte desse movimento os gráficos mostram.</p>
+        <p><b>Resultante</b> (o painel abre nela). Só o tamanho do movimento, sem direção: quanto a caneta corre. A curva fica sempre acima do zero. É a melhor para comparar rapidez, aceleração e tremor.</p>
+        <p><b>X.</b> Só o movimento para os lados. Para a direita, acima do zero; para a esquerda, abaixo.</p>
+        <p><b>Y.</b> Só o movimento para cima e para baixo. Subindo, acima do zero; descendo, abaixo. É o sobe e desce que forma as letras.</p>
+        <p><b>Quando trocar.</b> Quando a forma é parecida mas você suspeita que os traços foram feitos em outro sentido ou em outra ordem. Na resultante o sentido quase não aparece, porque a rapidez é a mesma nos dois sentidos; em X ou Y a curva se inverte e a diferença fica visível.</p>
+      </div>
+      <div class="tutwarn"><b>Cuidados</b><ul>
+        <li>Trocar a grandeza muda de uma vez todos os quadros com título em laranja (histograma, velocidade, aceleração, potência, energias, área sob a velocidade, FFT e derivadas). O desenho, a pressão, as medidas, as elipses e a tabela verdade não mudam.</li>
+        <li>Em X e Y, valores abaixo do zero não são erro: indicam o sentido do movimento (para a esquerda ou para baixo).</li>
+        <li>A troca fica no registro de acessos e a grandeza usada vai para o laudo.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-trd" data-card="trd">
+      <h3><span>Trecho e deslocar padrões</span><span class="fine">exemplo ilustrativo · no caso: desenho e gráficos da aba Análise</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 7</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: seleção de um trecho do desenho e deslocamento da faixa dos padrões"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>Trecho.</b> Arraste sobre o desenho para escolher uma parte (uma letra, um traço). O trecho fica amarelo, aparece ampliado com os 20 padrões por cima, e todo o painel passa a medir e desenhar só essa parte. "assinatura inteira" volta ao todo.</p><p><b>Deslocar padrões.</b> Embaixo de cada gráfico de curva, "padrões ◀ +0,0% ▶" desliza a faixa cinza 0,5% por toque, com a questionada parada. Serve para separar um simples atraso de uma diferença de forma.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Em trechos curtos, a FFT tem menos resolução e a tabela pode marcar o tremor como inconclusivo.</li><li>Deslocar só muda o desenho; as medidas e o resultado não mudam.</li><li>Trecho e deslocamentos vão para o registro de acessos e para o laudo.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-suv" data-card="suv">
+      <h3><span>Suavizar as curvas</span><span class="fine">exemplo ilustrativo · no caso: barra de ajustes da aba Análise</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 8</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a barra de suavização indo de 0 a 10 e a curva ficando mais lisa"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt">
+        <p><b>O que é.</b> Uma barra de 0 a 10 que deixa as curvas de velocidade, aceleração, potência e 4ª e 5ª derivadas mais lisas, para ver melhor o desenho geral do movimento.</p>
+        <p><b>Como funciona.</b> Em 0, a curva mostra todo o detalhe, como os números. Até o nível 4 a diferença é pequena; daí em diante, cada passo alisa bem mais. A partir do 7, aparece um aviso: o tremor e as pequenas correções do movimento somem do desenho.</p>
+        <p><b>O que não muda.</b> As medidas, a distância à pessoa, a tabela verdade e o resultado são sempre calculados sem suavização. A barra muda só o desenho.</p>
+        <p><b>Como usar.</b> Para procurar tremor, hesitação e pequenas correções, fique no nível 0. Suba a barra quando quiser enxergar onde a caneta acelera e freia no geral, e volte depois.</p>
+      </div>
+      <div class="tutwarn"><b>Cuidados</b><ul>
+        <li>Nos níveis altos, o tremor desaparece do desenho. Não conclua "não há tremor" olhando uma curva suavizada; confira no nível 0 e na FFT, que não é suavizada.</li>
+        <li>Nos níveis altos, o começo e o fim de cada curva ficam em branco; isso é proposital.</li>
+        <li>O título do gráfico mostra "suavizado N/10"; a mudança vai para o registro de acessos, e o laudo informa o nível usado nos gráficos impressos.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-var" data-card="var">
+      <h3><span>Velocidade e área sob a velocidade</span><span class="fine">exemplo ilustrativo · no caso: aba Análise › Velocidade e Área sob a velocidade</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 7</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a área sob a curva de velocidade virando barra"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>Velocidade.</b> Quão rápido a caneta anda em cada momento, com a faixa dos 20 padrões e a curva da questionada. Responde à suavização e aos modos de comparação, como as outras curvas.</p><p><b>Área sob a velocidade.</b> Uma barra por assinatura: 20 cinza (padrões) e uma azul (questionada). A barra é o caminho percorrido pela ponta da caneta; parte escura no papel, parte clara no ar. A faixa horizontal é a variação normal da pessoa.</p><p><b>Em X ou Y.</b> A barra mostra o quanto a caneta andou só para os lados ou só para cima e para baixo.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Mesma barra não quer dizer mesmo movimento: uma imitação lenta anda o mesmo caminho, só que devagar. Leia junto com o tempo total e a velocidade.</li><li>As barras não mudam com a suavização.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-air" data-card="air">
+      <h3><span>Faixas claras: caneta no ar</span><span class="fine">exemplo ilustrativo · no caso: gráficos de curva da aba Análise</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 5</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a caneta subindo do papel e as faixas claras no gráfico"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A mesa lê a caneta até cerca de 1 cm acima do papel. Os momentos em que a questionada estava com a caneta no ar aparecem nos gráficos de curva como faixas claras; a linha azul continua, mostrando o movimento no ar.</p><p><b>Como usar.</b> Veja onde e por quanto tempo ela levantou a caneta, e compare com a quantidade de levantamentos da pessoa no quadro de medidas.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Nesta demonstração, o movimento no ar é simulado. No sistema real, só os instantes sem sinal (caneta acima de ~1 cm) são preenchidos por uma curva suave, marcados como estimados e deixados fora das medidas.</li><li>Mais levantamentos não provam imitação: idade, doença e dificuldade também aumentam as paradas.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-elipse" data-card="elipse">
+      <h3><span>Distância à pessoa · como ler a elipse</span><span class="fine">exemplo ilustrativo, valores inventados · no caso: aba Análise › Distância à pessoa</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 10</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas id="cv-tut" class="tutcv" role="img" aria-label="Animação: padrões da pessoa, elipse e posições da questionada"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt">
+        <p><b>O que é.</b> Cada assinatura da pessoa vira um ponto: quanto mais à direita, mais rápida; quanto mais alto, mais apertada. Os 20 padrões formam uma nuvem de pontos, e a elipse é a linha que contorna essa nuvem. Ela mostra quais combinações de velocidade e pressão são normais para esta pessoa.</p>
+        <p><b>Por que é inclinada.</b> Neste exemplo, nas assinaturas mais rápidas a pessoa apertou menos, e nas mais lentas apertou mais. Por isso os pontos formam uma faixa diagonal, e a elipse acompanha essa diagonal. Em outra pessoa pode ser o contrário, ou não haver relação nenhuma; aí a elipse fica inclinada para o outro lado, deitada ou quase redonda. O painel sempre desenha a elipse a partir dos padrões da própria pessoa.</p>
+        <p><b>Com quem a questionada é comparada.</b> Com o conjunto das 20 assinaturas-padrão, nunca com uma assinatura só.</p>
+        <p><b>Como ler.</b> Dentro da linha interna: TÍPICA. Fora da linha externa: ATÍPICA. Entre as duas: INCONCLUSIVA.</p>
+        <p><b>Como usar.</b> Você escolhe as duas medidas dos eixos (velocidade, pressão, tempo e outras). Troque os pares para descobrir em qual combinação a questionada se afasta. Preste atenção no caso da etapa 7: cada medida parece normal sozinha, mas a combinação não é a da pessoa. É isso que a elipse mostra e uma lista de valores separados não mostra.</p>
+      </div>
+      <div class="tutwarn"><b>Cuidados</b><ul>
+        <li>A elipse de um par só não decide o laudo. A palavra grande no alto do gráfico (TÍPICA, ATÍPICA ou INCONCLUSIVA) vem sempre de quatro medidas avaliadas juntas: tempo total, pressão média, inclinação média da caneta e número de pequenas correções do movimento em cada traço. As elipses servem para mostrar onde a questionada se afasta.</li>
+        <li>Quem testa muitos pares acaba achando algum "fora" por acaso, como quem joga uma moeda muitas vezes e uma hora tira várias caras seguidas. Por isso a tabela verdade usa a linha mais larga.</li>
+        <li>Se a própria pessoa tem mais de um padrão fora da elipse, ela varia muito; nesse caso o painel não marca ATÍPICA, marca INCONCLUSIVA.</li>
+        <li>A seta na borda não é a posição da questionada; mostra só a direção. Use "escala real" para ver onde ela está.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-m3" data-card="m3">
+      <h3><span>Distância à pessoa em 3D · três medidas</span><span class="fine">exemplo ilustrativo, valores inventados · no caso: aba Análise › Distância à pessoa em 3D</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 8</b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: elipsoide de três medidas girando, com a questionada dentro e fora"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt">
+        <p><b>O que é.</b> A mesma ideia da elipse, com uma medida a mais. Os 20 padrões formam uma nuvem em três dimensões, e a "bola achatada" (elipsoide) contorna essa nuvem: são as combinações das três medidas que são normais para esta pessoa.</p>
+        <p><b>Como ler.</b> Dentro da casca de dentro: TÍPICA. Fora da casca de fora: ATÍPICA. Entre as duas: INCONCLUSIVA. As sombras no chão e a haste da questionada mostram a profundidade.</p>
+        <p><b>Por que girar.</b> A tela é plana: de um lado só, um ponto que está fora pode parecer dentro, escondido na frente ou atrás da bola. Gire até ver o elipsoide de lado antes de concluir.</p>
+        <p><b>Quais medidas.</b> O painel começa com as três medidas que mais andam ligadas entre si nos padrões da pessoa, escolhidas sem olhar a questionada. Você pode trocar qualquer uma nos seletores X, Y e Z; cada escolha fica no registro de acessos.</p>
+      </div>
+      <div class="tutwarn"><b>Cuidados</b><ul>
+        <li>O 3D é para explorar. A palavra grande no alto do gráfico continua vindo das quatro medidas principais, como na elipse.</li>
+        <li>Se escolher a rotação da caneta como uma das medidas, aparece um aviso amarelo: essa medida ainda não foi validada em bancada.</li>
+        <li>Questionada longe demais vira seta na borda, como na elipse; use "escala real" para ver onde ela está.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-tvt" data-card="tvt">
+      <h3><span>Tabela verdade · todas as combinações</span><span class="fine">exemplo ilustrativo · no caso: aba Análise › Tabela verdade</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 8</b><span class="tc-t"></span></p>
+      <div class="cw tutw tall"><canvas class="tutcv" role="img" aria-label="Animação: como ler a matriz de pares e trios da tabela verdade"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A pergunta da elipse ("a questionada combina com a pessoa nessas medidas?") feita para 47 combinações de pares e trios de medidas de uma vez. Cada quadrado ou faixa colorida é uma elipse resumida numa cor.</p><p><b>Como ler.</b> Verde T: típica. Vermelho A: atípica. Laranja I: inconclusiva, sempre com o motivo. O tracinho: tempo e velocidade não se comparam, porque a velocidade é o caminho dividido pelo tempo.</p><p><b>Como usar.</b> Procure onde os A se juntam: numa linha, numa coluna, num grupo de trios. É ali que a assinatura se afasta. Toque num quadrado para ler o motivo; toque de novo para abrir a combinação no gráfico.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Só a primeira linha decide: o veredito das quatro medidas principais. As demais mostram onde está a diferença.</li><li>A tabela é mais exigente que a elipse sozinha (limite da tabela), porque testa muitas combinações; por isso um ponto "fora" na elipse pode aparecer como I na tabela.</li><li>Nenhum número aparece na tabela: os números de cada linha estão nos gráficos e no anexo do laudo.</li></ul></div>
+    </article>
+
+
+
+
+
+
+
+
+  </section>
   <footer class="f">Simulação: assinaturas sintéticas em letra cursiva, com instrumentação do Thoth 1 (mesa 300 Hz · 0,005 mm · pressão 0–8191; clip 400 Hz). Todos os números são calculados no navegador a partir dos dados crus. O painel mede e mostra; a conclusão é do perito.</footer>
 </div>
 <div id="bigview" hidden role="dialog" aria-modal="true" aria-labelledby="big-title"><div class="bigbox"><div class="bighead"><b id="big-title"></b><span class="fine">duplo clique ou Esc para fechar</span><button type="button" class="btn" id="big-close" aria-label="Fechar">✕ fechar</button></div><div class="bigcv"><canvas id="cv-big"></canvas></div></div></div>
+<div id="tutinv" hidden role="dialog" aria-modal="true" aria-labelledby="tutinv-t"><div class="tibox">
+  <b class="tt" id="tutinv-t">Primeira vez no painel, ou ficou alguma dúvida?</b>
+  <p>A aba <b>Tutorial</b> explica, com animações curtas e na ordem da tela, como ler cada ajuste e cada gráfico: modos de comparação, suavização, elipse, 3D, tabela verdade e os demais.</p>
+  <div class="row"><button type="button" class="btn on" id="tutinv-go">Abrir o tutorial</button><button type="button" class="btn" id="tutinv-no">Ir para a análise</button></div>
+  <label><input type="checkbox" id="tutinv-hide"> Não mostrar de novo neste aparelho</label>
+</div></div>
 <div id="loading"><div class="box"><b>Preparando o caso</b><span id="loadtxt" class="fine">Simulando as colheitas</span><div class="track"><div id="loadbar"></div></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -830,7 +995,7 @@ const PERITO = 'Nome do Perito', CPFP = '***.456.789-**';
 
 const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira' : n.startsWith('João') ? 'construção' : 'imitação');
 const DADOS_ = null;
-const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['tempo total (s)', 'velocidade média (mm/s)', 'impulso total (kgf·s)'],
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'alinhado', g: 'r', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['velocidade média (mm/s)', 'aceleração RMS (m/s²)', 'pressão média (gf)'],
   crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false };
 let D = null, V = null;
 const cache = {};
@@ -947,7 +1112,7 @@ function curveData(sigf, shiftKey) {
   const shift = sh * (xr[1] - xr[0]) / 100;
   return { gx: gx.map(v => v + shift), m, lo: m.map((v, i) => v - 2 * s[i]), hi: m.map((v, i) => v + 2 * s[i]), qx, qy, qi, xr, xlabel, tol };
 }
-// trechos em que a questionada está com a caneta no ar: a linha fica interrompida (é real) e a região ganha uma faixa clara
+// trechos em que a questionada está com a caneta no ar: a linha continua e a região ganha uma faixa clara
 function airBands(F, d) { // faixa clara onde a questionada está com a caneta no ar (amostras sem contato ou levantamento entre dois pontos)
   const { c, X, P, m, h, w } = F, Cq = D.Q.C; let any = false; c.save(); c.fillStyle = P.amb; c.globalAlpha = 0.12;
   const band = (a, b) => { let x0 = X(a), x1 = X(b); if (x1 < x0) [x0, x1] = [x1, x0]; if (x1 - x0 < 3) { const cx = (x0 + x1) / 2; x0 = cx - 1.5; x1 = cx + 1.5; } c.fillRect(x0, m.t, x1 - x0, h - m.t - m.b); any = true; };
@@ -1170,7 +1335,7 @@ function raridade(p) { if (!Number.isFinite(p)) return '—'; if (p < 1e-4) retu
 function ligacao(r) { const a = Math.abs(r); if (!Number.isFinite(r)) return '—'; if (a < 0.3) return 'fraca'; return (a < 0.6 ? 'moderada' : 'forte') + (r < 0 ? ', inversa' : ', direta'); }
 /* ---------------- detalhe das curvas (só o desenho; os números usam sempre o filtro padrão) ---------------- */
 // suavização só do desenho: nível 0 a 10 → passa-baixa gaussiano sobre as derivadas do filtro padrão
-// (bordas espelhadas, sem artefato no início e no fim); 0 = exatamente o que os números usam
+// (média só com amostras válidas, sem espelhar); 0 = exatamente o que os números usam
 const SUAV_SIG = [0, ...Array.from({ length: 10 }, (_, i) => +(0.5 * 38.6 ** (i / 9)).toFixed(2))]; // escala logarítmica: 0,5 a 19,3 amostras; até o nível 4 quase não suaviza
 const suavN = () => S.suav || 0;
 const suavFc = n => (n ? 1.1774 / (2 * Math.PI * SUAV_SIG[n] / TH.FS) : 28); // frequência em que a curva cai à metade
@@ -1252,7 +1417,7 @@ function mainVerdict() { // modelo de 4 medidas ★ (Ledoit-Wolf), sem correçã
   const MH = V.MH, base = { ks: MH.keys, d2: MH.d2, pval: MH.p, lim95: MH.lim95, lim99: MH.lim99, out: MH.looOut, p: MH.keys.length };
   if (MH.d2 <= MH.lim95) return { ...base, res: 'TÍPICA', why: 'dentro da variação da pessoa' };
   if (MH.d2 > MH.lim99) return MH.looOut >= 2 ? { ...base, res: 'INCONCLUSIVA', why: `régua instável: ${MH.looOut} padrões da própria pessoa também saem` } : { ...base, res: 'ATÍPICA', why: 'fora com folga' };
-  return { ...base, res: 'INCONCLUSIVA', why: 'na borda: passou do limite da pessoa, não do limite da tabela; pode ser acaso' };
+  return { ...base, res: 'INCONCLUSIVA', why: 'na borda: passou da faixa normal (95%), não do limite da pessoa (99%); pode ser acaso' };
 }
 const vCol = (res, P) => (res === 'ATÍPICA' ? P.red : res === 'TÍPICA' ? P.grn : P.amb);
 let TVROWS = [];
@@ -1864,13 +2029,13 @@ function render() {
   $('#h-q').textContent = `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · Thoth nº 0123A1B2C3D4E5F6EE · 03/10/2026 14:32:07 UTC (GNSS)`;
   $('#h-sig').textContent = `Signatário declarado: ${D.name}`;
   $('#h-modo').textContent = 'Simulação · questionada: ' + { 'imitação': 'imitação por outra pessoa', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente' }[D.mode];
-  if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else renderInteg();
+  if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else if (S.tab === 'tut') renderTut(); else renderInteg();
 }
 async function loadCase() {
   if (ANIM.upto !== null) stopAnim(false);
   $('#loading').hidden = false; await tick();
   D = await build(S.name, S.mode); S.trecho = null; S.shifts = {}; S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 }; view();
-  $('#loading').hidden = true; log('abriu o caso', `${S.name} · questionada: ${S.mode}`); render();
+  $('#loading').hidden = true; log('abriu o caso', `${S.name} · questionada: ${S.mode}`); render(); tutInvite();
 }
 function watermark() {
   const c = document.createElement('canvas'); c.width = 420; c.height = 220; const x = c.getContext('2d'); x.translate(210, 110); x.rotate(-0.42);
@@ -1882,8 +2047,8 @@ function bind() {
   $$('[data-eixo]').forEach(b => b.addEventListener('click', () => { S.eixo = b.dataset.eixo; log('comparar as curvas por', b.textContent); renderAnalise(); }));
   $$('[data-g]').forEach(b => b.addEventListener('click', () => { S.g = b.dataset.g; log('mudou grandeza', SYM[S.g][3]); renderAnalise(); }));
   $('#btn-inteira').addEventListener('click', () => { if (!S.trecho) return; S.trecho = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
-  $('#btn-zero').addEventListener('click', () => { S.shifts = {}; renderAnalise(); });
-  $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); renderAnalise(); }));
+  $('#btn-zero').addEventListener('click', () => { S.shifts = {}; log('Deslocar padrões', 'zerar todos'); renderAnalise(); });
+  $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); log('Deslocar padrões', `${k}: ${S.shifts[k] >= 0 ? '+' : ''}${br(S.shifts[k], 1)}%`); renderAnalise(); }));
   const fixPair = moved => { const other = moved === 'x' ? 'my' : 'mx', me = moved === 'x' ? 'mx' : 'my'; let i = TV_SET.indexOf(S[other]); while (S[other] === S[me] || tvForbidden([S[other], S[me]])) { i = (i + 1) % TV_SET.length; S[other] = TV_SET[i]; } };
   $('#mh-x').addEventListener('change', e => { S.mx = e.target.value; fixPair('x'); renderAnalise(); });
   $('#mh-y').addEventListener('change', e => { S.my = e.target.value; fixPair('y'); renderAnalise(); });
@@ -1957,6 +2122,724 @@ function bind() {
   new MutationObserver(() => { watermark(); D && render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
 $$('.card > canvas').forEach(cv => { const d = document.createElement('div'); d.className = 'cw' + (cv.classList.contains('ch-l') ? ' l' : cv.classList.contains('ch-m') ? ' m' : cv.id === 'cv-sig' ? ' sig' : ''); cv.replaceWith(d); d.appendChild(cv); });
+
+/* ---------------- Tutorial: animações didáticas (valores ilustrativos, não são do caso) ----------------
+   Cartão 1: "Distância à pessoa — a elipse". Nuvem de 20 padrões inventada (velocidade × pressão, ligação inversa),
+   gerada sempre igual. As posições da questionada são escolhidas pela distância à pessoa, para cair com certeza em
+   cada zona (dentro, fora, retângulo-mas-fora, entre contornos, fora da escala). */
+const TUT = { data: null };
+const TUT_STEPS = [
+  [0, 5, 'Cada ponto é uma das 20 assinaturas-padrão da pessoa. Ele marca duas coisas daquela assinatura: a velocidade (mais para a direita = mais rápida) e a pressão (mais para cima = apertou mais).'],
+  [5, 10.5, 'Olhando cada medida separada: a pessoa escreve entre {vx0} e {vx1} mm/s e aperta entre {py0} e {py1} gf. Juntando as duas faixas, temos este retângulo.'],
+  [10.5, 16.5, 'Mas os pontos não se espalham pelo retângulo todo: ficam numa faixa diagonal. Nas assinaturas em que ela escreveu mais rápido, apertou menos; nas mais lentas, apertou mais. É o hábito dela.'],
+  [16.5, 22, 'A elipse contorna essa faixa diagonal: é o "território" da pessoa. A linha interna engloba 95% das assinaturas dela; a externa, 99%.'],
+  [22, 27, 'Questionada dentro da elipse: TÍPICA. A velocidade e a pressão dela combinam do jeito que a pessoa costuma combinar.'],
+  [27, 32, 'Questionada fora da linha externa: ATÍPICA. A pessoa quase nunca escreve com essa velocidade e essa pressão ao mesmo tempo.'],
+  [32, 40, 'O caso mais importante. Velocidade: dentro da faixa da pessoa. Pressão: também dentro. Mas a pessoa, quando escreve rápido, aperta pouco, e esta assinatura é rápida e apertada ao mesmo tempo. Separadas, as medidas enganam; juntas, mostram a diferença. ATÍPICA.'],
+  [40, 45.5, 'Entre a linha interna e a externa: INCONCLUSIVA. A pessoa até escreve assim, mas raramente; não dá para afirmar nem que combina, nem que não combina.'],
+  [45.5, 53.5, 'Questionada tão longe que não cabe no gráfico: aparece uma seta na borda. A seta mostra só para que lado ela está, não onde. Toque em "escala real" e o gráfico se afasta até mostrar a posição verdadeira.'],
+  [53.5, 60, 'No painel há ainda uma terceira linha, mais larga: o limite da tabela verdade. A tabela testa dezenas de pares de medidas; para não apontar uma diferença por acaso, ela só marca ATÍPICA o que passa dessa linha.']];
+const TUT_END = 60;
+function tutData() {
+  if (TUT.data) return TUT.data;
+  let s = 20261005; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  const gau = () => Math.sqrt(-2 * Math.log(rnd() + 1e-12)) * Math.cos(2 * Math.PI * rnd());
+  const r0 = -0.72, A = Array.from({ length: 20 }, () => { const a = gau(), b = r0 * a + Math.sqrt(1 - r0 * r0) * gau(); return [62 + 6 * a, 185 + 15 * b]; });
+  const n = A.length, mu = [TH.mean(A.map(a => a[0])), TH.mean(A.map(a => a[1]))];
+  let sxx = 0, syy = 0, sxy = 0; for (const [x, y] of A) { sxx += (x - mu[0]) ** 2; syy += (y - mu[1]) ** 2; sxy += (x - mu[0]) * (y - mu[1]); }
+  const S2 = [[sxx / (n - 1), sxy / (n - 1)], [sxy / (n - 1), syy / (n - 1)]], sx = Math.sqrt(S2[0][0]), sy = Math.sqrt(S2[1][1]), r = S2[0][1] / (sx * sy);
+  const L = [[sx, 0], [r * sy, sy * Math.sqrt(1 - r * r)]]; // Cholesky: ponto = média + L·u, distância² = |u|²
+  const at = u => [mu[0] + L[0][0] * u[0], mu[1] + L[1][0] * u[0] + L[1][1] * u[1]];
+  const dir = (ang, d2) => { const k = Math.sqrt(d2); return at([k * Math.cos(ang), k * Math.sin(ang)]); };
+  const l95 = TH.hotLim(0.95, 20, 2), l99 = TH.hotLim(0.99, 20, 2), lC = TH.hotLim(1 - 0.01 / (typeof TV_K === 'function' ? TV_K() : 48), 20, 2);
+  // retângulo-mas-fora: as duas medidas a +k desvios (rápida e com força), contra a ligação inversa da pessoa
+  const kb = Math.min(1.9, Math.sqrt(0.5 * (l99 + 10) * (1 + r))), box = [mu[0] + kb * sx, mu[1] + kb * sy];
+  const P = { dentro: dir(0.9, 1.2), fora: dir(-2.2, 24), box, entre: dir(-1.9, (l95 + l99) / 2), longe: [mu[0] + 5 * sx, mu[1] + 5 * sy] };
+  const d2 = p => { const dx = p[0] - mu[0], dy = p[1] - mu[1], det = S2[0][0] * S2[1][1] - S2[0][1] ** 2; return (S2[1][1] * dx * dx - 2 * S2[0][1] * dx * dy + S2[0][0] * dy * dy) / det; };
+  return (TUT.data = { A, mu, S2, sx, sy, r, P, l95, l99, lC, d2, rect: [mu[0] - 2 * sx, mu[0] + 2 * sx, mu[1] - 2 * sy, mu[1] + 2 * sy] });
+}
+const tutStep = T => { let k = 0; TUT_STEPS.forEach((s, i) => { if (T >= s[0]) k = i; }); return k; };
+const lerp = (a, b, u) => a + (b - a) * u, lerp2 = (p, q, u) => [lerp(p[0], q[0], u), lerp(p[1], q[1], u)];
+function drawTut(cv, T) {
+  const Dd = tutData(), { A, mu, S2, P: Q, l95, l99, lC, rect } = Dd, k = tutStep(T), st = TUT_STEPS[k], u = (T - st[0]) / (st[1] - st[0]);
+  // escala: normal (pessoa) e, no passo 9, abrindo até a questionada distante
+  const e99 = ellipsePts(mu, S2, l99), eC = ellipsePts(mu, S2, lC);
+  const bx = extent([[...e99.map(p => p[0]), rect[0], rect[1]]], 0.1), by = extent([[...e99.map(p => p[1]), rect[2], rect[3]]], 0.1);
+  const far = k === 8 ? [Q.longe] : eC, fx = extent([[...e99.map(p => p[0]), ...far.map(p => p[0])]], 0.12), fy = extent([[...e99.map(p => p[1]), ...far.map(p => p[1])]], 0.12);
+  const z = k === 8 ? ph(T, st[0] + 3.2, st[0] + 5) : k === 9 ? ph(T, st[0], st[0] + 1.5) : 0, xr = [lerp(bx[0], fx[0], z), lerp(bx[1], fx[1], z)], yr = [lerp(by[0], fy[0], z), lerp(by[1], fy[1], z)];
+  const F = frame(cv, xr, yr, { xlabel: 'velocidade média (mm/s)', ylabel: 'pressão média (gf)', ml: 52, mt: 10 }), { c, X, Y, P } = F, sans = css('--sans');
+  const halo = (txt, x, y, col, font) => { c.font = font || 'bold 12px ' + sans; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(txt, x, y); c.restore(); c.fillStyle = col; c.fillText(txt, x, y); };
+  // retângulo (passo 2; volta a acender no passo 7)
+  const rB = k < 1 ? 0 : k === 1 ? ph(T, st[0], st[0] + 1.5) : k === 6 ? 1 : k < 6 ? 0.35 : 0.2;
+  if (rB > 0) {
+    const [x0, x1, y0, y1] = rect; c.globalAlpha = 0.1 * rB; c.fillStyle = P.amb; c.fillRect(X(x0), F.m.t, X(x1) - X(x0), F.h - F.m.b - F.m.t); c.fillRect(F.m.l, Y(y1), F.w - F.m.r - F.m.l, Y(y0) - Y(y1));
+    c.globalAlpha = rB; c.strokeStyle = P.amb; c.lineWidth = 1.4; c.setLineDash([6, 4]); c.strokeRect(X(x0), Y(y1), X(x1) - X(x0), Y(y0) - Y(y1)); c.setLineDash([]);
+    if (k === 1 || k === 6) { c.textAlign = 'left'; halo('faixa normal de cada medida', X(x0) + 4, Y(y1) - 6, P.amb, '600 11.5px ' + sans); }
+    c.globalAlpha = 1;
+  }
+  // tendência (passo 3)
+  const tA = k < 2 ? 0 : k === 2 ? ph(T, st[0] + 0.3, st[0] + 2) : 0.25;
+  if (tA > 0) {
+    const a = S2[0][0], b = S2[0][1], d = S2[1][1], l1 = (a + d) / 2 + Math.sqrt(((a - d) / 2) ** 2 + b * b), th0 = Math.atan2(l1 - a, b), th = Math.cos(th0) < 0 ? th0 + Math.PI : th0, s = 2.2 * Math.sqrt(l1); // seta sempre no sentido de mais velocidade
+    const p0 = [mu[0] - s * Math.cos(th), mu[1] - s * Math.sin(th)], p1 = [mu[0] + s * Math.cos(th), mu[1] + s * Math.sin(th)];
+    const g = k === 2 ? tA : 1, e = lerp2(p0, p1, g), ang = Math.atan2(Y(e[1]) - Y(p0[1]), X(e[0]) - X(p0[0]));
+    c.globalAlpha = k === 2 ? 1 : tA; c.strokeStyle = P.fg; c.lineWidth = 2.2; c.beginPath(); c.moveTo(X(p0[0]), Y(p0[1])); c.lineTo(X(e[0]), Y(e[1])); c.stroke();
+    c.fillStyle = P.fg; c.save(); c.translate(X(e[0]), Y(e[1])); c.rotate(ang); c.beginPath(); c.moveTo(8, 0); c.lineTo(-6, -6); c.lineTo(-6, 6); c.closePath(); c.fill(); c.restore();
+    if (k === 2 && g > 0.9) { c.textAlign = 'left'; c.textAlign = 'right'; halo('mais rápida → menos pressão', X(e[0]) - 4, Y(e[1]) + 18, P.fg, '600 11.5px ' + sans); }
+    c.globalAlpha = 1;
+  }
+  // elipses (passo 4) e limite da tabela (passo 10)
+  const gE = k < 3 ? 0 : k === 3 ? ph(T, st[0] + 0.3, st[0] + 3) : 1;
+  if (gE > 0) {
+    if (k === 9) { const g = ph(T, st[0] + 1.2, st[0] + 3.2), E = ellipsePts(mu, S2, lC * g * g); c.strokeStyle = P.mut; c.lineWidth = 1.3; c.setLineDash([9, 3, 2, 3]); c.beginPath(); E.forEach(([x, y], i) => (i ? c.lineTo(X(x), Y(y)) : c.moveTo(X(x), Y(y)))); c.closePath(); c.stroke(); c.setLineDash([]);
+      if (g > 0.9) { const rt = E.reduce((a, p) => (X(p[0]) > X(a[0]) ? p : a)); c.textAlign = 'right'; halo('limite da tabela', X(rt[0]) - 4, Y(rt[1]) - 6, P.mut, '600 11.5px ' + sans); } }
+    for (const [lim, dsh, lab] of [[l99, [2, 3], '99%'], [l95, [6, 4], '95%']]) {
+      const E = ellipsePts(mu, S2, lim * gE * gE); c.fillStyle = P.acc; c.globalAlpha = 0.08 * gE; c.beginPath(); E.forEach(([x, y]) => c.lineTo(X(x), Y(y))); c.fill();
+      c.globalAlpha = gE; c.strokeStyle = P.acc; c.setLineDash(dsh); c.lineWidth = 1.4; c.stroke(); c.setLineDash([]);
+      if (gE > 0.95) { const top = E.reduce((a, p) => (p[1] > a[1] ? p : a)), bot = E.reduce((a, p) => (p[1] < a[1] ? p : a)), pp = lab === '99%' ? top : bot; c.textAlign = 'center'; halo(lab, X(pp[0]), Y(pp[1]) + (lab === '99%' ? -6 : 14), P.acc); }
+    }
+    c.globalAlpha = 1;
+  }
+  // padrões (passo 1)
+  A.forEach((a, i) => { const al = k > 0 ? 1 : ph(T, 0.2 + i * 0.17, 0.6 + i * 0.17); if (al <= 0) return; c.globalAlpha = al; c.fillStyle = P.fg; c.beginPath(); c.arc(X(a[0]), Y(a[1]), 3.4, 0, 7); c.fill(); });
+  c.globalAlpha = 1;
+  if (k === 0 && T > 3.6) { c.textAlign = 'left'; const a = A.reduce((m, p) => (X(p[0]) > X(m[0]) ? p : m)); halo('cada ponto = uma assinatura da pessoa', X(a[0]) + 8, Y(a[1]) + 4, P.fg, '600 11.5px ' + sans); }
+  // questionada (passos 5 a 9)
+  const seq = [null, null, null, null, Q.dentro, Q.fora, Q.box, Q.entre, Q.longe], res = [null, null, null, null, 'TÍPICA', 'ATÍPICA', 'ATÍPICA', 'INCONCLUSIVA', 'ATÍPICA'];
+  if (k >= 4 && k <= 8) {
+    const prev = k === 4 ? mu : seq[k - 1], mv = ph(T, st[0], st[0] + 1.3), p = k === 4 ? Q.dentro : lerp2(prev, seq[k], mv), col = vCol(res[k], P);
+    const R = { l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b }, inside = X(p[0]) >= R.l && X(p[0]) <= R.r && Y(p[1]) >= R.t && Y(p[1]) <= R.b;
+    const ap = k === 4 ? ph(T, st[0], st[0] + 0.8) : 1;
+    if (!inside) {
+      offArrow(c, X(mu[0]), Y(mu[1]), X(Q.longe[0]), Y(Q.longe[1]), R, 1, 1, col, P, ['use "escala real" para ver onde está']);
+      if (T > st[0] + 2.2 && z < 0.05) { c.textAlign = 'center'; const bxp = R.l + 58, byp = R.b - 12; c.fillStyle = P.panel; c.strokeStyle = P.acc; c.lineWidth = 1.5; c.beginPath(); c.roundRect ? c.roundRect(bxp - 50, byp - 15, 100, 22, 6) : c.rect(bxp - 50, byp - 15, 100, 22); c.fill(); c.stroke(); halo('escala real', bxp, byp, P.acc, '600 12px ' + sans); }
+    } else {
+      if (mv > 0.98) { const pu = Math.max(0, Math.sin(Math.PI * Math.min(1, (T - st[0] - 1.3) / 1.2))); if (pu > 0) { c.strokeStyle = col; c.globalAlpha = 0.5 * pu; c.lineWidth = 2; c.beginPath(); c.arc(X(p[0]), Y(p[1]), 7 + 14 * pu, 0, 7); c.stroke(); c.globalAlpha = 1; } }
+      c.globalAlpha = ap; c.fillStyle = col; c.beginPath(); c.arc(X(p[0]), Y(p[1]), 6.5, 0, 7); c.fill();
+      if (mv > 0.98) {
+        const right = X(p[0]) > F.w * 0.62; c.textAlign = right ? 'right' : 'left'; const lx = X(p[0]) + (right ? -12 : 12);
+        halo(res[k], lx, Y(p[1]) - 4, col, 'bold 15px ' + sans); halo('questionada', lx, Y(p[1]) + 12, col, '600 11px ' + sans);
+        if (k === 6) { // linhas-guia: cada medida dentro da sua faixa
+          c.globalAlpha = 0.9; c.strokeStyle = P.amb; c.setLineDash([3, 3]); c.lineWidth = 1.2; c.beginPath(); c.moveTo(X(p[0]), Y(p[1])); c.lineTo(X(p[0]), F.h - F.m.b); c.moveTo(X(p[0]), Y(p[1])); c.lineTo(F.m.l, Y(p[1])); c.stroke(); c.setLineDash([]);
+          c.textAlign = 'center'; halo('velocidade: normal', X(p[0]), F.h - F.m.b - 6, P.amb, '600 11px ' + sans); c.textAlign = 'left'; halo('pressão: normal', F.m.l + 6, Y(p[1]) + 14, P.amb, '600 11px ' + sans);
+        }
+        if (k === 8) { c.textAlign = 'left'; halo('escala real: posição verdadeira', F.m.l + 6, F.h - F.m.b - 6, P.mut, '11px ' + sans); }
+      }
+      c.globalAlpha = 1;
+    }
+  }
+  F.done();
+}
+/* ---------- controle genérico dos cartões (um toca por vez) ---------- */
+const TCARDS = {};
+// quadro mostrado antes do play (representativo de cada cartão)
+const TPOSTER = { elipse: 21.8, m3: 18.3, modos: 30.8, gxy: 33.3, suv: 6.3, tvt: 25.8, trd: 13.3, air: 20.8, var: 26.8 };
+const tStep = (steps, T) => { let k = 0; steps.forEach((s, i) => { if (T >= s[0]) k = i; }); return k; };
+function tcEl(key, sel) { return document.querySelector(`[data-card="${key}"] ${sel}`); }
+function tcUI(key) {
+  const C = TCARDS[key], k = tStep(C.steps, C.t);
+  if (C.poster) { tcEl(key, '.tc-n').textContent = `${C.steps.length} etapas`; tcEl(key, '.tc-t').textContent = 'Toque em ▶ tocar para ver a explicação passo a passo, ou escolha uma etapa.'; document.querySelectorAll(`[data-card="${key}"] .tutsteps button`).forEach(b => b.classList.remove('on')); tcEl(key, '.tut-play').textContent = '▶ tocar'; tcEl(key, '.tut-bar').style.width = '0%'; return; }
+  tcEl(key, '.tc-n').textContent = `${k + 1} de ${C.steps.length}`; tcEl(key, '.tc-t').textContent = C.fmt ? C.fmt(C.steps[k][2]) : C.steps[k][2];
+  document.querySelectorAll(`[data-card="${key}"] .tutsteps button`).forEach((b, i) => b.classList.toggle('on', i === k));
+  tcEl(key, '.tut-play').textContent = C.play ? '⏸ pausar' : C.t >= C.end ? '↺ repetir' : '▶ tocar';
+  tcEl(key, '.tut-bar').style.width = (100 * Math.min(1, C.t / C.end)).toFixed(1) + '%';
+}
+function tcDraw(key) { const C = TCARDS[key]; C.draw(tcEl(key, 'canvas'), C.t); tcUI(key); }
+function tcFrame(key, now) {
+  const C = TCARDS[key]; if (!C.play) return;
+  const dt = C.last ? (now - C.last) / 1000 : 0; C.last = now; C.t = Math.min(C.end, C.t + dt); tcDraw(key);
+  if (C.t >= C.end || S.tab !== 'tut') { C.play = false; tcUI(key); return; }
+  C.raf = requestAnimationFrame(n => tcFrame(key, n));
+}
+function tcPlay(key, on) {
+  for (const k in TCARDS) if (k !== key && TCARDS[k].play) { TCARDS[k].play = false; cancelAnimationFrame(TCARDS[k].raf); tcUI(k); }
+  const C = TCARDS[key]; cancelAnimationFrame(C.raf); C.play = on; C.last = 0;
+  if (on && (C.poster || C.t >= C.end)) C.t = 0; if (on) C.poster = false;
+  if (on) C.raf = requestAnimationFrame(n => tcFrame(key, n)); tcUI(key);
+}
+const tcReduce = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function tcGo(key, k) { const C = TCARDS[key], st = C.steps[k]; C.poster = false; C.t = tcReduce() ? st[1] - 0.01 : st[0]; tcDraw(key); if (!tcReduce()) tcPlay(key, true); }
+function tcRegister(key, steps, end, draw, fmt) {
+  const C = (TCARDS[key] = { steps, end, draw, fmt, t: TPOSTER[key] ?? steps[0][1] - 0.01, poster: true, play: false, raf: 0, last: 0 });
+  tcEl(key, '.tutsteps').innerHTML = steps.map((s, i) => `<button type="button" class="chip" title="etapa ${i + 1}">${i + 1}</button>`).join('');
+  document.querySelectorAll(`[data-card="${key}"] .tutsteps button`).forEach((b, i) => b.addEventListener('click', () => tcGo(key, i)));
+  tcEl(key, '.tut-play').addEventListener('click', () => tcPlay(key, !C.play));
+  tcEl(key, '.tut-restart').addEventListener('click', () => { C.poster = false; C.t = 0; tcDraw(key); tcPlay(key, true); });
+}
+let tutBuilt = false;
+function renderTut() {
+  if (!tutBuilt) {
+    tutBuilt = true;
+    const R = () => tutData().rect, f0 = v => br(v, 0);
+    tcRegister('elipse', TUT_STEPS, TUT_END, drawTut, t => t.replace('{vx0}', f0(R()[0])).replace('{vx1}', f0(R()[1])).replace('{py0}', f0(R()[2])).replace('{py1}', f0(R()[3])));
+    tcRegister('modos', MOD_STEPS, MOD_END, drawModos);
+    tcRegister('m3', M3T_STEPS, M3T_END, drawM3T);
+    tcRegister('gxy', GXY_STEPS, GXY_END, drawGXY);
+    tcRegister('suv', SUV_STEPS, SUV_END, drawSUV);
+    tcRegister('tvt', TVT_STEPS, TVT_END, drawTVT);
+    tcRegister('trd', TRD_STEPS, TRD_END, drawTRD);
+    tcRegister('air', AIR_STEPS, AIR_END, drawAIR);
+    tcRegister('var', VAR_STEPS, VAR_END, drawVAR);
+    window.addEventListener('resize', () => { if (S.tab === 'tut') for (const k in TCARDS) tcDraw(k); });
+  }
+  for (const k in TCARDS) tcDraw(k);
+}
+window.__tc = (key, T) => { const C = TCARDS[key]; C.play = false; C.poster = false; C.t = T; tcDraw(key); };
+window.__m3Info = () => { const d = m3tData(); return { side: d.side, sideD2: d.sideD2, l95: d.l95, l99: d.l99, dentro: d.d2(d.P.dentro), trai: d.d2(d.P.trai), entre: d.d2(d.P.entre), traiZ: d.P.trai.map((x, i) => (x - d.mu[i]) / Math.sqrt(d.Sm[i][i])), front2D: (() => { const S = [[d.Sm[0][0], d.Sm[0][2]], [d.Sm[2][0], d.Sm[2][2]]], v = [d.P.trai[0] - d.mu[0], d.P.trai[2] - d.mu[2]], det = S[0][0] * S[1][1] - S[0][1] ** 2; return (S[1][1] * v[0] * v[0] - 2 * S[0][1] * v[0] * v[1] + S[0][0] * v[1] * v[1]) / det; })() }; };
+window.__tutInfo = () => { const d = tutData(); const o = { r: d.r }; for (const k in d.P) o[k] = d.d2(d.P[k]); o.l95 = d.l95; o.l99 = d.l99; o.lC = d.lC; return o; };
+
+/* ---------- Cartão 2: comparar as curvas por (tempo real · traço a traço · posição no traçado) ----------
+   Curvas inventadas: 3 traços. Padrão: 4,65 s, com uma freada na curva do meio do 2º traço. Questionada da própria
+   pessoa: cada traço 1,7× mais longo e 1,7× mais baixo (mesmo caminho), com duas paradas no ar. Imitação: mesmo
+   tempo, com calombos e a freada do 2º traço em outro lugar (antes da curva). O desenho da "estrada" é ilustrativo. */
+const MOD_STEPS = [
+  [0, 5.5, 'Este gráfico mostra a velocidade da caneta ao longo da assinatura. Cada "morro" é um traço: a caneta acelera, chega ao máximo e freia. A faixa cinza é a variação dos 20 padrões da pessoa.'],
+  [5.5, 11.5, 'Tempo real: a questionada (linha azul) aparece no relógio dela. Ela levou quase o dobro do tempo, e as faixas claras mostram onde a caneta ficou no ar, parada entre um traço e outro.'],
+  [11.5, 18, 'Este modo é o melhor para ver o ritmo e as paradas. Mas repare: o 2º traço dela caiu embaixo do 3º traço da pessoa, e o 3º dela já passou do fim. Assim não dá para comparar a forma de cada traço.'],
+  [18, 28.5, 'Traço a traço: os padrões ficam parados, como referência. Quem se move é a questionada, um traço de cada vez: o começo e o fim de cada traço dela são levados ao começo e ao fim do traço correspondente da pessoa (linhas tracejadas). No fim, a escala se ajusta para ocupar o gráfico.'],
+  [28.5, 35, 'Agora cada morro azul está embaixo do morro cinza correspondente. Aqui a forma é a mesma, só mais baixa: é o mesmo movimento, feito mais devagar, como acontece com idade, doença ou cansaço.'],
+  [35, 42, 'Compare com uma imitação: mesmo depois do encaixe, os morros têm calombos e uma freada a mais no 2º traço. Não é só lentidão: é outro movimento.'],
+  [42, 49, 'O terceiro modo, posição no traçado. Pense no desenho da assinatura como uma estrada: o começo do desenho é o quilômetro 0 e o fim é o quilômetro 100. A metade do desenho fica no 50.'],
+  [49, 57, 'Neste modo, o eixo de baixo é essa estrada, e não mais o relógio. Aqui padrões e questionada mudam juntos: cada um é redesenhado pelo próprio caminho. Acompanhe o ponto azul: em cada lugar do desenho, o gráfico mostra a velocidade com que a caneta passou por ali.'],
+  [57, 65.5, 'E as paradas? Quando a caneta sobe entre um traço e outro, o relógio continua correndo, mas a caneta não avança na estrada. Por isso, aqui, as paradas não aparecem: o gráfico mostra só a caneta andando no papel.'],
+  [65.5, 72.5, 'Para que serve: ver em que lugar da letra a pessoa freia. Esta pessoa sempre freia na curva do meio do 2º traço (marca vermelha). A questionada verdadeira, mesmo mais lenta, freia no mesmo lugar.'],
+  [72.5, 79.5, 'Já a imitação freia em outro lugar, antes da curva. Quem imita copia a forma, mas não sabe onde a pessoa costuma frear. O lugar das freadas denuncia que o movimento é outro.'],
+  [79.5, 88, 'Resumo: cada modo responde a uma pergunta. Escolha o modo pela pergunta que você quer responder. As medidas e o resultado não mudam com o modo.']];
+const MOD_END = 88, MOD = {};
+function modData() {
+  if (MOD.ok) return MOD;
+  const FSx = 100, PS = [[0.10, 1.45], [1.65, 3.10], [3.30, 4.55]], AMP = [120, 150, 110], TP = 4.65, K = 1.7;
+  const dip = (u, c, d, w) => 1 - d * Math.exp(-(((u - c) / w) ** 2));
+  const prof = (u, k) => Math.sin(Math.PI * u) ** 2 * (1 + 0.18 * (0.5 - u)) * (k === 1 ? dip(u, 0.5, 0.45, 0.08) : 1);
+  const QS = []; { let t = 0.1; const gaps = [0.9, 0.7]; PS.forEach(([a, b], k) => { const d = (b - a) * K; QS.push([t, t + d]); t += d + (gaps[k] || 0); }); }
+  const TQ = QS[2][1] + 0.1;
+  const samp = (S_, amp, T, wig) => { const out = []; for (let i = 0; i <= Math.round(T * FSx); i++) { const t = i / FSx; let k = -1, u = 0; S_.forEach(([a, b], j) => { if (t >= a && t <= b) { k = j; u = (t - a) / (b - a); } }); let v = 0;
+    if (k >= 0) { v = amp[k] * (wig ? Math.sin(Math.PI * u) ** 2 * (1 + 0.18 * (0.5 - u)) * (1 + 0.28 * Math.sin(2 * Math.PI * (4 * u + 0.3 * k))) * (k === 1 ? dip(u, 0.24, 0.75, 0.06) : 1) : prof(u, k)); }
+    out.push({ t, v: Math.max(0, v), k, u }); } return out; };
+  const P0 = samp(PS, AMP, TP, false), Q1 = samp(QS, AMP.map(a => a / K), TQ, false), Q2 = samp(QS, AMP.map(a => a / K), TQ, true);
+  const path = A => { let s = 0; const o = A.map(p => { if (p.k >= 0) s += p.v / FSx; return s; }); return o.map(x => 100 * x / s); };
+  const lifts = S_ => S_.slice(0, -1).map((s, k) => [s[1], S_[k + 1][0]]);
+  const PL = lifts(PS), QL = lifts(QS);
+  const xAl = (A, S_, L, T) => A.map(p => { if (p.k >= 0) { const [a, b] = PS[p.k]; return (a + p.u * (b - a)) / TP; } for (let j = 0; j < L.length; j++) if (p.t > L[j][0] && p.t < L[j][1]) return (PL[j][0] + (p.t - L[j][0]) / (L[j][1] - L[j][0]) * (PL[j][1] - PL[j][0])) / TP; return p.t < S_[0][0] ? p.t / S_[0][0] * PS[0][0] / TP : (PS[2][1] + (p.t - S_[2][1]) / (T - S_[2][1]) * (TP - PS[2][1])) / TP; });
+  const mk = (A, S_, L, T) => { const pp = path(A); return { A, pp, xt: A.map(p => p.t / 8.9), xa: xAl(A, S_, L, T), xp: A.map((p, i) => (p.k >= 0 ? pp[i] / 100 : NaN)), air: L }; };
+  const P = mk(P0, PS, PL, TP), Q1m = mk(Q1, QS, QL, TQ), Q2m = mk(Q2, QS, QL, TQ);
+  // marcos em % do caminho: início e fim de cada traço do padrão; freada da pessoa e da imitação
+  const sEnds = [0, 1, 2].map(j => { const idx = P.A.map((p, i) => (p.k === j ? i : -1)).filter(i => i >= 0); return [P.pp[idx[0]] / 100, P.pp[idx[idx.length - 1]] / 100]; });
+  const at = (M_, j, u) => { const i = M_.A.findIndex(p => p.k === j && p.u >= u); return i; };
+  const brakeP = at(P, 1, 0.5), brakeI = at(Q2m, 1, 0.24);
+  // "estrada": desenho ilustrativo em 3 traços com laçadas; cada traço ocupa a mesma fração de caminho do padrão
+  const strokeGeom = [[0.02, 0.30, 2.2], [0.36, 0.70, 1.6], [0.76, 0.98, 1.1]].map(([x0, x1, n]) => { const pts = []; for (let i = 0; i <= 160; i++) { const s = i / 160, r = 0.045 + 0.02 * Math.sin(Math.PI * s); pts.push([x0 + (x1 - x0) * s - r * Math.sin(2 * Math.PI * n * s), 0.5 + 0.38 * Math.cos(2 * Math.PI * n * s) * (0.6 + 0.4 * Math.sin(Math.PI * s))]); }
+    const L = [0]; for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], (pts[i][1] - pts[i - 1][1]) * 0.35)); return { pts, L: L.map(v => v / L[L.length - 1]) }; });
+  const roadPt = p => { let j = sEnds.findIndex(([a, b]) => p <= b + 1e-9); if (j < 0) j = 2; const [a, b] = sEnds[j]; let f = (p - a) / (b - a); if (f < 0) { // no ar entre traços: fica no fim do traço anterior
+      j = Math.max(0, j - 1); f = 1; } f = Math.min(1, Math.max(0, f)); const G = strokeGeom[j]; let i = G.L.findIndex(v => v >= f); if (i <= 0) return G.pts[0]; const w = (f - G.L[i - 1]) / (G.L[i] - G.L[i - 1] || 1); return lerp2(G.pts[i - 1], G.pts[i], w); };
+  Object.assign(MOD, { ok: true, P, Q1: Q1m, Q2: Q2m, QS, PS, TQ, TP, sEnds, strokeGeom, roadPt, brakeP, brakeI });
+  return MOD;
+}
+function drawModos(cv, T) {
+  const M = modData(), k = tStep(MOD_STEPS, T), st = MOD_STEPS[k], sans = css('--sans');
+  // 0 = tempo, 1 = traço a traço, 2 = posição
+  // b: encaixe da questionada (os padrões ficam parados); z: ajuste da escala; mP: troca para a posição no traçado
+  const bj = [0, 1, 2].map(j => (k < 3 ? 0 : k === 3 ? ph(T, st[0] + 0.8 + 2.3 * j, st[0] + 2.6 + 2.3 * j) : 1)), b = bj[2], z = k < 3 ? 0 : k === 3 ? ph(T, st[0] + 8.2, st[0] + 9.8) : 1;
+  const mP = k < 7 ? 0 : k === 7 ? ph(T, st[0] + 0.3, st[0] + 2.6) : 1, mA = mP > 0 ? 1 + mP : b;
+  const wig = k < 5 ? 0 : k === 5 ? ph(T, st[0] + 0.5, st[0] + 2.5) : k === 6 ? 1 - ph(T, st[0] + 0.5, st[0] + 2) : k < 10 ? 0 : k === 10 ? ph(T, st[0] + 0.4, st[0] + 2.4) : 1;
+  const road = k < 6 ? 0 : k === 6 ? ph(T, st[0] + 0.3, st[0] + 2.3) : k < 11 ? 1 : 1 - ph(T, st[0], st[0] + 1); // área da "estrada" no alto
+  const mode = mP >= 1 ? 2 : mP > 0 ? -1 : bj[0] === 0 && z === 0 ? 0 : b === 1 && z === 1 ? 1 : -1, ymax = 175 + 125 * road, RT = M.TP / 8.9;
+  const grp = (S_, i) => { const p = S_.A[i]; if (p.k >= 0) return p.k; const nx = S_.A.slice(i).find(q => q.k >= 0); return nx ? nx.k : 2; };
+  const xOf = (S_, i, isQ) => { const base = lerp(S_.xt[i], S_.xa[i] * RT, isQ ? bj[grp(S_, i)] : 1) * lerp(1, 1 / RT, z); if (mP <= 0) return base; const c = S_.xp[i]; return Number.isFinite(c) ? lerp(base, c, mP) : NaN; };
+  const labels = ['tempo real (s)', 'traço a traço (% da assinatura)', 'posição no traçado (% do caminho)'];
+  const xfmt = v => (mode === 0 ? br(v * 8.9, 0) : mode > 0 ? br(v * 100, 0) : '');
+  const F = frame(cv, [0, 1], [0, ymax], { xlabel: mode >= 0 ? labels[mode] : k === 3 && z === 0 ? 'encaixando a questionada nos padrões (os padrões não se mexem)…' : k === 3 ? 'ajustando a escala do gráfico…' : 'trocando o eixo…', ylabel: 'velocidade (mm/s)', xfmt, ml: 46, mt: 10 }), { c, X, Y, P } = F, nar = F.w < 560;
+  const halo = (txt, x, y, col, font) => { c.font = font || '600 11.5px ' + sans; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(txt, x, y); c.restore(); c.fillStyle = col; c.fillText(txt, x, y); };
+  const circ = (x, y, r) => { c.strokeStyle = P.red; c.lineWidth = 2; c.setLineDash([4, 3]); c.beginPath(); c.arc(x, y, r, 0, 7); c.stroke(); c.setLineDash([]); };
+  // faixa cinza dos padrões
+  const pr = k === 0 ? ph(T, 0.3, 3.5) : 1, PP = M.P, px = PP.A.map((_, i) => xOf(PP, i, false)), pm = PP.A.map(p => p.v), sd = pm.map(v => 6 + 0.12 * v);
+  const shown = px.map(x => (x <= pr * (k < 3 ? PP.xt[PP.A.length - 1] : 1) + 1e-9 ? x : NaN));
+  bandFill(F, shown, pm.map((v, i) => Math.max(0, v - 2 * sd[i])), pm.map((v, i) => v + 2 * sd[i]), P.band); polyline(F, shown, pm, P.band, 1);
+  // questionada
+  let QA = M.Q1, qx = [], qv = [];
+  if (k >= 1) {
+    const QB = M.Q2, n = QA.A.length, qr = k === 1 ? ph(T, st[0] + 0.3, st[0] + 4.5) : 1;
+    qx = QA.A.map((_, i) => xOf(QA, i, true)); qv = QA.A.map((p, i) => lerp(p.v, QB.A[i].v, wig));
+    const qmax = Math.max(...qx.filter(Number.isFinite)), airA = 1 - mP;
+    if (airA > 0) { c.save(); c.fillStyle = P.amb; c.globalAlpha = 0.14 * airA; QA.air.forEach(([a, b]) => { const ia = Math.round(a * 100), ib = Math.round(b * 100); if (!(qx[ia] <= qr * qmax + 1e-9)) return; c.fillRect(X(qx[ia]), Y(ymax * 0.62), X(qx[ib]) - X(qx[ia]), F.h - F.m.b - Y(ymax * 0.62)); }); c.restore(); }
+    polyline(F, qx.map(x => (Number.isFinite(x) && x <= qr * qmax + 1e-9 ? x : NaN)), qv, P.acc, 2);
+    if (k === 3 && z < 0.05) { // linhas de início e fim do traço da pessoa que está recebendo o encaixe
+      const cur = bj.findIndex(v => v < 1), j = cur < 0 ? 2 : cur, [a0, b0] = M.PS[j], xa0 = a0 / 8.9, xb0 = b0 / 8.9, g = 1 - z;
+      c.globalAlpha = g; c.strokeStyle = P.fg; c.lineWidth = 1.3; c.setLineDash([5, 4]); [xa0, xb0].forEach(x => { c.beginPath(); c.moveTo(X(x), F.m.t + 4); c.lineTo(X(x), F.h - F.m.b); c.stroke(); }); c.setLineDash([]);
+      c.textAlign = 'center'; halo('início', X(xa0), F.m.t + 14, P.fg, '600 11px ' + sans); halo('fim', X(xb0), F.m.t + 14, P.fg, '600 11px ' + sans);
+      // traço da questionada em movimento: mais grosso
+      const ids = QA.A.map((p, i) => (p.k === j ? i : -1)).filter(i => i >= 0);
+      c.strokeStyle = P.acc; c.lineWidth = 4; c.globalAlpha = 0.5 * g; c.beginPath(); ids.forEach((i, n) => (n ? c.lineTo(X(qx[i]), Y(qv[i])) : c.moveTo(X(qx[i]), Y(qv[i])))); c.stroke();
+      c.globalAlpha = g; c.textAlign = 'left'; halo(cur < 0 ? 'os 3 traços encaixados' : `encaixando o ${j + 1}º traço dela`, X(xb0) + 6, F.m.t + 30, P.acc, 'bold 12px ' + sans); c.globalAlpha = 1;
+    }
+    if ((k === 2 || k === 4) && mode >= 0) {
+      const tops = (S_, vv, xx) => [0, 1, 2].map(j => { let best = -1, bi = 0; S_.A.forEach((p, i) => { if (p.k === j && vv[i] > best) { best = vv[i]; bi = i; } }); return [xx[bi], best]; });
+      const tp = tops(PP, pm, px), tq = tops(QA, qv, qx), g = ph(T, st[0] + 0.4, st[0] + 1.4);
+      c.globalAlpha = g; c.textAlign = 'center';
+      tp.forEach(([x, v], j) => halo(`${j + 1}º`, X(x), Math.max(F.m.t + 12, Y(v + 2 * (6 + 0.12 * v)) - 6), P.mut, 'bold 12px ' + sans));
+      tq.forEach(([x, v], j) => halo(`${j + 1}º`, X(x), Y(v) - 8, P.acc, 'bold 12px ' + sans));
+      if (k === 2 && g > 0.9) { const [x2] = tq[1]; circ(X(x2), Y(30), 26); c.font = '600 11.5px ' + sans; const tw = c.measureText('2º dela embaixo do 3º da pessoa').width, rt = X(x2) + 30 + tw > F.w - F.m.r; c.textAlign = rt ? 'right' : 'left';
+        if (rt && nar) { halo('2º dela embaixo', X(x2) - 30, Y(30) - 6, P.red); halo('do 3º da pessoa', X(x2) - 30, Y(30) + 8, P.red); } else halo('2º dela embaixo do 3º da pessoa', rt ? X(x2) - 30 : X(x2) + 30, Y(30) + 4, P.red); }
+      c.globalAlpha = 1;
+    }
+    if (k === 5 && wig > 0.9) { const i0 = QA.A.findIndex(p => p.k === 1 && p.u >= 0.24); circ(X(qx[i0]), Y(qv[i0]), 18); c.textAlign = 'left'; halo('freada a mais', X(qx[i0]) + 22, Y(qv[i0]) - 10, P.red); }
+  }
+  // "estrada": o desenho ilustrativo no alto, com quilômetros 0, 25, 50, 75 e 100
+  if (road > 0) {
+    const y0 = 190, y1 = 290, RX = v => X(v), RY = v => Y(y0 + (y1 - y0) * v);
+    c.globalAlpha = road; c.strokeStyle = P.fg; c.lineWidth = 1.8;
+    M.strokeGeom.forEach(G => { c.beginPath(); G.pts.forEach(([x, y], i) => (i ? c.lineTo(RX(x), RY(y)) : c.moveTo(RX(x), RY(y)))); c.stroke(); });
+    if (road > 0.6) { c.textAlign = 'center'; [0, 0.25, 0.5, 0.75, 1].forEach(p => { const q = M.roadPt(p); c.fillStyle = P.amb; c.beginPath(); c.arc(RX(q[0]), RY(q[1]), 3.5, 0, 7); c.fill(); halo(`${Math.round(p * 100)}`, RX(q[0]), RY(q[1]) - 8, P.amb, 'bold 11px ' + sans); }); }
+    if (k === 6) { c.textAlign = 'left'; halo(nar ? 'o desenho como estrada: 0 a 100' : 'o desenho da assinatura como uma estrada: do quilômetro 0 ao 100', F.m.l + 6, RY(0) + 22 + 4, P.amb); }
+    c.globalAlpha = 1;
+    // ponto que percorre a estrada e linha até o gráfico
+    let p = null, clock = null, noAr = false;
+    if (k === 7) { const g = ph(T, st[0] + 3, st[1] - 0.4); if (T > st[0] + 3) p = g; }
+    if (k === 8) { const g = (T - st[0] - 0.4) / (st[1] - st[0] - 1.2); if (g > 0) { const tq = Math.min(1, g) * (M.TQ - 0.05), i = Math.min(QA.A.length - 1, Math.round(tq * 100)); p = QA.pp[i] / 100; clock = tq; noAr = QA.A[i].k < 0 && tq > 0.15 && tq < M.TQ - 0.15; } }
+    if (p !== null && mP >= 1) {
+      const q = M.roadPt(p), i = QA.A.findIndex(a => a.k >= 0 && QA.pp[QA.A.indexOf(a)] / 100 >= p - 1e-9), vy = i >= 0 ? qv[i] : 0;
+      c.strokeStyle = P.acc; c.globalAlpha = 0.6; c.setLineDash([4, 4]); c.lineWidth = 1.2; c.beginPath(); c.moveTo(RX(q[0]), RY(q[1])); c.lineTo(X(p), Y(vy)); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+      c.fillStyle = P.acc; c.beginPath(); c.arc(RX(q[0]), RY(q[1]), 6, 0, 7); c.fill(); c.beginPath(); c.arc(X(p), Y(vy), 5, 0, 7); c.fill();
+      c.textAlign = RX(q[0]) > F.w * 0.6 ? 'right' : 'left'; halo(`quilômetro ${Math.round(p * 100)}`, RX(q[0]) + (c.textAlign === 'right' ? -10 : 10), RY(q[1]) - 12, P.acc, 'bold 12px ' + sans);
+      if (clock !== null) { c.textAlign = 'left'; halo(`relógio: ${br(clock, 1)} s`, F.m.l + 6, Y(ymax * 0.6), P.fg, 'bold 12px ' + sans); if (noAr) halo('caneta no ar: o relógio anda, o quilômetro não', F.m.l + 6, Y(ymax * 0.6) + 16, P.amb, '600 11.5px ' + sans); }
+    }
+    // freadas (passos 10 e 11)
+    if (k === 9 || k === 10) {
+      const ip = M.brakeP, xpP = PP.xp[ip], g = ph(T, st[0] + 0.5, st[0] + 1.5); c.globalAlpha = g;
+      const qp = M.roadPt(xpP); circ(X(xpP), Y(pm[ip]), 16); circ(RX(qp[0]), RY(qp[1]), 10);
+      c.textAlign = 'center'; halo('a pessoa freia aqui', X(xpP), Y(pm[ip]) + 30, P.red);
+      if (k === 10 && wig > 0.9) { const ii = M.brakeI, xi = qx[ii], qi = M.roadPt(xi); c.strokeStyle = P.acc; c.lineWidth = 2; c.setLineDash([4, 3]); c.beginPath(); c.arc(X(xi), Y(qv[ii]), 16, 0, 7); c.stroke(); c.beginPath(); c.arc(RX(qi[0]), RY(qi[1]), 10, 0, 7); c.stroke(); c.setLineDash([]); halo('a imitação freia aqui', X(xi), Y(qv[ii]) - 22, P.acc); }
+      c.globalAlpha = 1;
+    }
+  }
+  // legenda
+  const ly = nar ? F.h - F.m.b - 22 : F.h - F.m.b - 22; c.textAlign = 'right';
+  if (k < 11) { halo(nar ? 'cinza: 20 padrões' : 'faixa cinza: os 20 padrões', F.w - F.m.r - 6, ly, P.mut, '11px ' + sans);
+    if (k >= 1) halo(wig > 0.5 ? (nar ? 'azul: imitação' : 'azul: questionada (imitação)') : (nar ? 'azul: a pessoa, mais devagar' : 'azul: questionada (a própria pessoa, mais devagar)'), F.w - F.m.r - 6, ly + 14, P.acc, '600 11px ' + sans); }
+  F.done();
+  if (k === 11) { // resumo: pergunta → modo
+    const g = ph(T, st[0] + 0.3, st[0] + 1.5), rows = [['Ela parou? Onde e por quanto tempo?', 'Tempo real'], ['É o mesmo movimento, só mais devagar?', 'Traço a traço'], ['Ela acelera e freia nos mesmos lugares da letra?', 'Posição no traçado']];
+    const bw = Math.min(560, F.w - F.m.l - F.m.r - 20), bh = nar ? 46 : 34, x0 = F.m.l + 10, y0 = F.m.t + 12; c.globalAlpha = g;
+    rows.forEach(([q, a], i) => { const y = y0 + i * (bh + 8); c.fillStyle = P.panel; c.strokeStyle = P.acc; c.lineWidth = 1.5; c.beginPath(); c.roundRect ? c.roundRect(x0, y, bw, bh, 8) : c.rect(x0, y, bw, bh); c.fill(); c.stroke(); c.textAlign = 'left'; c.fillStyle = P.fg; c.font = '13px ' + sans;
+      if (nar) { c.fillText(q, x0 + 10, y + 19); c.fillStyle = P.acc; c.font = 'bold 13px ' + sans; c.fillText('→ ' + a, x0 + 10, y + 37); } else { c.fillText(q, x0 + 12, y + 22); c.fillStyle = P.acc; c.font = 'bold 13px ' + sans; c.textAlign = 'right'; c.fillText('→ ' + a, x0 + bw - 12, y + 22); } });
+    c.globalAlpha = 1;
+  }
+}
+
+/* ---------- Cartão 3: distância à pessoa em 3D (valores inventados, em desvios-padrão) ---------- */
+const M3T_STEPS = [
+  [0, 6, 'A elipse compara duas medidas. O 3D acrescenta uma terceira: aqui, a inclinação da caneta. Visto de frente, parece a elipse de sempre: velocidade na horizontal, pressão na vertical.'],
+  [6, 12.5, 'Girando, aparece a profundidade: a terceira medida vai "para dentro" da tela, e a elipse vira uma bola achatada. Dentro dela está o jeito natural da pessoa nas três medidas ao mesmo tempo.'],
+  [12.5, 18.5, 'As sombras no chão ajudam a ver a profundidade: cada assinatura tem a sua sombra logo abaixo. No painel, você gira arrastando com o dedo ou o mouse.'],
+  [18.5, 24, 'Questionada dentro da bola: TÍPICA. Nas três medidas juntas, ela se comporta como a pessoa.'],
+  [24, 31, 'O caso mais traiçoeiro. Vista de frente, a questionada parece estar dentro: velocidade e pressão combinam com a pessoa…'],
+  [31, 38, '…mas girando aparece que ela está fora: a inclinação da caneta não combina com a velocidade e a pressão dela. ATÍPICA. Por isso, sempre gire antes de concluir.'],
+  [38, 43.5, 'Entre a casca de dentro (95%) e a de fora (99%): INCONCLUSIVA, como na elipse.'],
+  [43.5, 51, 'Quais três medidas? O painel começa com as três que mais andam ligadas entre si nos padrões da pessoa, sem olhar a questionada, para não escolher a dedo. Você pode trocar qualquer uma nos seletores X, Y e Z; cada troca fica no registro de acessos.']];
+const M3T_END = 51, M3T = {};
+function m3tData() {
+  if (M3T.ok) return M3T;
+  let s = 3141592; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296), gau = () => Math.sqrt(-2 * Math.log(rnd() + 1e-12)) * Math.cos(2 * Math.PI * rnd());
+  const R = [[1, -0.75, 0.55], [-0.75, 1, -0.45], [0.55, -0.45, 1]];
+  const L = [[1, 0, 0], [0, 0, 0], [0, 0, 0]]; L[1][0] = R[1][0]; L[1][1] = Math.sqrt(1 - L[1][0] ** 2); L[2][0] = R[2][0]; L[2][1] = (R[2][1] - L[2][0] * L[1][0]) / L[1][1]; L[2][2] = Math.sqrt(1 - L[2][0] ** 2 - L[2][1] ** 2);
+  const A = Array.from({ length: 20 }, () => { const g = [gau(), gau(), gau()]; const r = [0, 1, 2].map(i => L[i][0] * g[0] + L[i][1] * g[1] + L[i][2] * g[2]); return [r[0], r[2], r[1]]; }); // ordem de desenho: [velocidade, inclinação (profundidade), pressão (vertical)]
+  const mu = [0, 1, 2].map(j => TH.mean(A.map(a => a[j]))), Sm = [0, 1, 2].map(i => [0, 1, 2].map(j => A.reduce((t, a) => t + (a[i] - mu[i]) * (a[j] - mu[j]), 0) / 19));
+  const inv3 = m => { const [a, b, c] = m[0], [d, e, f] = m[1], [g, h, i] = m[2], C = [[e * i - f * h, c * h - b * i, b * f - c * e], [f * g - d * i, a * i - c * g, c * d - a * f], [d * h - e * g, b * g - a * h, a * e - b * d]], det = a * C[0][0] + b * C[1][0] + c * C[2][0]; return C.map(r => r.map(v => v / det)); };
+  const Si = inv3(Sm), d2 = p => { const v = p.map((x, i) => x - mu[i]); return v.reduce((t, x, i) => t + x * v.reduce((u, y, j) => u + Si[i][j] * y, 0), 0); };
+  const l95 = TH.hotLim(0.95, 20, 3), l99 = TH.hotLim(0.99, 20, 3), at = (u, target) => { const d = d2(u.map((x, i) => mu[i] + x)); const k = Math.sqrt(target / d); return u.map((x, i) => mu[i] + k * x); };
+  const vpi = u => [u[0], u[2], u[1]]; // direções dadas como [velocidade, pressão, inclinação]
+  const P = { dentro: at(vpi([0.4, -0.2, 0.3]), 1.4), trai: at(vpi([0.9, -0.7, -1.4]), l99 + 9), entre: at(vpi([-0.6, 0.9, 0.6]), (l95 + l99) / 2) };
+  const E = jacobi3(Sm);
+  // vista lateral: o giro em que a questionada "traiçoeira" fica mais claramente fora da silhueta
+  let side = [-1.35, 0.2], best = -1; const v = P.trai.map((x, i) => x - mu[i]);
+  for (let yw = -3.1; yw <= 3.1; yw += 0.05) for (let pt = -0.1; pt <= 0.6; pt += 0.05) {
+    const cy = Math.cos(yw), sy = Math.sin(yw), cp = Math.cos(pt), sp = Math.sin(pt), PM = [[cy, -sy, 0], [sy * sp, cy * sp, cp]];
+    const C = [0, 1].map(i => [0, 1].map(j => PM[i].reduce((t, a, ii) => t + a * PM[j].reduce((u, b, jj) => u + Sm[ii][jj] * b, 0), 0))), u = PM.map(r => r[0] * v[0] + r[1] * v[1] + r[2] * v[2]);
+    const det = C[0][0] * C[1][1] - C[0][1] ** 2, q = (C[1][1] * u[0] * u[0] - 2 * C[0][1] * u[0] * u[1] + C[0][0] * u[1] * u[1]) / det;
+    if (q > best + 1e-9 && Math.abs(yw) > 0.4) { best = q; side = [yw, pt]; } }
+  Object.assign(M3T, { ok: true, A, mu, Sm, d2, l95, l99, P, E, side, sideD2: best });
+  return M3T;
+}
+function drawM3T(cv, T) {
+  const D3 = m3tData(), k = tStep(M3T_STEPS, T), st = M3T_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), nar = w < 560;
+  // orientação da câmera por etapa: frente (yaw 0, pitch 0) ou oblíqua
+  const OBL = [-0.85, 0.42], FR = [0, 0], SIDE = D3.side;
+  let yaw, pit;
+  if (k === 0) [yaw, pit] = FR;
+  else if (k === 1) { const g = ph(T, st[0] + 0.5, st[0] + 4); yaw = lerp(0, OBL[0], g); pit = lerp(0, OBL[1], g); }
+  else if (k === 2 || k === 3) { yaw = OBL[0] + 0.25 * Math.sin((T - 12.5) * 0.5); pit = OBL[1]; }
+  else if (k === 4) { const g = ph(T, st[0] + 0.3, st[0] + 2.5); yaw = lerp(OBL[0], 0, g); pit = lerp(OBL[1], 0, g); }
+  else if (k === 5) { const g = ph(T, st[0] + 0.3, st[0] + 3.5); yaw = lerp(0, SIDE[0], g); pit = lerp(0, SIDE[1], g); }
+  else { yaw = OBL[0] + 0.2 * Math.sin((T - st[0]) * 0.5); pit = OBL[1]; }
+  // coordenadas: x = velocidade, y = inclinação (profundidade), z = pressão (vertical)
+  const cy = Math.cos(yaw), sy = Math.sin(yaw), cp = Math.cos(pit), sp = Math.sin(pit);
+  const rot = v => { const x1 = v[0] * cy - v[1] * sy, y1 = v[0] * sy + v[1] * cy, z1 = v[2]; return [x1, y1 * cp - z1 * sp, y1 * sp + z1 * cp]; }; // [tela x, profundidade, tela y]
+  const Rm = [[cy, -sy, 0], [sy * cp, cy * cp, -sp], [sy * sp, cy * sp, cp]];
+  const sc = Math.min(w / 10.5, (h - 50) / 7.2), cx = w / 2, cyy = (h + 20) / 2, S2 = (v => [cx + sc * v[0], cyy - sc * v[2]]);
+  const pr = v => S2(rot(v.map((x, i) => x - D3.mu[i]))), PM = [Rm[0], Rm[2]], C2 = [0, 1].map(i => [0, 1].map(j => PM[i].reduce((t, a, ii) => t + a * PM[j].reduce((u, b, jj) => u + D3.Sm[ii][jj] * b, 0), 0)));
+  const sil = kk => ellipsePts([0, 0], C2, kk).map(([x, y]) => [cx + sc * x, cyy - sc * y]);
+  const path = pts => { c.beginPath(); pts.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y))); c.closePath(); };
+  const halo = (txt, x, y, col, font) => { c.font = font || '600 12px ' + sans; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(txt, x, y); c.restore(); c.fillStyle = col; c.fillText(txt, x, y); };
+  const depthOn = k === 0 ? 0 : k === 1 ? ph(T, st[0] + 0.5, st[0] + 4) : k === 4 ? 1 - ph(T, st[0] + 0.3, st[0] + 2.5) : k === 5 ? ph(T, st[0] + 0.3, st[0] + 3.5) : 1;
+  // chão e sombras
+  const zf = -3.3;
+  if (depthOn > 0.02) {
+    c.globalAlpha = 0.5 * depthOn; c.strokeStyle = P.grid; c.lineWidth = 1;
+    for (let g = -3; g <= 3; g += 1.5) { let a = S2(rot([g, -3, zf])), b = S2(rot([g, 3, zf])); c.beginPath(); c.moveTo(...a); c.lineTo(...b); c.stroke(); a = S2(rot([-3, g, zf])); b = S2(rot([3, g, zf])); c.beginPath(); c.moveTo(...a); c.lineTo(...b); c.stroke(); }
+    if (k >= 2) { c.fillStyle = P.mut; c.globalAlpha = 0.35 * depthOn; D3.A.forEach(a => { const v = a.map((x, i) => x - D3.mu[i]); const q = S2(rot([v[0], v[1], zf])); c.beginPath(); c.ellipse(q[0], q[1], 3.2, 1.6, 0, 0, 7); c.fill(); }); }
+    c.globalAlpha = 1;
+  }
+  // eixos
+  const ax = [[[-3.2, 0, 0], [3.4, 0, 0], 'velocidade'], [[0, 0, -3.2], [0, 0, 3.4], 'pressão'], [[0, -3.2, 0], [0, 3.4, 0], 'inclinação']];
+  ax.forEach(([a, b, nm], i) => { const al = i === 2 ? depthOn : 1; if (al < 0.03) return; const A_ = S2(rot(a)), B_ = S2(rot(b)); c.globalAlpha = 0.55 * al; c.strokeStyle = P.mut; c.lineWidth = 1; c.beginPath(); c.moveTo(...A_); c.lineTo(...B_); c.stroke(); c.globalAlpha = al; c.textAlign = 'center'; halo(nm, B_[0], B_[1] - 6, i === 2 ? P.amb : P.mut, '600 11.5px ' + sans); c.globalAlpha = 1; });
+  // elipsoide: silhueta 95% e 99% + anéis principais
+  const g0 = k === 0 ? ph(T, 1.5, 4) : 1;
+  for (const [lim, dsh] of [[D3.l99, [2, 3]], [D3.l95, [6, 4]]]) { const E = sil(lim * g0 * g0); c.fillStyle = P.acc; c.globalAlpha = 0.07 * g0; path(E); c.fill(); c.globalAlpha = g0; c.strokeStyle = P.acc; c.lineWidth = 1.4; c.setLineDash(dsh); path(E); c.stroke(); c.setLineDash([]); }
+  if (depthOn > 0.05) { c.globalAlpha = 0.45 * depthOn; c.strokeStyle = P.acc; c.lineWidth = 1; const { val, vec } = D3.E;
+    [[0, 1], [0, 2], [1, 2]].forEach(([a, b]) => { const ra = Math.sqrt(D3.l99 * val[a]), rb = Math.sqrt(D3.l99 * val[b]); c.beginPath(); for (let t = 0; t <= 64; t++) { const th = 2 * Math.PI * t / 64, v = [0, 1, 2].map(i => ra * Math.cos(th) * vec[a][i] + rb * Math.sin(th) * vec[b][i]), q = S2(rot(v)); t ? c.lineTo(...q) : c.moveTo(...q); } c.stroke(); }); }
+  c.globalAlpha = 1;
+  if (g0 > 0.95) { const E = sil(D3.l99), tp = E.reduce((a, p) => (p[1] < a[1] ? p : a)), E2 = sil(D3.l95), bt = E2.reduce((a, p) => (p[1] > a[1] ? p : a)); c.textAlign = 'center'; halo('99%', tp[0], tp[1] - 6, P.acc, 'bold 11px ' + sans); halo('95%', bt[0], bt[1] + 14, P.acc, 'bold 11px ' + sans); }
+  // padrões (ordem de profundidade)
+  const pts = D3.A.map(a => { const v = a.map((x, i) => x - D3.mu[i]), r = rot(v); return { s: S2(r), d: r[1] }; }).sort((a, b) => b.d - a.d);
+  pts.forEach((p, i) => { const al = k > 0 ? 1 : ph(T, 0.1 + i * 0.06, 0.4 + i * 0.06); c.globalAlpha = al; c.fillStyle = P.fg; c.beginPath(); c.arc(p.s[0], p.s[1], 3.4 + 0.6 * Math.tanh(-p.d / 3), 0, 7); c.fill(); });
+  c.globalAlpha = 1;
+  // questionada
+  const QQ = [null, null, null, D3.P.dentro, D3.P.trai, D3.P.trai, D3.P.entre, null][k], RES = [null, null, null, 'TÍPICA', null, 'ATÍPICA', 'INCONCLUSIVA', null][k];
+  if (QQ) {
+    const v = QQ.map((x, i) => x - D3.mu[i]), q = S2(rot(v)), sh = S2(rot([v[0], v[1], zf])), ap = ph(T, st[0], st[0] + 0.8), col = RES ? vCol(RES, P) : P.acc;
+    if (depthOn > 0.05) { c.globalAlpha = depthOn * ap; c.strokeStyle = col; c.setLineDash([3, 3]); c.lineWidth = 1.2; c.beginPath(); c.moveTo(...q); c.lineTo(...sh); c.stroke(); c.setLineDash([]); c.fillStyle = col; c.globalAlpha = 0.4 * depthOn * ap; c.beginPath(); c.ellipse(sh[0], sh[1], 5, 2.4, 0, 0, 7); c.fill(); }
+    c.globalAlpha = ap; c.fillStyle = col; c.beginPath(); c.arc(q[0], q[1], 6.5, 0, 7); c.fill();
+    const right = q[0] > w * 0.62; c.textAlign = right ? 'right' : 'left'; const lx = q[0] + (right ? -12 : 12);
+    if (k === 4) { if (T > st[0] + 2.6) { halo('parece dentro…', lx, q[1] - 4, P.amb, 'bold 14px ' + sans); halo('questionada', lx, q[1] + 12, P.acc, '600 11px ' + sans); } }
+    else if (k === 5) { if (T > st[0] + 3.6) { halo('ATÍPICA', lx, q[1] - 4, col, 'bold 15px ' + sans); halo('fora: inclinação não combina', lx, q[1] + 12, col, '600 11px ' + sans); } else { halo('questionada', lx, q[1] + 12, P.acc, '600 11px ' + sans); } }
+    else if (T > st[0] + 0.9) { halo(RES, lx, q[1] - 4, col, 'bold 15px ' + sans); halo('questionada', lx, q[1] + 12, col, '600 11px ' + sans); }
+    c.globalAlpha = 1;
+  }
+  if (k === 7) { const g = ph(T, st[0] + 0.3, st[0] + 1.3), x0 = 12, y0 = 14; c.globalAlpha = g; c.textAlign = 'left'; ['X  velocidade ▾', 'Y  pressão ▾', 'Z  inclinação ▾'].forEach((t, i) => { const bw = nar ? 120 : 140, xx = x0 + (nar ? 0 : i * (bw + 8)), yy = y0 + (nar ? i * 30 : 0); c.fillStyle = P.panel; c.strokeStyle = P.acc; c.lineWidth = 1.4; c.beginPath(); c.roundRect ? c.roundRect(xx, yy, bw, 24, 6) : c.rect(xx, yy, bw, 24); c.fill(); c.stroke(); c.fillStyle = P.acc; c.font = '600 12px ' + sans; c.fillText(t, xx + 10, yy + 16); }); c.globalAlpha = 1; }
+  if (k === 2 && T > st[0] + 1) { c.textAlign = 'left'; halo('sombras no chão', 12, h - 14, P.mut); }
+}
+
+/* ---------- Cartão 4: grandeza X, Y ou resultante ---------- */
+const GXY_STEPS = [
+  [0, 6, 'A caneta anda pelo papel. Em cada instante ela vai numa direção, com uma certa rapidez. A seta azul mostra esse movimento: o comprimento é a rapidez, a ponta é a direção.'],
+  [6, 12.5, 'Essa seta pode ser dividida em duas: quanto a caneta anda para os lados (seta laranja, X) e quanto anda para cima ou para baixo (seta verde, Y).'],
+  [12.5, 19.5, 'X: só o movimento para os lados. Indo para a direita, a curva fica acima do zero; indo para a esquerda, abaixo do zero.'],
+  [19.5, 26.5, 'Y: só o movimento para cima e para baixo. Subindo, a curva fica acima do zero; descendo, abaixo do zero. É o sobe e desce que forma as letras.'],
+  [26.5, 33.5, 'Resultante: o comprimento da seta inteira, sem direção. Fica sempre acima do zero: diz quanto a caneta corre, não para onde. É a grandeza com que o painel abre.'],
+  [33.5, 42, 'Para que serve X ou Y: alguém fez a mesma letra no sentido contrário, do fim para o começo. A resultante (azul) fica igual à da pessoa (cinza), porque a rapidez é a mesma. Em X, a curva fica de cabeça para baixo: a diferença salta aos olhos.'],
+  [42, 50, 'O que muda no painel ao trocar a grandeza: os quadros com título em laranja mudam todos juntos. O desenho, a pressão, as medidas, as elipses e a tabela verdade não mudam.']];
+const GXY_END = 50;
+function gxyPath(s) { const c = 0.72, r = 0.12, n = 2; return [0.14 + c * s - r * Math.sin(2 * Math.PI * n * s), -r * Math.cos(2 * Math.PI * n * s)]; }
+function gxyVel(t, rev) { // t em 0..1; s(t) com partida e parada suaves; rev = mesma letra feita do fim para o começo
+  const s = t - Math.sin(2 * Math.PI * t) / (2 * Math.PI), ds = 1 - Math.cos(2 * Math.PI * t), c = 0.72, r = 0.12, n = 2, w = 2 * Math.PI * n;
+  const ss = rev ? 1 - s : s, sg = rev ? -1 : 1, vx = sg * ds * (c - r * w * Math.cos(w * ss)), vy = sg * ds * (r * w * Math.sin(w * ss));
+  return { p: gxyPath(ss), vx, vy, vr: Math.hypot(vx, vy) };
+}
+function drawGXY(cv, T) {
+  const k = tStep(GXY_STEPS, T), st = GXY_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), nar = w < 560;
+  const halo = (txt, x, y, col, font) => { c.font = font || '600 12px ' + sans; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(txt, x, y); c.restore(); c.fillStyle = col; c.fillText(txt, x, y); };
+  const arrow = (x0, y0, x1, y1, col, lw) => { const a = Math.atan2(y1 - y0, x1 - x0), L = Math.hypot(x1 - x0, y1 - y0); if (L < 3) return; c.strokeStyle = col; c.fillStyle = col; c.lineWidth = lw; c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1 - 7 * Math.cos(a), y1 - 7 * Math.sin(a)); c.stroke(); c.beginPath(); c.moveTo(x1, y1); c.lineTo(x1 - 10 * Math.cos(a - 0.4), y1 - 10 * Math.sin(a - 0.4)); c.lineTo(x1 - 10 * Math.cos(a + 0.4), y1 - 10 * Math.sin(a + 0.4)); c.closePath(); c.fill(); };
+  // áreas: desenho e três gráficos
+  const D_ = nar ? { x: 10, y: 8, w: w - 20, h: h * 0.34 } : { x: 10, y: 10, w: w * 0.4 - 20, h: h - 20 };
+  const G_ = nar ? { x: 34, y: D_.y + D_.h + 10, w: w - 44, h: h - D_.h - 28 } : { x: w * 0.4 + 30, y: 10, w: w * 0.6 - 40, h: h - 24 };
+  const rev = k === 5, CX = '' + P.amb, CY = P.grn, CR = P.acc;
+  // tempo da caneta nesta etapa (percorre a letra uma vez)
+  const tau0 = k === 6 ? 1 : k === 5 ? Math.min(1, Math.max(0, (T - st[0] - 0.5) / (st[1] - st[0] - 1.5))) : Math.min(1, Math.max(0, (T - st[0] - 0.4) / (st[1] - st[0] - 1.2))), tau = k <= 1 ? 0.04 + 0.76 * tau0 : tau0;
+  // desenho da letra
+  const DX = x => D_.x + D_.w * x, DY = y => D_.y + D_.h / 2 - D_.h * 1.25 * y * Math.min(1, D_.w / D_.h);
+  c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(D_.x, D_.y, D_.w, D_.h);
+  c.strokeStyle = P.fg; c.lineWidth = 2; c.beginPath(); for (let i = 0; i <= 300; i++) { const q = gxyPath(i / 300); i ? c.lineTo(DX(q[0]), DY(q[1])) : c.moveTo(DX(q[0]), DY(q[1])); } c.stroke();
+  c.textAlign = 'left'; halo(rev ? 'mesma letra, feita do fim para o começo' : 'a letra sendo escrita', D_.x + 8, D_.y + 18, P.mut, '600 11.5px ' + sans);
+  if (rev) { [0.2, 0.45, 0.7].forEach(s0 => { const a = gxyPath(s0), b = gxyPath(s0 - 0.02); arrow(DX(a[0]), DY(a[1]), DX(b[0]), DY(b[1]), P.acc, 2); }); }
+  { const V = gxyVel(tau, rev), x = DX(V.p[0]), y = DY(V.p[1]), sc = Math.min(D_.w, D_.h) * 0.045;
+    if (k <= 1 || k === 5) arrow(x, y, x + sc * V.vx, y - sc * V.vy, CR, 2.6);
+    if (k >= 1 && k <= 4) { const g = k === 1 ? ph(T, st[0] + 1, st[0] + 2.5) : 1; c.globalAlpha = g; arrow(x, y, x + sc * V.vx, y, CX, 2.4); arrow(x, y, x, y - sc * V.vy, CY, 2.4); c.globalAlpha = 1;
+      if (k === 1 && g > 0.9) { c.textAlign = 'center'; halo('X', x + sc * V.vx / 2, y + 16, CX, 'bold 13px ' + sans); halo('Y', x - 12, y - sc * V.vy / 2 + 4, CY, 'bold 13px ' + sans); } }
+    c.fillStyle = P.fg; c.beginPath(); c.arc(x, y, 5, 0, 7); c.fill(); }
+  // gráficos
+  const rows = [['X (para os lados)', 'vx', CX, 2], ['Y (para cima e para baixo)', 'vy', CY, 3], ['resultante (só o tamanho)', 'vr', CR, 4]];
+  const ph_ = (G_.h - 2 * 8) / 3, mx = 4.8;
+  rows.forEach(([nm, key, col, from], j) => {
+    const y0 = G_.y + j * (ph_ + 8), on = k >= from - 1 + (from === 2 ? 0 : 0) ? 1 : 0, act = k === 6 ? 1 : k >= from ? 1 : k === from - 1 ? 1 : 0;
+    const vis = k >= from ? 1 : k === from - 1 ? 1 : 0.25, Yc = v => y0 + ph_ / 2 - (ph_ / 2 - 6) * v / mx, Xc = t => G_.x + G_.w * t;
+    const show = (k >= 2 && j === 0) || (k >= 3 && j === 1) || (k >= 4 && j === 2);
+    c.globalAlpha = show ? 1 : 0.3; c.strokeStyle = P.line; c.strokeRect(G_.x, y0, G_.w, ph_);
+    c.strokeStyle = P.mut; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(G_.x, Yc(0)); c.lineTo(G_.x + G_.w, Yc(0)); c.stroke(); c.setLineDash([]);
+    c.textAlign = 'left'; halo(nm, G_.x + 6, y0 + 14, show ? col : P.mut, '600 11.5px ' + sans); c.textAlign = 'right'; c.fillStyle = P.mut; c.font = '10px ' + sans; c.fillText('0', G_.x - 4, Yc(0) + 3);
+    if (show && key !== 'vr') { halo('+', G_.x - 4, y0 + 16, P.mut, 'bold 11px ' + sans); halo('−', G_.x - 4, y0 + ph_ - 6, P.mut, 'bold 11px ' + sans); }
+    if (show) {
+      const curve = (rv, upTo, color, lw) => { c.strokeStyle = color; c.lineWidth = lw; c.beginPath(); const N = 200; for (let i = 0; i <= N * upTo; i++) { const t = i / N, v = gxyVel(t, rv)[key]; i ? c.lineTo(Xc(t), Yc(v)) : c.moveTo(Xc(t), Yc(v)); } c.stroke(); };
+      if (k === 5) { curve(false, 1, P.band, 2.4); curve(true, tau, col, 2); }
+      else { const upTo = (k === 2 && j === 0) || (k === 3 && j === 1) || (k === 4 && j === 2) ? tau : 1; curve(false, upTo, col, 2);
+        if (upTo < 1) { const V = gxyVel(upTo, false); c.strokeStyle = P.fg; c.globalAlpha = 0.5; c.beginPath(); c.moveTo(Xc(upTo), y0); c.lineTo(Xc(upTo), y0 + ph_); c.stroke(); c.globalAlpha = 1; c.fillStyle = col; c.beginPath(); c.arc(Xc(upTo), Yc(V[key]), 4, 0, 7); c.fill();
+          if (key !== 'vr') { c.textAlign = 'left'; halo(V[key] > 0.3 ? (key === 'vx' ? 'indo para a direita' : 'subindo') : V[key] < -0.3 ? (key === 'vx' ? 'indo para a esquerda' : 'descendo') : '', Math.min(Xc(upTo) + 8, G_.x + G_.w - 120), V[key] > 0 ? Yc(V[key]) - 8 : Yc(V[key]) + 16, col, '600 11px ' + sans); } } }
+      if (k === 5 && j === 0 && tau > 0.6) { c.textAlign = 'right'; halo('de cabeça para baixo', G_.x + G_.w - 6, y0 + ph_ - 8, P.red, 'bold 12px ' + sans); }
+      if (k === 5 && j >= 1 && tau > 0.6) { c.textAlign = 'right'; halo(j === 1 ? 'igual nesta letra' : 'igual', G_.x + G_.w - 6, y0 + 14, P.mut, 'bold 12px ' + sans); }
+    }
+    c.globalAlpha = 1;
+  });
+  c.textAlign = 'center'; c.fillStyle = P.mut; c.font = '10px ' + sans; c.fillText('tempo →', G_.x + G_.w / 2, G_.y + G_.h + 10);
+  if (k === 6) { // quadros que mudam e que não mudam
+    const g = ph(T, st[0] + 0.3, st[0] + 1.3), muda = ['histograma', 'velocidade', 'aceleração', 'potência', 'energias', 'área sob a velocidade', 'FFT', '4ª e 5ª derivadas'], nao = ['desenho', 'pressão', 'impulso', 'deformação', 'bússola', 'medidas', 'elipses e 3D', 'tabela verdade'];
+    const bw = nar ? w - 20 : w * 0.6 - 40, x0 = nar ? 10 : w * 0.4 + 30, bh = nar ? h * 0.6 : h - 30, y0 = nar ? h * 0.38 : 14; c.globalAlpha = g; c.fillStyle = P.panel; c.strokeStyle = P.line; c.lineWidth = 1; c.beginPath(); c.roundRect ? c.roundRect(x0, y0, bw, bh, 10) : c.rect(x0, y0, bw, bh); c.fill(); c.stroke();
+    const col2 = (x, title, list, color) => { c.textAlign = 'left'; c.fillStyle = color; c.font = 'bold 13px ' + sans; c.fillText(title, x, y0 + 24); c.font = '12.5px ' + sans; list.forEach((t, i) => { c.fillStyle = color; c.beginPath(); c.arc(x + 4, y0 + 46 + i * (nar ? 17 : 21) - 4, 3, 0, 7); c.fill(); c.fillStyle = P.fg; c.fillText(t, x + 14, y0 + 46 + i * (nar ? 17 : 21)); }); };
+    col2(x0 + 14, 'Mudam (título laranja)', muda, P.amb); col2(x0 + bw / 2 + 6, 'Não mudam', nao, P.mut); c.globalAlpha = 1;
+  }
+}
+
+/* ---------- Cartão 5: suavizar as curvas (mesma escala e mesmo filtro da barra do painel) ---------- */
+const SUV_STEPS = [
+  [0, 6.5, 'Este é o gráfico da aceleração (vale também para velocidade, potência e derivadas). No nível 0, a curva azul mostra todo o detalhe do movimento, até os tremidos mais rápidos. É exatamente o que os números usam.'],
+  [6.5, 13.5, 'Arrastando a barra para a direita, a curva fica mais lisa. Até o nível 4 muda pouco: a barra começa devagar de propósito.'],
+  [13.5, 20.5, 'Nos níveis 5 e 6, os tremidos pequenos somem e fica mais fácil ver o desenho geral: onde a caneta acelera e onde freia.'],
+  [20.5, 28.5, 'A partir do nível 7 aparece um aviso: o tremor e as pequenas correções do movimento somem do desenho. Cuidado: o tremor pode ser justamente o que você procura.'],
+  [28.5, 34.5, 'No nível 10 fica só o contorno geral do esforço ao longo da assinatura.'],
+  [34.5, 41.5, 'O que não muda: a suavização é só no desenho. As medidas, a distância à pessoa, a tabela verdade e o resultado continuam iguais, calculados sempre sem suavização.'],
+  [41.5, 47.5, 'Nos níveis altos, o começo e o fim da curva ficam em branco: ali não há movimento suficiente dos dois lados para suavizar sem inventar.'],
+  [47.5, 54, 'Recomendação: procure tremor e pequenas correções no nível 0; suba a barra só para enxergar o desenho geral. O nível usado vai para o registro de acessos e para o laudo.']];
+const SUV_END = 54, SUV = {};
+function suvData() {
+  if (SUV.ok) return SUV;
+  const fs = TH.FS, n = Math.round(2.2 * fs); let s = 777; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+  const base = Array.from({ length: n }, (_, i) => { const t = i / fs; return 1.6 * Math.sin(2 * Math.PI * 2.2 * t) * Math.exp(-(((t - 1.1) / 0.9) ** 2)) + 0.7 * Math.sin(2 * Math.PI * 4.1 * t + 0.6); });
+  const q = base.map((v, i) => 0.92 * v + 0.42 * Math.sin(2 * Math.PI * 9 * i / fs + 0.3) + 0.12 * (rnd() - 0.5) * 2);
+  Object.assign(SUV, { ok: true, fs, n, base, q });
+  return SUV;
+}
+function suvSig(L) { return L <= 0 ? 0 : L < 1 ? 0.5 * L : 0.5 * 38.6 ** ((L - 1) / 9); } // mesma escala logarítmica da barra
+function suvSmooth(a, sig) { if (!sig) return a.slice(); const r = Math.ceil(3 * sig), ker = []; for (let i = -r; i <= r; i++) ker.push(Math.exp(-0.5 * (i / sig) ** 2)); const n = a.length, o = new Array(n).fill(NaN);
+  for (let i = r; i < n - r; i++) { let acc = 0, ws = 0; for (let j = -r; j <= r; j++) { acc += ker[j + r] * a[i + j]; ws += ker[j + r]; } o[i] = acc / ws; } return o; }
+function drawSUV(cv, T) {
+  const D5 = suvData(), k = tStep(SUV_STEPS, T), st = SUV_STEPS[k], sans = css('--sans');
+  const L = k === 0 ? 0 : k === 1 ? 4 * ph(T, st[0] + 0.8, st[1] - 1) : k === 2 ? 4 + 2 * ph(T, st[0] + 0.5, st[1] - 1.5) : k === 3 ? 6 + 2 * ph(T, st[0] + 0.5, st[0] + 3) : k === 4 ? 8 + 2 * ph(T, st[0] + 0.5, st[1] - 1.5) : k === 5 ? 10 : k === 6 ? 10 : 10 * (1 - ph(T, st[0] + 0.5, st[0] + 3));
+  const sig = suvSig(L), xs = Array.from({ length: D5.n }, (_, i) => i / D5.fs), b = suvSmooth(D5.base, sig), qv = suvSmooth(D5.q, sig);
+  const F = frame(cv, [0, 2.2], [-3.4, 3.4], { xlabel: 'tempo (s)', ylabel: 'aceleração', ml: 46, mt: 64 }), { c, X, Y, P } = F, nar = F.w < 560;
+  const halo = (txt, x, y, col, font) => { c.font = font || '600 12px ' + sans; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(txt, x, y); c.restore(); c.fillStyle = col; c.fillText(txt, x, y); };
+  bandFill(F, xs, b.map(v => v - 0.45), b.map(v => v + 0.45), P.band); polyline(F, xs, b, P.band, 1);
+  polyline(F, xs, qv, P.acc, 1.6);
+  if (k === 0 && T > 2) { const t0 = 0.55, i0 = Math.round(t0 * D5.fs); c.strokeStyle = P.red; c.lineWidth = 2; c.setLineDash([4, 3]); c.beginPath(); c.ellipse(X(t0 + 0.12), Y(qv[i0]), 46, 26, 0, 0, 7); c.stroke(); c.setLineDash([]); c.textAlign = 'left'; halo('tremidos rápidos (tremor)', X(t0 + 0.12) + 50, Y(qv[i0]) - 18, P.red); }
+  if ((k === 3 && T > st[0] + 3.2) || k === 4) { c.textAlign = 'left'; halo('o tremor sumiu do desenho', X(0.5), Y(-2.6), P.amb, 'bold 12px ' + sans); }
+  if (k === 6) { const r = Math.ceil(3 * sig) / D5.fs, g = ph(T, st[0] + 0.5, st[0] + 1.5); c.globalAlpha = g; c.fillStyle = P.amb; c.globalAlpha = 0.16 * g; c.fillRect(X(0), F.m.t, X(r) - X(0), F.h - F.m.b - F.m.t); c.fillRect(X(2.2 - r), F.m.t, X(2.2) - X(2.2 - r), F.h - F.m.b - F.m.t); c.globalAlpha = g; c.textAlign = 'center'; halo('em branco', X(r / 2), Y(2.9), P.amb); halo('em branco', X(2.2 - r / 2), Y(2.9), P.amb); c.globalAlpha = 1; }
+  c.textAlign = 'right'; halo(nar ? 'cinza: padrões · azul: questionada' : 'faixa cinza: os 20 padrões · azul: questionada', F.w - F.m.r - 6, F.h - F.m.b - 8, P.mut, '11px ' + sans);
+  F.done();
+  // barra de suavização desenhada no alto, como no painel
+  const lv = Math.round(L), x0 = F.m.l, x1 = Math.min(F.w - F.m.r, F.m.l + (nar ? F.w - F.m.l - 16 : 330)), yb = 22;
+  c.textAlign = 'left'; c.fillStyle = P.fg; c.font = '600 12.5px ' + sans; c.fillText('Suavizar as curvas:', x0, yb - 6);
+  c.strokeStyle = P.line; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(x0, yb + 8); c.lineTo(x1, yb + 8); c.stroke(); c.strokeStyle = P.acc; c.beginPath(); c.moveTo(x0, yb + 8); c.lineTo(x0 + (x1 - x0) * L / 10, yb + 8); c.stroke(); c.lineCap = 'butt';
+  c.fillStyle = P.acc; c.beginPath(); c.arc(x0 + (x1 - x0) * L / 10, yb + 8, 7, 0, 7); c.fill();
+  const warn = lv > 0 && suavFc(lv) < 13, nome = `${lv} de 10 · ${SUAV_NOME[lv]}`;
+  c.font = 'bold 12.5px ' + sans; c.fillStyle = P.fg; if (!nar) c.fillText(nome, x1 + 14, yb + 12); else c.fillText(nome, x0 + 150, yb - 6);
+  c.font = '600 11.5px ' + sans; c.fillStyle = warn ? P.amb : P.mut; c.fillText(lv === 0 ? 'todo o detalhe do movimento (é o que os números usam)' : warn ? '⚠ esconde o tremor e as microcorreções · números e veredito não mudam' : 'desenho mais limpo · números e veredito não mudam', x0, yb + 32);
+  if (k === 5) { const g = ph(T, st[0] + 0.3, st[0] + 1.3), bw = nar ? F.w - F.m.l - 20 : 300, bx = F.w - F.m.r - bw - 6, by = F.m.t + 8; c.globalAlpha = g; c.fillStyle = P.panel; c.strokeStyle = P.grn; c.lineWidth = 1.5; c.beginPath(); c.roundRect ? c.roundRect(bx, by, bw, 88, 8) : c.rect(bx, by, bw, 88); c.fill(); c.stroke();
+    ['medidas: iguais', 'distância à pessoa: igual', 'tabela verdade: igual', 'resultado: igual'].forEach((t, i) => { c.fillStyle = P.grn; c.font = 'bold 12px ' + sans; c.fillText('✓', bx + 12, by + 20 + i * 18); c.fillStyle = P.fg; c.font = '12px ' + sans; c.fillText(t, bx + 30, by + 20 + i * 18); }); c.globalAlpha = 1; }
+}
+
+/* ---------- utilidades comuns dos cartões novos ---------- */
+function tHalo(c, P, sans) { return (txt, x, y, col, font) => { c.font = font || '600 12px ' + sans; c.save(); c.lineJoin = 'round'; c.lineWidth = 4; c.strokeStyle = P.panel; c.strokeText(txt, x, y); c.restore(); c.fillStyle = col; c.fillText(txt, x, y); }; }
+function tBox(c, x, y, w, h, fill, stroke, r = 8) { c.fillStyle = fill; c.strokeStyle = stroke; c.lineWidth = 1.4; c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); c.fill(); c.stroke(); }
+function tWrap(c, txt, maxw) { const out = []; let line = ''; txt.split(' ').forEach(wd => { const t = line ? line + ' ' + wd : wd; if (c.measureText(t).width > maxw && line) { out.push(line); line = wd; } else line = t; }); if (line) out.push(line); return out; }
+
+/* ---------- Cartão 6: tabela verdade ---------- */
+const TVT_STEPS = [
+  [0, 7, 'A tabela verdade faz a pergunta da elipse para muitas combinações de medidas de uma vez. Cada quadrado é uma elipse inteira, resumida numa cor.'],
+  [7, 13, 'A linha e a coluna dizem quais são as duas medidas. Este quadrado, por exemplo, é pressão × velocidade.'],
+  [13, 20, 'Verde com T: típica. Vermelho com A: atípica. Laranja com I: inconclusiva. O tracinho (—) não se compara: tempo e velocidade dizem a mesma coisa.'],
+  [20, 26, 'Os trios fazem o mesmo com três medidas ao mesmo tempo, como no 3D.'],
+  [26, 33, 'Toque num quadrado: aparece o motivo, em palavras. Toque de novo: o painel abre essa combinação no gráfico (elipse ou 3D).'],
+  [33, 42, 'INCONCLUSIVA sempre vem com o motivo: na borda; régua instável (padrões da própria pessoa também saem); só a relação entre as medidas destoa; medida que não varia; medidas que dizem a mesma coisa; trecho curto para o tremor.'],
+  [42, 50, 'São 47 combinações. Quem testa muita coisa acaba achando algum "fora" por acaso. Por isso, na tabela, ATÍPICA exige passar da linha mais larga, o limite da tabela.'],
+  [50, 58, 'Quem decide é a primeira linha: o veredito das quatro medidas principais. A tabela mostra onde a assinatura se afasta. Aqui, quase todo A está na linha e na coluna da pressão: a diferença está na pressão.']];
+const TVT_END = 58;
+const TVT_M = ['tempo', 'veloc.', 'acel.', 'pressão', 'inclin.', 'jerk', 'levant.', '5–8 Hz'];
+function tvtCell(i, j) { // i = linha (1..7), j = coluna (0..6), j < i; exemplo: diferença na pressão
+  if (i === 1 && j === 0) return '—'; const pr = i === 3 || j === 3;
+  if (pr) return (i === 4 && j === 3) ? 'I' : 'A';
+  if ((i === 6 && j === 5) || (i === 7 && j === 2)) return 'I';
+  return 'T'; }
+const TVT_TRIOS = [['tempo · pressão · inclin.', 'A'], ['veloc. · pressão · jerk', 'A'], ['tempo · inclin. · jerk', 'T'], ['pressão · jerk · levant.', 'A'], ['inclin. · jerk · levant.', 'I'], ['tempo · jerk · 5–8 Hz', 'T']];
+function drawTVT(cv, T) {
+  const k = tStep(TVT_STEPS, T), st = TVT_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const colOf = r => (r === 'A' ? P.red : r === 'T' ? P.grn : r === 'I' ? P.amb : P.grid);
+  const cs = nar ? 30 : 34, gap = 3, mx = nar ? 52 : 60, my = 54, X0 = 10 + mx, Y0 = my;
+  const cell = (i, j) => [X0 + j * (cs + gap), Y0 + (i - 1) * (cs + gap)];
+  // veredito no alto
+  const vg = k === 7 ? 1 : 0.35;
+  c.globalAlpha = k >= 2 ? vg : 0.15; tBox(c, 10, 8, nar ? w - 20 : 420, 30, P.panel, k === 7 ? P.red : P.line); c.textAlign = 'left'; c.fillStyle = P.red; c.font = 'bold 13px ' + sans; c.fillText('ATÍPICA', 20, 28); c.fillStyle = P.fg; c.font = '12.5px ' + sans; c.fillText(nar ? 'veredito — quem decide' : 'veredito (4 medidas principais) — quem decide', 90, 28); c.globalAlpha = 1;
+  // passo 1: uma elipse que vira quadrado
+  const tgt = cell(3, 1);
+  if (k === 0) {
+    const g = ph(T, st[0] + 2.5, st[0] + 5.5), ex = lerp(w * 0.62, tgt[0] + cs / 2, g), ey = lerp(h * 0.5, tgt[1] + cs / 2, g), R = lerp(nar ? 80 : 120, cs / 2, g);
+    c.fillStyle = P.acc; c.globalAlpha = 0.1; c.beginPath(); c.ellipse(ex, ey, R, R * 0.5, -0.5 * (1 - g), 0, 7); c.fill(); c.globalAlpha = 1; c.strokeStyle = P.acc; c.setLineDash([2, 3]); c.beginPath(); c.ellipse(ex, ey, R, R * 0.5, -0.5 * (1 - g), 0, 7); c.stroke(); c.setLineDash([]);
+    if (g < 0.2) { [[-0.6, 0.15], [-0.2, 0.05], [0.3, -0.1], [0.5, -0.2], [-0.4, 0.2], [0.1, -0.05]].forEach(([a, b]) => { c.fillStyle = P.fg; c.beginPath(); c.arc(ex + a * R, ey + b * R * 0.9, 3, 0, 7); c.fill(); }); c.fillStyle = P.red; c.beginPath(); c.arc(ex + 0.7 * R, ey - 0.45 * R, 6, 0, 7); c.fill(); c.textAlign = 'center'; halo('pressão × velocidade', ex, ey + R * 0.5 + 22, P.mut); }
+    if (g > 0.95) { c.fillStyle = P.red; c.beginPath(); c.roundRect ? c.roundRect(tgt[0], tgt[1], cs, cs, 5) : c.rect(tgt[0], tgt[1], cs, cs); c.fill(); c.fillStyle = P.panel; c.font = 'bold 13px ' + sans; c.textAlign = 'center'; c.fillText('A', tgt[0] + cs / 2, tgt[1] + cs / 2 + 5); }
+    return;
+  }
+  // matriz de pares
+  const fillUpTo = k === 1 ? 0 : k === 2 ? ph(T, st[0] + 0.3, st[0] + 4.5) : 1, order = []; for (let i = 1; i <= 7; i++) for (let j = 0; j < i; j++) order.push([i, j]);
+  c.textAlign = 'right'; c.font = '11.5px ' + sans; for (let i = 1; i <= 7; i++) { const [x, y] = cell(i, 0), hl = (k === 1 && i === 3) || (k === 7 && i === 3); c.fillStyle = hl ? P.red : P.mut; c.font = (hl ? 'bold ' : '') + '11.5px ' + sans; c.fillText(TVT_M[i], x - 6, y + cs / 2 + 4); }
+  for (let j = 0; j < 7; j++) { const [x, y] = cell(7, j), hl = (k === 1 && j === 1) || (k === 7 && j === 3); c.save(); c.translate(x + cs / 2 + 4, y + cs + 8); c.rotate(-Math.PI / 2); c.textAlign = 'right'; c.fillStyle = hl ? P.red : P.mut; c.font = (hl ? 'bold ' : '') + '11.5px ' + sans; c.fillText(TVT_M[j], 0, 0); c.restore(); }
+  order.forEach(([i, j], n) => { const [x, y] = cell(i, j), r = tvtCell(i, j), shown = (k === 1 ? i === 3 && j === 1 : n / order.length <= fillUpTo + 1e-9), dim = k === 7 && !(i === 3 || j === 3);
+    c.globalAlpha = dim ? 0.3 : 1; c.fillStyle = shown ? colOf(r) : P.grid; c.beginPath(); c.roundRect ? c.roundRect(x, y, cs, cs, 5) : c.rect(x, y, cs, cs); c.fill();
+    if (shown) { c.fillStyle = r === '—' ? P.mut : P.panel; c.font = 'bold 13px ' + sans; c.textAlign = 'center'; c.fillText(r, x + cs / 2, y + cs / 2 + 5); } c.globalAlpha = 1; });
+  if (k === 1) { const [x, y] = cell(3, 1); c.strokeStyle = P.fg; c.lineWidth = 2.5; c.strokeRect(x - 2, y - 2, cs + 4, cs + 4); c.strokeStyle = P.red; c.lineWidth = 1.2; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(X0 - 8, y + cs / 2); c.lineTo(x, y + cs / 2); c.moveTo(x + cs / 2, y + cs); c.lineTo(x + cs / 2, cell(7, 1)[1] + cs + 4); c.stroke(); c.setLineDash([]); }
+  // trios
+  const trioX = nar ? 10 : X0 + 7 * (cs + gap) + 30, trioY = nar ? Y0 + 7 * (cs + gap) + 62 : Y0;
+  if (k === 3 || k === 7) { c.textAlign = 'left'; c.fillStyle = P.mut; c.font = '600 12px ' + sans; c.fillText('Trios', trioX, trioY - 8); const g = k === 3 ? ph(T, st[0] + 0.3, st[0] + 3) : 1;
+    TVT_TRIOS.forEach(([t, r], n) => { if (n / TVT_TRIOS.length > g + 1e-9) return; const yy = trioY + n * 26, dim = k === 7 && !t.includes('pressão'); c.globalAlpha = dim ? 0.3 : 1; c.fillStyle = colOf(r); c.beginPath(); c.roundRect ? c.roundRect(trioX, yy, nar ? w - 30 : 210, 22, 6) : c.rect(trioX, yy, 210, 22); c.fill(); c.fillStyle = P.panel; c.font = 'bold 12px ' + sans; c.fillText(r, trioX + 8, yy + 15); c.font = '12px ' + sans; c.fillText(t, trioX + 24, yy + 15); c.globalAlpha = 1; }); }
+  // toque: motivo
+  if (k === 4) { const [x, y] = cell(4, 3), g = ph(T, st[0] + 0.8, st[0] + 1.6), g2 = ph(T, st[0] + 4, st[0] + 5); const hx = x + cs / 2 + 6, hy = y + cs / 2 + 6;
+    c.globalAlpha = g; c.strokeStyle = P.fg; c.lineWidth = 2.5; c.strokeRect(x - 2, y - 2, cs + 4, cs + 4);
+    c.fillStyle = P.fg; c.beginPath(); c.arc(hx, hy, 9, 0, 7); c.globalAlpha = 0.25 * g; c.fill(); c.globalAlpha = g;
+    const bx = nar ? 10 : X0 + 7 * (cs + gap) + 20, by = nar ? Y0 + 7 * (cs + gap) + 50 : Y0 + 20, bw = nar ? w - 20 : Math.min(420, w - bx - 10); c.font = '12.5px ' + sans; const lines = tWrap(c, 'inclinação × pressão: INCONCLUSIVA — cada medida está normal; só a relação entre elas destoa (com 20 padrões, pode ser acaso)', bw - 20);
+    tBox(c, bx, by, bw, 22 + 17 * lines.length, P.panel, P.amb); c.fillStyle = P.fg; c.textAlign = 'left'; lines.forEach((l, i) => c.fillText(l, bx + 10, by + 20 + 17 * i));
+    if (g2 > 0) { c.globalAlpha = g2; halo('toque de novo → abre no gráfico', bx + 10, by + 46 + 17 * lines.length, P.acc, 'bold 12.5px ' + sans); } c.globalAlpha = 1; }
+  if (k === 5) { const items = nar ? ['na borda', 'régua instável', 'só a relação destoa', 'medida não varia', 'medidas dizem a mesma coisa', 'trecho curto para o tremor'] : ['na borda: passou do limite da pessoa, não do limite da tabela', 'régua instável: padrões da própria pessoa também saem', 'só a relação destoa: cada medida está normal sozinha', 'medida não varia nos padrões', 'as medidas dizem a mesma coisa', 'trecho curto demais para medir o tremor'];
+    const bx = nar ? 10 : X0 + 7 * (cs + gap) + 20, by = nar ? Y0 + 7 * (cs + gap) + 50 : Y0 + 10, bw = nar ? w - 20 : Math.min(460, w - bx - 10); c.font = '12px ' + sans;
+    tBox(c, bx, by, bw, 30 + items.length * 20, P.panel, P.amb); c.textAlign = 'left'; c.fillStyle = P.amb; c.font = 'bold 12.5px ' + sans; c.fillText('Motivos de INCONCLUSIVA', bx + 10, by + 20); c.font = '12px ' + sans;
+    items.forEach((t, i) => { if (i / items.length > ph(T, st[0] + 0.5, st[0] + 6) + 1e-9) return; c.fillStyle = P.amb; c.beginPath(); c.arc(bx + 14, by + 38 + i * 20 - 4, 3, 0, 7); c.fill(); c.fillStyle = P.fg; c.fillText(t, bx + 24, by + 38 + i * 20); }); }
+  if (k === 6) { const cx = nar ? w / 2 : X0 + 7 * (cs + gap) + 150, cy = nar ? Y0 + 7 * (cs + gap) + 130 : Y0 + 120, R = nar ? 50 : 70;
+    [[1, [6, 4], P.acc, '95%'], [1.25, [2, 3], P.acc, '99%'], [1.75, [9, 3, 2, 3], P.mut, 'limite da tabela']].forEach(([s, d, col, lab], i) => { if (i === 2 && T < st[0] + 2) return; c.strokeStyle = col; c.lineWidth = i === 2 ? 2 : 1.3; c.setLineDash(d); c.beginPath(); c.ellipse(cx, cy, R * s, R * s * 0.45, -0.4, 0, 7); c.stroke(); c.setLineDash([]); if (i === 2) { c.textAlign = 'left'; halo(lab, cx + R * s * 0.75, cy - R * s * 0.1, P.mut, 'bold 12px ' + sans); } });
+    c.fillStyle = P.amb; c.beginPath(); c.arc(cx + R * 1.3, cy - R * 0.25, 6, 0, 7); c.fill(); c.textAlign = 'left'; if (T > st[0] + 3) { halo('aqui: I na tabela (na borda)', cx - R * 1.6, cy + R * 0.9, P.amb, '600 12px ' + sans); } }
+  if (k === 7 && T > st[0] + 1) { const [x, y] = cell(3, 0); c.textAlign = 'left'; const tx = nar ? 10 : X0 + 7 * (cs + gap) + 30; halo('linha e coluna da pressão: quase tudo A', tx, nar ? h - 14 : Y0 + 7 * 26 + 40, P.red, 'bold 12.5px ' + sans); }
+}
+
+/* ---------- Cartão 7: trecho e deslocar padrões ---------- */
+const TRD_STEPS = [
+  [0, 7, 'Para olhar só uma parte da assinatura (uma letra, um traço), arraste sobre o desenho formando um retângulo em volta dela. No celular, arraste com o dedo.'],
+  [7, 13.5, 'O trecho fica amarelo e aparece ampliado ao lado, com os 20 padrões por cima. A barra mostra o intervalo, por exemplo "Trecho 36–70%".'],
+  [13.5, 20, 'A partir daí, medidas, distância à pessoa, tabela verdade, histograma, impulso, energias, FFT, bússola e curvas passam a usar só esse trecho. Para voltar, toque em "assinatura inteira".'],
+  [20, 28, 'Deslocar padrões: embaixo de cada gráfico de curva há "padrões ◀ +0,0% ▶". Cada toque desliza a faixa cinza 0,5%; a questionada fica parada.'],
+  [28, 35, 'Se a curva azul encaixa na cinza com 1 a 2% de deslocamento, a diferença era só um pequeno atraso, não de movimento.'],
+  [35, 43, 'Se não encaixa em nenhuma posição, a diferença é de forma: a questionada faz outro movimento.'],
+  [43, 49, '"zerar todos" volta todos os gráficos a 0%. Os deslocamentos usados vão para o registro de acessos e para o laudo.']];
+const TRD_END = 49;
+function drawTRD(cv, T) {
+  const k = tStep(TRD_STEPS, T), st = TRD_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560, M = modData();
+  if (k <= 2) {
+    const D_ = nar ? { x: 10, y: 40, w: w - 20, h: h * 0.38 } : { x: 10, y: 40, w: w * 0.55 - 20, h: h - 60 }, Z_ = nar ? { x: 10, y: D_.y + D_.h + 14, w: w - 20, h: h - D_.h - 70 } : { x: w * 0.55 + 10, y: 40, w: w * 0.45 - 20, h: h - 60 };
+    const DX = x => D_.x + D_.w * x, DY = y => D_.y + D_.h * (1 - y);
+    // barra do trecho
+    const sel = k === 0 ? ph(T, st[0] + 1.5, st[0] + 5) : 1, a0 = 0.355, a1 = 0.715;
+    c.textAlign = 'left'; c.font = '600 12.5px ' + sans; c.fillStyle = P.fg; c.fillText(sel >= 1 ? 'Trecho 36–70% em zoom' : 'Trecho: arraste sobre o desenho', 12, 22);
+    tBox(c, nar ? w - 150 : 250, 8, 140, 22, k === 2 && T > st[0] + 4 ? P.acc : P.panel, P.acc, 6); c.fillStyle = k === 2 && T > st[0] + 4 ? P.panel : P.acc; c.font = '600 12px ' + sans; c.textAlign = 'center'; c.fillText('assinatura inteira', (nar ? w - 150 : 250) + 70, 23);
+    c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(D_.x, D_.y, D_.w, D_.h);
+    const inSel = x => sel >= 1 && x >= a0 && x <= a1;
+    M.strokeGeom.forEach(G => { for (let i = 1; i < G.pts.length; i++) { const p0 = G.pts[i - 1], p1 = G.pts[i], on = inSel(p0[0]); c.strokeStyle = on ? P.sel : P.fg; c.lineWidth = on ? 3.5 : 1.8; c.beginPath(); c.moveTo(DX(p0[0]), DY(p0[1])); c.lineTo(DX(p1[0]), DY(p1[1])); c.stroke(); } });
+    if (k === 0 && sel > 0) { const x0 = DX(a0), y0 = DY(0.95), x1 = lerp(x0, DX(a1), sel), y1 = lerp(y0, DY(0.05), sel); c.strokeStyle = P.acc; c.setLineDash([5, 4]); c.lineWidth = 1.5; c.strokeRect(x0, y0, x1 - x0, y1 - y0); c.setLineDash([]); c.fillStyle = P.fg; c.beginPath(); c.moveTo(x1, y1); c.lineTo(x1 + 4, y1 + 14); c.lineTo(x1 + 8, y1 + 8); c.lineTo(x1 + 15, y1 + 6); c.closePath(); c.fill(); }
+    if (k >= 1) { const g = k === 1 ? ph(T, st[0] + 0.3, st[0] + 2) : 1; c.globalAlpha = g; c.strokeStyle = P.line; c.strokeRect(Z_.x, Z_.y, Z_.w, Z_.h); c.textAlign = 'left'; halo('trecho em zoom · 20 padrões por cima', Z_.x + 8, Z_.y + 16, P.mut, '600 11.5px ' + sans);
+      const G = M.strokeGeom[1], ZX = x => Z_.x + 14 + (Z_.w - 28) * (x - a0) / (a1 - a0), ZY = y => Z_.y + 26 + (Z_.h - 36) * (1 - y);
+      let s = 99; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+      for (let r = 0; r < 20; r++) { const dx = (rnd() - 0.5) * 0.02, dy = (rnd() - 0.5) * 0.08, sx = 1 + (rnd() - 0.5) * 0.06; c.strokeStyle = P.band; c.globalAlpha = 0.35 * g; c.lineWidth = 1; c.beginPath(); G.pts.forEach(([x, y], i) => { const X_ = ZX(a0 + (x - a0) * sx + dx), Y_ = ZY(y + dy); i ? c.lineTo(X_, Y_) : c.moveTo(X_, Y_); }); c.stroke(); }
+      c.globalAlpha = g; c.strokeStyle = P.acc; c.lineWidth = 2.2; c.beginPath(); G.pts.forEach(([x, y], i) => (i ? c.lineTo(ZX(x), ZY(y)) : c.moveTo(ZX(x), ZY(y)))); c.stroke(); c.globalAlpha = 1; }
+    if (k === 2) { const items = ['medidas', 'distância à pessoa', 'tabela verdade', 'histograma', 'impulso', 'energias', 'FFT', 'bússola', 'curvas']; const g = ph(T, st[0] + 0.3, st[0] + 3); const bx = nar ? 10 : D_.x + 10, by = nar ? D_.y + 10 : D_.y + D_.h - 80, bw = nar ? w - 20 : D_.w - 20;
+      c.globalAlpha = g; tBox(c, bx, by, bw, 66, P.panel, P.acc); c.textAlign = 'left'; c.fillStyle = P.acc; c.font = 'bold 12px ' + sans; c.fillText('passam a usar só o trecho:', bx + 10, by + 18); c.fillStyle = P.fg; c.font = '12px ' + sans; tWrap(c, items.join(' · '), bw - 20).forEach((l, i) => c.fillText(l, bx + 10, by + 38 + 16 * i)); c.globalAlpha = 1; }
+    return;
+  }
+  // deslocar: uma curva com a azul atrasada (k 3–4) ou com outra forma (k 5)
+  const F = frame(cv, [0, 100], [0, 175], { xlabel: 'traço a traço (% da assinatura)', ylabel: 'velocidade (mm/s)', ml: 46, mt: 40 }), { X, Y } = F, cc = F.c;
+  const PP = M.P, px = PP.xa.map(v => v * 100), pm = PP.A.map(p => p.v), sd = pm.map(v => 6 + 0.12 * v), QA = k === 5 ? M.Q2 : M.Q1, qx = QA.xa.map(v => v * 100 + (k === 5 ? 0 : 2)), qv = QA.A.map(p => p.v);
+  let shift = 0; if (k === 3) shift = 0.5 * Math.min(4, Math.floor(Math.max(0, T - st[0] - 1.5) / 1.4)); else if (k === 4) shift = 2; else if (k === 5) { const n = Math.floor(Math.max(0, T - st[0] - 0.5) / 0.9); shift = 0.5 * [0, 1, 2, 3, 4, 3, 2, 1, 0, -1, -2, -3, -2][Math.min(12, n)]; } else shift = k === 6 ? (T > st[0] + 2 ? 0 : 2) : 0;
+  const xs = px.map(x => x + shift); bandFill(F, xs, pm.map((v, i) => Math.max(0, v - 2 * sd[i])), pm.map((v, i) => v + 2 * sd[i]), P.band); polyline(F, xs, pm, P.band, 1); polyline(F, qx, qv, P.acc, 2);
+  F.done();
+  const lab = `${shift >= 0 ? '+' : '−'}${br(Math.abs(shift), 1)}%`, bx = F.w - F.m.r - 190, by = F.h - 6 - 24;
+  cc.textAlign = 'left'; cc.fillStyle = P.acc; cc.font = '12px ' + css('--mono'); cc.fillText('padrões', bx, 26); tBox(cc, bx + 62, 12, 26, 22, P.panel, P.acc, 5); tBox(cc, bx + 150, 12, 26, 22, P.panel, P.acc, 5); cc.fillStyle = P.acc; cc.font = 'bold 12px ' + sans; cc.textAlign = 'center'; cc.fillText('◀', bx + 75, 27); cc.fillText('▶', bx + 163, 27); cc.font = 'bold 13px ' + css('--mono'); cc.fillText(lab, bx + 119, 28);
+  if (k === 6) { tBox(cc, 12, 12, 110, 22, T > st[0] + 1.5 ? P.acc : P.panel, P.acc, 6); cc.fillStyle = T > st[0] + 1.5 ? P.panel : P.acc; cc.font = '600 12px ' + sans; cc.fillText('zerar todos', 67, 27); }
+  if (k === 4 && T > st[0] + 1) { cc.textAlign = 'left'; halo('encaixou com +2,0%: era só um atraso', F.m.l + 10, 30, P.grn, 'bold 12.5px ' + sans); }
+  if (k === 5 && T > st[0] + 5) { cc.textAlign = 'left'; halo('não encaixa em nenhuma posição: é de forma', F.m.l + 10, 30, P.red, 'bold 12.5px ' + sans); }
+}
+
+/* ---------- Cartão 8: faixas claras (caneta no ar) ---------- */
+const AIR_STEPS = [
+  [0, 7, 'A mesa lê a caneta também no ar, até cerca de 1 cm acima do papel. Entre um traço e outro, a caneta sobe, anda no ar e desce de novo.'],
+  [7, 14, 'No gráfico, os momentos com a caneta no ar aparecem como faixas claras. A linha azul não se interrompe: ali ela mostra o movimento da caneta no ar.'],
+  [14, 21, 'As faixas são só da questionada. Mostram onde ela levantou a caneta, quantas vezes e por quanto tempo. Compare com o número de levantamentos da pessoa, no quadro de medidas.'],
+  [21, 29, 'Se a caneta sobe mais de 1 cm, a mesa perde o sinal por um instante. Nesta demonstração esse movimento é simulado; no sistema real, o vão é ligado por uma curva suave, marcado como estimado, e não entra em nenhuma medida.'],
+  [29, 36, 'Como ler: faixas largas no meio de uma palavra podem ser hesitação ou parada para olhar o modelo. Mas pessoas idosas ou com dificuldade também levantam mais a caneta: conclua junto com as outras medidas.']];
+const AIR_END = 36;
+function drawAIR(cv, T) {
+  const k = tStep(AIR_STEPS, T), st = AIR_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  // vista de lado: papel, limite de 1 cm e a ponta da caneta
+  const S_ = { x: 46, y: 12, w: w - 60, h: h * 0.36 }, G_ = { x: 46, y: S_.y + S_.h + 22, w: w - 60, h: h - S_.h - 50 };
+  const SX = x => S_.x + S_.w * x, SY = z => S_.y + S_.h - 8 - (S_.h - 30) * z / 16; // z em mm, 0..16
+  c.strokeStyle = P.fg; c.lineWidth = 2; c.beginPath(); c.moveTo(S_.x, SY(0)); c.lineTo(S_.x + S_.w, SY(0)); c.stroke(); c.textAlign = 'left'; halo('papel', S_.x + 4, SY(0) - 4, P.mut, '11px ' + sans);
+  c.fillStyle = P.acc; c.globalAlpha = 0.07; c.fillRect(S_.x, SY(10), S_.w, SY(0) - SY(10)); c.globalAlpha = 1; c.strokeStyle = P.acc; c.setLineDash([5, 4]); c.beginPath(); c.moveTo(S_.x, SY(10)); c.lineTo(S_.x + S_.w, SY(10)); c.stroke(); c.setLineDash([]); c.textAlign = 'right'; halo('~1 cm: a mesa enxerga até aqui', S_.x + S_.w - 4, SY(10) - 5, P.acc, '600 11.5px ' + sans);
+  // altura da ponta ao longo do tempo: 3 traços no papel, 2 subidas (a 2ª passa de 1 cm no passo 4)
+  const segs = [[0, 0.26], [0.36, 0.62], [0.74, 1]], hi = k === 3 ? 14 : 6.5;
+  const zAt = t => { for (const [a, b] of segs) if (t >= a && t <= b) return 0; const L = t < 0.36 ? [0.26, 0.36, 6.5] : [0.62, 0.74, hi]; const u = (t - L[0]) / (L[1] - L[0]); return L[2] * Math.sin(Math.PI * u); };
+  const tP = Math.min(1, Math.max(0, (T - st[0] - 0.3) / (st[1] - st[0] - 1.3)));
+  c.strokeStyle = P.fg; c.lineWidth = 1.6; c.beginPath(); for (let i = 0; i <= 400; i++) { const t = i / 400; if (t > tP) break; const z = zAt(t), lost = z > 10; c.lineTo(SX(t), SY(Math.min(z, 16))); } c.stroke();
+  if (k === 3) { c.strokeStyle = P.red; c.lineWidth = 2; c.setLineDash([3, 3]); c.beginPath(); let on = false; for (let i = 0; i <= 400; i++) { const t = i / 400; if (t > tP) break; const z = zAt(t); if (z > 10) { on ? c.lineTo(SX(t), SY(z)) : c.moveTo(SX(t), SY(z)); on = true; } } c.stroke(); c.setLineDash([]); if (tP > 0.7) { c.textAlign = 'center'; halo('sem sinal', SX(0.68), SY(15) + 2, P.red, 'bold 11.5px ' + sans); } }
+  const pz = zAt(tP); c.fillStyle = P.fg; c.beginPath(); c.moveTo(SX(tP), SY(pz)); c.lineTo(SX(tP) + 9, SY(pz) - 30); c.lineTo(SX(tP) + 15, SY(pz) - 27); c.closePath(); c.fill();
+  // gráfico de velocidade com faixas claras
+  if (k >= 1) {
+    const GX = t => G_.x + G_.w * t, GY = v => G_.y + G_.h - (G_.h - 10) * v / 160, vAt = (t, base) => { for (const [a, b] of segs) if (t >= a && t <= b) { const u = (t - a) / (b - a); return (base ? 120 : 75) * Math.sin(Math.PI * u) ** 2; } return base ? 0 : 22 * Math.sin(Math.PI * ((t < 0.36 ? (t - 0.26) / 0.1 : (t - 0.62) / 0.12))); };
+    c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(G_.x, G_.y, G_.w, G_.h); c.save(); c.translate(14, G_.y + G_.h / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText('velocidade', 0, 0); c.restore();
+    const lim = k === 1 ? tP : 1;
+    c.fillStyle = P.amb; c.globalAlpha = k === 2 ? 0.24 : 0.14; [[0.26, 0.36], [0.62, 0.74]].forEach(([a, b]) => { if (a < lim) c.fillRect(GX(a), G_.y, GX(Math.min(b, lim)) - GX(a), G_.h); }); c.globalAlpha = 1;
+    c.fillStyle = P.band; c.globalAlpha = 0.3; c.beginPath(); for (let i = 0; i <= 300; i++) { const t = i / 300; c.lineTo(GX(t), GY(vAt(t, true) + 20)); } for (let i = 300; i >= 0; i--) { const t = i / 300; c.lineTo(GX(t), GY(Math.max(0, vAt(t, true) - 20))); } c.fill(); c.globalAlpha = 1;
+    c.strokeStyle = P.acc; c.lineWidth = 2; c.beginPath(); let on = false; for (let i = 0; i <= 400; i++) { const t = i / 400; if (t > lim) break; const est = k === 3 && t > 0.62 && t < 0.74 && zAt(t) > 10; if (est) { if (on) c.stroke(); on = false; continue; } on ? c.lineTo(GX(t), GY(vAt(t, false))) : (c.beginPath(), c.moveTo(GX(t), GY(vAt(t, false)))); on = true; } if (on) c.stroke();
+    if (k === 3) { c.strokeStyle = P.acc; c.setLineDash([2, 4]); c.lineWidth = 2; c.beginPath(); let st0 = false; for (let i = 0; i <= 400; i++) { const t = i / 400; if (t > lim) break; if (t > 0.62 && t < 0.74 && zAt(t) > 10) { st0 ? c.lineTo(GX(t), GY(vAt(t, false))) : c.moveTo(GX(t), GY(vAt(t, false))); st0 = true; } } c.stroke(); c.setLineDash([]); if (tP > 0.75) { c.textAlign = 'center'; halo('estimado (sistema real)', GX(0.68), GY(60), P.red, 'bold 11.5px ' + sans); } }
+    if (k >= 1) { c.textAlign = 'left'; halo('faixa clara = caneta no ar', G_.x + 6, G_.y + 14, P.amb, '600 11.5px ' + sans); }
+    if (k === 2 && T > st[0] + 1) { c.textAlign = 'center'; [[0.31, '1'], [0.68, '2']].forEach(([t, n]) => halo(n + 'º levantamento', GX(t), G_.y + G_.h - 8, P.amb, 'bold 12px ' + sans)); }
+    if (k === 4 && T > st[0] + 1) { c.textAlign = 'right'; halo('conclua junto com as outras medidas', G_.x + G_.w - 6, G_.y + 14, P.fg, 'bold 12px ' + sans); }
+  }
+}
+
+/* ---------- Cartão 9: velocidade e área sob a velocidade ---------- */
+const VAR_STEPS = [
+  [0, 6.5, 'O gráfico de velocidade mostra quão rápido a caneta anda em cada momento. Faixa cinza: os 20 padrões; linha azul: a questionada.'],
+  [6.5, 14, 'A área embaixo da curva é o caminho que a caneta percorreu: velocidade vezes tempo dá distância. É como num carro: andar a 60 km/h por meia hora dá 30 km.'],
+  [14, 20, 'A parte escura é o caminho com a caneta no papel; a parte clara, o caminho no ar, entre um traço e outro.'],
+  [20, 27, 'O gráfico "Área sob a velocidade" transforma essa área numa barra: 20 barras cinza (os padrões) e uma azul (a questionada).'],
+  [27, 34, 'A faixa horizontal é a variação normal da pessoa. Barra azul muito acima: a questionada percorreu mais caminho, com traços a mais, letras maiores ou mais movimento no ar.'],
+  [34, 41, 'Atenção: uma imitação lenta pode ter a barra igual à da pessoa, porque anda o mesmo caminho, só que devagar. Por isso, olhe a barra junto com o tempo total e a velocidade.'],
+  [41, 47, 'Em X ou Y, a barra mostra quanto a caneta andou só para os lados ou só para cima e para baixo. A suavização não muda as barras.']];
+const VAR_END = 47;
+function drawVAR(cv, T) {
+  const k = tStep(VAR_STEPS, T), st = VAR_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560, M = modData();
+  const showBars = k >= 3, split = showBars ? (nar ? 0 : 0.5) : 1;
+  const C_ = nar && showBars ? { x: 46, y: 10, w: w - 56, h: h * 0.42 } : { x: 46, y: 10, w: (w - 56) * split - (showBars ? 20 : 0), h: h - 40 }, B_ = nar ? { x: 46, y: C_.y + C_.h + 30, w: w - 56, h: h - C_.h - 70 } : { x: 46 + (w - 56) * 0.5 + 10, y: 10, w: (w - 56) * 0.5 - 10, h: h - 40 };
+  // curva (questionada da própria pessoa, mais devagar), em tempo real
+  const Q = M.Q1, n = Q.A.length, tmax = M.TQ, CX = t => C_.x + C_.w * t / tmax, CY = v => C_.y + C_.h - (C_.h - 12) * v / 205;
+  c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(C_.x, C_.y, C_.w, C_.h); c.save(); c.translate(14, C_.y + C_.h / 2); c.rotate(-Math.PI / 2); c.textAlign = 'center'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText('velocidade', 0, 0); c.restore();
+  c.textAlign = 'center'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText('tempo →', C_.x + C_.w / 2, C_.y + C_.h + 14);
+  const vAir = i => { const p = Q.A[i]; if (!(p.k < 0 && p.t > 0.15 && p.t < tmax - 0.15)) return p.v; const first = p.t < M.QS[1][0], a = first ? M.QS[0][1] : M.QS[1][1], b = first ? M.QS[1][0] : M.QS[2][0]; return 18 * Math.sin(Math.PI * (p.t - a) / (b - a)); };
+  const vv = Q.A.map((_, i) => vAir(i));
+  // faixa dos padrões em tempo da pessoa, só para referência visual
+  c.fillStyle = P.band; c.globalAlpha = 0.25; c.beginPath(); M.P.A.forEach((p, i) => c.lineTo(CX(p.t), CY(p.v + 2 * (6 + 0.12 * p.v)))); for (let i = M.P.A.length - 1; i >= 0; i--) { const p = M.P.A[i]; c.lineTo(CX(p.t), CY(Math.max(0, p.v - 2 * (6 + 0.12 * p.v)))); } c.fill(); c.globalAlpha = 1;
+  const fillA = k === 1 ? ph(T, st[0] + 1, st[1] - 1) : k >= 2 ? 1 : 0;
+  if (fillA > 0) { const lim = fillA * tmax; for (let i = 1; i < n; i++) { const t = Q.A[i].t; if (t > lim) break; const air = Q.A[i].k < 0; c.fillStyle = P.acc; c.globalAlpha = air ? (k >= 2 ? 0.15 : 0.35) : 0.45; c.fillRect(CX(Q.A[i - 1].t), CY(vv[i]), CX(t) - CX(Q.A[i - 1].t) + 0.5, CY(0) - CY(vv[i])); } c.globalAlpha = 1;
+    let path = 0; for (let i = 1; i < n && Q.A[i].t <= lim; i++) path += vv[i] / 100; c.textAlign = 'left'; halo(`caminho: ${br(path, 0)} mm`, C_.x + 8, C_.y + 18, P.acc, 'bold 13px ' + sans); }
+  c.strokeStyle = P.acc; c.lineWidth = 2; c.beginPath(); vv.forEach((v, i) => (i ? c.lineTo(CX(Q.A[i].t), CY(v)) : c.moveTo(CX(Q.A[i].t), CY(v)))); c.stroke();
+  if (k === 2) { c.textAlign = 'center'; halo('no papel', CX((M.QS[1][0] + M.QS[1][1]) / 2), CY(30), P.acc, 'bold 12px ' + sans); halo('no ar', CX((M.QS[0][1] + M.QS[1][0]) / 2), CY(40), P.mut, 'bold 12px ' + sans); }
+  if (!showBars) return;
+  // barras
+  let qc = 0, qa = 0; for (let i = 1; i < n; i++) { if (Q.A[i].k < 0) qa += vv[i] / 100; else qc += vv[i] / 100; }
+  let s = 4242; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296), PB = Array.from({ length: 20 }, () => [qc * (1 + (rnd() - 0.5) * 0.14), qa * (0.8 + (rnd() - 0.5) * 0.3)]);
+  const QB = k === 4 ? [qc * 1.32, qa * 1.6] : [qc, qa], tot = PB.map(([a, b]) => a + b), mu = TH.mean(tot), sd = TH.std(tot, 1), ymax = Math.max(qc * 1.32 + qa * 1.6, mu + 2 * sd) * 1.15;
+  const BX = i => B_.x + B_.w * (i + 0.5) / 22, BY = v => B_.y + B_.h - (B_.h - 14) * v / ymax, bw = B_.w / 22 * 0.7, gb = k === 3 ? ph(T, st[0] + 0.5, st[0] + 3.5) : 1;
+  c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(B_.x, B_.y, B_.w, B_.h); c.textAlign = 'left'; halo(nar ? 'Área' : 'Área sob a velocidade', B_.x + 6, B_.y + 14, P.fg, '600 11.5px ' + sans);
+  c.fillStyle = P.band; c.globalAlpha = k === 4 ? 0.3 : 0.18; c.fillRect(B_.x, BY(mu + 2 * sd), B_.w, BY(mu - 2 * sd) - BY(mu + 2 * sd)); c.globalAlpha = 1;
+  const bar = (i, [cn, ar], col) => { c.fillStyle = col; c.fillRect(BX(i) - bw / 2, BY(cn * gb), bw, BY(0) - BY(cn * gb)); c.globalAlpha = 0.4; c.fillRect(BX(i) - bw / 2, BY((cn + ar) * gb), bw, BY(cn * gb) - BY((cn + ar) * gb)); c.globalAlpha = 1; };
+  PB.forEach((v, i) => bar(i, v, P.band)); bar(21, QB, P.acc);
+  c.textAlign = 'center'; c.fillStyle = P.mut; c.font = '10px ' + sans; c.fillText('P1 … P20', BX(9.5), B_.y + B_.h + 12); c.fillStyle = P.acc; c.font = 'bold 11px ' + sans; c.fillText('Q', BX(21), B_.y + B_.h + 12);
+  if (k === 4) { c.textAlign = 'right'; halo('Q acima da faixa: mais caminho', B_.x + B_.w - 6, BY(QB[0] + QB[1]) - 8, P.red, 'bold 12px ' + sans); }
+  if (k === 5) { c.textAlign = 'right'; halo('igual: mesmo caminho, mais devagar', B_.x + B_.w - 6, B_.y + 30, P.amb, 'bold 12px ' + sans); }
+}
+
+/* ---------- convite ao tutorial ao abrir o painel ---------- */
+let tutInvited = false;
+function tutInvite() {
+  if (tutInvited) return; tutInvited = true; // só na primeira abertura da página, não ao trocar de caso
+  let hide = false; try { hide = localStorage.getItem('thoth_tut_hide') === '1'; } catch (e) { hide = false; }
+  if (hide || S.printing) return;
+  const box = $('#tutinv'), close = goTut => { try { if ($('#tutinv-hide').checked) localStorage.setItem('thoth_tut_hide', '1'); } catch (e) {} box.hidden = true; document.removeEventListener('keydown', esc);
+    if (goTut) { S.tab = 'tut'; log('mudou de aba', 'Tutorial (convite)'); render(); window.scrollTo({ top: 0 }); } };
+  const esc = e => { if (e.key === 'Escape') close(false); };
+  $('#tutinv-go').onclick = () => close(true); $('#tutinv-no').onclick = () => close(false); box.onclick = e => { if (e.target === box) close(false); };
+  document.addEventListener('keydown', esc); box.hidden = false; setTimeout(() => $('#tutinv-go').focus(), 50);
+}
+
 bind(); watermark(); loadCase();
 })();
 
