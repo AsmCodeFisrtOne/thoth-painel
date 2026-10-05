@@ -1841,9 +1841,10 @@ function m3Kick() { if (!M3.raf) { M3.last = 0; M3.raf = requestAnimationFrame(m
 function m3Play() { M3.t0 = performance.now(); M3.tAnim = 0; m3Kick(); }
 function m3Auto(on) { M3.auto = on; $('#m3-spin').textContent = on ? '❚❚ parar' : '⟳ girar'; $('#m3-spin').classList.toggle('on', on); if (on) m3Kick(); }
 function m3Bind(cv) {
-  cv.addEventListener('pointerdown', e => { M3.drag = { x: e.clientX, y: e.clientY, id: e.pointerId, moved: false }; });
+  const mine = () => cv.id !== 'cv-big' || BIG === 'cv-m3'; // o canvas ampliado é compartilhado: só gira o 3D quando é o 3D que está ampliado
+  cv.addEventListener('pointerdown', e => { if (!mine()) return; M3.drag = { x: e.clientX, y: e.clientY, id: e.pointerId, moved: false }; });
   cv.addEventListener('pointermove', e => {
-    const d = M3.drag; if (!d || d.id !== e.pointerId) return; const dx = e.clientX - d.x, dy = e.clientY - d.y;
+    const d = M3.drag; if (!d || d.id !== e.pointerId || !mine()) return; const dx = e.clientX - d.x, dy = e.clientY - d.y;
     if (!d.moved && Math.hypot(dx, dy) < 4) return; if (!d.moved) { d.moved = true; try { cv.setPointerCapture(e.pointerId); } catch (_) {} if (M3.auto) m3Auto(false); }
     M3.yaw += dx * 0.01; M3.pitch = Math.max(-0.1, Math.min(1.15, M3.pitch + dy * 0.008)); d.x = e.clientX; d.y = e.clientY;
     if (cv.id === 'cv-big') drawM3(cv, M3.tAnim); else drawM3(cv, M3.tAnim);
