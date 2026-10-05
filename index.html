@@ -195,7 +195,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 
   <section class="pane" id="pane-analise">
     <div id="vista" class="vista ok" role="status"><span id="vista-t"></span><span class="vc">código da vista <b id="vista-c"></b></span><button type="button" class="btn" id="btn-padrao" hidden>voltar à vista padrão</button></div>
-    <div id="obs" class="obs"><div id="obs-form"><label for="obs-txt"><b>1º passo · Observações iniciais na vista padrão</b></label><textarea id="obs-txt" placeholder="Ex.: na questionada o ritmo é mais lento e regular, com pausas antes do S e do d; 17 levantamentos contra 11 nos padrões; a pressão cai no fim dos traços…"></textarea><div class="grp"><button type="button" class="primary" id="obs-reg">registrar observações</button><span class="fine" id="obs-hint"></span></div></div><div id="obs-done" hidden></div></div>
+    <div id="obs" class="obs"><div id="obs-form"><label for="obs-txt"><b>1º passo · Observações iniciais na vista padrão</b></label><textarea id="obs-txt" placeholder="Só fatos. Ex.: questionada com 8,24 s contra 4,55 ± 0,13 s nos padrões; 17 levantamentos contra 11 ± 1; no gráfico em tempo real, pausas antes do S e do d; traços na mesma ordem e sentido dos padrões."></textarea><div class="grp"><button type="button" class="primary" id="obs-reg">registrar observações</button><span class="fine" id="obs-hint"></span></div></div><div id="obs-done" hidden></div></div>
     <div id="tr-banner" class="trban" hidden><span id="tr-banner-t"></span><button type="button" class="btn" id="tr-banner-x">voltar à assinatura inteira</button></div>
     <div class="bar">
       <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn on" data-eixo="tempo" title="Vista padrão. Cada assinatura no próprio relógio: mostra o ritmo, as pausas e a duração, como a assinatura foi feita.">tempo real (padrão)</button><button type="button" class="btn" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
@@ -207,7 +207,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <span class="note">⤢ no canto de um gráfico para ampliar · dados não saem do sistema</span>
     </div>
     <div class="grid">
-      <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. Na animação: a espessura do traço segue a pressão, o ponto vermelho é a caneta no papel e os números marcam a ordem dos traços; nos gráficos de curvas, pressão e deformação, a faixa verde cresce junto, mostrando o trecho já desenhado.</p></div>
+      <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: 20 padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços, o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
       <div class="card" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas></div>
       <div class="card rows2"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
@@ -1134,10 +1134,14 @@ function pal() {
   if (S.printing) Object.assign(p, { fg: '#1b2230', mut: '#5d6878', grid: '#e7eaf0', line: '#d9dee7', acc: '#2f6fd6', band: '#8a919c', red: '#c8372d', amb: '#c47a0a', grn: '#1f7a35', sel: '#f5c542', panel: '#ffffff', noise: '#c47a0a' });
   return p;
 }
+const STAMP_IDS = new Set(['cv-sig', 'cv-zoom', 'cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5', 'cv-maha', 'cv-m3', 'cv-big']), BAND_H = 16;
 function setup(cv, h) {
   const r = S.printing ? 2 : (window.devicePixelRatio || 1), w = cv.clientWidth || 600; h = h || cv.clientHeight || 200;
   cv.width = Math.round(w * r); cv.height = Math.round(h * r); cv._stamped = false; const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0);
-  c.clearRect(0, 0, w, h); return { c, w, h };
+  c.clearRect(0, 0, w, h);
+  // em vista ajustada, os gráficos da análise reservam uma faixa no topo para o aviso: o gráfico desce e nada fica por baixo do aviso
+  const off = D && (cv._stampable || STAMP_IDS.has(cv.id)) && !isPadrao() ? BAND_H : 0; cv._off = off; if (off) c.translate(0, off);
+  return { c, w, h: h - off };
 }
 function nice(lo, hi, n = 5) {
   if (!(hi > lo)) { hi = lo + 1; }
@@ -1234,7 +1238,7 @@ function drawCurve(cv, sigf, shiftKey, ylabel, noise, scale = 1) {
 const SYM = { x: ['vₓ', 'aₓ', 'aₓ·vₓ', 'X'], y: ['v_y', 'a_y', 'a_y·v_y', 'Y'], r: ['|v|', '|a|', 'a·v', 'resultante'] };
 let drawXform = null, dragRect = null;
 function drawSignature(cv) {
-  const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), R = D.REG;
+  const P = pal(), { c, w, h } = setup(cv, cv.clientHeight || 220), R = D.REG;
   let xs = [], ys = []; R.forEach(([X, Y], k) => { const p = k < 20 ? D.PP[k] : D.Q; for (let i = 0; i < X.length; i += 3) if (p.C[i]) { xs.push(X[i]); ys.push(Y[i]); } });
   const x0 = Math.min(...xs) - 2, x1 = Math.max(...xs) + 2, y0 = Math.min(...ys) - 2, y1 = Math.max(...ys) + 2, sc = Math.min((w - 16) / (x1 - x0), (h - 16) / (y1 - y0));
   const ox = (w - sc * (x1 - x0)) / 2, oy = (h - sc * (y1 - y0)) / 2;
@@ -1267,9 +1271,9 @@ function drawSigAnim(c, X, Y, P, R) {
   c.strokeStyle = col; c.globalAlpha = 0.55; c.lineWidth = 0.9; c.setLineDash([1.5, 2.5]); c.beginPath(); let pen = false;
   for (let i = 0; i <= n; i++) { if (p.C[i]) { pen = false; continue; } if (pen) c.lineTo(X(RX[i]), Y(RY[i])); else { c.moveTo(X(RX[i]), Y(RY[i])); pen = true; } }
   c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
-  // tinta até agora: espessura pela pressão
-  c.strokeStyle = col; c.lineCap = 'round';
-  for (let i = 1; i <= n; i++) if (p.C[i] && p.C[i - 1]) { c.lineWidth = 0.6 + 2.6 * Math.min(1, p.gf[i] / 600); c.beginPath(); c.moveTo(X(RX[i - 1]), Y(RY[i - 1])); c.lineTo(X(RX[i]), Y(RY[i])); c.stroke(); }
+  // tinta até agora: espessura uniforme — a animação mostra só a construção (trajeto, ordem e sentido); pressão e dinâmica ficam nos gráficos
+  c.strokeStyle = col; c.lineCap = 'round'; c.lineJoin = 'round'; c.lineWidth = 1.8; c.beginPath(); let inkPen = false;
+  for (let i = 0; i <= n; i++) { if (!p.C[i]) { inkPen = false; continue; } if (inkPen) c.lineTo(X(RX[i]), Y(RY[i])); else { c.moveTo(X(RX[i]), Y(RY[i])); inkPen = true; } } c.stroke();
   // número de cada traço no ponto em que a caneta pousou
   const narrow = (c.canvas.clientWidth || 600) < 500, br_ = narrow ? 5 : 7;
   let nt = 0; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); c.textAlign = 'center';
@@ -1277,10 +1281,9 @@ function drawSigAnim(c, X, Y, P, R) {
   // ponta da caneta
   const tip = [X(RX[n]), Y(RY[n])], down = !!p.C[n];
   c.fillStyle = down ? P.red : P.panel; c.strokeStyle = down ? P.red : col; c.lineWidth = 1.5; c.beginPath(); c.arc(tip[0], tip[1], down ? 4 : 5, 0, 7); c.fill(); c.stroke();
-  // relógio
-  const T = p.t[p.t.length - 1], tt = p.t[n];
+  // legenda: só construção (qual traço, caneta no papel ou no ar); sem tempo nem pressão
   c.textAlign = 'left'; c.fillStyle = P.fg; c.font = (narrow ? '11px ' : '12px ') + css('--mono');
-  const l1 = `${k < 20 ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · ${br(tt, 2)} s de ${br(T, 2)} s · traço ${nt} de ${p.segs.length}`, l2 = down ? `caneta no papel · ${br(p.gf[n], 0)} gf` : 'caneta no ar';
+  const l1 = `${k < 20 ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · traço ${nt} de ${p.segs.length}`, l2 = (down ? 'caneta no papel' : 'caneta no ar') + ' · reprodução do trajeto';
   if (narrow) { c.fillText(l1, 8, 15); c.fillText(l2, 8, 30); } else c.fillText(l1 + ' · ' + l2, 8, 16);
 }
 /* faixa nos gráficos durante a animação: mostra, em cada gráfico, o trecho já percorrido pela assinatura animada */
@@ -1299,7 +1302,7 @@ function abBand(cv) {
   const id = cv.id === 'cv-big' ? 'big:' + BIG : cv.id, x = abX(cv); if (Number.isFinite(x)) ANIM.mx[id] = Math.max(ANIM.mx[id] ?? -Infinity, x);
   const v = ANIM.mx[id]; if (!Number.isFinite(v) || v <= a.xr[0]) return;
   const toPx = u => a.l + (Math.min(a.xr[1], u) - a.xr[0]) / (a.xr[1] - a.xr[0]) * (a.r - a.l), x1 = toPx(v), r = cv.width / (cv.clientWidth || 1);
-  ctx.save(); ctx.setTransform(r, 0, 0, r, 0, 0); ctx.fillStyle = css('--green'); ctx.globalAlpha = 0.16; ctx.fillRect(a.l, a.t, x1 - a.l, a.b - a.t);
+  ctx.save(); ctx.setTransform(r, 0, 0, r, 0, (cv._off || 0) * r); ctx.fillStyle = css('--green'); ctx.globalAlpha = 0.16; ctx.fillRect(a.l, a.t, x1 - a.l, a.b - a.t);
   if (v < a.xr[1]) { ctx.globalAlpha = 1; ctx.strokeStyle = css('--green'); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x1, a.t); ctx.lineTo(x1, a.b); ctx.stroke(); }
   ctx.restore();
 }
@@ -1323,11 +1326,11 @@ function animUI() {
   const sel = $('#an-sel'), cur = sel.value || '20';
   sel.innerHTML = '<option value="20">questionada</option>' + D.PP.map((_, i) => `<option value="${i}">padrão P${String(i + 1).padStart(2, '0')}</option>`).join('');
   sel.value = cur; const k = +sel.value, p = k < 20 ? D.PP[k] : D.Q, T = p.t[p.t.length - 1], ms = +$('#an-ms').value;
-  $('#an-ms-o').textContent = `${ms} ms · duração real ${br(T, 2)} s (${T * 1000 >= ms ? br(T * 1000 / ms, 1) + '× mais rápido' : br(ms / (T * 1000), 1) + '× mais lento'})`;
+  $('#an-ms-o').textContent = `reprodução em ${ms} ms (${T * 1000 >= ms ? br(T * 1000 / ms, 1) + '× mais rápida' : br(ms / (T * 1000), 1) + '× mais lenta'} que a escrita) · mostra a construção: ordem, sentido, início e fim dos traços e levantamentos · ritmo, pausas e pressão: use os gráficos e as medidas`;
 }
 
 function drawZoom(cv) {
-  const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), R = D.REG; let mx = 0, my = 0, n = 0;
+  const P = pal(), { c, w, h } = setup(cv, cv.clientHeight || 220), R = D.REG; let mx = 0, my = 0, n = 0;
   D.PP.forEach((p, k) => { const s = V.zs[k]; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { mx += R[k][0][i]; my += R[k][1][i]; n++; } }); mx /= n; my /= n;
   const all = [...D.PP, D.Q], sels = [...V.zs, V.zq]; let ex = 1;
   all.forEach((p, k) => { const s = sels[k]; for (let i = 0; i < s.length; i++) if (s[i]) ex = Math.max(ex, Math.abs(R[k][0][i] - mx), Math.abs(R[k][1][i] - my)); });
@@ -1338,7 +1341,7 @@ function drawZoom(cv) {
   c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText(`escala: ${br(10 * sc / 10, 1)} px/mm`, 6, h - 6);
 }
 function drawCompass(cv) {
-  const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), cx = w / 2, cy = h / 2 - 6, R = Math.min(w, h) / 2 - 22;
+  const P = pal(), { c, w, h } = setup(cv, cv.clientHeight || 220), cx = w / 2, cy = h / 2 - 6, R = Math.min(w, h) / 2 - 22;
   c.strokeStyle = P.grid; c.lineWidth = 1; for (const r of [30, 60, 90]) { c.beginPath(); c.arc(cx, cy, R * r / 90, 0, 2 * Math.PI); c.stroke(); }
   c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'center';
   for (let a = 0; a < 360; a += 45) { const t = a * Math.PI / 180; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + R * Math.sin(t), cy - R * Math.cos(t)); c.stroke(); c.fillText(a + '°', cx + (R + 11) * Math.sin(t), cy - (R + 11) * Math.cos(t) + 3); }
@@ -2092,7 +2095,7 @@ function renderLog() { $('#log').innerHTML = S.log.slice().reverse().map(l => `<
 /* ---------------- laudo em PDF ---------------- */
 const latin = s => String(s).replace(/[✓]/g, 'OK').replace(/[✗]/g, 'X').replace(/[⚠]/g, '!').replace(/[◦·]/g, '·').replace(/≤/g, '<=').replace(/σ/g, 'sigma').replace(/[→←]/g, '->').replace(/[ₓ]/g, 'x').replace(/⁷/g, '7').replace(/⁶/g, '6').replace(/⁸/g, '8').replace(/[∠]/g, '').replace(/−/g, '-').replace(/[^\x00-\xFF–—…‘’“”•€]/g, '');
 async function chartImg(fn, w, h) {
-  const cv = document.createElement('canvas'); cv.style.width = w + 'px'; cv.style.height = h + 'px'; cv.style.position = 'fixed'; cv.style.left = '-9999px'; document.body.appendChild(cv);
+  const cv = document.createElement('canvas'); cv._stampable = true; cv.style.width = w + 'px'; cv.style.height = h + 'px'; cv.style.position = 'fixed'; cv.style.left = '-9999px'; document.body.appendChild(cv);
   S.printing = true;
   try { fn(cv, w, h); const ctx = cv.getContext('2d'); ctx.globalCompositeOperation = 'destination-over'; ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); return cv.toDataURL('image/png'); }
   finally { S.printing = false; cv.remove(); }
@@ -2121,7 +2124,8 @@ async function makePDF() {
   y = T(`Signatário declarado: ${D.name} · Thoth nº 0123A1B2C3D4E5F6EE · questionada: contador 184 · padrões: 20 colheitas (contadores 201–220)`, L, y, { s: 8.5, c: [93, 104, 120], gap: 4 });
   H2('1. Observações iniciais e conclusão do perito');
   y = T(`Observações iniciais, registradas às ${S.obs.ts} na vista padrão (tempo real, assinatura inteira, sem suavização)${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de o perito já ter usado ajustes (o primeiro às ${S.obs.adjTs})`} · hash ${S.obs.h.slice(0, 16)}:`, L, y, { b: true, s: 8.5 });
-  y = T(S.obs.txt, L + 3, y, { i: true, gap: 2.5 });
+  y = T(S.obs.txt, L + 3, y, { i: true, gap: S.obs.aviso ? 1 : 2.5 });
+  if (S.obs.aviso) y = T(`O painel avisou que o texto parecia conter conclusão (${S.obs.aviso.join(', ')}); o perito manteve.`, L, y, { s: 8, c: [196, 122, 10], gap: 2.5 });
   y = T(`Modo cego: ${S.blind ? 'o tipo da questionada não foi revelado ao perito durante a análise.' : `o perito revelou o tipo da questionada às ${S.revealed}${S.obs && S.obs.ts ? '' : ''} (ação registrada na seção 7).`}`, L, y, { s: 8.5, c: [93, 104, 120], gap: 3 });
   y = T(`Hipótese: ${S.hip.h || '(não escolhida)'}   ·   contra: ${S.hip.c || '(não escolhida)'}`, L, y, { b: true });
   y = T(`Grau de suporte (escala verbal ENFSI / SWGDOC): ${S.hip.grau || '(não escolhido)'}`, L, y, { b: true });
@@ -2261,9 +2265,8 @@ function stamp(cv) {
     // gráfico largo: a lista dos ajustes por extenso; gráfico estreito: só o código (que também diz os ajustes), para não cobrir os dados
     let f = 9.5, t = `VISTA AJUSTADA · ${aj.join(' · ')} · não é a assinatura como foi feita · ${code}`; ctx.font = `bold ${f}px ` + css('--sans');
     if (ctx.measureText(t).width > w - 8) { t = `VISTA AJUSTADA · ${code}`; while (ctx.measureText(t).width > w - 8 && f > 7) { f -= 0.5; ctx.font = `bold ${f}px ` + css('--sans'); } }
-    const lines = [t];
-    const bh = lines.length * (f + 3) + 3; ctx.globalAlpha = 0.9; ctx.fillStyle = P.red; ctx.fillRect(0, 0, w, bh); ctx.globalAlpha = 1; ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
-    lines.forEach((l, i) => ctx.fillText(l, 4, (i + 1) * (f + 3)));
+    const bh = cv._off || BAND_H; ctx.globalAlpha = 1; ctx.fillStyle = P.red; ctx.fillRect(0, 0, w, bh); ctx.fillStyle = '#ffffff'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(t, 4, bh / 2 + 0.5);
   }
   ctx.restore();
 }
@@ -2280,8 +2283,8 @@ const escH = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;'
 function renderObs() { // observações iniciais: feitas na vista padrão, registradas com hora e hash, depois só leitura
   const box = $('#obs'); if (!box || !D) return; const aj = ajustes().length > 0;
   $('#obs-form').hidden = !!S.obs; $('#obs-done').hidden = !S.obs;
-  if (S.obs) $('#obs-done').innerHTML = `<b>Observações iniciais registradas</b> às ${S.obs.ts}, na vista padrão${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de já ter usado ajustes (o primeiro às ${S.obs.adjTs})`} · hash ${S.obs.h.slice(0, 12)}…<blockquote>${escH(S.obs.txt)}</blockquote>`;
-  else { $('#obs-reg').disabled = aj; $('#obs-hint').textContent = aj ? 'Volte à vista padrão para registrar: as observações iniciais são sobre a assinatura como foi feita.' : 'Descreva o que vê na vista padrão (ritmo, pausas, ordem dos traços, pressão) antes de usar outros ajustes. O laudo só é gerado com este registro.'; }
+  if (S.obs) $('#obs-done').innerHTML = `<b>Observações iniciais registradas</b> às ${S.obs.ts}, na vista padrão${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de já ter usado ajustes (o primeiro às ${S.obs.adjTs})`}${S.obs.aviso ? ' · <span class="warn">mantidas após aviso de conclusão</span>' : ''} · hash ${S.obs.h.slice(0, 12)}…<blockquote>${escH(S.obs.txt)}</blockquote>`;
+  else { $('#obs-reg').disabled = aj; if (!S.obsWarn) $('#obs-hint').textContent = aj ? 'Volte à vista padrão para registrar: as observações iniciais são sobre a assinatura como foi feita.' : 'Só fatos observáveis na vista padrão: duração, número de traços e levantamentos, ordem e sentido, pausas vistas no gráfico em tempo real, valores das medidas. Sem conclusão sobre autoria: ela vai na fundamentação. O laudo só é gerado com este registro.'; }
   box.classList.toggle('done', !!S.obs);
 }
 function resetPadrao() { S.eixo = 'tempo'; S.suav = 0; S.trecho = null; S.zoom = null; S.shifts = {}; }
@@ -2340,7 +2343,7 @@ function bind() {
   $('#mh-y').addEventListener('change', e => { S.my = e.target.value; fixPair('y'); renderAnalise(); });
   $('#btn-anim').addEventListener('click', () => playMaha(true));
   const cv = $('#cv-sig'); let start = null;
-  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+  const pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top - (cv._off || 0)]; };
   cv.addEventListener('pointerdown', e => { if (ANIM.upto !== null) stopAnim(false); start = pos(e); dragRect = [...start, ...start]; cv.setPointerCapture(e.pointerId); });
   cv.addEventListener('pointermove', e => { if (!start) return; const p = pos(e); dragRect = [...start, ...p]; drawSignature(cv); });
   cv.addEventListener('pointerup', e => {
@@ -2361,7 +2364,7 @@ function bind() {
     const isCurve = () => (c.id === 'cv-big' ? !!CURV[BIG] : !!CURV[c.id]) && c._csel;
     c.addEventListener('pointerdown', e => { if (!isCurve() || e.button > 0) return; const x = px(e), s = c._csel; if (x < s.l || x > s.r) return; st = x; x1 = x; const ctx = c.getContext('2d'); snap = ctx.getImageData(0, 0, c.width, c.height); c.setPointerCapture(e.pointerId); });
     c.addEventListener('pointermove', e => { if (st === null) return; const s = c._csel; x1 = Math.max(s.l, Math.min(s.r, px(e))); const ctx = c.getContext('2d'), r = c.width / (c.clientWidth || 1);
-      ctx.putImageData(snap, 0, 0); ctx.save(); ctx.setTransform(r, 0, 0, r, 0, 0); ctx.fillStyle = css('--sel'); ctx.globalAlpha = 0.28; ctx.fillRect(Math.min(st, x1), s.t, Math.abs(x1 - st), s.b - s.t); ctx.globalAlpha = 1; ctx.strokeStyle = css('--sel'); ctx.lineWidth = 1.5; ctx.strokeRect(Math.min(st, x1), s.t, Math.abs(x1 - st), s.b - s.t); ctx.restore(); });
+      ctx.putImageData(snap, 0, 0); ctx.save(); ctx.setTransform(r, 0, 0, r, 0, (c._off || 0) * r); ctx.fillStyle = css('--sel'); ctx.globalAlpha = 0.28; ctx.fillRect(Math.min(st, x1), s.t, Math.abs(x1 - st), s.b - s.t); ctx.globalAlpha = 1; ctx.strokeStyle = css('--sel'); ctx.lineWidth = 1.5; ctx.strokeRect(Math.min(st, x1), s.t, Math.abs(x1 - st), s.b - s.t); ctx.restore(); });
     const end = (ok, ev) => { if (st === null) return; const s = c._csel, a = Math.min(st, x1), b = Math.max(st, x1); st = null; const ctx = c.getContext('2d'); if (snap) ctx.putImageData(snap, 0, 0); snap = null;
       if (!ok || b - a < 8) return;
       const toX = x => s.xr[0] + (x - s.l) / (s.r - s.l) * (s.xr[1] - s.xr[0]), xa = toX(a), xb = toX(b), us = [];
@@ -2395,10 +2398,15 @@ function bind() {
   $('#btn-padrao').addEventListener('click', () => { const antes = ajustes().join(' · '); resetPadrao(); suavUI(); view(); log('voltou à vista padrão', `desfez: ${antes}`); renderAnalise(); });
   // observações iniciais: só na vista padrão; depois de registradas, não mudam
   $('#obs-reg').addEventListener('click', async () => {
-    const txt = $('#obs-txt').value.trim(); if (!isPadrao()) return; if (txt.length < 20) { $('#obs-hint').textContent = 'Escreva ao menos uma frase (20 caracteres) sobre o que vê na vista padrão.'; return; }
+    const txt = $('#obs-txt').value.trim(); if (!isPadrao()) return; if (txt.length < 20) { $('#obs-hint').textContent = 'Escreva ao menos uma frase (20 caracteres) com fatos observados na vista padrão.'; return; }
+    // observações iniciais são fatos; palavras de conclusão pedem confirmação (não dá para proibir: podem aparecer com outro sentido)
+    const CONC = /\b(falsa|falso|falsifica\w*|imita(ção|çao|cao|da|do|dor\w*)|autêntic\w*|autentic\w*|forjad\w*|fraud\w*|verdadeira|verdadeiro|genuín\w*|genuin\w*|não (é|foi) (dele|dela|do autor|da autora)|mesmo autor|outro autor|outra pessoa|atípica|típica)\b/gi;
+    const hits = [...new Set((txt.match(CONC) || []).map(w => w.toLowerCase()))];
+    if (hits.length && S.obsWarn !== txt) { S.obsWarn = txt; $('#obs-hint').innerHTML = `<span class="bad">⚠ O texto parece conter conclusão (${hits.map(escH).join(', ')}).</span> As observações iniciais devem ser fatos: o que se vê e se mede. A conclusão vai na fundamentação, na aba Integridade e laudo. Reescreva, ou toque de novo em "registrar" para manter assim (fica anotado no registro).`; return; }
+    const aviso = hits.length ? hits : null; S.obsWarn = null;
     const now = new Date(), ts = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR'), h = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode([casoId(), ts, txt].join('|'))));
-    S.obs = { txt, ts, h, antes: !S.firstAdj, adjTs: S.firstAdj ? S.firstAdj.ts : null, vista: vistaCode() };
-    log('registrou observações iniciais', `na vista padrão (${S.obs.antes ? 'antes de qualquer ajuste' : 'depois de ajustes'}) · ${txt.length} caracteres · hash ${h.slice(0, 12)}`); renderObs(); if (S.tab === 'integ') renderInteg();
+    S.obs = { txt, ts, h, antes: !S.firstAdj, adjTs: S.firstAdj ? S.firstAdj.ts : null, vista: vistaCode(), aviso };
+    log('registrou observações iniciais', `na vista padrão (${S.obs.antes ? 'antes de qualquer ajuste' : 'depois de ajustes'}) · ${txt.length} caracteres · hash ${h.slice(0, 12)}${aviso ? ' · mantidas após aviso de conclusão (' + aviso.join(', ') + ')' : ''}`); renderObs(); if (S.tab === 'integ') renderInteg();
   });
   // modo cego: revelar o tipo da questionada fica registrado e aparece no laudo
   $('#btn-reveal').addEventListener('click', () => { const now = new Date(); S.blind = false; S.revealed = now.toLocaleTimeString('pt-BR'); log('revelou o tipo da questionada', `${MODE_NOME[S.mode]}${S.obs ? '' : ' · antes das observações iniciais'}`); render(); });
