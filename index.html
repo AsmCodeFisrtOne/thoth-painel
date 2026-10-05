@@ -98,11 +98,16 @@ b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(
 table.tq { border-collapse: collapse; width: 100%; font-size: 11.5px; line-height: 1.35; table-layout: fixed } table.tq th:nth-child(1) { width: 46% } table.tq th:nth-child(2) { width: 18% } table.tq th { text-align: left; color: var(--muted); font-weight: 600; padding: 3px 6px; border-bottom: 1px solid var(--accent) }
 table.tq td { padding: 3px 6px; border-bottom: 1px solid var(--grid); vertical-align: top } table.tq td:nth-child(2) { font-weight: 600; overflow-wrap: anywhere } table.tq td:first-child { width: 46% }
 @media (max-width: 680px) { table.tq td:nth-child(2) { white-space: normal } table.tq th:nth-child(1) { width: 40% } table.tq th:nth-child(2) { width: 22% } }
+.trban { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; background: var(--warnbg); border: 1px solid var(--amber); border-left: 5px solid var(--amber); border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 8px }
+#trinv { position: fixed; inset: 0; z-index: 9; background: color-mix(in srgb, var(--bg) 72%, transparent); display: grid; place-items: center; padding: 16px }
+.trwarn { color: var(--amber); font-weight: 600 } .trwarn:empty { display: none }
+#ztoast { position: fixed; z-index: 7; background: var(--panel); border: 1px solid var(--line); border-left: 4px solid var(--sel); border-radius: 10px; box-shadow: 0 8px 28px rgba(0,0,0,.18); padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; font-weight: 600; max-width: min(420px, calc(100vw - 24px)) }
+#ztoast .zb { display: flex; flex-wrap: wrap; gap: 6px; align-items: center } #ztoast .zx { border: 0; background: none; color: var(--muted); font-size: 18px; line-height: 1; cursor: pointer; padding: 0 4px; margin-left: auto }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
 .cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
 .ch-s { height: 120px }
-#cv-sig { touch-action: none; cursor: crosshair }
+#cv-sig { touch-action: none; cursor: crosshair } #cv-vel, #cv-acc, #cv-pow, #cv-d4, #cv-d5, #cv-big { cursor: col-resize }
 .shift { display: flex; gap: 4px; align-items: center; justify-content: flex-end; font: 11px var(--mono); color: var(--accent) }
 .shift button { border: 1px solid var(--accent); background: none; color: var(--accent); border-radius: 4px; font-size: 10px; padding: 0 5px; cursor: pointer }
 table { border-collapse: collapse; width: 100% }
@@ -177,10 +182,11 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   </nav>
 
   <section class="pane" id="pane-analise">
+    <div id="tr-banner" class="trban" hidden><span id="tr-banner-t"></span><button type="button" class="btn" id="tr-banner-x">voltar à assinatura inteira</button></div>
     <div class="bar">
       <div class="grp"><span>Comparar as curvas por:</span><button type="button" class="btn" data-eixo="tempo" title="Cada assinatura no próprio relógio: mostra o ritmo e a duração; os traços podem não coincidir.">tempo real</button><button type="button" class="btn on" data-eixo="alinhado" title="O início e o fim de cada traço coincidem com os mesmos traços dos padrões: compara a forma do movimento em cada traço.">traço a traço</button><button type="button" class="btn" data-eixo="caminho" title="O mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.">posição no traçado</button><span class="dica" id="eixo-dica"></span></div>
       <div class="grp hl"><span>Grandeza:</span><button type="button" class="btn" data-g="x">X</button><button type="button" class="btn" data-g="y">Y</button><button type="button" class="btn on" data-g="r">resultante</button></div>
-      <div class="grp"><span id="trecho-txt">Trecho: arraste sobre o desenho</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button></div>
+      <div class="grp"><span id="trecho-txt">Zoom: arraste sobre o desenho ou sobre uma curva</span><button type="button" class="btn on" id="btn-inteira">assinatura inteira</button><button type="button" class="btn" id="btn-anal" hidden title="Calcula medidas, elipses e tabela só neste pedaço, como exploração. O veredito continua o da assinatura inteira.">analisar só este trecho</button></div>
       <div class="grp suavg"><label for="suav"><span>Suavizar as curvas:</span></label><input type="range" id="suav" min="0" max="10" step="1" value="0"><b id="suav-o" style="font-size:12px">0 de 10 · nenhuma</b><span class="dica" id="suav-dica"></span></div>
       <div class="grp"><span>Padrão médio:</span><span style="font-weight:400">DBA</span></div>
       <div class="grp"><span>Deslocar padrões:</span><button type="button" class="btn" id="btn-zero">zerar todos</button></div>
@@ -288,7 +294,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 <tr><td>As velocidades usadas se distribuem como as da pessoa?</td><td>Qualquer</td><td>Histograma</td></tr>
 <tr><td>No conjunto, a questionada está longe da pessoa?</td><td>Qualquer</td><td>Leitura da elipse 2D e do elipsoide 3D</td></tr>
 <tr><td>Qual relação entre medidas a questionada quebra (por exemplo, velocidade com pressão)?</td><td>Qualquer</td><td>Tabela verdade: resultado e motivo de cada combinação</td></tr>
-<tr><td>A diferença está na assinatura inteira ou só em um trecho?</td><td>Qualquer</td><td>Selecionar o trecho no desenho e repetir a leitura das elipses e da tabela</td></tr>
+<tr><td>A diferença está na assinatura inteira ou só em um trecho?</td><td>Qualquer</td><td>Marcar o trecho e tocar em &quot;analisar só este trecho&quot; (exploratório); repetir a leitura das elipses e da tabela</td></tr>
 </tbody></table></div>
 </div>
       <div class="tutwarn"><b>Cuidados</b><ul>
@@ -320,8 +326,8 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
       <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: seleção de um trecho do desenho e deslocamento da faixa dos padrões"></canvas></div>
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
-      <div class="tuttxt"><p><b>Trecho.</b> Arraste sobre o desenho para escolher uma parte (uma letra, um traço). O trecho fica amarelo, aparece ampliado com os 20 padrões por cima, e todo o painel passa a medir e desenhar só essa parte. "assinatura inteira" volta ao todo.</p><p><b>Deslocar padrões.</b> Embaixo de cada gráfico de curva, "padrões ◀ +0,0% ▶" desliza a faixa cinza 0,5% por toque, com a questionada parada. Serve para separar um simples atraso de uma diferença de forma.</p></div>
-      <div class="tutwarn"><b>Cuidados</b><ul><li>Em trechos curtos, a FFT tem menos resolução e a tabela pode marcar o tremor como inconclusivo.</li><li>Deslocar só muda o desenho; as medidas e o resultado não mudam.</li><li>Trecho e deslocamentos vão para o registro de acessos e para o laudo.</li></ul></div>
+      <div class="tuttxt"><p><b>Zoom.</b> Arraste sobre o desenho (uma letra, um traço) ou na horizontal sobre um gráfico de velocidade, aceleração, potência ou derivadas. O pedaço fica amarelo, aparece ampliado com os 20 padrões por cima e as curvas passam a mostrar só ele. <b>É só visual:</b> medidas, elipses, tabela verdade e veredito continuam os da assinatura inteira. "assinatura inteira" volta ao todo.</p><p><b>Analisar só este trecho.</b> Ao marcar um zoom, aparece um balão junto da seleção com este botão. Ele abre uma explicação e, se confirmado, calcula medidas, elipses e tabela verdade só no pedaço, como exploração (os títulos avisam "exploratório"). O veredito do alto continua sempre o da assinatura inteira.</p><p><b>Deslocar padrões.</b> Embaixo de cada gráfico de curva, "padrões ◀ +0,0% ▶" desliza a faixa cinza 0,5% por toque, com a questionada parada. Serve para separar um simples atraso de uma diferença de forma.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Na análise de um trecho curto, os números ficam frágeis: a FFT tem menos resolução e a tabela pode marcar o tremor como inconclusivo.</li><li>Deslocar só muda o desenho; as medidas e o resultado não mudam.</li><li>Zoom, análise de trecho e deslocamentos vão para o registro de acessos e para o laudo.</li></ul></div>
     </article>
     <article class="card tut" id="tut-suv" data-card="suv">
       <h3><span>Suavizar as curvas</span><span class="fine">exemplo ilustrativo · no caso: barra de ajustes da aba Análise</span></h3>
@@ -415,6 +421,16 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   <footer class="f">Simulação: assinaturas sintéticas em letra cursiva, com instrumentação do Thoth 1 (mesa 300 Hz · 0,005 mm · pressão 0–8191; clip 400 Hz). Todos os números são calculados no navegador a partir dos dados crus. O painel mede e mostra; a conclusão é do perito.</footer>
 </div>
 <div id="bigview" hidden role="dialog" aria-modal="true" aria-labelledby="big-title"><div class="bigbox"><div class="bighead"><b id="big-title"></b><span class="fine">duplo clique ou Esc para fechar</span><button type="button" class="btn" id="big-close" aria-label="Fechar">✕ fechar</button></div><div class="bigcv"><canvas id="cv-big"></canvas></div></div></div>
+<div id="ztoast" hidden role="status"><span id="ztoast-t"></span><span class="zb"><button type="button" class="btn on" id="ztoast-a">analisar só este trecho</button><button type="button" class="btn" id="ztoast-i">assinatura inteira</button><button type="button" class="zx" id="ztoast-x" aria-label="Fechar">×</button></span></div>
+<div id="trinv" hidden role="dialog" aria-modal="true" aria-labelledby="trinv-t"><div class="tibox">
+  <b class="tt" id="trinv-t">Analisar só este trecho?</b>
+  <p id="trinv-what"></p>
+  <p><b>Passam a valer só no pedaço:</b> medidas, elipses 2D e 3D, tabela verdade, histograma, impulso, energias, FFT e bússola.</p>
+  <p><b>Não muda:</b> o veredito do alto continua o da assinatura inteira.</p>
+  <p class="trwarn" id="trinv-warn"></p>
+  <p class="fine" style="margin:0">Quem testa muitos pedaços acaba achando algum "fora" por acaso. Use para entender onde está a diferença, não para escolher um resultado. O trecho analisado vai para o registro de acessos e para o laudo, marcado como exploratório.</p>
+  <div class="row"><button type="button" class="btn on" id="trinv-go">Analisar o trecho</button><button type="button" class="btn" id="trinv-no">Cancelar</button></div>
+</div></div>
 <div id="tutinv" hidden role="dialog" aria-modal="true" aria-labelledby="tutinv-t"><div class="tibox">
   <b class="tt" id="tutinv-t">Primeira vez no painel, ou ficou alguma dúvida?</b>
   <p>A aba <b>Tutorial</b> explica, com animações curtas e na ordem da tela, como ler cada ajuste e cada gráfico: modos de comparação, suavização, elipse, 3D, tabela verdade e os demais.</p>
@@ -1073,15 +1089,23 @@ async function build(name, mode) {
 }
 
 /* ---------------- recorte (trecho) e cálculos da vista ---------------- */
-const selOf = p => { const s = new Uint8Array(p.t.length); if (!S.trecho) { s.fill(1); return s; } const [a, b] = S.trecho; for (let i = 0; i < s.length; i++) s[i] = p.u[i] >= a && p.u[i] <= b ? 1 : 0; return s; };
+const ZR = () => S.zoom || S.trecho; // faixa mostrada (zoom só visual) — a análise usa só S.trecho
+const selR = (p, R) => { const s = new Uint8Array(p.t.length); if (!R) { s.fill(1); return s; } const [a, b] = R; for (let i = 0; i < s.length; i++) s[i] = p.u[i] >= a && p.u[i] <= b ? 1 : 0; return s; };
 function view() {
-  const sels = D.PP.map(selOf), selq = selOf(D.Q);
+  const sels = D.PP.map(p => selR(p, S.trecho)), selq = selR(D.Q, S.trecho);
   if (sels.some(s => !s.some(v => v)) || !selq.some(v => v)) { S.trecho = null; return view(); }
-  const M = D.PP.map((p, i) => TH.measures(p, D.NF, sels[i])), MQ = TH.measures(D.Q, D.NF, selq), MH = TH.maha(M, MQ);
+  const zsame = !S.zoom || (S.trecho && S.zoom[0] === S.trecho[0] && S.zoom[1] === S.trecho[1]);
+  const zs = zsame ? sels : D.PP.map(p => selR(p, S.zoom)), zq = zsame ? selq : selR(D.Q, S.zoom);
+  if (zs.some(s => !s.some(v => v)) || !zq.some(v => v)) { S.zoom = null; return view(); }
+  const M = D.PP.map((p, i) => TH.measures(p, D.NF, sels[i])), MQ = TH.measures(D.Q, D.NF, selq), MHt = TH.maha(M, MQ);
+  // o veredito vem sempre da assinatura inteira: o trecho (exploratório) e o zoom não mudam a conclusão
+  if (!S.trecho) D._MHfull = MHt;
+  if (!D._MHfull) { const all = p => selR(p, null); D._MHfull = TH.maha(D.PP.map(p => TH.measures(p, D.NF, all(p))), TH.measures(D.Q, D.NF, all(D.Q))); }
+  const MH = D._MHfull;
   const prof = (p, s) => { let a = -1, b = -1; for (let i = 0; i < s.length; i++) if (s[i]) { if (a < 0) a = i; b = i; } const g = new Float64Array(400); for (let i = 0; i < 400; i++) g[i] = a + (b - a) * i / 399; return TH.interp(g, p._ix, p.vabs); };
   const PR = D.PP.map((p, i) => prof(p, sels[i])), avg = ex => { const o = new Float64Array(400); let n = 0; PR.forEach((r, j) => { if (j === ex) return; n++; for (let i = 0; i < 400; i++) o[i] += r[i]; }); return o.map(v => v / n); };
   const dtwP = PR.map((r, i) => TH.dtwPath(r, avg(i), 40).dist), dtwQ = TH.dtwPath(prof(D.Q, selq), avg(-1), 40).dist;
-  return (V = { sels, selq, M, MQ, MH, dtwP, dtwQ });
+  return (V = { sels, selq, zs, zq, M, MQ, MH, MHt, dtwP, dtwQ });
 }
 
 /* ---------------- canvas: utilidades de desenho ---------------- */
@@ -1131,10 +1155,10 @@ function robust(arrs, q = 0.995) { const all = []; for (const a of arrs) for (co
 function selRange(s) { let a = -1, b = -1; for (let i = 0; i < s.length; i++) if (s[i]) { if (a < 0) a = i; b = i; } return [a, b]; }
 function pathPct(p) { const P = p.path[p.i1] || 1; return p.path.map(v => 100 * v / P); }
 function curveData(sigf, shiftKey) {
-  const { sels, selq } = V, mode = S.eixo, sh = S.shifts[shiftKey] || 0;
+  const sels = V.zs, selq = V.zq, mode = S.eixo, sh = S.shifts[shiftKey] || 0, ZT = ZR();
   let gx, rows, qx, qy, qi, xr, xlabel, tol;
   if (mode === 'alinhado') {
-    const ua = S.trecho ? S.trecho[0] : 0, ub = S.trecho ? S.trecho[1] : 100, idx = [];
+    const ua = ZT ? ZT[0] : 0, ub = ZT ? ZT[1] : 100, idx = [];
     for (let i = 0; i < NU; i++) { const u = 100 * i / (NU - 1); if (u >= ua && u <= ub) idx.push(i); }
     gx = idx.map(i => 100 * i / (NU - 1));
     rows = D.PP.map((p, k) => { const v = TH.interp(idx.map(i => D.A.W[k][i]), p._ix, sigf(p)); return v; });
@@ -1145,10 +1169,10 @@ function curveData(sigf, shiftKey) {
     const n = Math.max(50, Math.round(maxd * FS)); gx = Array.from({ length: n }, (_, i) => i / FS);
     rows = D.PP.map((p, k) => { const [a, b] = durs[k], y = sigf(p), o = new Float64Array(n); for (let i = 0; i < n; i++) o[i] = a + i <= b ? y[a + i] : NaN; return o; });
     const [qa, qb] = selRange(selq), ys = sigf(D.Q); qx = []; qy = []; qi = []; for (let i = qa; i <= qb; i++) { qx.push((i - qa) / FS); qy.push(ys[i]); qi.push(i); }
-    xr = [0, Math.max(maxd, (qb - qa) / FS)]; xlabel = 'tempo real (s)' + (S.trecho ? ' desde o início do trecho' : ''); tol = Infinity;
+    xr = [0, Math.max(maxd, (qb - qa) / FS)]; xlabel = 'tempo real (s)' + (ZT ? ' desde o início do trecho' : ''); tol = Infinity;
   } else {
-    const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.sels[D.ri]; let PA = 0, PB = 100;
-    if (S.trecho) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
+    const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.zs[D.ri]; let PA = 0, PB = 100;
+    if (ZT) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
     const n = 500; gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
     rows = D.PP.map(p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) if (p.C[i]) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); });
     const qp = pathPct(D.Q), ys = sigf(D.Q); qx = []; qy = []; qi = []; for (let i = D.Q.i0; i <= D.Q.i1; i++) if (D.Q.C[i] && selq[i]) { qx.push(qp[i]); qy.push(ys[i]); qi.push(i); }
@@ -1179,6 +1203,7 @@ function drawCurve(cv, sigf, shiftKey, ylabel, noise, scale = 1) {
   const F = frame(cv, d.xr, yr, { xlabel: d.xlabel, ylabel });
   airBands(F, d); bandFill(F, d.gx, d.lo, d.hi, F.P.band); polyline(F, d.gx, d.m, F.P.band, 1);
   if (noise) for (const sg of [1, -1]) polyline(F, d.xr, [sg * 2 * noise * scale, sg * 2 * noise * scale], F.P.noise, 1, Infinity, [2, 3]);
+  cv._csel = { xr: d.xr, l: F.m.l, r: F.w - F.m.r, t: F.m.t, b: F.h - F.m.b, qx: d.qx, qi: d.qi }; // para escolher o trecho arrastando sobre a curva
   polyline(F, d.qx, d.qy, F.P.acc, 1, Infinity); F.done(); // contínua (sem buracos); as faixas claras mostram onde a caneta estava no ar —: inclui o movimento no ar medido pela mesa (até ~10 mm do papel), como a faixa dos padrões
 }
 
@@ -1191,9 +1216,9 @@ function drawSignature(cv) {
   const x0 = Math.min(...xs) - 2, x1 = Math.max(...xs) + 2, y0 = Math.min(...ys) - 2, y1 = Math.max(...ys) + 2, sc = Math.min((w - 16) / (x1 - x0), (h - 16) / (y1 - y0));
   const ox = (w - sc * (x1 - x0)) / 2, oy = (h - sc * (y1 - y0)) / 2;
   const X = v => ox + (v - x0) * sc, Y = v => h - oy - (v - y0) * sc; drawXform = { X, Y, inv: (px, py) => [(px - ox) / sc + x0, (h - oy - py) / sc + y0] };
-  if (S.trecho) {
+  if (ZR()) {
     let a = Infinity, b = -Infinity, e = Infinity, f = -Infinity;
-    D.PP.forEach((p, k) => { const s = V.sels[k], [RX, RY] = R[k]; for (let i = 0; i < s.length; i++) if (s[i]) { a = Math.min(a, RX[i]); b = Math.max(b, RX[i]); e = Math.min(e, RY[i]); f = Math.max(f, RY[i]); } });
+    D.PP.forEach((p, k) => { const s = V.zs[k], [RX, RY] = R[k]; for (let i = 0; i < s.length; i++) if (s[i]) { a = Math.min(a, RX[i]); b = Math.max(b, RX[i]); e = Math.min(e, RY[i]); f = Math.max(f, RY[i]); } });
     c.fillStyle = P.sel; c.globalAlpha = 0.35; c.fillRect(X(a - 0.8), Y(f + 0.8), (b - a + 1.6) * sc, (f - e + 1.6) * sc); c.globalAlpha = 1;
   }
   const stroke = (RX, RY, C, col, lw, alpha, air) => {
@@ -1258,8 +1283,8 @@ function animUI() {
 
 function drawZoom(cv) {
   const P = pal(), h = cv.clientHeight || 220, { c, w } = setup(cv, h), R = D.REG; let mx = 0, my = 0, n = 0;
-  D.PP.forEach((p, k) => { const s = V.sels[k]; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { mx += R[k][0][i]; my += R[k][1][i]; n++; } }); mx /= n; my /= n;
-  const all = [...D.PP, D.Q], sels = [...V.sels, V.selq]; let ex = 1;
+  D.PP.forEach((p, k) => { const s = V.zs[k]; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { mx += R[k][0][i]; my += R[k][1][i]; n++; } }); mx /= n; my /= n;
+  const all = [...D.PP, D.Q], sels = [...V.zs, V.zq]; let ex = 1;
   all.forEach((p, k) => { const s = sels[k]; for (let i = 0; i < s.length; i++) if (s[i]) ex = Math.max(ex, Math.abs(R[k][0][i] - mx), Math.abs(R[k][1][i] - my)); });
   const sc = Math.min(w, h) / 2 / (ex * 1.08), X = v => w / 2 + (v - mx) * sc, Y = v => h / 2 - (v - my) * sc;
   c.fillStyle = P.sel; c.globalAlpha = 0.12; c.fillRect(0, 0, w, h); c.globalAlpha = 1;
@@ -1294,8 +1319,8 @@ function drawHist(cv) {
   c.strokeStyle = P.acc; c.lineWidth = 1.4; c.beginPath(); for (let i = 0; i < nb; i++) { c.lineTo(X(lo + i * bw), Y(hq[i])); c.lineTo(X(lo + (i + 1) * bw), Y(hq[i])); } c.stroke(); F.done();
 }
 function byPathRows(sigf) {
-  const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.sels[D.ri]; let PA = 0, PB = 100;
-  if (S.trecho) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
+  const ref = D.PP[D.ri], pr = pathPct(ref), rs = V.zs[D.ri]; let PA = 0, PB = 100;
+  if (ZR()) { PA = Infinity; PB = -Infinity; for (let i = 0; i < rs.length; i++) if (rs[i]) { PA = Math.min(PA, pr[i]); PB = Math.max(PB, pr[i]); } }
   const n = 400, gx = Array.from({ length: n }, (_, i) => PA + (PB - PA) * i / (n - 1));
   const one = p => { const pp = pathPct(p), y = sigf(p), xs = [], vs = []; for (let i = p.i0; i <= p.i1; i++) { if (xs.length && pp[i] <= xs[xs.length - 1]) continue; xs.push(pp[i]); vs.push(y[i]); } return TH.interp(gx, xs, vs); };
   return { gx, rows: D.PP.map(one), q: one(D.Q), PA, PB };
@@ -1309,7 +1334,7 @@ function drawPressure(cv) {
 }
 function drawDeform(cv) {
   const { gx, rows, q, PA, PB } = byPathRows(p => p.t), sh = (S.shifts.def || 0) * (PB - PA) / 100;
-  const st = (p, s) => p.t[selRange(s)[0]], R = rows.map((r, k) => r.map(v => v - st(D.PP[k], V.sels[k]))), qq = q.map(v => v - st(D.Q, V.selq));
+  const st = (p, s) => p.t[selRange(s)[0]], R = rows.map((r, k) => r.map(v => v - st(D.PP[k], V.zs[k]))), qq = q.map(v => v - st(D.Q, V.zq));
   const F = frame(cv, [PA, PB], [Math.min(0, ...R.map(r => Math.min(...r))), Math.max(...qq, ...R.map(r => Math.max(...r))) * 1.05], { xlabel: 'posição no traçado (%)', ylabel: 'tempo real (s)' });
   R.forEach(r => polyline(F, gx.map(v => v + sh), r, F.P.band, 0.6)); polyline(F, gx, qq, F.P.acc, 1.4); F.done();
 }
@@ -1475,7 +1500,7 @@ let TVSEL = -1, TVLIST = false;
 function renderTV() {
   const VD = mainVerdict(); TVROWS = [{ ks: VD.ks, grp: 'Veredito', L: VD, main: true }, ...tvCombos().map(c => ({ ...c, L: tvLinha(c.ks) }))];
   const cnt = r => TVROWS.slice(1).filter(x => x.L.res === r).length;
-  let h = `<div class="tvsum"><span class="chip-r big ${tvCls(VD.res)}">${VD.res}</span> <b>Veredito (4 medidas ★)</b> — ${VD.why}. <span class="mut">Combinações: <b class="r-at">${cnt('ATÍPICA')} atípicas</b> · <b class="r-ty">${cnt('TÍPICA')} típicas</b> · <b class="r-in">${cnt('INCONCLUSIVA')} inconclusivas</b> de ${TVROWS.length - 1}.</span> <button type="button" class="btn" id="tv-list">${TVLIST ? 'ver em matriz' : 'ver em lista'}</button></div>`;
+  let h = `<div class="tvsum"><span class="chip-r big ${tvCls(VD.res)}">${VD.res}</span> <b>Veredito (4 medidas ★)</b> — ${VD.why}. <span class="mut">${S.trecho ? `Combinações no trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% (exploratório): ` : 'Combinações: '}<b class="r-at">${cnt('ATÍPICA')} atípicas</b> · <b class="r-ty">${cnt('TÍPICA')} típicas</b> · <b class="r-in">${cnt('INCONCLUSIVA')} inconclusivas</b> de ${TVROWS.length - 1}.</span> <button type="button" class="btn" id="tv-list">${TVLIST ? 'ver em matriz' : 'ver em lista'}</button></div>`;
   if (TVLIST) {
     h += '<div class="tw"><table class="tv"><thead><tr><th>Combinação</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody>';
     let g = ''; TVROWS.forEach((r, i) => { if (r.grp !== g) { g = r.grp; h += `<tr class="g"><td colspan="3">${g}${g === 'Veredito' ? ' · modelo de 4 medidas ★, o único que decide' : ''}</td></tr>`; }
@@ -1836,20 +1861,31 @@ function renderMeasures() {
 }
 
 /* ---------------- aba Análise ---------------- */
+let ZT_T = 0;
+function zToastHide() { clearTimeout(ZT_T); const el = $('#ztoast'); if (el) el.hidden = true; }
+function zToast(x, y) { // balão junto da seleção: o zoom é só visual; a análise do trecho é opcional
+  if (!S.zoom) return; const el = $('#ztoast'); $('#ztoast-t').textContent = `Zoom ${br(S.zoom[0], 0)}–${br(S.zoom[1], 0)}% · só visual (nada foi recalculado)`;
+  el.hidden = false; const r = el.getBoundingClientRect(), W = window.innerWidth, H = window.innerHeight;
+  let lx = Math.min(Math.max(12, x + 12), W - r.width - 12), ly = y + 14; if (ly + r.height > H - 12) ly = Math.max(12, y - r.height - 14);
+  el.style.left = lx + 'px'; el.style.top = ly + 'px'; clearTimeout(ZT_T); ZT_T = setTimeout(zToastHide, 9000);
+}
 function renderAnalise() {
-  const g = S.g, [v, a, pw, nm] = SYM[g], z = S.trecho ? ' · trecho' : '';
+  const g = S.g, [v, a, pw, nm] = SYM[g], z = S.trecho ? ' · trecho (exploratório)' : '', Z = ZR(), zc = Z ? ` · ${br(Z[0], 0)}–${br(Z[1], 0)}%` : '';
   $$('[data-eixo]').forEach(b => b.classList.toggle('on', b.dataset.eixo === S.eixo));
   $('#eixo-dica').textContent = { tempo: 'Tempo real: cada assinatura no próprio relógio. Mostra o ritmo e a duração; os traços podem não coincidir.', alinhado: 'Traço a traço: o início e o fim de cada traço coincidem com os dos padrões. Compara a forma do movimento em cada traço, mesmo que a pessoa tenha escrito mais devagar.', caminho: 'Posição no traçado: o mesmo ponto da letra fica no mesmo lugar, qualquer que seja a velocidade.' }[S.eixo];
   $$('[data-g]').forEach(b => b.classList.toggle('on', b.dataset.g === g));
-  $('#btn-inteira').classList.toggle('on', !S.trecho);
-  $('#trecho-txt').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : 'Trecho: arraste sobre o desenho';
-  $('#card-zoom').hidden = !S.trecho; $('#card-sig').classList.toggle('span2', !S.trecho);
-  $('#t-sig').textContent = S.trecho ? 'Desenho · seleção do trecho' : 'Desenho: 20 padrões + questionada, registrados';
-  $('#t-zoom').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em zoom` : '';
+  $('#btn-inteira').classList.toggle('on', !Z);
+  $('#trecho-txt').textContent = S.trecho ? `Trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% em análise (exploratória; o veredito continua o da assinatura inteira)` : Z ? `Zoom ${br(Z[0], 0)}–${br(Z[1], 0)}% (só visual; nada é recalculado)` : 'Zoom: arraste sobre o desenho ou sobre uma curva';
+  $('#btn-anal').hidden = true; // a ação aparece no balão junto da seleção
+  if (!S.zoom || S.trecho) zToastHide();
+  $('#tr-banner').hidden = !S.trecho; if (S.trecho) $('#tr-banner-t').textContent = `Análise do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% · exploratória · medidas, elipses e tabela só deste pedaço · o veredito continua o da assinatura inteira`;
+  $('#card-zoom').hidden = !Z; $('#card-sig').classList.toggle('span2', !Z);
+  $('#t-sig').textContent = Z ? 'Desenho · trecho em destaque' : 'Desenho: 20 padrões + questionada, registrados';
+  $('#t-zoom').textContent = Z ? `Zoom ${br(Z[0], 0)}–${br(Z[1], 0)}%` : '';
   const sv = suavN() ? ` · suavizado ${suavN()}/10` : '';
-  const T = { vel: `Velocidade · ${v}${z}${sv}`, area: `Área sob a velocidade (distância percorrida) · ${v}${z}`, hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${z}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${z}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${z}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${z}${sv}` };
+  const T = { vel: `Velocidade · ${v}${zc}${sv}`, area: `Área sob a velocidade (distância percorrida) · ${v}${z}`, hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${zc}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${zc}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${zc}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${zc}${sv}` };
   for (const k in T) $('#t-' + k).textContent = T[k];
-  $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}%` : 'Medidas globais';
+  $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% (exploratório)` : 'Medidas globais';
   $('#t-maha').textContent = `Distância à pessoa${z} · ${V.MH.keys.length} medidas ★`;
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
   renderMeasures(); renderTV();
@@ -1865,7 +1901,7 @@ function renderAnalise() {
     'cv-maha': cv => drawMaha(cv, 1), 'cv-m3': cv => { drawM3(cv, M3.tAnim); m3Kick(); },
   };
   requestAnimationFrame(() => {
-    animUI(); drawSignature($('#cv-sig')); if (S.trecho) drawZoom($('#cv-zoom'));
+    animUI(); drawSignature($('#cv-sig')); if (ZR()) drawZoom($("#cv-zoom"));
     for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5']) DRAW[id]($('#' + id));
     playMaha(false);
     m3Selects(); { const k3 = [D.name, D.mode, S.trecho].join('|'); if (k3 !== M3.key) { M3.key = k3; if (!S.m3user) { S.m3 = m3Best(); } m3Selects(); m3Record(S.m3user ? 'perito (mantido)' : 'auto'); m3Play(); } else m3Kick(); }
@@ -1984,7 +2020,7 @@ function params() {
   return [['Derivadas', `Savitzky-Golay · janela ${TH.SGW} (70 ms) · grau ${TH.SGO} · corte ~24,5 Hz`], ['Ruído (caneta parada)', `σ velocidade ${br(D.NF[1])} mm/s · σ 5ª derivada ${br(D.NF[5] / 1e7, 1)}×10⁷ mm/s⁵`],
     ['Alinhamento', 'marcos (levantamentos casados primeiro) + DTW limitado, banda de 10%'], ['Padrão médio', `DBA dos 20 padrões · referência P${String(D.ri + 1).padStart(2, '0')}`],
     ['Mahalanobis', `${V.MH.keys.length} medidas: ${V.MH.keys.join(', ')}`], ['Covariância', `Ledoit-Wolf (encolhimento ${br(V.MH.shrink)}) · limite de Hotelling (n = 20)`],
-    ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'], ['Grandeza', SYM[S.g][3]], ['Comparação das curvas (normalização do tempo)', { alinhado: 'traço a traço (marcos + DTW limitado)', tempo: 'tempo real (sem normalização)', caminho: 'posição no traçado (normalização pelo caminho percorrido)' }[S.eixo]],
+    ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura (análise exploratória; veredito da assinatura inteira)` : 'assinatura inteira'], ['Zoom visual dos gráficos', S.zoom ? `${br(S.zoom[0], 0)}–${br(S.zoom[1], 0)}% (só visual)` : 'nenhum'], ['Grandeza', SYM[S.g][3]], ['Comparação das curvas (normalização do tempo)', { alinhado: 'traço a traço (marcos + DTW limitado)', tempo: 'tempo real (sem normalização)', caminho: 'posição no traçado (normalização pelo caminho percorrido)' }[S.eixo]],
     ['Deslocamentos dos padrões', Object.keys(S.shifts).filter(k => S.shifts[k]).map(k => `${k} ${br(S.shifts[k], 1)}%`).join(' · ') || 'todos +0,0%'], ['Questionada (simulação)', { 'imitação': 'imitação por terceiro', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente (ordem e sentido dos traços trocados), ritmo da pessoa' }[S.mode]]];
 }
 function renderInteg() {
@@ -2028,7 +2064,7 @@ async function makePDF() {
   y = T(`Grau de suporte (escala verbal ENFSI / SWGDOC): ${S.hip.grau || '(não escolhido)'}`, L, y, { b: true });
   y = T('Fundamentação: ' + ($('#fund').value.trim() || '(não preenchida)'), L, y, { gap: 3 });
   H2('2. Resultado estatístico');
-  y = T(`Análise: ${S.trecho ? `trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura` : 'assinatura inteira'} · grandeza ${SYM[S.g][3]} · eixo ${params()[8][1]}.`, L, y);
+  y = T(`Análise: ${S.trecho ? `trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura (exploratória; o veredito é o da assinatura inteira)` : 'assinatura inteira'} · grandeza ${SYM[S.g][3]} · eixo ${params().find(r => r[0].startsWith('Comparação das curvas'))[1]}.`, L, y);
   y = T(`Distância à pessoa nas ${MH.keys.length} medidas (${MH.keys.join(', ')}): ${fDist(MH.d2)}, contra limite da pessoa de ${br(MH.lim99, 1)} (99%); raridade: ${raridade(MH.p)} [técnico: Mahalanobis D² = ${br(MH.d2, MH.d2 > 100 ? 0 : 2)}, limite de Hotelling n = 20, valor p ${MH.p < 1e-4 ? '< 0,0001' : '= ' + br(MH.p, 4)}]. Leitura do painel: ${mainVerdict().res} para a pessoa (${mainVerdict().why}; regra de três saídas: típica abaixo do limite de 95%, atípica acima do de 99% com régua estável, inconclusiva no meio ou com régua instável). Padrões contra os outros 19: D² de ${br(Math.min(...MH.loo), 1)} a ${br(Math.max(...MH.loo), 1)}, ${MH.looOut} de 20 fora do limite.`, L, y);
   y = T('O valor p mede só o quanto a questionada é atípica para a pessoa; não é a probabilidade de falsificação.', L, y, { i: true, s: 8.5, c: [93, 104, 120], gap: 3 });
   const H3 = S.m3hist || [], last = H3[H3.length - 1];
@@ -2081,7 +2117,7 @@ function render() {
 async function loadCase() {
   if (ANIM.upto !== null) stopAnim(false);
   $('#loading').hidden = false; await tick();
-  D = await build(S.name, S.mode); S.trecho = null; S.shifts = {}; S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 }; view();
+  D = await build(S.name, S.mode); S.trecho = null; S.zoom = null; S.shifts = {}; S.crus = { qm: -1, qc: 0, sel: 12, pm: 0, pc: -1 }; view();
   $('#loading').hidden = true; log('abriu o caso', `${S.name} · questionada: ${S.mode}`); render(); tutInvite();
 }
 function watermark() {
@@ -2093,7 +2129,24 @@ function bind() {
   $$('.tab').forEach(t => t.addEventListener('click', () => { S.tab = t.dataset.tab; log('mudou de aba', t.textContent.trim()); render(); }));
   $$('[data-eixo]').forEach(b => b.addEventListener('click', () => { S.eixo = b.dataset.eixo; log('comparar as curvas por', b.textContent); renderAnalise(); }));
   $$('[data-g]').forEach(b => b.addEventListener('click', () => { S.g = b.dataset.g; log('mudou grandeza', SYM[S.g][3]); renderAnalise(); }));
-  $('#btn-inteira').addEventListener('click', () => { if (!S.trecho) return; S.trecho = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
+  $('#btn-inteira').addEventListener('click', () => { if (!ZR()) return; S.trecho = null; S.zoom = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
+  $('#btn-anal').addEventListener('click', () => { // pede confirmação com explicação antes de recalcular no pedaço
+    if (!S.zoom) return; const [a, b] = S.zoom, z = p => selR(p, S.zoom), dur = (p, s) => { const [i, j] = selRange(s); return (j - i) / FS; };
+    const tq = dur(D.Q, z(D.Q)), tp = TH.mean(D.PP.map(p => dur(p, z(p))));
+    $('#trinv-what').textContent = `Trecho ${br(a, 0)}–${br(b, 0)}% da assinatura: ${br(tp, 2)} s de escrita nos padrões (média) e ${br(tq, 2)} s na questionada.`;
+    $('#trinv-warn').textContent = tp < 1 ? '⚠ Pedaço curto (menos de 1 s nos padrões): os números ficam frágeis e o tremor (5–8 Hz) não pode ser medido.' : '';
+    const box = $('#trinv'), close = go => { box.hidden = true; document.removeEventListener('keydown', esc); if (!go) { log('cancelou análise do trecho', `${a}–${b}%`); return; }
+      S.trecho = S.zoom.slice(); view(); log('análise exploratória do trecho', `${S.trecho[0]}–${S.trecho[1]}% (o veredito continua o da assinatura inteira)`); renderAnalise(); };
+    const esc = e => { if (e.key === 'Escape') close(false); };
+    $('#trinv-go').onclick = () => close(true); $('#trinv-no').onclick = () => close(false); box.onclick = e => { if (e.target === box) close(false); };
+    document.addEventListener('keydown', esc); box.hidden = false; setTimeout(() => $('#trinv-go').focus(), 50); });
+  $('#tr-banner-x').addEventListener('click', () => $('#btn-inteira').click());
+  $('#ztoast-a').addEventListener('click', () => { zToastHide(); $('#btn-anal').click(); });
+  $('#ztoast-i').addEventListener('click', () => { zToastHide(); $('#btn-inteira').click(); });
+  $('#ztoast-x').addEventListener('click', zToastHide);
+  window.addEventListener('scroll', () => { if (!$('#ztoast').hidden) zToastHide(); }, { passive: true });
+  $$('.tab').forEach(t => t.addEventListener('click', zToastHide));
+  $('#ztoast').addEventListener('pointerenter', () => clearTimeout(ZT_T)); $('#ztoast').addEventListener('pointerleave', () => { ZT_T = setTimeout(zToastHide, 4000); });
   $('#btn-zero').addEventListener('click', () => { S.shifts = {}; log('Deslocar padrões', 'zerar todos'); renderAnalise(); });
   $$('.shift').forEach(el => el.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const k = el.dataset.k; S.shifts[k] = +((S.shifts[k] || 0) + +b.dataset.s).toFixed(1); log('Deslocar padrões', `${k}: ${S.shifts[k] >= 0 ? '+' : ''}${br(S.shifts[k], 1)}%`); renderAnalise(); }));
   const fixPair = moved => { const other = moved === 'x' ? 'my' : 'mx', me = moved === 'x' ? 'mx' : 'my'; let i = TV_SET.indexOf(S[other]); while (S[other] === S[me] || tvForbidden([S[other], S[me]])) { i = (i + 1) % TV_SET.length; S[other] = TV_SET[i]; } };
@@ -2111,9 +2164,29 @@ function bind() {
     const k = D.ri, [RX, RY] = D.REG[k], ref = D.PP[k], us = [];
     for (let i = 0; i < RX.length; i++) if (ref.C[i] && RX[i] >= ax && RX[i] <= bx && RY[i] >= ay && RY[i] <= by && ref.u[i] >= 0 && ref.u[i] <= 100) us.push(ref.u[i]);
     if (us.length < 3) { drawSignature(cv); return; }
-    S.trecho = [Math.floor(Math.min(...us)), Math.ceil(Math.max(...us))]; view(); log('selecionou trecho', `${S.trecho[0]}–${S.trecho[1]}%`); renderAnalise();
+    S.zoom = [Math.floor(Math.min(...us)), Math.ceil(Math.max(...us))]; S.trecho = null; view(); log('zoom visual', `${S.zoom[0]}–${S.zoom[1]}% (desenho)`); renderAnalise(); zToast(e.clientX, e.clientY);
   });
   cv.addEventListener('pointercancel', () => { start = null; dragRect = null; drawSignature(cv); });
+  // trecho escolhido arrastando na horizontal sobre um gráfico de curva (velocidade, aceleração, potência, 4ª e 5ª derivadas)
+  const CURV = { 'cv-vel': 'velocidade', 'cv-acc': 'aceleração', 'cv-pow': 'potência inercial', 'cv-d4': '4ª derivada', 'cv-d5': '5ª derivada' };
+  const curveSel = c => {
+    let st = null, snap = null, x1 = 0;
+    const px = e => { const r = c.getBoundingClientRect(); return e.clientX - r.left; };
+    const isCurve = () => (c.id === 'cv-big' ? !!CURV[BIG] : !!CURV[c.id]) && c._csel;
+    c.addEventListener('pointerdown', e => { if (!isCurve() || e.button > 0) return; const x = px(e), s = c._csel; if (x < s.l || x > s.r) return; st = x; x1 = x; const ctx = c.getContext('2d'); snap = ctx.getImageData(0, 0, c.width, c.height); c.setPointerCapture(e.pointerId); });
+    c.addEventListener('pointermove', e => { if (st === null) return; const s = c._csel; x1 = Math.max(s.l, Math.min(s.r, px(e))); const ctx = c.getContext('2d'), r = c.width / (c.clientWidth || 1);
+      ctx.putImageData(snap, 0, 0); ctx.save(); ctx.setTransform(r, 0, 0, r, 0, 0); ctx.fillStyle = css('--sel'); ctx.globalAlpha = 0.28; ctx.fillRect(Math.min(st, x1), s.t, Math.abs(x1 - st), s.b - s.t); ctx.globalAlpha = 1; ctx.strokeStyle = css('--sel'); ctx.lineWidth = 1.5; ctx.strokeRect(Math.min(st, x1), s.t, Math.abs(x1 - st), s.b - s.t); ctx.restore(); });
+    const end = (ok, ev) => { if (st === null) return; const s = c._csel, a = Math.min(st, x1), b = Math.max(st, x1); st = null; const ctx = c.getContext('2d'); if (snap) ctx.putImageData(snap, 0, 0); snap = null;
+      if (!ok || b - a < 8) return;
+      const toX = x => s.xr[0] + (x - s.l) / (s.r - s.l) * (s.xr[1] - s.xr[0]), xa = toX(a), xb = toX(b), us = [];
+      for (let j = 0; j < s.qx.length; j++) if (s.qx[j] >= xa && s.qx[j] <= xb) { const u = D.Q.u[s.qi[j]]; if (u >= 0 && u <= 100) us.push(u); }
+      if (us.length < 3) return;
+      const nome = CURV[c.id === 'cv-big' ? BIG : c.id]; S.zoom = [Math.floor(Math.min(...us)), Math.ceil(Math.max(...us))]; S.trecho = null;
+      if (c.id === 'cv-big') closeBig();
+      view(); log('zoom visual', `${S.zoom[0]}–${S.zoom[1]}% (gráfico de ${nome})`); renderAnalise(); zToast(ev.clientX, ev.clientY); };
+    c.addEventListener('pointerup', e => end(true, e)); c.addEventListener('pointercancel', () => end(false));
+  };
+  [...Object.keys(CURV), 'cv-big'].forEach(id => curveSel($('#' + id)));
   document.addEventListener('click', e => {
     const pg = e.target.closest('[data-pg]'); if (pg) { const id = pg.dataset.pg, d = +pg.dataset.d, c = S.crus, r = id[0] === 'q' ? D.RQ : D.RR[c.sel], n = id[1] === 'm' ? r.t_us.length : r.clip_t_us.length; c[id] = Math.max(0, Math.min(Math.ceil(n / PG) - 1, (c[id] < 0 ? 0 : c[id]) + d)); log('página vista', `${id[0] === 'q' ? 'questionada' : D.packs[c.sel + 1].name} · ${id[1] === 'm' ? 'mesa' : 'Clip'} · página ${c[id] + 1}`); renderCrus(); return; }
     const row = e.target.closest('[data-row]'); if (row) { S.crus.sel = +row.dataset.row; S.crus.pc = -1; S.crus.pm = 0; log('abriu padrão', D.packs[S.crus.sel + 1].name); renderCrus(); return; }
@@ -2756,9 +2829,9 @@ function drawTVT(cv, T) {
 
 /* ---------- Cartão 7: trecho e deslocar padrões ---------- */
 const TRD_STEPS = [
-  [0, 7, 'Para olhar só uma parte da assinatura (uma letra, um traço), arraste sobre o desenho formando um retângulo em volta dela. No celular, arraste com o dedo.'],
-  [7, 13.5, 'O trecho fica amarelo e aparece ampliado ao lado, com os 20 padrões por cima. A barra mostra o intervalo, por exemplo "Trecho 36–70%".'],
-  [13.5, 20, 'A partir daí, medidas, distância à pessoa, tabela verdade, histograma, impulso, energias, FFT, bússola e curvas passam a usar só esse trecho. Para voltar, toque em "assinatura inteira".'],
+  [0, 7, 'Para olhar só uma parte da assinatura (uma letra, um traço), arraste sobre o desenho formando um retângulo em volta dela. Também dá para arrastar na horizontal sobre um gráfico de curva (velocidade, aceleração, potência, derivadas). No celular, arraste com o dedo.'],
+  [7, 13.5, 'O trecho fica amarelo e aparece ampliado ao lado, com os 20 padrões por cima, e as curvas passam a mostrar só esse pedaço. A barra mostra "Zoom 36–70% (só visual)".'],
+  [13.5, 21, 'É só zoom: medidas, elipses, tabela verdade e o veredito continuam os da assinatura inteira. Para estudar o pedaço, o botão "analisar só este trecho", que aparece num balão junto da seleção, calcula medidas, elipses e tabela só nele, como exploração; o veredito do alto nunca muda. "assinatura inteira" volta ao todo.'],
   [20, 28, 'Deslocar padrões: embaixo de cada gráfico de curva há "padrões ◀ +0,0% ▶". Cada toque desliza a faixa cinza 0,5%; a questionada fica parada.'],
   [28, 35, 'Se a curva azul encaixa na cinza com 1 a 2% de deslocamento, a diferença era só um pequeno atraso, não de movimento.'],
   [35, 43, 'Se não encaixa em nenhuma posição, a diferença é de forma: a questionada faz outro movimento.'],
@@ -2771,7 +2844,7 @@ function drawTRD(cv, T) {
     const DX = x => D_.x + D_.w * x, DY = y => D_.y + D_.h * (1 - y);
     // barra do trecho
     const sel = k === 0 ? ph(T, st[0] + 1.5, st[0] + 5) : 1, a0 = 0.355, a1 = 0.715;
-    c.textAlign = 'left'; c.font = '600 12.5px ' + sans; c.fillStyle = P.fg; c.fillText(sel >= 1 ? 'Trecho 36–70% em zoom' : 'Trecho: arraste sobre o desenho', 12, 22);
+    c.textAlign = 'left'; c.font = '600 12.5px ' + sans; c.fillStyle = P.fg; c.fillText(sel >= 1 ? 'Zoom 36–70% (só visual)' : 'Zoom: arraste sobre o desenho ou uma curva', 12, 22);
     tBox(c, nar ? w - 150 : 250, 8, 140, 22, k === 2 && T > st[0] + 4 ? P.acc : P.panel, P.acc, 6); c.fillStyle = k === 2 && T > st[0] + 4 ? P.panel : P.acc; c.font = '600 12px ' + sans; c.textAlign = 'center'; c.fillText('assinatura inteira', (nar ? w - 150 : 250) + 70, 23);
     c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(D_.x, D_.y, D_.w, D_.h);
     const inSel = x => sel >= 1 && x >= a0 && x <= a1;
@@ -2782,8 +2855,10 @@ function drawTRD(cv, T) {
       let s = 99; const rnd = () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
       for (let r = 0; r < 20; r++) { const dx = (rnd() - 0.5) * 0.02, dy = (rnd() - 0.5) * 0.08, sx = 1 + (rnd() - 0.5) * 0.06; c.strokeStyle = P.band; c.globalAlpha = 0.35 * g; c.lineWidth = 1; c.beginPath(); G.pts.forEach(([x, y], i) => { const X_ = ZX(a0 + (x - a0) * sx + dx), Y_ = ZY(y + dy); i ? c.lineTo(X_, Y_) : c.moveTo(X_, Y_); }); c.stroke(); }
       c.globalAlpha = g; c.strokeStyle = P.acc; c.lineWidth = 2.2; c.beginPath(); G.pts.forEach(([x, y], i) => (i ? c.lineTo(ZX(x), ZY(y)) : c.moveTo(ZX(x), ZY(y)))); c.stroke(); c.globalAlpha = 1; }
-    if (k === 2) { const items = ['medidas', 'distância à pessoa', 'tabela verdade', 'histograma', 'impulso', 'energias', 'FFT', 'bússola', 'curvas']; const g = ph(T, st[0] + 0.3, st[0] + 3); const bx = nar ? 10 : D_.x + 10, by = nar ? D_.y + 10 : D_.y + D_.h - 80, bw = nar ? w - 20 : D_.w - 20;
-      c.globalAlpha = g; tBox(c, bx, by, bw, 66, P.panel, P.acc); c.textAlign = 'left'; c.fillStyle = P.acc; c.font = 'bold 12px ' + sans; c.fillText('passam a usar só o trecho:', bx + 10, by + 18); c.fillStyle = P.fg; c.font = '12px ' + sans; tWrap(c, items.join(' · '), bw - 20).forEach((l, i) => c.fillText(l, bx + 10, by + 38 + 16 * i)); c.globalAlpha = 1; }
+    if (k === 2) { const g = ph(T, st[0] + 0.3, st[0] + 3), bx = nar ? 10 : D_.x + 10, by = nar ? D_.y + 6 : D_.y + D_.h - 104, bw = nar ? w - 20 : D_.w - 20; c.font = '12px ' + sans;
+      const L1 = tWrap(c, 'Zoom: só o desenho e as curvas mudam. Medidas, elipses, tabela e veredito continuam os da assinatura inteira.', bw - 20), L2 = tWrap(c, '"analisar só este trecho": medidas, elipses e tabela do pedaço, como exploração. O veredito não muda.', bw - 20), hh = 26 + 16 * (L1.length + L2.length);
+      c.globalAlpha = g; tBox(c, bx, by, bw, hh, P.panel, P.acc); c.textAlign = 'left'; c.fillStyle = P.fg; L1.forEach((l, i) => c.fillText(l, bx + 10, by + 18 + 16 * i)); c.fillStyle = P.acc; c.font = '600 12px ' + sans; L2.forEach((l, i) => c.fillText(l, bx + 10, by + 24 + 16 * (L1.length + i))); c.globalAlpha = 1;
+      if (T > st[0] + 3) { const bx2 = Math.min(w - 250, DX(a1) + 8), by2 = nar ? D_.y + D_.h - 70 : D_.y + 14; tBox(c, bx2, by2, 240, 54, P.panel, P.sel, 8); c.textAlign = 'left'; c.fillStyle = P.fg; c.font = '600 11.5px ' + sans; c.fillText('Zoom 36–70% · só visual', bx2 + 10, by2 + 18); tBox(c, bx2 + 10, by2 + 26, 160, 20, P.acc, P.acc, 5); c.fillStyle = P.panel; c.font = '600 11.5px ' + sans; c.fillText('analisar só este trecho', bx2 + 18, by2 + 40); } }
     return;
   }
   // deslocar: uma curva com a azul atrasada (k 3–4) ou com outra forma (k 5)
