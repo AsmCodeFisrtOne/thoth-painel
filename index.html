@@ -93,6 +93,11 @@ b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(
 .tibox b.tt { font-size: 18px } .tibox p { margin: 0; font-size: 14px; line-height: 1.5; color: var(--ink) }
 .tibox .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px } .tibox .row .btn { font-size: 13.5px; padding: 7px 14px }
 .tibox label { font-size: 12.5px; color: var(--muted); display: flex; gap: 6px; align-items: center }
+.tutq { font-size: 12px; max-width: 110ch; display: flex; flex-direction: column; gap: 4px } .tutq > b { font-size: 13px } .tutq .fine { margin: 0 }
+.tutq h4 { margin: 8px 0 2px; font-size: 12px; color: var(--accent) }
+table.tq { border-collapse: collapse; width: 100%; font-size: 11.5px; line-height: 1.35; table-layout: fixed } table.tq th:nth-child(1) { width: 46% } table.tq th:nth-child(2) { width: 16% } table.tq th { text-align: left; color: var(--muted); font-weight: 600; padding: 3px 6px; border-bottom: 1px solid var(--accent) }
+table.tq td { padding: 3px 6px; border-bottom: 1px solid var(--grid); vertical-align: top } table.tq td:nth-child(2) { white-space: nowrap; font-weight: 600 } table.tq td:first-child { width: 46% }
+@media (max-width: 680px) { table.tq td:nth-child(2) { white-space: normal } table.tq th:nth-child(1) { width: 40% } table.tq th:nth-child(2) { width: 22% } }
 canvas { width: 100%; display: block; touch-action: pan-y }
 .cw { position: relative; flex: 1 1 auto; min-height: 190px } .cw > canvas { position: absolute; inset: 0; width: 100%; height: 100% }
 .cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
@@ -244,6 +249,48 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
         <p><b>Posição no traçado.</b> Pense no desenho da assinatura como uma estrada: o começo é o quilômetro 0 e o fim é o quilômetro 100. Neste modo, o eixo de baixo é essa estrada. Cada ponto do gráfico é um lugar do desenho, e mostra com que velocidade a caneta passou por ali. Como a caneta parada não avança na estrada, as paradas não aparecem. Serve para ver se a questionada acelera e freia nos mesmos lugares da letra que a pessoa, por mais devagar que tenha escrito.</p>
         <p><b>O que não muda.</b> As medidas, as elipses, a tabela verdade e o resultado são os mesmos nos três modos. O modo muda só o desenho das curvas.</p>
       </div>
+      <div class="tutq"><b>Perguntas do perito e o modo que responde melhor</b><p class="fine">"A pessoa" é sempre a dona dos 20 padrões; cada pergunta é se a questionada se comporta como ela. Faixa cinza = variação da pessoa; linha azul = questionada; faixas claras = caneta no ar.</p>
+<h4>A. Ritmo, duração e pausas</h4><div class="tw"><table class="tq"><thead><tr><th>Pergunta</th><th>Modo</th><th>Onde olhar</th></tr></thead><tbody>
+<tr><td>A duração total da questionada fica dentro da variação da pessoa?</td><td>Tempo real</td><td>Fim da linha azul contra o fim da faixa cinza; medida &quot;tempo total&quot;</td></tr>
+<tr><td>Onde a questionada levantou a caneta e por quanto tempo ficou no ar?</td><td>Tempo real</td><td>Posição e largura das faixas claras</td></tr>
+<tr><td>Houve parada com a caneta apoiada no papel?</td><td>Tempo real</td><td>Velocidade encostada em zero fora das faixas claras; degrau na curva de deformação</td></tr>
+<tr><td>As paradas ficam antes de pontos difíceis (cruzamento, laçada, troca de direção), como quem confere o modelo?</td><td>Tempo real</td><td>Selecionar o trecho da parada no desenho e ver em que parte da letra cai</td></tr>
+<tr><td>A lentidão é igual na assinatura toda ou concentrada em alguns trechos?</td><td>Tempo real</td><td>A distância entre azul e cinza cresce aos poucos (lentidão geral) ou aos saltos (paradas); curva de deformação</td></tr>
+<tr><td>A quantidade de levantamentos é a da pessoa?</td><td>Qualquer</td><td>Medida &quot;levantamentos&quot;; contar as faixas claras</td></tr>
+<tr><td>A velocidade média e o caminho total são os da pessoa?</td><td>Qualquer</td><td>Medidas &quot;velocidade média&quot; e &quot;caminho total&quot;; barras da área sob a velocidade</td></tr>
+</tbody></table></div>
+<h4>B. Ordem e sentido dos traços</h4><div class="tw"><table class="tq"><thead><tr><th>Pergunta</th><th>Modo</th><th>Onde olhar</th></tr></thead><tbody>
+<tr><td>Os traços foram feitos na mesma ordem dos padrões?</td><td>Tempo real</td><td>Animar a questionada e depois um padrão (seletor no cartão Desenho)</td></tr>
+<tr><td>Cada traço vai no mesmo sentido (de cima para baixo, da esquerda para a direita)?</td><td>Tempo real, X ou Y</td><td>Sinal da velocidade em X e em Y: positivo e negativo indicam o sentido</td></tr>
+<tr><td>Houve retoque (voltar para corrigir um traço já feito)?</td><td>Tempo real</td><td>Animação; levantamento a mais seguido de traço curto sobre um trecho já desenhado</td></tr>
+<tr><td>Pingos, cortes e acentos, quando houver, são feitos no mesmo momento que a pessoa faz?</td><td>Tempo real</td><td>Animação; posição do último traço no tempo</td></tr>
+</tbody></table></div>
+<h4>C. Movimento dentro de cada traço</h4><div class="tw"><table class="tq"><thead><tr><th>Pergunta</th><th>Modo</th><th>Onde olhar</th></tr></thead><tbody>
+<tr><td>O movimento de cada traço é o da pessoa, apenas mais lento (idade, doença, medicação, apoio ruim)?</td><td>Traço a traço</td><td>Depois do encaixe, a linha azul acompanha a faixa cinza na velocidade e na aceleração</td></tr>
+<tr><td>A velocidade de cada traço tem a mesma forma (sobe e desce em um pico liso)?</td><td>Traço a traço</td><td>Gráfico de velocidade, traço por traço</td></tr>
+<tr><td>Acelera e freia nos mesmos momentos do traço?</td><td>Traço a traço</td><td>Aceleração: partes positivas (acelera) e negativas (freia)</td></tr>
+<tr><td>A questionada tem mais microcorreções que a pessoa?</td><td>Traço a traço</td><td>4ª e 5ª derivadas; medidas &quot;trocas de aceleração / traço&quot; e &quot;trocas de jerk / traço&quot;</td></tr>
+<tr><td>Há hesitação no meio de um traço, sem levantar a caneta?</td><td>Traço a traço</td><td>Queda de velocidade no meio do traço que os padrões não têm</td></tr>
+<tr><td>O impulso do movimento (quando ganha e quando perde energia) é o da pessoa?</td><td>Traço a traço</td><td>Potência inercial; barras de energias</td></tr>
+<tr><td>O movimento vertical (subir e descer) tem o mesmo ritmo da pessoa?</td><td>Traço a traço, Y</td><td>Velocidade e aceleração em Y</td></tr>
+<tr><td>O movimento horizontal (avanço na linha) tem o mesmo ritmo?</td><td>Traço a traço, X</td><td>Velocidade e aceleração em X</td></tr>
+</tbody></table></div>
+<h4>D. Relação com a forma da letra</h4><div class="tw"><table class="tq"><thead><tr><th>Pergunta</th><th>Modo</th><th>Onde olhar</th></tr></thead><tbody>
+<tr><td>Freia e acelera nos mesmos pontos da letra (curvas, laçadas, base)?</td><td>Posição no traçado</td><td>Velocidade e aceleração</td></tr>
+<tr><td>As irregularidades se concentram em letras ou trechos difíceis de imitar?</td><td>Posição no traçado</td><td>4ª e 5ª derivadas: onde a linha azul sai da faixa cinza</td></tr>
+<tr><td>A pressão é aplicada nos mesmos pontos da letra?</td><td>Qualquer (sempre por posição)</td><td>Gráfico de pressão</td></tr>
+<tr><td>O tempo gasto em cada parte da letra é distribuído como na pessoa?</td><td>Qualquer (sempre por posição)</td><td>Curva de deformação: inclinação diferente = trecho mais lento; degrau = pausa</td></tr>
+<tr><td>Início e fim de cada traço: entra e sai do papel com a mesma força?</td><td>Qualquer</td><td>Pontas do gráfico de pressão; impulso por traço</td></tr>
+</tbody></table></div>
+<h4>E. Não dependem do modo</h4><div class="tw"><table class="tq"><thead><tr><th>Pergunta</th><th>Modo</th><th>Onde olhar</th></tr></thead><tbody>
+<tr><td>A questionada tem tremor que a pessoa não tem?</td><td>Qualquer</td><td>FFT e medida &quot;% do espectro em 5–8 Hz&quot;; ver as curvas com Suavizar no mínimo</td></tr>
+<tr><td>A caneta é segurada com a mesma inclinação e o mesmo giro?</td><td>Qualquer</td><td>Bússola da caneta; medidas &quot;inclinação média&quot; e &quot;rotação média&quot;</td></tr>
+<tr><td>As velocidades usadas se distribuem como as da pessoa?</td><td>Qualquer</td><td>Histograma</td></tr>
+<tr><td>No conjunto, a questionada está longe da pessoa?</td><td>Qualquer</td><td>Leitura da elipse 2D e do elipsoide 3D</td></tr>
+<tr><td>Qual relação entre medidas a questionada quebra (por exemplo, velocidade com pressão)?</td><td>Qualquer</td><td>Tabela verdade: resultado e motivo de cada combinação</td></tr>
+<tr><td>A diferença está na assinatura inteira ou só em um trecho?</td><td>Qualquer</td><td>Selecionar o trecho no desenho e repetir a leitura das elipses e da tabela</td></tr>
+</tbody></table></div>
+</div>
       <div class="tutwarn"><b>Cuidados</b><ul>
         <li>Traço a traço e posição no traçado supõem que a questionada fez os mesmos traços, na mesma ordem. Se ela tiver traços a mais ou feitos em outra ordem, o encaixe pode juntar pedaços que não se correspondem. Confira a ordem dos traços na animação do desenho, em tempo real.</li>
         <li>Nos gráficos de pressão e na curva de deformação o eixo é sempre a posição no traçado, em qualquer modo.</li>
