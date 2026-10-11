@@ -177,6 +177,49 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   header.dev .r { text-align: left } .cw.m { min-height: 340px } .note { margin-left: 0 }
 }
 @media (prefers-reduced-motion: reduce) { #loadbar { transition: none } }
+
+/* ---- captura ao vivo ---- */
+.livebtn { display: flex; align-items: center }
+#btn-live { font: 600 13px var(--sans); color: #fff; background: linear-gradient(180deg, #3a7bea, #2a63c4); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 7px 16px 7px 13px; cursor: pointer; box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 4px 14px rgba(47,111,214,.35); display: inline-flex; gap: 7px; align-items: center; transition: transform .15s, box-shadow .15s }
+#btn-live:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 6px 18px rgba(47,111,214,.45) } #btn-live .pen { font-size: 15px; line-height: 1 }
+#live-view { display: none } body.live-on #live-view { display: block } body.live-on .pane, body.live-on nav.tabs, body.live-on .ghost, body.live-on header.dev .r > .sub:last-child { display: none !important }
+.lv-bar { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; justify-content: space-between; margin: 12px 0 6px }
+.lv-tt { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap } .lv-tt b { font-size: 16px } .lv-tt .fine { margin: 0 }
+.lv-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); align-self: center; box-shadow: 0 0 0 0 rgba(31,122,53,.5); animation: lvpulse 2s infinite }
+@keyframes lvpulse { 0% { box-shadow: 0 0 0 0 rgba(76,192,122,.55) } 70% { box-shadow: 0 0 0 8px rgba(76,192,122,0) } 100% { box-shadow: 0 0 0 0 rgba(76,192,122,0) } }
+.lv-note { margin: 0 0 10px; font-size: 12.5px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: 6px; padding: 8px 12px; max-width: 120ch }
+.lv-grid .c-full { grid-column: 1 / -1 } .lv-grid .cw { min-height: 210px } .lv-grid .card:first-child .cw { min-height: 340px }
+.lv-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px }
+.lt { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 1px; min-width: 0 }
+.lt .k { font-size: 11px; color: var(--muted) } .lt b { font: 600 20px var(--sans); font-variant-numeric: tabular-nums; letter-spacing: -.01em } .lt .u { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+#live-view .lv-c { opacity: 0; transform: translateY(10px) }
+#live-view.in .lv-c { animation: lvin .55s cubic-bezier(.2,.7,.2,1) forwards; animation-delay: calc(.35s + var(--d) * .09s) }
+#live-view.in .lv-c .cw { animation: lvwipe .9s cubic-bezier(.4,0,.2,1) both; animation-delay: calc(.45s + var(--d) * .09s) }
+@keyframes lvin { to { opacity: 1; transform: none } } @keyframes lvwipe { from { clip-path: inset(0 100% 0 0) } to { clip-path: inset(0 0 0 0) } }
+@media (max-width: 900px) { .lv-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)) } }
+@media (prefers-reduced-motion: reduce) { #live-view .lv-c, #live-view.in .lv-c, #live-view.in .lv-c .cw { animation: none; opacity: 1; transform: none } }
+#lc { position: fixed; inset: 0; z-index: 9999; background: radial-gradient(120% 90% at 50% 40%, #fbfaf6 0%, #f3f0e8 70%, #ebe7dc 100%); touch-action: none; cursor: none; user-select: none; -webkit-user-select: none; color: #2a2f3a; font-family: var(--sans) }
+#lc[hidden] { display: none } #lc canvas { position: absolute; inset: 0; width: 100%; height: 100% } #lc .lc-ui { cursor: default; position: absolute; z-index: 2 }
+.lc-top { top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 16px; padding: 18px 26px }
+.lc-brand { display: flex; gap: 12px; align-items: baseline } .lc-brand b { letter-spacing: .32em; font-size: 14px; color: #1c2a4d } .lc-brand span { font-size: 13px; color: #7a7466 }
+.lc-badge { margin-left: auto; font: 11px var(--mono); color: #8a6a1f; background: rgba(196,122,10,.09); border: 1px solid rgba(196,122,10,.25); padding: 4px 10px; border-radius: 999px }
+.lc-x { background: none; border: 0; font-size: 18px; color: #8b8577; cursor: pointer; padding: 4px 8px; border-radius: 6px } .lc-x:hover { background: rgba(0,0,0,.05); color: #333 }
+.lc-guide { position: absolute; left: 12%; right: 12%; top: 66%; pointer-events: none; transition: opacity .6s }
+.lc-line { height: 1.5px; background: linear-gradient(90deg, rgba(120,110,90,.0), rgba(120,110,90,.45) 8%, rgba(120,110,90,.45) 92%, rgba(120,110,90,0)) }
+.lc-cross { position: absolute; left: 1%; top: -34px; font: 300 30px var(--sans); color: #a49c89 }
+.lc-lab { text-align: center; margin-top: 14px; font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: #9b937f; transition: opacity .5s }
+#lc.inked .lc-lab { opacity: 0 } #lc.inked .lc-cross { opacity: .5 }
+.lc-bot { left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 26px 22px; flex-wrap: wrap }
+.lc-meter { display: flex; align-items: center; gap: 10px; font: 12px var(--mono); color: #6f6959 } .lc-k { letter-spacing: .12em; text-transform: uppercase; font: 600 10.5px var(--sans) }
+.lc-bar { width: 180px; height: 6px; border-radius: 3px; background: rgba(28,42,77,.1); overflow: hidden } .lc-bar i { display: block; height: 100%; background: linear-gradient(90deg, #6ea1ff, #1c2a4d); transform-origin: left; transform: scaleX(0); transition: transform 60ms linear }
+.lc-v { width: 3.2em; font-variant-numeric: tabular-nums; color: #1c2a4d; font-weight: 600 } .lc-st { color: #9b937f }
+.lc-acts { display: flex; gap: 10px; align-items: center } .lc-msg { font-size: 13px; color: #b0462f; margin-right: 6px }
+.lc-b { font: 600 14px var(--sans); padding: 10px 22px; border-radius: 999px; border: 1px solid rgba(28,42,77,.25); background: rgba(255,255,255,.6); color: #1c2a4d; cursor: pointer; transition: background .15s, transform .15s }
+.lc-b:hover { background: #fff } .lc-b.pri { background: #1c2a4d; color: #fff; border-color: #1c2a4d; box-shadow: 0 6px 18px rgba(28,42,77,.25) } .lc-b.pri:hover { background: #24365f; transform: translateY(-1px) }
+#lc.shake .lc-acts { animation: lcsh .4s } @keyframes lcsh { 25% { transform: translateX(-6px) } 75% { transform: translateX(6px) } }
+body.live-on footer.f { display: none }
+@media (max-width: 640px) { .lc-brand span { display: none } .lc-top { padding: 14px 16px } .lc-bot { padding: 14px 16px 18px } .lv-grid .card:first-child .cw { min-height: 230px } .lc-st { display: none } }
+.lc-fly { position: fixed; left: 0; top: 0; z-index: 9998; pointer-events: none; transform-origin: 0 0; transition: transform .9s cubic-bezier(.45,0,.2,1), opacity .9s ease-in .15s }
 </style>
 
 <div class="wrap">
@@ -184,6 +227,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
   <header class="dev">
     <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
     <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no laudo.">revelar (fica registrado)</button></div><div class="sub">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
+    <div class="livebtn"><button type="button" id="btn-live" title="Assinar na mesa digitalizadora e ver os gráficos dessa assinatura (demonstração)"><span class="pen">✎</span> Captura ao vivo</button></div>
     <div class="ghost"><button type="button" id="btn-mode" title="Alternar a questionada: imitação, verdadeira ou mesma forma com construção diferente">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
   </header>
   <nav class="tabs" aria-label="Abas do painel">
@@ -193,6 +237,20 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
     <button type="button" class="tab" data-tab="tut">Tutorial</button>
   </nav>
 
+  <section id="live-view" aria-label="Captura ao vivo">
+    <div class="lv-bar"><div class="lv-tt"><span class="lv-dot" aria-hidden="true"></span><b>Captura ao vivo</b><span class="fine" id="lv-meta"></span></div><div class="grp"><button type="button" class="btn" id="lv-new">✎ nova captura</button><button type="button" class="btn" id="lv-exit">voltar ao caso simulado</button></div></div>
+    <p class="lv-note">Demonstração com uma assinatura sozinha: sem padrões, sem comparação, sem veredito e sem laudo. A pressão é a da mesa, <b>adimensional</b> (0 a 1, sem calibração em gramas-força). Sem o clip não há inclinação. Faixa âmbar nos gráficos: caneta no ar; faixa cinza: caneta fora do alcance da mesa.</p>
+    <div class="grid lv-grid">
+      <div class="card c-full lv-c" style="--d:0"><h3><span>Desenho capturado na mesa</span><button type="button" class="btn" id="lv-play">▶ reproduzir no tempo real</button></h3><canvas id="lv-sig"></canvas></div>
+      <div class="card c-full lv-c" style="--d:1"><h3>Medidas desta assinatura</h3><div id="lv-tiles" class="lv-tiles"></div></div>
+      <div class="card span2 lv-c" style="--d:2"><h3>Velocidade · |v|</h3><canvas id="lv-vel"></canvas></div>
+      <div class="card span2 lv-c" style="--d:3"><h3>Pressão · adimensional (0–1)</h3><canvas id="lv-pres"></canvas></div>
+      <div class="card span2 lv-c" style="--d:4"><h3>Aceleração · |a|</h3><canvas id="lv-acc"></canvas></div>
+      <div class="card span2 lv-c" style="--d:5"><h3>FFT da velocidade</h3><canvas id="lv-fft"></canvas></div>
+      <div class="card span2 lv-c" style="--d:6"><h3>4ª derivada · hesitações e retomadas</h3><canvas id="lv-d4"></canvas></div>
+      <div class="card span2 lv-c" style="--d:7"><h3>5ª derivada · microcorreções</h3><canvas id="lv-d5"></canvas></div>
+    </div>
+  </section>
   <section class="pane" id="pane-analise">
     <div id="vista" class="vista ok" role="status"><span id="vista-t"></span><span class="vc">código da vista <b id="vista-c"></b></span><button type="button" class="btn" id="btn-padrao" hidden>voltar à vista padrão</button></div>
     <div id="obs" class="obs"><div id="obs-form"><label for="obs-txt"><b>1º passo · Observações iniciais na vista padrão</b></label><textarea id="obs-txt" placeholder="Só fatos. Ex.: questionada com 8,24 s contra 4,55 ± 0,13 s nos padrões; 17 levantamentos contra 11 ± 1; no gráfico em tempo real, pausas antes do S e do d; traços na mesma ordem e sentido dos padrões."></textarea><div class="grp"><button type="button" class="primary" id="obs-reg">registrar observações</button><span class="fine" id="obs-hint"></span></div></div><div id="obs-done" hidden></div></div>
@@ -3178,6 +3236,198 @@ function tutInvite() {
   const esc = e => { if (e.key === 'Escape') close(false); };
   $('#tutinv-go').onclick = () => close(true); $('#tutinv-no').onclick = () => close(false); box.onclick = e => { if (e.target === box) close(false); };
   document.addEventListener('keydown', esc); box.hidden = false; setTimeout(() => $('#tutinv-go').focus(), 50);
+}
+
+/* ================= captura ao vivo pela mesa (demonstração, sem padrões) =================
+   A mesa (Huion H420X, driver com Windows Ink) chega ao navegador como caneta: posição, pressão (0–1, adimensional),
+   contato e caneta no ar. A área da mesa corresponde à tela inteira, por isso a captura é feita em tela cheia e a
+   posição em mm sai da fração da tela (106 × 66 mm). Nada aqui entra no caso simulado nem no laudo. */
+const LIVE = { on: false, data: null, raw: [], t0: 0, mouse: false, play: null };
+const MESA_MM = [106, 66];
+function liveEnsureDom() {
+  if ($('#lc')) return;
+  const d = document.createElement('div'); d.id = 'lc'; d.hidden = true;
+  d.innerHTML = `<canvas id="lc-ink"></canvas><canvas id="lc-cur"></canvas>
+    <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
+    <div class="lc-guide" aria-hidden="true"><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine na mesa</div></div>
+    <div class="lc-bot lc-ui"><div class="lc-meter"><span class="lc-k">pressão</span><div class="lc-bar"><i id="lc-fill"></i></div><span class="lc-v" id="lc-pv">0,00</span><span class="lc-st" id="lc-st">aguardando a caneta</span></div>
+      <div class="lc-acts"><span class="lc-msg" id="lc-msg"></span><button type="button" class="lc-b" id="lc-clear">Limpar</button><button type="button" class="lc-b pri" id="lc-ok">Concluir</button></div></div>`;
+  document.body.appendChild(d);
+  const ink = $('#lc-ink'), cur = $('#lc-cur'); let last = null, hover = null, raf = 0, pNow = 0;
+  const fit = () => { const r = window.devicePixelRatio || 1; for (const c of [ink, cur]) { c.width = Math.round(innerWidth * r); c.height = Math.round(innerHeight * r); c.getContext('2d').setTransform(r, 0, 0, r, 0, 0); } redrawInk(); };
+  const W = p => 1.1 + 4.2 * Math.pow(Math.max(0, Math.min(1, p)), 0.75);
+  function seg(c, a, b) { c.strokeStyle = '#1c2a4d'; c.lineCap = 'round'; c.lineWidth = (W(a.p) + W(b.p)) / 2; c.beginPath(); c.moveTo(a.cx, a.cy); c.lineTo(b.cx, b.cy); c.stroke(); }
+  function redrawInk() { const c = ink.getContext('2d'); c.clearRect(0, 0, innerWidth, innerHeight); const R = LIVE.raw; for (let i = 1; i < R.length; i++) if (R[i].c && R[i - 1].c) seg(c, R[i - 1], R[i]); }
+  function frameCur() {
+    raf = 0; const c = cur.getContext('2d'); c.clearRect(0, 0, innerWidth, innerHeight);
+    if (hover && !hover.c) { c.strokeStyle = 'rgba(47,111,214,.55)'; c.lineWidth = 1.4; c.beginPath(); c.arc(hover.cx, hover.cy, 7, 0, 7); c.stroke(); c.fillStyle = 'rgba(47,111,214,.8)'; c.beginPath(); c.arc(hover.cx, hover.cy, 1.6, 0, 7); c.fill(); }
+    $('#lc-fill').style.transform = `scaleX(${pNow.toFixed(3)})`; $('#lc-pv').textContent = br(pNow, 2);
+    const R = LIVE.raw, nc = R.filter(s => s.c).length;
+    $('#lc-st').textContent = !R.length ? 'aguardando a caneta' : LIVE.mouse ? 'mouse: sem pressão real' : `${nc.toLocaleString('pt-BR')} pontos no papel · ${br(R[R.length - 1].t - R[0].t, 1)} s`;
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frameCur); };
+  const toMM = e => { const fs = !!document.fullscreenElement, u = fs ? e.clientX / innerWidth : e.screenX / screen.width, v = fs ? e.clientY / innerHeight : e.screenY / screen.height; return [u * MESA_MM[0], (1 - v) * MESA_MM[1]]; };
+  function take(e) {
+    if (e.target.closest && e.target.closest('.lc-ui')) { hover = null; kick(); return; }
+    if (e.pointerType === 'touch') return;
+    const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : []; const list = evs.length ? evs : [e];
+    for (const ev of list) {
+      if (ev.pointerType === 'pen') LIVE.sawPen = true;
+      if (ev.pointerType === 'mouse' && LIVE.sawPen) continue; // com a caneta em uso, o mouse é ignorado
+      const down = (ev.buttons & 1) === 1, p = ev.pointerType === 'mouse' ? (down ? 0.5 : 0) : (down ? ev.pressure : 0), c = down && (p > 0 || ev.pointerType === 'mouse') ? 1 : 0;
+      const [x, y] = toMM(ev), s = { t: ev.timeStamp / 1000, x, y, p, c, cx: ev.clientX, cy: ev.clientY };
+      const R = LIVE.raw; if (R.length && s.t <= R[R.length - 1].t) s.t = R[R.length - 1].t + 1e-6;
+      if (!R.length && !c && ev.pointerType === 'mouse') continue; // com mouse, só registra a partir do primeiro clique
+      if (c && ev.pointerType === 'mouse') LIVE.mouse = true;
+      R.push(s); if (c && last && last.c) seg(ink.getContext('2d'), last, s);
+      last = s; hover = s; pNow = p;
+      if (c) d.classList.add('inked');
+    }
+    kick();
+  }
+  for (const ev of ['pointerdown', 'pointermove', 'pointerup']) d.addEventListener(ev, e => { if (ev === 'pointerdown' && !(e.target.closest && e.target.closest('.lc-ui'))) { try { d.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); } take(e); });
+  d.addEventListener('pointerleave', () => { hover = null; pNow = 0; kick(); });
+  d.addEventListener('contextmenu', e => e.preventDefault());
+  $('#lc-clear').addEventListener('click', () => { LIVE.raw = []; LIVE.mouse = false; last = null; d.classList.remove('inked'); $('#lc-msg').textContent = ''; redrawInk(); kick(); });
+  $('#lc-x').addEventListener('click', () => liveClose(false));
+  $('#lc-ok').addEventListener('click', () => liveFinish());
+  document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Escape') liveClose(false); });
+  window.addEventListener('resize', () => { if (!d.hidden) fit(); });
+  LIVE._fit = fit; LIVE._redraw = redrawInk; LIVE._resetLast = () => { last = null; hover = null; pNow = 0; };
+}
+function liveOpen() {
+  liveEnsureDom(); const d = $('#lc'); LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = '';
+  d.hidden = false; document.body.style.overflow = 'hidden'; LIVE._fit();
+  const el = document.documentElement; if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().then(() => setTimeout(LIVE._fit, 60)).catch(() => {});
+  log('captura ao vivo', 'abriu a tela de assinatura (mesa)');
+}
+function liveClose(keepFs) {
+  const d = $('#lc'); if (!d) return; d.hidden = true; document.body.style.overflow = '';
+  if (!keepFs && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+}
+function liveFinish() {
+  const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
+  if (nc < 30) { msg.textContent = 'Assinatura curta demais: assine de novo.'; $('#lc').classList.add('shake'); setTimeout(() => $('#lc').classList.remove('shake'), 400); return; }
+  const L = liveProcess(R); if (!L) { msg.textContent = 'Não deu para processar: assine de novo.'; return; }
+  LIVE.data = L; LIVE.snap = $('#lc-ink').toDataURL();
+  log('captura ao vivo', `assinatura capturada · ${br(L.m.dur, 2)} s · ${L.m.tracos} traços · ${Math.round(L.rate)} amostras/s${L.mouse ? ' · mouse (sem pressão)' : ''}`);
+  liveEnter(true);
+}
+/* ---------- processamento: reamostra a 300 Hz (o mesmo FS do painel) e calcula as derivadas pelo mesmo filtro SG ---------- */
+function liveProcess(R) {
+  let a = R.findIndex(s => s.c), b = -1; for (let i = R.length - 1; i >= 0; i--) if (R[i].c) { b = i; break; }
+  if (a < 0) return null;
+  const pad = 0.25; while (a > 0 && R[a - 1].t >= R[a].t - pad && R[a].t - R[a - 1].t < 0.06) a--; // ar antes do 1º toque (aproximação)
+  let e = b; while (e < R.length - 1 && R[e + 1].t <= R[b].t + pad && R[e + 1].t - R[e].t < 0.06) e++; // ar depois do último (sem o caminho até o botão)
+  const S0 = R.slice(a, e + 1), t0 = S0[0].t, T = S0.map(s => s.t - t0), dur = T[T.length - 1];
+  const n = Math.floor(dur * FS) + 1; if (n < 40) return null;
+  const tg = new Float64Array(n); for (let i = 0; i < n; i++) tg[i] = i / FS;
+  const col = k => S0.map(s => s[k]), x = TH.interp(tg, T, col('x')), y = TH.interp(tg, T, col('y')), pr = TH.interp(tg, T, col('p')), cf = TH.interp(tg, T, col('c'));
+  const C = new Uint8Array(n), P = new Float64Array(n), G = new Uint8Array(n);
+  for (let i = 0; i < n; i++) { C[i] = cf[i] > 0.5 ? 1 : 0; P[i] = C[i] ? Math.max(0, pr[i]) : 0; }
+  for (const [s, f] of TH.edges(C)) if (f - s < 4) C.fill(0, s, f); // toques de menos de ~13 ms: ruído
+  for (let j = 1; j < T.length; j++) if (T[j] - T[j - 1] > 0.05) { const i0 = Math.ceil(T[j - 1] * FS), i1 = Math.floor(T[j] * FS); for (let i = Math.max(0, i0); i <= Math.min(n - 1, i1); i++) G[i] = 1; } // caneta fora do alcance
+  const D = {}; for (let k = 1; k <= 5; k++) D[k] = [TH.sg(x, k), TH.sg(y, k)];
+  const mag = k => { const [u, v] = D[k], o = new Float64Array(n); for (let i = 0; i < n; i++) o[i] = Math.hypot(u[i], v[i]); return o; };
+  const vabs = mag(1), segs = TH.edges(C);
+  const dts = []; for (let j = 1; j < T.length; j++) { const dt = T[j] - T[j - 1]; if (dt > 0 && dt < 0.05 && S0[j].c) dts.push(dt); }
+  const rate = dts.length ? 1 / TH.median(dts) : NaN;
+  // medidas desta assinatura (mesmas definições do painel; pressão adimensional)
+  let path = 0, pm = 0, pmax = 0, np_ = 0, vmax = 0, a2 = 0; const [ax, ay] = D[2];
+  for (let i = 0; i < n; i++) if (C[i]) { path += vabs[i] / FS; pm += P[i]; pmax = Math.max(pmax, P[i]); np_++; vmax = Math.max(vmax, vabs[i]); a2 += ax[i] * ax[i] + ay[i] * ay[i]; }
+  const i0 = segs[0][0], i1 = segs[segs.length - 1][1] - 1, Tt = (i1 - i0) / FS;
+  const { fr, A } = TH.spectrum(vabs.subarray(i0, i1 + 1)); let e58 = 0, e20 = 0; for (let i = 1; i < fr.length; i++) { const P2 = A[i] ** 2; if (fr[i] <= 20) e20 += P2; if (fr[i] >= 5 && fr[i] < 8) e58 += P2; }
+  let ar = 0; for (let i = i0; i <= i1; i++) if (!C[i]) ar++;
+  const m = { dur: Tt, path, vmed: path / Tt, vmax, tracos: segs.length, ar: ar / FS, pm: pm / Math.max(np_, 1), pmax, aRMS: Math.sqrt(a2 / Math.max(np_, 1)) / 1000, e58: 100 * e58 / e20 };
+  return { t: tg, x, y, C, P, G, D, vabs, acc: mag(2), d4: mag(4), d5: mag(5), segs, i0, i1, rate, m, n, raw: S0, mouse: LIVE.mouse, when: new Date() };
+}
+/* ---------- vista da captura ---------- */
+function liveEnter(fromCapture) {
+  LIVE.on = true; stopAnim(false); S.tab = 'analise'; $$('.tab').forEach(t => t.classList.toggle('on', t.dataset.tab === 'analise')); $$('.pane').forEach(p => (p.hidden = p.id !== 'pane-analise'));
+  document.body.classList.add('live-on'); const lv = $('#live-view'); lv.classList.remove('in'); liveHeader();
+  const go = () => { liveDraw(); void lv.offsetWidth; lv.classList.add('in'); };
+  if (fromCapture && LIVE.snap) { // a assinatura "voa" da tela de captura para o cartão Desenho
+    const d = $('#lc'), fly = document.createElement('img'); fly.src = LIVE.snap; fly.className = 'lc-fly'; document.body.appendChild(fly);
+    liveClose(false); window.scrollTo(0, 0);
+    requestAnimationFrame(() => { go(); requestAnimationFrame(() => {
+      const tgt = $('#lv-sig').getBoundingClientRect(), L = LIVE.data, raw = L.raw, xs = raw.filter(s => s.c).map(s => s.cx), ys = raw.filter(s => s.c).map(s => s.cy);
+      const bx0 = Math.min(...xs), bx1 = Math.max(...xs), by0 = Math.min(...ys), by1 = Math.max(...ys), sc = Math.min(tgt.width * 0.86 / Math.max(bx1 - bx0, 1), tgt.height * 0.8 / Math.max(by1 - by0, 1));
+      const dx = tgt.left + tgt.width / 2 - ((bx0 + bx1) / 2) * sc, dy = tgt.top + tgt.height / 2 - ((by0 + by1) / 2) * sc;
+      fly.style.width = innerWidth + 'px'; fly.style.height = innerHeight + 'px';
+      requestAnimationFrame(() => { fly.style.transform = `translate(${dx}px, ${dy}px) scale(${sc})`; fly.style.opacity = '0'; });
+      setTimeout(() => fly.remove(), 1100);
+    }); });
+  } else go();
+}
+function liveExit() {
+  LIVE.on = false; if (LIVE.play) { cancelAnimationFrame(LIVE.play); LIVE.play = null; }
+  document.body.classList.remove('live-on'); $('#live-view').classList.remove('in'); log('captura ao vivo', 'voltou ao caso simulado'); render();
+}
+function liveHeader() {
+  const L = LIVE.data; if (!L) return;
+  $('#h-q').textContent = `Captura ao vivo · Huion H420X · ${L.when.toLocaleDateString('pt-BR')} ${L.when.toLocaleTimeString('pt-BR')}`;
+  $('#h-sig').textContent = 'Uma assinatura, sem padrões e sem comparação'; $('#h-modo-t').textContent = 'Demonstração · sem cadeia de custódia'; $('#btn-reveal').hidden = true;
+}
+function liveDraw() {
+  const L = LIVE.data; if (!L) return; const M = L.m;
+  $('#lv-meta').textContent = `${Math.round(L.rate)} amostras/s medidas · reamostrado a ${FS}/s${L.mouse ? ' · capturado com mouse: a pressão não é real' : ''}`;
+  const tiles = [['Duração', br(M.dur, 2), 's'], ['Traços', String(M.tracos), M.tracos - 1 === 1 ? '1 levantamento' : `${M.tracos - 1} levantamentos`], ['Caminho no papel', br(M.path, 0), 'mm'], ['Velocidade média', br(M.vmed, 0), 'mm/s'],
+    ['Velocidade máxima', br(M.vmax, 0), 'mm/s'], ['Tempo no ar', br(M.ar, 2), 's entre traços'], ['Pressão média', br(M.pm, 2), 'adimensional (0–1)'], ['Pressão máxima', br(M.pmax, 2), 'adimensional (0–1)'],
+    ['Aceleração RMS', br(M.aRMS, 2), 'm/s²'], ['Espectro em 5–8 Hz', br(M.e58, 1), '% da velocidade']];
+  $('#lv-tiles').innerHTML = tiles.map(([k, v, u]) => `<div class="lt"><span class="k">${k}</span><b>${v}</b><span class="u">${u}</span></div>`).join('');
+  liveSig($('#lv-sig'));
+  const tx = Array.from(L.t), air = (F) => liveAir(F, L);
+  liveCurve($('#lv-vel'), tx, L.vabs, 'mm/s', air);
+  liveCurve($('#lv-pres'), tx, Array.from(L.P, (v, i) => (L.C[i] ? v : NaN)), 'pressão (0–1)', air, [0, 1.05]);
+  liveCurve($('#lv-acc'), tx, Array.from(L.acc, v => v / 1000), 'm/s²', air);
+  liveCurve($('#lv-d4'), tx, Array.from(L.d4, v => v * 1e-6), '×10⁶ mm/s⁴', air);
+  liveCurve($('#lv-d5'), tx, Array.from(L.d5, v => v * 1e-8), '×10⁸ mm/s⁵', air);
+  liveFFT($('#lv-fft'));
+}
+function liveAir(F, L) { // faixas claras: caneta no ar (âmbar) e fora do alcance da mesa (cinza)
+  const { c, X, P, m, h } = F; c.save();
+  for (const [arr, col, al] of [[Array.from(L.C, v => (v ? 0 : 1)), P.amb, 0.12], [L.G, P.mut, 0.12]]) { c.fillStyle = col; c.globalAlpha = al; let s = -1; for (let i = 0; i <= L.n; i++) { const on = i < L.n && arr[i]; if (on && s < 0) s = i; else if (!on && s >= 0) { c.fillRect(X(L.t[s]), m.t, Math.max(1.5, X(L.t[i - 1]) - X(L.t[s])), h - m.t - m.b); s = -1; } } }
+  c.restore();
+}
+function liveCurve(cv, xs, ys, ylabel, under, yr) {
+  const F = frame(cv, [0, xs[xs.length - 1]], yr || robust([ys], 0.998), { xlabel: 'tempo real (s)', ylabel });
+  if (under) under(F); polyline(F, xs, ys, F.P.acc, 1.2); F.done();
+}
+function liveFFT(cv) {
+  const L = LIVE.data, fq = Array.from({ length: 400 }, (_, i) => 20 * i / 399), { fr, A } = TH.spectrum(L.vabs.subarray(L.i0, L.i1 + 1)), v = TH.interp(fq, fr, A), mx = Math.max(...v) || 1;
+  const F = frame(cv, [0, 20], [0, 1.08], { xlabel: 'Hz', ylabel: 'amplitude relativa' }), { c, X, Y, P } = F;
+  [[0, 5, P.grn], [5, 8, P.red], [8, 13, P.amb]].forEach(([a, b, col]) => { c.fillStyle = col; c.globalAlpha = 0.1; c.fillRect(X(a), Y(1.08), X(b) - X(a), Y(0) - Y(1.08)); }); c.globalAlpha = 1;
+  polyline(F, fq, v.map(x => x / mx), P.acc, 1.3); F.done();
+}
+function liveSig(cv, upto) {
+  const L = LIVE.data, P = pal(), { c, w, h } = setup(cv, cv.clientHeight || 300);
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (let i = 0; i < L.n; i++) if (L.C[i]) { x0 = Math.min(x0, L.x[i]); x1 = Math.max(x1, L.x[i]); y0 = Math.min(y0, L.y[i]); y1 = Math.max(y1, L.y[i]); }
+  const pd = 3; x0 -= pd; x1 += pd; y0 -= pd; y1 += pd; const sc = Math.min((w - 20) / (x1 - x0), (h - 30) / (y1 - y0)), ox = (w - sc * (x1 - x0)) / 2, oy = (h - 14 - sc * (y1 - y0)) / 2;
+  const X = v => ox + (v - x0) * sc, Y = v => h - 14 - oy - (v - y0) * sc, N = upto == null ? L.n - 1 : Math.min(upto, L.n - 1);
+  // caneta no ar: pontilhado fino (só onde a mesa leu a caneta)
+  c.strokeStyle = P.acc; c.globalAlpha = 0.45; c.lineWidth = 0.9; c.setLineDash([1.5, 3]); c.beginPath(); let pen = false;
+  for (let i = 0; i <= N; i++) { if (L.C[i] || L.G[i]) { pen = false; continue; } if (pen) c.lineTo(X(L.x[i]), Y(L.y[i])); else { c.moveTo(X(L.x[i]), Y(L.y[i])); pen = true; } }
+  c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+  // tinta: espessura pela pressão medida (adimensional), como uma esferográfica
+  const ink = css('--ink'); c.strokeStyle = ink; c.lineCap = 'round'; const mm = Math.max(0.6, sc * 0.11);
+  for (let i = 1; i <= N; i++) if (L.C[i] && L.C[i - 1]) { c.lineWidth = mm * (0.55 + 2.2 * Math.pow((L.P[i] + L.P[i - 1]) / 2, 0.8)); c.beginPath(); c.moveTo(X(L.x[i - 1]), Y(L.y[i - 1])); c.lineTo(X(L.x[i]), Y(L.y[i])); c.stroke(); }
+  if (upto != null && N < L.n - 1) { c.fillStyle = L.C[N] ? P.red : 'transparent'; c.strokeStyle = P.red; c.lineWidth = 1.5; c.beginPath(); c.arc(X(L.x[N]), Y(L.y[N]), 4.5, 0, 7); L.C[N] ? c.fill() : c.stroke(); }
+  c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'left'; c.fillText(`escala: 10 mm = ${br(10 * sc, 0)} px · espessura do traço pela pressão medida`, 8, h - 4);
+  if (upto != null) { c.textAlign = 'right'; c.fillText(`${br(L.t[N], 2)} s`, w - 8, h - 4); }
+}
+function livePlay() {
+  const L = LIVE.data; if (!L) return; if (LIVE.play) { cancelAnimationFrame(LIVE.play); LIVE.play = null; liveSig($('#lv-sig')); $('#lv-play').textContent = '▶ reproduzir no tempo real'; return; }
+  const t0 = performance.now(); $('#lv-play').textContent = '■ parar';
+  const step = now => { const k = Math.floor((now - t0) / 1000 * FS); liveSig($('#lv-sig'), k); if (k < L.n - 1) LIVE.play = requestAnimationFrame(step); else { LIVE.play = null; liveSig($('#lv-sig')); $('#lv-play').textContent = '▶ reproduzir no tempo real'; } };
+  LIVE.play = requestAnimationFrame(step); log('captura ao vivo', 'reproduziu a assinatura no tempo real');
+}
+{ // ligações: botão do cabeçalho, barra da vista e redesenho
+  const _render = render;
+  render = function () { if (LIVE.on) { liveHeader(); return liveDraw(); } return _render.apply(this, arguments); };
+  $('#btn-live').addEventListener('click', liveOpen);
+  $('#lv-new').addEventListener('click', liveOpen);
+  $('#lv-exit').addEventListener('click', liveExit);
+  $('#lv-play').addEventListener('click', livePlay);
 }
 
 bind(); watermark(); loadCase();
