@@ -213,7 +213,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 .lc-line { height: 1.5px; background: linear-gradient(90deg, rgba(120,110,90,.0), rgba(120,110,90,.45) 8%, rgba(120,110,90,.45) 92%, rgba(120,110,90,0)) }
 .lc-cross { position: absolute; left: 1%; top: -34px; font: 300 30px var(--sans); color: #a49c89 }
 .lc-lab { text-align: center; margin-top: 14px; font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: #9b937f; transition: opacity .5s }
-#lc.inked .lc-lab:not(.done) { opacity: 0 } .lc-lab.done { color: #1f7a35; font-weight: 600 } .lc-msg .okm { color: #1f7a35 } #lc.inked .lc-cross { opacity: .5 }
+#lc.inked .lc-lab:not(.done) { opacity: 0 } .lc-lab.done { color: #1f7a35; font-weight: 600 } .lc-msg .okm { color: #1f7a35 } .lc-msg .inf { color: #4b4a45 } #lc.inked .lc-cross { opacity: .5 }
 .lc-bot { left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 26px 22px; flex-wrap: wrap }
 .lc-meter { display: flex; align-items: center; gap: 10px; font: 12px var(--mono); color: #6f6959 } .lc-k { letter-spacing: .12em; text-transform: uppercase; font: 600 10.5px var(--sans) }
 .lc-bar { width: 180px; height: 6px; border-radius: 3px; background: rgba(28,42,77,.1); overflow: hidden } .lc-bar i { display: block; height: 100%; background: linear-gradient(90deg, #6ea1ff, #1c2a4d); transform-origin: left; transform: scaleX(0); transition: transform 60ms linear }
@@ -3406,7 +3406,7 @@ function liveEnsureDom() {
       last = s; hover = s; pNow = p;
       if (c) d.classList.add('inked');
     }
-    if (LIVE.mode === 'ruido-rec') ruidoCheck();
+    if (LIVE.mode === 'ruido') ruidoCheck();
     kick();
   }
   for (const ev of ['pointerdown', 'pointermove', 'pointerup']) d.addEventListener(ev, e => { if (ev === 'pointerdown' && !(e.target.closest && e.target.closest('.lc-ui'))) { try { d.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); } take(e); });
@@ -3423,7 +3423,7 @@ function liveEnsureDom() {
   LIVE._fit = fit; LIVE._redraw = redrawInk; LIVE._resetLast = () => { last = null; hover = null; pNow = 0; };
 }
 function liveOpen(mode = 'solo') {
-  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.armed = false; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
+  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
   d.hidden = false; document.body.style.overflow = 'hidden'; LIVE._fit();
   const el = document.documentElement; if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().then(() => setTimeout(LIVE._fit, 60)).catch(() => {});
   if (mode === 'solo') log('captura ao vivo', 'abriu a tela de assinatura (mesa)');
@@ -3586,9 +3586,9 @@ function colUI() {
   $('#lc-step').innerHTML = step + (m === 'p' || m === 'q' ? ` <em>${escH(COL.signatario)}</em>` : '');
   $('.lc-lab').textContent = m === 'ruido' || m === 'ruido-rec' ? 'Encoste a caneta aqui e segure parada' : m === 'ruido-ok' ? '✓ Ruído medido' : 'Assine aqui'; $('.lc-lab').classList.toggle('done', m === 'ruido-ok');
   show('#lc-ref', m === 'p' && COL && COL.refImg); if (m === 'p' && COL && COL.refImg) $('#lc-ref-img').src = COL.refImg;
-  show('#lc-prog', m === 'p'); show('#lc-undo', m === 'p' && n > 0); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', m === 'ruido-ok');
-  show('#lc-ok', m !== 'ruido-rec'); show('#lc-clear', !m.startsWith('ruido'));
-  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: 'Salvar padrão', ruido: 'Medir ruído (2 s)', 'ruido-ok': 'Continuar para a questionada →' }[m] || 'Concluir';
+  show('#lc-prog', m === 'p'); show('#lc-undo', m === 'p' && n > 0); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', false);
+  show('#lc-ok', true); show('#lc-clear', m !== 'ruido'); $('#lc-ok').disabled = m === 'ruido' && !LIVE.ruidoRun;
+  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
   $('#lc-skip').textContent = 'Pular (usar ruído de referência)';
   if (m === 'p') {
     const e = $('#lc-end'); e.disabled = n < N_MIN; e.textContent = `Encerrar e analisar (${n})`;
@@ -3597,24 +3597,22 @@ function colUI() {
     $('#lc-prec').innerHTML = z === null ? `<b>${n}</b> padrões · faltam ${N_MIN - n} para o mínimo (${N_MIN})` :
       `<b>${n}</b> padrões · precisão da régua: <span class="z${z}">${['insuficiente (sem veredito)', 'reduzida', 'normal'][z]}</span> · limite ${fDist(lim)} (com 20: ${fDist(l20)})`;
   }
-  $('#lc-msg').innerHTML = m === 'ruido' ? 'Encoste a ponta no centro do campo, sem escrever, e mantenha parada. Com a caneta encostada, aperte Enter ou toque em Medir ruído.' : m === 'ruido-rec' ? 'Medindo… mantenha a caneta parada.' : m === 'ruido-ok' ? `<span class="okm">✓ Medição do ruído concluída${COL.ruido_sg ? ` · σ velocidade ${br(COL.ruido_sg[1], 2)} mm/s` : ''}. Levante a caneta e toque em Continuar, ou aperte Enter.</span>` : '';
+  $('#lc-msg').innerHTML = m === 'ruido' ? '<span class="inf">Encoste a ponta no centro do campo, sem escrever, e mantenha parada por pelo menos 2 s. A medição começa sozinha.</span>' : m === 'ruido-ok' ? `<span class="okm">✓ Medição do ruído concluída${COL.ruido_sg ? ` · σ velocidade ${br(COL.ruido_sg[1], 2)} mm/s` : ''}. Levante a caneta e toque em Continuar, ou aperte Enter.</span>` : '';
   LIVE.endWarn = null; LIVE.exitWarn = false;
 }
 /* ruído: 2 s de contato com a caneta parada → desvio das derivadas (base das faixas de ruído e do limiar das trocas de jerk) */
-/* a medição só começa quando quem opera aperta o botão (ou Enter) com a caneta já encostada e parada */
+/* a medição começa sozinha quando a caneta encosta e fica parada; só termina quando quem opera aperta o botão (ou Enter),
+   mesmo que a caneta continue encostada. Vale o último trecho parado de pelo menos 2 s. */
 function ruidoCheck() {
-  if (LIVE.mode !== 'ruido-rec') return;
-  const R = LIVE.raw, b = R.length - 1, a = LIVE.recIdx, falha = t => { LIVE.mode = 'ruido'; colUI(); $('#lc-msg').textContent = t; };
-  if (b < a || !R[b].c) return falha('A caneta levantou durante a medição. Encoste de novo e aperte Medir ruído.');
-  const S0 = R.slice(a, b + 1); if (S0.some(s => !s.c)) return falha('A caneta levantou durante a medição. Encoste de novo e aperte Medir ruído.');
-  if (S0.some(s => Math.hypot(s.x - S0[0].x, s.y - S0[0].y) > 1.5)) return falha('A caneta andou durante a medição. Encoste parada e aperte Medir ruído de novo.');
-  const dur = R[b].t - R[a].t; $('#lc-msg').textContent = `Medindo… ${br(Math.min(dur, 2), 1)} de 2 s · mantenha a caneta parada`;
-  if (dur >= 2) colRuido(S0);
-}
-function ruidoIniciar() {
-  const R = LIVE.raw, last = R[R.length - 1];
-  if (!last || !last.c) { $('#lc-msg').textContent = 'Primeiro encoste a ponta da caneta no centro do campo e mantenha parada; depois aperte Medir ruído.'; $('#lc').classList.add('shake'); setTimeout(() => $('#lc').classList.remove('shake'), 400); return; }
-  LIVE.recIdx = R.length; LIVE.mode = 'ruido-rec'; colUI();
+  if (LIVE.mode !== 'ruido') return;
+  const R = LIVE.raw, b = R.length - 1, msg = $('#lc-msg'), ok = $('#lc-ok');
+  if (b >= 0 && R[b].c) {
+    let a = b; while (a > 0 && R[a - 1].c && Math.hypot(R[a - 1].x - R[b].x, R[a - 1].y - R[b].y) <= 1.5) a--;
+    const dur = R[b].t - R[a].t;
+    if (dur >= 2.3) LIVE.ruidoRun = R.slice(a, b + 1).filter(s => s.t >= R[a].t + 0.3);
+    msg.innerHTML = dur >= 2.3 ? `<span class="okm">✓ Ruído medido (${br(dur, 1)} s parada).</span> <span class="inf">Aperte Enter ou toque em Finalizar para ir à questionada; a caneta pode continuar encostada.</span>` : `<span class="inf">Medindo… ${br(dur, 1)} de 2 s · mantenha a caneta parada</span>`;
+  } else if (LIVE.ruidoRun) msg.innerHTML = '<span class="okm">✓ Ruído medido.</span> <span class="inf">Aperte Enter ou toque em Finalizar para ir à questionada.</span>';
+  ok.disabled = !LIVE.ruidoRun;
 }
 function ruidoDe(run) {
   const t0 = run[0].t, T = run.map(s => s.t - t0), n = Math.floor(T[T.length - 1] * FS) + 1, tg = Float64Array.from({ length: n }, (_, i) => i / FS);
@@ -3626,11 +3624,12 @@ function ruidoDe(run) {
   return { sg: out, medido: med, q_mm: q };
 }
 function colRuido(run) {
-  if (run && run.length > 40) { const r = ruidoDe(run); COL.ruido_sg = r.sg; COL.ruido = { medido: r.medido, q_mm: r.q_mm }; log('coleta: ruído da mesa', `σ velocidade ${br(r.sg[1], 3)} mm/s · resolução da posição ${br(r.q_mm, 3)} mm`); LIVE.mode = 'ruido-ok'; colUI(); colSave(); return; }
-  COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência');
+  LIVE.ruidoRun = null;
+  if (run && run.length > 40) { const r = ruidoDe(run); COL.ruido_sg = r.sg; COL.ruido = { medido: r.medido, q_mm: r.q_mm }; log('coleta: ruído da mesa', `σ velocidade ${br(r.sg[1], 3)} mm/s · resolução da posição ${br(r.q_mm, 3)} mm · finalizado pelo operador`); }
+  else { COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência'); }
   colParaQuestionada();
 }
-function colParaQuestionada() { LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave(); lcToast('Agora a assinatura questionada');
+function colParaQuestionada() { LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.ruido_sg ? 'Ruído registrado · agora a questionada' : 'Agora a assinatura questionada');
 }
 function colValida() {
   const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
@@ -3641,8 +3640,7 @@ function colValida() {
   return { s: serial(R), quando: Date.now(), w: +sw.toFixed(1), h: +sh.toFixed(1), fora, mouse: !!LIVE.mouse };
 }
 function colConcluir() {
-  if (LIVE.mode === 'ruido') return ruidoIniciar();
-  if (LIVE.mode === 'ruido-ok') return colParaQuestionada();
+  if (LIVE.mode === 'ruido') { if (!LIVE.ruidoRun) { $('#lc-msg').textContent = 'Ainda não há medição: encoste a caneta no centro e mantenha parada por 2 s.'; return; } return colRuido(LIVE.ruidoRun); }
   const a = colValida(); if (!a) return;
   if (LIVE.mode === 'q') {
     COL.Q = a; COL.refImg = refImage(a.s); log('coleta: questionada', `${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantida)' : ''}${a.mouse ? ' · mouse' : ''}`);
