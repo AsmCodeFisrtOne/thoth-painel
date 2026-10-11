@@ -202,7 +202,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 #lc[hidden] { display: none } #lc canvas { position: absolute; inset: 0; width: 100%; height: 100% } #lc .lc-ui { cursor: default; position: absolute; z-index: 2 }
 .lc-top { top: 0; left: 0; right: 0; display: flex; align-items: center; gap: 16px; padding: 18px 26px }
 .lc-brand { display: flex; gap: 12px; align-items: baseline } .lc-brand b { letter-spacing: .32em; font-size: 14px; color: #1c2a4d } .lc-brand span { font-size: 13px; color: #7a7466 }
-.lc-badge { margin-left: auto; font: 11px var(--mono); color: #8a6a1f; background: rgba(196,122,10,.09); border: 1px solid rgba(196,122,10,.25); padding: 4px 10px; border-radius: 999px }
+.lc-som { margin-left: auto; font: 12px var(--sans); color: #6f6959; background: none; border: 1px solid rgba(120,110,90,.3); border-radius: 999px; padding: 4px 10px; cursor: pointer } .lc-badge { font: 11px var(--mono); color: #8a6a1f; background: rgba(196,122,10,.09); border: 1px solid rgba(196,122,10,.25); padding: 4px 10px; border-radius: 999px }
 .lc-x { background: none; border: 0; font-size: 18px; color: #8b8577; cursor: pointer; padding: 4px 8px; border-radius: 6px } .lc-x:hover { background: rgba(0,0,0,.05); color: #333 }
 .lc-field { position: absolute; pointer-events: none }
 .lc-field > i { position: absolute; width: 16px; height: 16px; border: 0 solid rgba(120,110,90,.45) } .lc-field .tl { left: 0; top: 0; border-width: 1.5px 0 0 1.5px } .lc-field .tr { right: 0; top: 0; border-width: 1.5px 1.5px 0 0 } .lc-field .bl { left: 0; bottom: 0; border-width: 0 0 1.5px 1.5px } .lc-field .br { right: 0; bottom: 0; border-width: 0 1.5px 1.5px 0 }
@@ -3358,7 +3358,7 @@ function liveEnsureDom() {
   if ($('#lc')) return;
   const d = document.createElement('div'); d.id = 'lc'; d.hidden = true;
   d.innerHTML = `<canvas id="lc-ink"></canvas><canvas id="lc-cur"></canvas>
-    <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-step" id="lc-step"></div><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
+    <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-step" id="lc-step"></div><button type="button" class="lc-som" id="lc-som">🔔 som</button><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
     <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
     <div class="lc-gal lc-ui" id="lc-gal" hidden aria-label="Padrões colhidos"></div>
     <div class="lc-ref" id="lc-ref" hidden aria-hidden="true"><img id="lc-ref-img" alt="" draggable="false"><span>questionada · só referência visual</span></div>
@@ -3401,7 +3401,7 @@ function liveEnsureDom() {
       if (c && ev.pointerType === 'mouse') LIVE.mouse = true;
       R.push(s); if (c && last && last.c) seg(ink.getContext('2d'), last, s);
       last = s; hover = s; pNow = p;
-      if (c) d.classList.add('inked');
+      if (c) { d.classList.add('inked'); if (LIVE.waitT) waitStop(); }
     }
     if (LIVE.mode === 'ruido') ruidoCheck();
     kick();
@@ -3409,7 +3409,7 @@ function liveEnsureDom() {
   for (const ev of ['pointerdown', 'pointermove', 'pointerup']) d.addEventListener(ev, e => { if (ev === 'pointerdown' && !(e.target.closest && e.target.closest('.lc-ui'))) { try { d.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); } take(e); });
   d.addEventListener('pointerleave', () => { hover = null; pNow = 0; kick(); });
   d.addEventListener('contextmenu', e => e.preventDefault());
-  const clear = () => { LIVE.armed = false; LIVE.sizeWarn = null; LIVE.raw = []; LIVE.mouse = false; last = null; d.classList.remove('inked'); $('#lc-msg').textContent = ''; redrawInk(); kick(); };
+  const clear = () => { setTimeout(() => typeof colPronta === 'function' && colPronta(), 0); LIVE.armed = false; LIVE.sizeWarn = null; LIVE.raw = []; LIVE.mouse = false; last = null; d.classList.remove('inked'); $('#lc-msg').textContent = ''; redrawInk(); kick(); };
   $('#lc-clear').addEventListener('click', clear); LIVE._clear = clear;
   $('#lc-x').addEventListener('click', () => (LIVE.mode === 'solo' ? liveClose(false) : colSair()));
   $('#lc-ok').addEventListener('click', () => (LIVE.mode === 'solo' ? liveFinish() : colConcluir()));
@@ -3426,7 +3426,7 @@ function liveOpen(mode = 'solo') {
   if (mode === 'solo') log('captura ao vivo', 'abriu a tela de assinatura (mesa)');
 }
 function liveClose(keepFs) {
-  const d = $('#lc'); if (!d) return; d.hidden = true; document.body.style.overflow = '';
+  waitStop(); const d = $('#lc'); if (!d) return; d.hidden = true; document.body.style.overflow = '';
   if (!keepFs && document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
 }
 function liveFinish() {
@@ -3567,6 +3567,17 @@ const colSave = () => { try { localStorage.setItem(COL_KEY, JSON.stringify({ ...
 const colLoad = () => { try { const v = JSON.parse(localStorage.getItem(COL_KEY) || 'null'); return v && v.formato === 'thoth-coleta-v1' ? v : null; } catch (_) { return null; } };
 const colDrop = () => { try { localStorage.removeItem(COL_KEY); } catch (_) {} };
 const serial = R => R.map(s => [+s.t.toFixed(6), +s.x.toFixed(4), +s.y.toFixed(4), +s.p.toFixed(4), s.c ? 1 : 0]);
+/* ---------- beep: avisa que a tela está pronta para assinar; repete a cada 4 s até a caneta tocar ---------- */
+let AC = null; try { LIVE.mute = localStorage.getItem('thoth-som') === '0'; } catch (_) {}
+function beep(f = 880, d = 0.14, v = 0.18) {
+  if (LIVE.mute) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
+    const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + 0.02); } catch (_) {}
+}
+function waitStop() { clearInterval(LIVE.waitT); LIVE.waitT = 0; }
+function waitBeep() { // pronta para assinar: um beep agora e outro a cada 4 s enquanto ninguém encostar a caneta
+  if (LIVE.waitT) return; beep(); LIVE.waitT = setInterval(() => { const d = $('#lc'); if (!d || d.hidden || LIVE.raw.some(s => s.c) || !['solo', 'q', 'p'].includes(LIVE.mode)) return waitStop(); beep(880, 0.1, 0.1); }, 4000);
+}
+function somUI() { const b = $('#lc-som'); if (b) { b.textContent = LIVE.mute ? '🔇 som' : '🔔 som'; b.title = LIVE.mute ? 'Beep desligado: tocar para ligar' : 'Beep ligado: avisa quando a tela está pronta para assinar'; } }
 function lcToast(t) { let el = $('#lc-toast'); if (!el) { el = document.createElement('div'); el.id = 'lc-toast'; el.className = 'lc-toast'; $('#lc').appendChild(el); } el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1600); }
 const nP = () => (COL ? COL.P.filter(Boolean).length : 0), slotNext = () => { if (!COL) return 0; const i = COL.P.indexOf(null); return i >= 0 ? i : COL.P.length; };
 const compactP = c => ({ ...c, P: c.P.filter(Boolean) });
@@ -3602,12 +3613,13 @@ function colUI() {
     $('#lc-prec').innerHTML = z === null ? `<b>${n}</b> padrões · faltam ${N_MIN - n} para o mínimo (${N_MIN})` :
       `<b>${n}</b> padrões · precisão da régua: <span class="z${z}">${['insuficiente (combinações sem classificação)', 'reduzida', 'normal'][z]}</span> · faixa de 95% de um par até ${fDist(lim)} (com 20: ${fDist(l20)})`;
   }
-  if (m === 'p' && LIVE.selIdx != null) { const i = LIVE.selIdx; $('#lc-msg').innerHTML = `<span class="inf">Padrão ${i + 1}:</span> <button type="button" class="lc-mini" data-act="refazer">Refazer</button> <button type="button" class="lc-mini" data-act="excluir">Excluir</button> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; return; }
-  if (m === 'p' && n >= COL_MAX && ed == null) { $('#lc-msg').innerHTML = `<span class="okm">✓ ${COL_MAX} padrões coletados.</span> <span class="inf">Toque num padrão para refazer ou excluir, ou em Encerrar e analisar.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; return; }
-  if (m === 'p' && ed != null) { $('#lc-msg').innerHTML = `<span class="inf">Assine de novo: a nova assinatura substitui o padrão ${ed + 1}.</span> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; return; }
+  if (m === 'p' && LIVE.selIdx != null) { const i = LIVE.selIdx; $('#lc-msg').innerHTML = `<span class="inf">Padrão ${i + 1}:</span> <button type="button" class="lc-mini" data-act="refazer">Refazer</button> <button type="button" class="lc-mini" data-act="excluir">Excluir</button> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (m === 'p' && n >= COL_MAX && ed == null) { $('#lc-msg').innerHTML = `<span class="okm">✓ ${COL_MAX} padrões coletados.</span> <span class="inf">Toque num padrão para refazer ou excluir, ou em Encerrar e analisar.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (m === 'p' && ed != null) { $('#lc-msg').innerHTML = `<span class="inf">Assine de novo: a nova assinatura substitui o padrão ${ed + 1}.</span> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   $('#lc-msg').innerHTML = m === 'ruido' ? '<span class="inf">Encoste a ponta no centro do campo, sem escrever, e mantenha parada por pelo menos 2 s. A medição começa sozinha.</span>' : m === 'ruido-ok' ? `<span class="okm">✓ Medição do ruído concluída${COL.ruido_sg ? ` · σ velocidade ${br(COL.ruido_sg[1], 2)} mm/s` : ''}. Levante a caneta e toque em Continuar, ou aperte Enter.</span>` : '';
-  LIVE.endWarn = null; LIVE.exitWarn = false;
+  LIVE.endWarn = null; LIVE.exitWarn = false; colPronta();
 }
+function colPronta() { somUI(); const pronta = ['solo', 'q', 'p'].includes(LIVE.mode) && !LIVE.raw.some(s => s.c) && !(LIVE.mode === 'p' && LIVE.editIdx == null && nP() >= COL_MAX); if (pronta) waitBeep(); else waitStop(); }
 /* ruído: 2 s de contato com a caneta parada → desvio das derivadas (base das faixas de ruído e do limiar das trocas de jerk) */
 /* a medição começa sozinha quando a caneta encosta e fica parada; só termina quando quem opera aperta o botão (ou Enter),
    mesmo que a caneta continue encostada. Vale o último trecho parado de pelo menos 2 s. */
@@ -3657,7 +3669,9 @@ function colConcluir() {
   const ed = LIVE.editIdx, i = ed != null ? ed : slotNext(); if (i >= COL_MAX) return;
   a.thumb = refImage(a.s, 156, 64); COL.P[i] = a; LIVE.editIdx = null; LIVE.selIdx = null;
   log(ed != null ? 'coleta: refez padrão' : 'coleta: padrão', `P${String(i + 1).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
-  colSave(); LIVE._clear(); colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
+  colSave();
+  if (nP() >= COL_MAX) { waitStop(); beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`${COL_MAX} padrões coletados · encerrando a coleta`); log('coleta: 20 padrões', 'encerrada automaticamente'); return setTimeout(colFinalizar, 900); }
+  LIVE._clear(); colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
 }
 function colSlotAcao(act) {
   const i = LIVE.selIdx;
@@ -3681,7 +3695,7 @@ function colSair() {
   log('coleta: interrompida', `${COL.Q ? 'questionada ✓' : 'sem questionada'} · ${nP()} padrões`); colSave(); liveClose(false);
 }
 async function colFinalizar() {
-  liveClose(false); colDrop();
+  waitStop(); liveClose(false); colDrop();
   const c = compactP(COL); c.P.forEach(a => delete a.thumb);
   log('coleta: encerrada', `questionada + ${c.P.length} padrões${COL.descartes ? ` · ${COL.descartes} excluídos ou refeitos` : ''}`);
   abrirReal(c);
@@ -3729,7 +3743,7 @@ function openCapMenu() {
   });
   $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
-  document.addEventListener('click', e => { const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
+  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); if (LIVE.mute) waitStop(); else colPronta(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
     const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
   $('#real-save').addEventListener('click', () => S.realCol && colBaixar(S.realCol));
   $('#real-exit').addEventListener('click', () => { S.real = false; REALCASE = null; S.name = NAMES[4]; S.mode = MODE0(S.name); log('voltou à simulação', '—'); loadCase(); });
