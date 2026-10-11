@@ -236,12 +236,18 @@ body.live-on footer.f { display: none } body.live-on #real-bar { display: none }
 .lc-ref { position: absolute; left: 26px; top: 72px; z-index: 1; pointer-events: none; display: flex; flex-direction: column; gap: 4px; padding: 8px 10px; background: rgba(255,255,255,.55); border: 1px solid rgba(120,110,90,.2); border-radius: 8px } .lc-ref[hidden] { display: none }
 .lc-ref img { width: 200px; height: 80px; object-fit: contain; opacity: .8 } .lc-ref span { font: 10.5px var(--mono); color: #8b8577 }
 .lc-prog { display: flex; flex-direction: column; gap: 6px; flex-basis: 100%; order: -1 } .lc-prog[hidden] { display: none }
-.lc-dots { display: flex; gap: 5px; flex-wrap: wrap } .lc-dots i { width: 14px; height: 14px; border-radius: 50%; border: 1.5px solid rgba(28,42,77,.25); display: grid; place-items: center; font: 600 8px var(--sans); color: transparent }
-.lc-dots i.f { background: #1c2a4d; border-color: #1c2a4d } .lc-dots i.min { border-color: rgba(176,70,47,.55) } .lc-dots i.ok { border-color: rgba(31,122,53,.5) } .lc-dots i.cur { box-shadow: 0 0 0 3px rgba(47,111,214,.25); border-color: #2f6fd6 }
+.lc-dots { display: flex; gap: 6px; flex-wrap: wrap } .lc-dots i { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid rgba(28,42,77,.28); display: grid; place-items: center; font-style: normal; transition: background .25s, border-color .25s } .lc-dots i em { font: 600 8.5px var(--sans); font-style: normal; color: #8b8577 }
+.lc-dots i.f { background: #1f8a45; border-color: #1f8a45 } .lc-dots i.f em { color: #fff } .lc-dots i.cur { box-shadow: 0 0 0 3px rgba(47,111,214,.25); border-color: #2f6fd6 }
+.lc-gal { position: absolute; top: 72px; left: 260px; right: 26px; z-index: 2; display: grid; grid-template-columns: repeat(10, minmax(0, 92px)); gap: 6px } .lc-gal[hidden] { display: none }
+.lc-slot { position: relative; height: 44px; border-radius: 7px; display: grid; place-items: center; padding: 0; font: inherit; background: rgba(255,255,255,.5) } .lc-slot b { position: absolute; left: 5px; top: 3px; font: 600 9.5px var(--sans); color: #8b8577 }
+.lc-slot.e { border: 1.5px dashed rgba(120,110,90,.3) } .lc-slot.f { border: 1.5px solid #1f8a45; background: rgba(31,138,69,.06); cursor: pointer } .lc-slot.f b { color: #1f8a45 } .lc-slot.f:hover { background: rgba(31,138,69,.14) }
+.lc-slot img { width: 100%; height: 100%; object-fit: contain; padding: 4px 4px 2px 14px; pointer-events: none } .lc-slot.cur { box-shadow: 0 0 0 3px rgba(47,111,214,.25); border-color: #2f6fd6 } .lc-slot.sel { box-shadow: 0 0 0 3px rgba(196,122,10,.35); border-color: #c47a0a }
+.lc-mini { font: 600 12.5px var(--sans); padding: 5px 12px; border-radius: 999px; border: 1px solid rgba(28,42,77,.3); background: #fff; color: #1c2a4d; cursor: pointer; margin-left: 4px } .lc-mini[data-act="excluir"] { color: #b0462f; border-color: rgba(176,70,47,.4) }
+@media (max-width: 1100px) { .lc-gal { left: 26px; top: 170px; grid-template-columns: repeat(10, minmax(0, 1fr)) } .lc-slot { height: 34px } }
 .lc-prec { font: 12px var(--sans); color: #6f6959 } .lc-prec b { color: #1c2a4d } .lc-prec .z0 { color: #b0462f } .lc-prec .z1 { color: #a8700c } .lc-prec .z2 { color: #1f7a35 }
 .lc-b[hidden] { display: none } .lc-b:disabled { opacity: .4; cursor: default }
 .lc-hold { position: absolute; left: 50%; top: 52%; width: 74px; height: 74px; margin: -37px 0 0 -37px; pointer-events: none }
-.lc-toast { position: absolute; left: 50%; top: 84px; transform: translateX(-50%); z-index: 3; font: 600 13px var(--sans); color: #1f7a35; background: rgba(255,255,255,.85); border: 1px solid rgba(31,122,53,.3); padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .3s; pointer-events: none } .lc-toast.on { opacity: 1 }
+.lc-toast { position: absolute; left: 50%; top: 186px; transform: translateX(-50%); z-index: 3; font: 600 13px var(--sans); color: #1f7a35; background: rgba(255,255,255,.85); border: 1px solid rgba(31,122,53,.3); padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .3s; pointer-events: none } .lc-toast.on { opacity: 1 }
 .lc-fly { position: fixed; left: 0; top: 0; z-index: 9998; pointer-events: none; transform-origin: 0 0; transition: transform .9s cubic-bezier(.45,0,.2,1), opacity .9s ease-in .15s }
 </style>
 
@@ -3354,6 +3360,7 @@ function liveEnsureDom() {
   d.innerHTML = `<canvas id="lc-ink"></canvas><canvas id="lc-cur"></canvas>
     <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-step" id="lc-step"></div><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
     <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
+    <div class="lc-gal lc-ui" id="lc-gal" hidden aria-label="Padrões colhidos"></div>
     <div class="lc-ref" id="lc-ref" hidden aria-hidden="true"><img id="lc-ref-img" alt="" draggable="false"><span>questionada · só referência visual</span></div>
     <div class="lc-bot lc-ui"><div class="lc-prog" id="lc-prog" hidden><div class="lc-dots" id="lc-dots"></div><div class="lc-prec" id="lc-prec"></div></div><div class="lc-meter"><span class="lc-k">pressão</span><div class="lc-bar"><i id="lc-fill"></i></div><span class="lc-v" id="lc-pv">0,00</span><span class="lc-st" id="lc-st">aguardando a caneta</span></div>
       <div class="lc-acts"><span class="lc-msg" id="lc-msg"></span><button type="button" class="lc-b" id="lc-skip" hidden>Pular</button><button type="button" class="lc-b" id="lc-redo" hidden>Medir de novo</button><button type="button" class="lc-b" id="lc-undo" hidden>Descartar o último</button><button type="button" class="lc-b" id="lc-clear">Limpar</button><button type="button" class="lc-b" id="lc-end" hidden>Encerrar e analisar</button><button type="button" class="lc-b pri" id="lc-ok">Concluir</button></div></div>`;
@@ -3413,7 +3420,7 @@ function liveEnsureDom() {
   LIVE._fit = fit; LIVE._redraw = redrawInk; LIVE._resetLast = () => { last = null; hover = null; pNow = 0; };
 }
 function liveOpen(mode = 'solo') {
-  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
+  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.editIdx = null; LIVE.selIdx = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
   d.hidden = false; document.body.style.overflow = 'hidden'; LIVE._fit();
   const el = document.documentElement; if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().then(() => setTimeout(LIVE._fit, 60)).catch(() => {});
   if (mode === 'solo') log('captura ao vivo', 'abriu a tela de assinatura (mesa)');
@@ -3556,13 +3563,15 @@ function livePlay() {
    processamento → alinhamento. Sem clip: inclinação sem dado. Pressão adimensional. Demonstração, sem cadeia de custódia. */
 let COL = null;
 const COL_MAX = 20, COL_KEY = 'thoth-coleta-andamento';
-const colSave = () => { try { localStorage.setItem(COL_KEY, JSON.stringify(COL)); } catch (_) {} };
+const colSave = () => { try { localStorage.setItem(COL_KEY, JSON.stringify({ ...COL, refImg: undefined, P: COL.P.map(a => (a ? { ...a, thumb: undefined } : null)) })); } catch (_) {} };
 const colLoad = () => { try { const v = JSON.parse(localStorage.getItem(COL_KEY) || 'null'); return v && v.formato === 'thoth-coleta-v1' ? v : null; } catch (_) { return null; } };
 const colDrop = () => { try { localStorage.removeItem(COL_KEY); } catch (_) {} };
 const serial = R => R.map(s => [+s.t.toFixed(6), +s.x.toFixed(4), +s.y.toFixed(4), +s.p.toFixed(4), s.c ? 1 : 0]);
 function lcToast(t) { let el = $('#lc-toast'); if (!el) { el = document.createElement('div'); el.id = 'lc-toast'; el.className = 'lc-toast'; $('#lc').appendChild(el); } el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1600); }
-function refImage(S0) { // miniatura fixa da questionada (só imagem: não anima, não amplia, não seleciona)
-  const c = document.createElement('canvas'), W = 400, H = 160; c.width = W; c.height = H; const x = c.getContext('2d');
+const nP = () => (COL ? COL.P.filter(Boolean).length : 0), slotNext = () => { if (!COL) return 0; const i = COL.P.indexOf(null); return i >= 0 ? i : COL.P.length; };
+const compactP = c => ({ ...c, P: c.P.filter(Boolean) });
+function refImage(S0, W = 400, H = 160) { // miniatura fixa (só imagem: não anima, não amplia, não seleciona)
+  const c = document.createElement('canvas');  c.width = W; c.height = H; const x = c.getContext('2d');
   const on = S0.filter(s => s[4]); if (!on.length) return ''; const xs = on.map(s => s[1]), ys = on.map(s => s[2]);
   const x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys), sc = Math.min((W - 16) / Math.max(x1 - x0, 1), (H - 16) / Math.max(y1 - y0, 1));
   const X = v => (W - sc * (x1 - x0)) / 2 + (v - x0) * sc, Y = v => H - (H - sc * (y1 - y0)) / 2 - (v - y0) * sc;
@@ -3571,22 +3580,31 @@ function refImage(S0) { // miniatura fixa da questionada (só imagem: não anima
   return c.toDataURL();
 }
 function colUI() {
-  const m = LIVE.mode, n = COL ? COL.P.length : 0, show = (id, v) => { const e = $(id); if (e) e.hidden = !v; };
-  const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', 'ruido-rec': 'Ruído da mesa <em>medindo…</em>', 'ruido-ok': 'Ruído da mesa ✓ <em>passo 1 concluído</em>', q: 'Assinatura questionada', p: `Padrão ${Math.min(n + 1, COL_MAX)} de ${COL_MAX}` }[m] || '';
+  const m = LIVE.mode, n = nP(), ed = LIVE.editIdx, show = (id, v) => { const e = $(id); if (e) e.hidden = !v; };
+  const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', 'ruido-rec': 'Ruído da mesa <em>medindo…</em>', 'ruido-ok': 'Ruído da mesa ✓ <em>passo 1 concluído</em>', q: 'Assinatura questionada', p: ed != null ? `Refazendo o padrão ${ed + 1}` : n >= COL_MAX ? `${COL_MAX} padrões coletados` : `Padrão ${slotNext() + 1} de ${COL_MAX}` }[m] || '';
   $('#lc-step').innerHTML = step + (m === 'p' || m === 'q' ? ` <em>${escH(COL.signatario)}</em>` : '');
   $('.lc-lab').textContent = m === 'ruido' || m === 'ruido-rec' ? 'Encoste a caneta aqui e segure parada' : m === 'ruido-ok' ? '✓ Ruído medido' : 'Assine aqui'; $('.lc-lab').classList.toggle('done', m === 'ruido-ok');
   show('#lc-ref', m === 'p' && COL && COL.refImg); if (m === 'p' && COL && COL.refImg) $('#lc-ref-img').src = COL.refImg;
-  show('#lc-prog', m === 'p'); show('#lc-undo', m === 'p' && n > 0); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', false);
-  show('#lc-ok', true); show('#lc-clear', m !== 'ruido'); $('#lc-ok').disabled = m === 'ruido' && !LIVE.ruidoRun;
-  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
+  show('#lc-prog', m === 'p'); show('#lc-gal', m === 'p'); show('#lc-undo', false); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', false);
+  show('#lc-ok', true); show('#lc-clear', m !== 'ruido'); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX);
+  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: ed != null ? `Salvar no padrão ${ed + 1}` : 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
   $('#lc-skip').textContent = 'Pular (usar ruído de referência)';
   if (m === 'p') {
     const e = $('#lc-end'); e.disabled = n < N_MIN; e.textContent = `Encerrar e analisar (${n})`;
-    $('#lc-dots').innerHTML = Array.from({ length: COL_MAX }, (_, i) => `<i class="${i < n ? 'f' : ''} ${i === n ? 'cur' : ''} ${i === N_MIN - 1 || i === N_VER - 1 ? 'min' : i === N_OK - 1 ? 'ok' : ''}" title="${i === N_MIN - 1 ? 'mínimo para analisar' : i === N_VER - 1 ? 'classificação das combinações a partir daqui' : i === N_OK - 1 ? 'precisão normal a partir daqui' : ''}"></i>`).join('');
+    // bolinhas fixas (uma por padrão): verde quando colhido; contorno azul no que está sendo colhido agora
+    const alvo = ed != null ? ed : n >= COL_MAX ? -1 : slotNext();
+    $('#lc-dots').innerHTML = Array.from({ length: COL_MAX }, (_, i) => `<i class="${COL.P[i] ? 'f' : ''} ${i === alvo ? 'cur' : ''}" title="padrão ${i + 1}${COL.P[i] ? ' · colhido' : ''}${i === N_MIN - 1 ? ' · mínimo para analisar' : i === N_VER - 1 ? ' · classificação a partir daqui' : i === N_OK - 1 ? ' · precisão normal a partir daqui' : ''}"><em>${i + 1}</em></i>`).join('');
+    // galeria fixa com as 20 posições: cada padrão colhido aparece no seu lugar; tocar abre refazer / excluir
+    $('#lc-gal').innerHTML = Array.from({ length: COL_MAX }, (_, i) => { const a = COL.P[i]; if (a && !a.thumb) a.thumb = refImage(a.s, 156, 64);
+      return a ? `<button type="button" class="lc-slot f${i === alvo ? ' cur' : ''}${i === LIVE.selIdx ? ' sel' : ''}" data-slot="${i}" title="Padrão ${i + 1}: tocar para refazer ou excluir"><img src="${a.thumb}" alt=""><b>${i + 1}</b></button>`
+        : `<span class="lc-slot e${i === alvo ? ' cur' : ''}"><b>${i + 1}</b></span>`; }).join('');
     const z = n < N_MIN ? null : n < N_VER ? 0 : n < N_OK ? 1 : 2, lim = n >= N_MIN ? TH.hotLim(0.95, n, 2) : NaN, l20 = TH.hotLim(0.95, 20, 2);
     $('#lc-prec').innerHTML = z === null ? `<b>${n}</b> padrões · faltam ${N_MIN - n} para o mínimo (${N_MIN})` :
       `<b>${n}</b> padrões · precisão da régua: <span class="z${z}">${['insuficiente (combinações sem classificação)', 'reduzida', 'normal'][z]}</span> · faixa de 95% de um par até ${fDist(lim)} (com 20: ${fDist(l20)})`;
   }
+  if (m === 'p' && LIVE.selIdx != null) { const i = LIVE.selIdx; $('#lc-msg').innerHTML = `<span class="inf">Padrão ${i + 1}:</span> <button type="button" class="lc-mini" data-act="refazer">Refazer</button> <button type="button" class="lc-mini" data-act="excluir">Excluir</button> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; return; }
+  if (m === 'p' && n >= COL_MAX && ed == null) { $('#lc-msg').innerHTML = `<span class="okm">✓ ${COL_MAX} padrões coletados.</span> <span class="inf">Toque num padrão para refazer ou excluir, ou em Encerrar e analisar.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; return; }
+  if (m === 'p' && ed != null) { $('#lc-msg').innerHTML = `<span class="inf">Assine de novo: a nova assinatura substitui o padrão ${ed + 1}.</span> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; return; }
   $('#lc-msg').innerHTML = m === 'ruido' ? '<span class="inf">Encoste a ponta no centro do campo, sem escrever, e mantenha parada por pelo menos 2 s. A medição começa sozinha.</span>' : m === 'ruido-ok' ? `<span class="okm">✓ Medição do ruído concluída${COL.ruido_sg ? ` · σ velocidade ${br(COL.ruido_sg[1], 2)} mm/s` : ''}. Levante a caneta e toque em Continuar, ou aperte Enter.</span>` : '';
   LIVE.endWarn = null; LIVE.exitWarn = false;
 }
@@ -3636,27 +3654,37 @@ function colConcluir() {
     COL.Q = a; COL.refImg = refImage(a.s); log('coleta: questionada', `${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantida)' : ''}${a.mouse ? ' · mouse' : ''}`);
     LIVE.mode = 'p'; LIVE._clear(); colUI(); colSave(); lcToast('Questionada registrada. Agora os padrões.'); return;
   }
-  COL.P.push(a); const n = COL.P.length; log('coleta: padrão', `P${String(n).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
-  colSave(); if (n >= COL_MAX) return colFinalizar();
-  LIVE._clear(); colUI(); lcToast(`Padrão ${n} salvo`);
+  const ed = LIVE.editIdx, i = ed != null ? ed : slotNext(); if (i >= COL_MAX) return;
+  a.thumb = refImage(a.s, 156, 64); COL.P[i] = a; LIVE.editIdx = null; LIVE.selIdx = null;
+  log(ed != null ? 'coleta: refez padrão' : 'coleta: padrão', `P${String(i + 1).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
+  colSave(); LIVE._clear(); colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
+}
+function colSlotAcao(act) {
+  const i = LIVE.selIdx;
+  if (act === 'cancelar') { LIVE.selIdx = null; LIVE.editIdx = null; LIVE._clear(); colUI(); return; }
+  if (i == null) return;
+  if (act === 'refazer') { LIVE.editIdx = i; LIVE.selIdx = null; LIVE._clear(); colUI(); return; }
+  if (act === 'excluir') { COL.P[i] = null; while (COL.P.length && !COL.P[COL.P.length - 1]) COL.P.pop(); COL.descartes = (COL.descartes || 0) + 1; LIVE.selIdx = null; LIVE.editIdx = null;
+    log('coleta: excluiu padrão', `P${String(i + 1).padStart(2, '0')}`); colSave(); LIVE._clear(); colUI(); lcToast(`Padrão ${i + 1} excluído`); }
 }
 function colDescartar() {
   if (!COL.P.length) return; const n = COL.P.length; COL.P.pop(); COL.descartes = (COL.descartes || 0) + 1;
   log('coleta: descartou padrão', `P${String(n).padStart(2, '0')}`); LIVE._clear(); colUI(); colSave(); lcToast(`Padrão ${n} descartado`);
 }
 function colEncerrar() {
-  const n = COL.P.length; if (n < N_MIN) return;
+  const n = nP(); if (n < N_MIN) return;
   if (n < N_OK && LIVE.endWarn !== n) { LIVE.endWarn = n; $('#lc-msg').textContent = n < N_VER ? `Com ${n} padrões as combinações não são classificadas (precisam de ${N_VER}); só curvas, medidas e distâncias. Toque de novo em Encerrar para analisar assim.` : `Com ${n} padrões a precisão é reduzida: a faixa de 95% de um par vai até ${fDist(TH.hotLim(0.95, n, 2))}, contra ${fDist(TH.hotLim(0.95, 20, 2))} com 20. Toque de novo em Encerrar para analisar assim.`; return; }
   colFinalizar();
 }
 function colSair() {
   if (!LIVE.exitWarn) { LIVE.exitWarn = true; $('#lc-msg').textContent = 'Sair da coleta? O que já foi coletado fica guardado neste navegador para retomar. Toque ✕ de novo para sair.'; return; }
-  log('coleta: interrompida', `${COL.Q ? 'questionada ✓' : 'sem questionada'} · ${COL.P.length} padrões`); colSave(); liveClose(false);
+  log('coleta: interrompida', `${COL.Q ? 'questionada ✓' : 'sem questionada'} · ${nP()} padrões`); colSave(); liveClose(false);
 }
 async function colFinalizar() {
   liveClose(false); colDrop();
-  log('coleta: encerrada', `questionada + ${COL.P.length} padrões${COL.descartes ? ` · ${COL.descartes} descartados` : ''}`);
-  abrirReal(COL);
+  const c = compactP(COL); c.P.forEach(a => delete a.thumb);
+  log('coleta: encerrada', `questionada + ${c.P.length} padrões${COL.descartes ? ` · ${COL.descartes} excluídos ou refeitos` : ''}`);
+  abrirReal(c);
 }
 async function abrirReal(col) {
   S.realCol = col; REALCASE = null; S.real = true; S.name = col.signatario; S.mode = col.tipo || 'não informado'; S.tab = 'analise';
@@ -3664,7 +3692,7 @@ async function abrirReal(col) {
   try { await loadCase(); } catch (e) { $('#loading').hidden = true; S.real = false; REALCASE = null; alert('Não foi possível montar o caso: ' + e.message); loadCase(); }
 }
 /* ---------- arquivo da coleta ---------- */
-const colCorpo = c => { const o = Object.assign({}, c); delete o.sha256; delete o.refImg; return o; };
+const colCorpo = c => { const o = Object.assign({}, c); delete o.sha256; delete o.refImg; o.P = o.P.filter(Boolean).map(a => { const b = { ...a }; delete b.thumb; return b; }); return o; };
 async function colBaixar(c) {
   const corpo = colCorpo(c), sha = await TH.sha256hex(TH.canonJSON(corpo)), blob = new Blob([JSON.stringify({ ...corpo, sha256: sha })], { type: 'application/json' });
   const a = document.createElement('a'), nome = c.signatario.normalize('NFD').replace(/\p{Mn}/gu, '').replace(/[^\w]+/g, '_').slice(0, 30);
@@ -3682,7 +3710,7 @@ async function colAbrirArquivo(file) {
 /* ---------- menu e formulário ---------- */
 function openCapMenu() {
   const m = $('#capm'); $('#capm-1').hidden = false; $('#capm-2').hidden = true; $('#capm-st').textContent = ''; $('#capm-file').value = '';
-  const r = colLoad(); $('#capm-resume').hidden = !r; if (r) $('#capm-resume-t').textContent = `${r.signatario} · ${r.Q ? 'questionada ✓' : 'sem questionada'} · ${r.P.length} de ${COL_MAX} padrões`;
+  const r = colLoad(); $('#capm-resume').hidden = !r; if (r) $('#capm-resume-t').textContent = `${r.signatario} · ${r.Q ? 'questionada ✓' : 'sem questionada'} · ${r.P.filter(Boolean).length} de ${COL_MAX} padrões`;
   m.hidden = false;
 }
 {
@@ -3699,8 +3727,10 @@ function openCapMenu() {
     close(); log('coleta: iniciou caso', `${nome} · tipo da questionada ${COL.tipo === 'não informado' ? 'não informado' : 'informado e oculto'}`); colSave();
     liveOpen($('#cf-ruido').checked ? 'ruido' : 'q');
   });
-  $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); log('coleta: retomou', `${COL.signatario} · ${COL.P.length} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
+  $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
+  document.addEventListener('click', e => { const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
+    const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
   $('#real-save').addEventListener('click', () => S.realCol && colBaixar(S.realCol));
   $('#real-exit').addEventListener('click', () => { S.real = false; REALCASE = null; S.name = NAMES[4]; S.mode = MODE0(S.name); log('voltou à simulação', '—'); loadCase(); });
 }
