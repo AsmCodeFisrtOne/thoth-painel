@@ -189,7 +189,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 @keyframes lvpulse { 0% { box-shadow: 0 0 0 0 rgba(76,192,122,.55) } 70% { box-shadow: 0 0 0 8px rgba(76,192,122,0) } 100% { box-shadow: 0 0 0 0 rgba(76,192,122,0) } }
 .lv-note { margin: 0 0 10px; font-size: 12.5px; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: 6px; padding: 8px 12px; max-width: 120ch }
 .lv-grid .c-full { grid-column: 1 / -1 } .lv-grid .cw { min-height: 210px } .lv-grid .card:first-child .cw { min-height: 340px }
-.lv-tiles { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px }
+.lv-tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px }
 .lt { border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 1px; min-width: 0 }
 .lt .k { font-size: 11px; color: var(--muted) } .lt b { font: 600 20px var(--sans); font-variant-numeric: tabular-nums; letter-spacing: -.01em } .lt .u { font-size: 10.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
 #live-view .lv-c { opacity: 0; transform: translateY(10px) }
@@ -204,7 +204,12 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 .lc-brand { display: flex; gap: 12px; align-items: baseline } .lc-brand b { letter-spacing: .32em; font-size: 14px; color: #1c2a4d } .lc-brand span { font-size: 13px; color: #7a7466 }
 .lc-badge { margin-left: auto; font: 11px var(--mono); color: #8a6a1f; background: rgba(196,122,10,.09); border: 1px solid rgba(196,122,10,.25); padding: 4px 10px; border-radius: 999px }
 .lc-x { background: none; border: 0; font-size: 18px; color: #8b8577; cursor: pointer; padding: 4px 8px; border-radius: 6px } .lc-x:hover { background: rgba(0,0,0,.05); color: #333 }
-.lc-guide { position: absolute; left: 12%; right: 12%; top: 66%; pointer-events: none; transition: opacity .6s }
+.lc-field { position: absolute; pointer-events: none }
+.lc-field > i { position: absolute; width: 16px; height: 16px; border: 0 solid rgba(120,110,90,.45) } .lc-field .tl { left: 0; top: 0; border-width: 1.5px 0 0 1.5px } .lc-field .tr { right: 0; top: 0; border-width: 1.5px 1.5px 0 0 } .lc-field .bl { left: 0; bottom: 0; border-width: 0 0 1.5px 1.5px } .lc-field .br { right: 0; bottom: 0; border-width: 0 1.5px 1.5px 0 }
+.lc-field .lc-line { position: absolute; left: 6%; right: 6%; top: 74% }
+.lc-field .lc-cross { left: 6%; top: calc(74% - 40px) }
+.lc-field .lc-lab { position: absolute; left: 0; right: 0; top: 100%; margin-top: 18px }
+.lc-rule { position: absolute; right: 0; top: 100%; margin-top: 46px; display: flex; flex-direction: column; align-items: flex-end; gap: 5px } .lc-rule span { display: block; height: 7px; border: 1.5px solid rgba(120,110,90,.5); border-top: 0 } .lc-rule em { font: normal 10.5px var(--mono); color: #a49c89; letter-spacing: .04em }
 .lc-line { height: 1.5px; background: linear-gradient(90deg, rgba(120,110,90,.0), rgba(120,110,90,.45) 8%, rgba(120,110,90,.45) 92%, rgba(120,110,90,0)) }
 .lc-cross { position: absolute; left: 1%; top: -34px; font: 300 30px var(--sans); color: #a49c89 }
 .lc-lab { text-align: center; margin-top: 14px; font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: #9b937f; transition: opacity .5s }
@@ -3243,18 +3248,23 @@ function tutInvite() {
    contato e caneta no ar. A área da mesa corresponde à tela inteira, por isso a captura é feita em tela cheia e a
    posição em mm sai da fração da tela (106 × 66 mm). Nada aqui entra no caso simulado nem no laudo. */
 const LIVE = { on: false, data: null, raw: [], t0: 0, mouse: false, play: null };
-const MESA_MM = [106, 66];
+const MESA_MM = [106, 66], FIELD_MM = [60, 20], SIZE_OK = [20, 90];
+const sigSize = R => { let a = Infinity, b = -Infinity, e = Infinity, f = -Infinity; for (const s of R) if (s.c) { a = Math.min(a, s.x); b = Math.max(b, s.x); e = Math.min(e, s.y); f = Math.max(f, s.y); } return a < Infinity ? [b - a, f - e] : [0, 0]; };
 function liveEnsureDom() {
   if ($('#lc')) return;
   const d = document.createElement('div'); d.id = 'lc'; d.hidden = true;
   d.innerHTML = `<canvas id="lc-ink"></canvas><canvas id="lc-cur"></canvas>
     <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
-    <div class="lc-guide" aria-hidden="true"><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine na mesa</div></div>
+    <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
     <div class="lc-bot lc-ui"><div class="lc-meter"><span class="lc-k">pressão</span><div class="lc-bar"><i id="lc-fill"></i></div><span class="lc-v" id="lc-pv">0,00</span><span class="lc-st" id="lc-st">aguardando a caneta</span></div>
       <div class="lc-acts"><span class="lc-msg" id="lc-msg"></span><button type="button" class="lc-b" id="lc-clear">Limpar</button><button type="button" class="lc-b pri" id="lc-ok">Concluir</button></div></div>`;
   document.body.appendChild(d);
   const ink = $('#lc-ink'), cur = $('#lc-cur'); let last = null, hover = null, raf = 0, pNow = 0;
-  const fit = () => { const r = window.devicePixelRatio || 1; for (const c of [ink, cur]) { c.width = Math.round(innerWidth * r); c.height = Math.round(innerHeight * r); c.getContext('2d').setTransform(r, 0, 0, r, 0, 0); } redrawInk(); };
+  const fit = () => { placeField(); const r = window.devicePixelRatio || 1; for (const c of [ink, cur]) { c.width = Math.round(innerWidth * r); c.height = Math.round(innerHeight * r); c.getContext('2d').setTransform(r, 0, 0, r, 0, 0); } redrawInk(); };
+  function placeField() { // campo de assinatura de 60 × 20 mm na mesa, desenhado na escala exata da mesa
+    const kx = innerWidth / MESA_MM[0], ky = innerHeight / MESA_MM[1], f = $('#lc-field'), w = FIELD_MM[0] * kx, h = FIELD_MM[1] * ky;
+    Object.assign(f.style, { width: w + 'px', height: h + 'px', left: (innerWidth - w) / 2 + 'px', top: (innerHeight * 0.52 - h / 2) + 'px' }); $('#lc-rule').style.width = 10 * kx + 'px';
+  }
   const W = p => 1.1 + 4.2 * Math.pow(Math.max(0, Math.min(1, p)), 0.75);
   function seg(c, a, b) { c.strokeStyle = '#1c2a4d'; c.lineCap = 'round'; c.lineWidth = (W(a.p) + W(b.p)) / 2; c.beginPath(); c.moveTo(a.cx, a.cy); c.lineTo(b.cx, b.cy); c.stroke(); }
   function redrawInk() { const c = ink.getContext('2d'); c.clearRect(0, 0, innerWidth, innerHeight); const R = LIVE.raw; for (let i = 1; i < R.length; i++) if (R[i].c && R[i - 1].c) seg(c, R[i - 1], R[i]); }
@@ -3263,7 +3273,7 @@ function liveEnsureDom() {
     if (hover && !hover.c) { c.strokeStyle = 'rgba(47,111,214,.55)'; c.lineWidth = 1.4; c.beginPath(); c.arc(hover.cx, hover.cy, 7, 0, 7); c.stroke(); c.fillStyle = 'rgba(47,111,214,.8)'; c.beginPath(); c.arc(hover.cx, hover.cy, 1.6, 0, 7); c.fill(); }
     $('#lc-fill').style.transform = `scaleX(${pNow.toFixed(3)})`; $('#lc-pv').textContent = br(pNow, 2);
     const R = LIVE.raw, nc = R.filter(s => s.c).length;
-    $('#lc-st').textContent = !R.length ? 'aguardando a caneta' : LIVE.mouse ? 'mouse: sem pressão real' : `${nc.toLocaleString('pt-BR')} pontos no papel · ${br(R[R.length - 1].t - R[0].t, 1)} s`;
+    $('#lc-st').textContent = !R.length ? 'aguardando a caneta' : LIVE.mouse ? 'mouse: sem pressão real' : `${br(sigSize(R)[0], 0)} × ${br(sigSize(R)[1], 0)} mm · ${br(R[R.length - 1].t - R[0].t, 1)} s`;
   }
   const kick = () => { if (!raf) raf = requestAnimationFrame(frameCur); };
   const toMM = e => { const fs = !!document.fullscreenElement, u = fs ? e.clientX / innerWidth : e.screenX / screen.width, v = fs ? e.clientY / innerHeight : e.screenY / screen.height; return [u * MESA_MM[0], (1 - v) * MESA_MM[1]]; };
@@ -3288,7 +3298,7 @@ function liveEnsureDom() {
   for (const ev of ['pointerdown', 'pointermove', 'pointerup']) d.addEventListener(ev, e => { if (ev === 'pointerdown' && !(e.target.closest && e.target.closest('.lc-ui'))) { try { d.setPointerCapture(e.pointerId); } catch (_) {} e.preventDefault(); } take(e); });
   d.addEventListener('pointerleave', () => { hover = null; pNow = 0; kick(); });
   d.addEventListener('contextmenu', e => e.preventDefault());
-  $('#lc-clear').addEventListener('click', () => { LIVE.raw = []; LIVE.mouse = false; last = null; d.classList.remove('inked'); $('#lc-msg').textContent = ''; redrawInk(); kick(); });
+  $('#lc-clear').addEventListener('click', () => { LIVE.sizeWarn = null; LIVE.raw = []; LIVE.mouse = false; last = null; d.classList.remove('inked'); $('#lc-msg').textContent = ''; redrawInk(); kick(); });
   $('#lc-x').addEventListener('click', () => liveClose(false));
   $('#lc-ok').addEventListener('click', () => liveFinish());
   document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Escape') liveClose(false); });
@@ -3308,9 +3318,12 @@ function liveClose(keepFs) {
 function liveFinish() {
   const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
   if (nc < 30) { msg.textContent = 'Assinatura curta demais: assine de novo.'; $('#lc').classList.add('shake'); setTimeout(() => $('#lc').classList.remove('shake'), 400); return; }
+  const [sw, sh] = sigSize(R), fora = sw < SIZE_OK[0] || sw > SIZE_OK[1];
+  if (fora && LIVE.sizeWarn !== R.length) { LIVE.sizeWarn = R.length; msg.textContent = `Assinatura com ${br(sw, 0)} mm de largura, fora do tamanho usual (${SIZE_OK[0]} a ${SIZE_OK[1]} mm). Limpar e assinar de novo, ou Concluir para usar assim.`; return; }
   const L = liveProcess(R); if (!L) { msg.textContent = 'Não deu para processar: assine de novo.'; return; }
+  L.m.w = sw; L.m.h = sh; L.m.foraTam = fora;
   LIVE.data = L; LIVE.snap = $('#lc-ink').toDataURL();
-  log('captura ao vivo', `assinatura capturada · ${br(L.m.dur, 2)} s · ${L.m.tracos} traços · ${Math.round(L.rate)} amostras/s${L.mouse ? ' · mouse (sem pressão)' : ''}`);
+  log('captura ao vivo', `assinatura capturada · ${br(L.m.dur, 2)} s · ${L.m.tracos} traços · ${br(L.m.w, 0)} × ${br(L.m.h, 0)} mm${L.m.foraTam ? ' (fora do tamanho usual, mantida)' : ''} · ${Math.round(L.rate)} amostras/s${L.mouse ? ' · mouse (sem pressão)' : ''}`);
   liveEnter(true);
 }
 /* ---------- processamento: reamostra a 300 Hz (o mesmo FS do painel) e calcula as derivadas pelo mesmo filtro SG ---------- */
@@ -3371,9 +3384,9 @@ function liveHeader() {
 function liveDraw() {
   const L = LIVE.data; if (!L) return; const M = L.m;
   $('#lv-meta').textContent = `${Math.round(L.rate)} amostras/s medidas · reamostrado a ${FS}/s${L.mouse ? ' · capturado com mouse: a pressão não é real' : ''}`;
-  const tiles = [['Duração', br(M.dur, 2), 's'], ['Traços', String(M.tracos), M.tracos - 1 === 1 ? '1 levantamento' : `${M.tracos - 1} levantamentos`], ['Caminho no papel', br(M.path, 0), 'mm'], ['Velocidade média', br(M.vmed, 0), 'mm/s'],
+  const tiles = [['Tamanho na mesa', `${br(M.w, 0)} × ${br(M.h, 0)}`, 'mm (largura × altura)' + (M.foraTam ? ' · fora do usual' : '')], ['Duração', br(M.dur, 2), 's'], ['Traços', String(M.tracos), M.tracos - 1 === 1 ? '1 levantamento' : `${M.tracos - 1} levantamentos`], ['Caminho no papel', br(M.path, 0), 'mm'], ['Velocidade média', br(M.vmed, 0), 'mm/s'],
     ['Velocidade máxima', br(M.vmax, 0), 'mm/s'], ['Tempo no ar', br(M.ar, 2), 's entre traços'], ['Pressão média', br(M.pm, 2), 'adimensional (0–1)'], ['Pressão máxima', br(M.pmax, 2), 'adimensional (0–1)'],
-    ['Aceleração RMS', br(M.aRMS, 2), 'm/s²'], ['Espectro em 5–8 Hz', br(M.e58, 1), '% da velocidade']];
+    ['Aceleração RMS', br(M.aRMS, 2), 'm/s²'], ['Espectro em 5–8 Hz', br(M.e58, 1), '% da velocidade'], ['Inclinação', '—', 'sem dado (sem clip)']];
   $('#lv-tiles').innerHTML = tiles.map(([k, v, u]) => `<div class="lt"><span class="k">${k}</span><b>${v}</b><span class="u">${u}</span></div>`).join('');
   liveSig($('#lv-sig'));
   const tx = Array.from(L.t), air = (F) => liveAir(F, L);
