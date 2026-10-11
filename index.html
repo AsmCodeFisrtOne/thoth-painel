@@ -3265,8 +3265,8 @@ function liveEnsureDom() {
     const kx = innerWidth / MESA_MM[0], ky = innerHeight / MESA_MM[1], f = $('#lc-field'), w = FIELD_MM[0] * kx, h = FIELD_MM[1] * ky;
     Object.assign(f.style, { width: w + 'px', height: h + 'px', left: (innerWidth - w) / 2 + 'px', top: (innerHeight * 0.52 - h / 2) + 'px' }); $('#lc-rule').style.width = 10 * kx + 'px';
   }
-  const W = p => 1.1 + 4.2 * Math.pow(Math.max(0, Math.min(1, p)), 0.75);
-  function seg(c, a, b) { c.strokeStyle = '#1c2a4d'; c.lineCap = 'round'; c.lineWidth = (W(a.p) + W(b.p)) / 2; c.beginPath(); c.moveTo(a.cx, a.cy); c.lineTo(b.cx, b.cy); c.stroke(); }
+  const W = p => 0.7 + 2.1 * Math.pow(Math.max(0, Math.min(1, p)), 0.9); // traço fino, como esferográfica; engrossa com a pressão
+  function seg(c, a, b) { c.strokeStyle = '#1c2a4d'; c.lineCap = 'round'; c.lineJoin = 'round'; c.lineWidth = (W(a.p) + W(b.p)) / 2; c.beginPath(); c.moveTo(a.cx, a.cy); c.lineTo(b.cx, b.cy); c.stroke(); }
   function redrawInk() { const c = ink.getContext('2d'); c.clearRect(0, 0, innerWidth, innerHeight); const R = LIVE.raw; for (let i = 1; i < R.length; i++) if (R[i].c && R[i - 1].c) seg(c, R[i - 1], R[i]); }
   function frameCur() {
     raf = 0; const c = cur.getContext('2d'); c.clearRect(0, 0, innerWidth, innerHeight);
@@ -3423,7 +3423,7 @@ function liveSig(cv, upto) {
   c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
   // tinta: espessura pela pressão medida (adimensional), como uma esferográfica
   const ink = css('--ink'); c.strokeStyle = ink; c.lineCap = 'round'; const mm = Math.max(0.6, sc * 0.11);
-  for (let i = 1; i <= N; i++) if (L.C[i] && L.C[i - 1]) { c.lineWidth = mm * (0.55 + 2.2 * Math.pow((L.P[i] + L.P[i - 1]) / 2, 0.8)); c.beginPath(); c.moveTo(X(L.x[i - 1]), Y(L.y[i - 1])); c.lineTo(X(L.x[i]), Y(L.y[i])); c.stroke(); }
+  for (let i = 1; i <= N; i++) if (L.C[i] && L.C[i - 1]) { c.lineWidth = mm * (0.35 + 1.25 * Math.pow((L.P[i] + L.P[i - 1]) / 2, 0.9)); c.beginPath(); c.moveTo(X(L.x[i - 1]), Y(L.y[i - 1])); c.lineTo(X(L.x[i]), Y(L.y[i])); c.stroke(); }
   if (upto != null && N < L.n - 1) { c.fillStyle = L.C[N] ? P.red : 'transparent'; c.strokeStyle = P.red; c.lineWidth = 1.5; c.beginPath(); c.arc(X(L.x[N]), Y(L.y[N]), 4.5, 0, 7); L.C[N] ? c.fill() : c.stroke(); }
   c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'left'; c.fillText(`escala: 10 mm = ${br(10 * sc, 0)} px · espessura do traço pela pressão medida`, 8, h - 4);
   if (upto != null) { c.textAlign = 'right'; c.fillText(`${br(L.t[N], 2)} s`, w - 8, h - 4); }
