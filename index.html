@@ -248,6 +248,11 @@ body.live-on footer.f { display: none } body.live-on #real-bar { display: none }
 .lc-b[hidden] { display: none } .lc-b:disabled { opacity: .4; cursor: default }
 .lc-hold { position: absolute; left: 50%; top: 52%; width: 74px; height: 74px; margin: -37px 0 0 -37px; pointer-events: none }
 .lc-toast { position: absolute; left: 50%; top: 186px; transform: translateX(-50%); z-index: 3; font: 600 13px var(--sans); color: #1f7a35; background: rgba(255,255,255,.85); border: 1px solid rgba(31,122,53,.3); padding: 6px 14px; border-radius: 999px; opacity: 0; transition: opacity .3s; pointer-events: none } .lc-toast.on { opacity: 1 }
+.lc-count { position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-62%); text-align: center; font: 700 64px var(--sans); color: #2f6fd6; letter-spacing: .04em; pointer-events: none; text-shadow: 0 2px 12px rgba(47,111,214,.18) } .lc-count:empty { display: none }
+#lc.g-fechado .lc-field { background: rgba(120,110,90,.06); border-radius: 10px } #lc.g-fechado .lc-field .lc-lab { color: #a49c89; opacity: 1 !important } #lc.g-fechado .lc-line { opacity: .45 }
+#lc.g-contagem .lc-field { background: rgba(47,111,214,.05); border-radius: 10px } #lc.g-contagem .lc-field > i { border-color: #2f6fd6 }
+#lc.g-aberto .lc-field > i { border-color: #1f8a45; animation: lcgo 1.6s ease-in-out infinite } #lc.g-aberto .lc-field { background: rgba(31,138,69,.035); border-radius: 10px } #lc.g-aberto .lc-count { color: #1f8a45; text-shadow: 0 2px 12px rgba(31,138,69,.2) }
+@keyframes lcgo { 50% { opacity: .45 } }
 .lc-fly { position: fixed; left: 0; top: 0; z-index: 9998; pointer-events: none; transform-origin: 0 0; transition: transform .9s cubic-bezier(.45,0,.2,1), opacity .9s ease-in .15s }
 </style>
 
@@ -3359,7 +3364,7 @@ function liveEnsureDom() {
   const d = document.createElement('div'); d.id = 'lc'; d.hidden = true;
   d.innerHTML = `<canvas id="lc-ink"></canvas><canvas id="lc-cur"></canvas>
     <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-step" id="lc-step"></div><button type="button" class="lc-som" id="lc-som">🔔 som</button><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
-    <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
+    <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-count" id="lc-count" aria-live="assertive"></div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
     <div class="lc-gal lc-ui" id="lc-gal" hidden aria-label="Padrões colhidos"></div>
     <div class="lc-ref" id="lc-ref" hidden aria-hidden="true"><img id="lc-ref-img" alt="" draggable="false"><span>questionada · só referência visual</span></div>
     <div class="lc-bot lc-ui"><div class="lc-prog" id="lc-prog" hidden><div class="lc-dots" id="lc-dots"></div><div class="lc-prec" id="lc-prec"></div></div><div class="lc-meter"><span class="lc-k">pressão</span><div class="lc-bar"><i id="lc-fill"></i></div><span class="lc-v" id="lc-pv">0,00</span><span class="lc-st" id="lc-st">aguardando a caneta</span></div>
@@ -3387,6 +3392,8 @@ function liveEnsureDom() {
     if (e.target.closest && e.target.closest('.lc-ui')) { hover = null; kick(); return; }
     if (e.pointerType === 'touch') return;
     if (LIVE.mode === 'ruido-ok') { hover = { c: 0, cx: e.clientX, cy: e.clientY }; pNow = e.buttons & 1 ? e.pressure : 0; kick(); return; } // medição encerrada: nada é gravado até continuar
+    // semáforo: fora da janela verde nada é gravado
+    if (GATE_MODES.includes(LIVE.mode) && LIVE.gate !== 'aberto') { hover = { c: 0, cx: e.clientX, cy: e.clientY }; pNow = e.buttons & 1 ? e.pressure : 0; kick(); return; }
     // cada etapa só começa a gravar num toque NOVO da caneta: se ela ainda estiver encostada da etapa anterior
     // (ruído, padrão salvo com Enter), nada entra até a pessoa levantar e encostar de novo
     if (!LIVE.armed) { if (!(e.type === 'pointerdown' && (e.buttons & 1))) { hover = { c: 0, cx: e.clientX, cy: e.clientY }; pNow = 0; kick(); return; } LIVE.armed = true; }
@@ -3401,7 +3408,7 @@ function liveEnsureDom() {
       if (c && ev.pointerType === 'mouse') LIVE.mouse = true;
       R.push(s); if (c && last && last.c) seg(ink.getContext('2d'), last, s);
       last = s; hover = s; pNow = p;
-      if (c) { d.classList.add('inked'); if (LIVE.waitT) waitStop(); }
+      if (c) d.classList.add('inked');
     }
     if (LIVE.mode === 'ruido') ruidoCheck();
     kick();
@@ -3412,7 +3419,7 @@ function liveEnsureDom() {
   const clear = () => { setTimeout(() => typeof colPronta === 'function' && colPronta(), 0); LIVE.armed = false; LIVE.sizeWarn = null; LIVE.raw = []; LIVE.mouse = false; last = null; d.classList.remove('inked'); $('#lc-msg').textContent = ''; redrawInk(); kick(); };
   $('#lc-clear').addEventListener('click', clear); LIVE._clear = clear;
   $('#lc-x').addEventListener('click', () => (LIVE.mode === 'solo' ? liveClose(false) : colSair()));
-  $('#lc-ok').addEventListener('click', () => (LIVE.mode === 'solo' ? liveFinish() : colConcluir()));
+  $('#lc-ok').addEventListener('click', okClick);
   $('#lc-undo').addEventListener('click', colDescartar); $('#lc-end').addEventListener('click', colEncerrar); $('#lc-skip').addEventListener('click', () => colRuido(null)); $('#lc-redo').addEventListener('click', () => { LIVE.mode = 'ruido'; LIVE._clear(); colUI(); });
   document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Enter' && !e.repeat) { const b = $('#lc-ok'); if (!b.hidden && !b.disabled) { e.preventDefault(); b.click(); } } });
   document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Escape') (LIVE.mode === 'solo' ? liveClose(false) : colSair()); });
@@ -3420,8 +3427,8 @@ function liveEnsureDom() {
   LIVE._fit = fit; LIVE._redraw = redrawInk; LIVE._resetLast = () => { last = null; hover = null; pNow = 0; };
 }
 function liveOpen(mode = 'solo') {
-  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.editIdx = null; LIVE.selIdx = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
-  d.hidden = false; document.body.style.overflow = 'hidden'; LIVE._fit();
+  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.gate = 'fechado'; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.editIdx = null; LIVE.selIdx = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
+  d.hidden = false; document.body.style.overflow = 'hidden'; LIVE._fit(); if (typeof colPronta === 'function') colPronta();
   const el = document.documentElement; if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().then(() => setTimeout(LIVE._fit, 60)).catch(() => {});
   if (mode === 'solo') log('captura ao vivo', 'abriu a tela de assinatura (mesa)');
 }
@@ -3435,6 +3442,7 @@ function liveFinish() {
   const [sw, sh] = sigSize(R), fora = sw < SIZE_OK[0] || sw > SIZE_OK[1];
   if (fora && LIVE.sizeWarn !== R.length) { LIVE.sizeWarn = R.length; msg.textContent = `Assinatura com ${br(sw, 0)} mm de largura, fora do tamanho usual (${SIZE_OK[0]} a ${SIZE_OK[1]} mm). Limpar e assinar de novo, ou Concluir para usar assim.`; return; }
   const L = liveProcess(R); if (!L) { msg.textContent = 'Não deu para processar: assine de novo.'; return; }
+  waitStop(); beep(440, 0.16, 0.16);
   L.m.w = sw; L.m.h = sh; L.m.foraTam = fora;
   LIVE.data = L; LIVE.snap = $('#lc-ink').toDataURL();
   log('captura ao vivo', `assinatura capturada · ${br(L.m.dur, 2)} s · ${L.m.tracos} traços · ${br(L.m.w, 0)} × ${br(L.m.h, 0)} mm${L.m.foraTam ? ' (fora do tamanho usual, mantida)' : ''} · ${Math.round(L.rate)} amostras/s${L.mouse ? ' · mouse (sem pressão)' : ''}`);
@@ -3567,17 +3575,33 @@ const colSave = () => { try { localStorage.setItem(COL_KEY, JSON.stringify({ ...
 const colLoad = () => { try { const v = JSON.parse(localStorage.getItem(COL_KEY) || 'null'); return v && v.formato === 'thoth-coleta-v1' ? v : null; } catch (_) { return null; } };
 const colDrop = () => { try { localStorage.removeItem(COL_KEY); } catch (_) {} };
 const serial = R => R.map(s => [+s.t.toFixed(6), +s.x.toFixed(4), +s.y.toFixed(4), +s.p.toFixed(4), s.c ? 1 : 0]);
-/* ---------- beep: avisa que a tela está pronta para assinar; repete a cada 4 s até a caneta tocar ---------- */
+/* ---------- sincronismo com quem assina (semáforo) ----------
+   fechado: campo cinza, "aguarde", nada é gravado · o operador libera (botão ou Enter) →
+   contagem: bip · bip · biiip (o terceiro, longo, é a largada) → aberto: campo verde, grava; silêncio enquanto a pessoa
+   assina (um som contínuo funcionaria como metrônomo e alteraria o ritmo) → Enter/botão: bip grave, volta a fechado. */
 let AC = null; try { LIVE.mute = localStorage.getItem('thoth-som') === '0'; } catch (_) {}
 function beep(f = 880, d = 0.14, v = 0.18) {
   if (LIVE.mute) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === 'suspended') AC.resume();
     const o = AC.createOscillator(), g = AC.createGain(), t = AC.currentTime; o.type = 'sine'; o.frequency.value = f; g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.01); g.gain.exponentialRampToValueAtTime(0.0001, t + d); o.connect(g).connect(AC.destination); o.start(t); o.stop(t + d + 0.02); } catch (_) {}
 }
-function waitStop() { clearInterval(LIVE.waitT); LIVE.waitT = 0; }
-function waitBeep() { // pronta para assinar: um beep agora e outro a cada 4 s enquanto ninguém encostar a caneta
-  if (LIVE.waitT) return; beep(); LIVE.waitT = setInterval(() => { const d = $('#lc'); if (!d || d.hidden || LIVE.raw.some(s => s.c) || !['solo', 'q', 'p'].includes(LIVE.mode)) return waitStop(); beep(880, 0.1, 0.1); }, 4000);
+const GATE_MODES = ['solo', 'q', 'p'];
+function waitStop() { (LIVE.gateT || []).forEach(clearTimeout); LIVE.gateT = []; const c = $('#lc-count'); if (c) c.textContent = ''; if (LIVE.gate === 'contagem') LIVE.gate = 'fechado'; }
+function gateFechar(som) { waitStop(); LIVE.gate = 'fechado'; if (som) beep(440, 0.16, 0.16); colPronta(); }
+function gateAbrir() {
+  if (LIVE.gate !== 'fechado') return; LIVE._clear(); LIVE.gate = 'contagem'; LIVE.gateT = []; colUI();
+  const c = $('#lc-count'), at = (ms, f) => LIVE.gateT.push(setTimeout(f, ms));
+  at(0, () => { c.textContent = '3'; beep(660, 0.12); });
+  at(800, () => { c.textContent = '2'; beep(660, 0.12); });
+  at(1600, () => { c.textContent = 'ASSINE'; beep(1046, 0.5, 0.2); LIVE.gate = 'aberto'; LIVE.armed = false; colUI(); });
+  at(2600, () => { c.textContent = ''; });
+  log('coleta: liberou assinatura', { solo: 'avulsa', q: 'questionada', p: LIVE.editIdx != null ? `refazer P${String(LIVE.editIdx + 1).padStart(2, '0')}` : `P${String(slotNext() + 1).padStart(2, '0')}` }[LIVE.mode] || LIVE.mode);
 }
-function somUI() { const b = $('#lc-som'); if (b) { b.textContent = LIVE.mute ? '🔇 som' : '🔔 som'; b.title = LIVE.mute ? 'Beep desligado: tocar para ligar' : 'Beep ligado: avisa quando a tela está pronta para assinar'; } }
+function okClick() {
+  const m = LIVE.mode;
+  if (GATE_MODES.includes(m)) { if (LIVE.gate === 'fechado') return gateAbrir(); if (LIVE.gate === 'contagem') return; }
+  return m === 'solo' ? liveFinish() : colConcluir();
+}
+function somUI() { const b = $('#lc-som'); if (b) { b.textContent = LIVE.mute ? '🔇 som' : '🔔 som'; b.title = LIVE.mute ? 'Bipes desligados: tocar para ligar' : 'Bipes ligados: bip · bip · biiip = pode assinar'; } }
 function lcToast(t) { let el = $('#lc-toast'); if (!el) { el = document.createElement('div'); el.id = 'lc-toast'; el.className = 'lc-toast'; $('#lc').appendChild(el); } el.textContent = t; el.classList.add('on'); clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 1600); }
 const nP = () => (COL ? COL.P.filter(Boolean).length : 0), slotNext = () => { if (!COL) return 0; const i = COL.P.indexOf(null); return i >= 0 ? i : COL.P.length; };
 const compactP = c => ({ ...c, P: c.P.filter(Boolean) });
@@ -3597,9 +3621,13 @@ function colUI() {
   $('.lc-lab').textContent = m === 'ruido' || m === 'ruido-rec' ? 'Encoste a caneta aqui e segure parada' : m === 'ruido-ok' ? '✓ Ruído medido' : 'Assine aqui'; $('.lc-lab').classList.toggle('done', m === 'ruido-ok');
   show('#lc-ref', m === 'p' && COL && COL.refImg); if (m === 'p' && COL && COL.refImg) $('#lc-ref-img').src = COL.refImg;
   show('#lc-prog', m === 'p'); show('#lc-gal', m === 'p'); show('#lc-undo', false); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', false);
-  show('#lc-ok', true); show('#lc-clear', m !== 'ruido'); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX);
+  const gt = GATE_MODES.includes(m) ? LIVE.gate || 'fechado' : null;
+  show('#lc-ok', true); show('#lc-clear', m !== 'ruido' && (!gt || gt === 'aberto')); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX) || gt === 'contagem';
   $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: ed != null ? `Salvar no padrão ${ed + 1}` : 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
   $('#lc-skip').textContent = 'Pular (usar ruído de referência)';
+  if (gt === 'fechado') $('#lc-ok').textContent = m === 'q' ? 'Liberar a questionada ▶' : m === 'p' ? (ed != null ? `Liberar: refazer o padrão ${ed + 1} ▶` : `Liberar o padrão ${slotNext() + 1} ▶`) : 'Liberar a assinatura ▶';
+  else if (gt === 'contagem') $('#lc-ok').textContent = 'bip · bip · biiip…';
+  $('.lc-lab').textContent = gt === 'fechado' ? 'Aguarde' : gt === 'contagem' ? 'Prepare-se' : $('.lc-lab').textContent;
   if (m === 'p') {
     const e = $('#lc-end'); e.disabled = n < N_MIN; e.textContent = `Encerrar e analisar (${n})`;
     // bolinhas fixas (uma por padrão): verde quando colhido; contorno azul no que está sendo colhido agora
@@ -3615,11 +3643,13 @@ function colUI() {
   }
   if (m === 'p' && LIVE.selIdx != null) { const i = LIVE.selIdx; $('#lc-msg').innerHTML = `<span class="inf">Padrão ${i + 1}:</span> <button type="button" class="lc-mini" data-act="refazer">Refazer</button> <button type="button" class="lc-mini" data-act="excluir">Excluir</button> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (m === 'p' && n >= COL_MAX && ed == null) { $('#lc-msg').innerHTML = `<span class="okm">✓ ${COL_MAX} padrões coletados.</span> <span class="inf">Toque num padrão para refazer ou excluir, ou em Encerrar e analisar.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (gt === 'fechado' && !(m === 'p' && ed == null && n >= COL_MAX)) { $('#lc-msg').innerHTML = `<span class="inf">Quando a pessoa estiver pronta, toque em Liberar ou aperte Enter: bip · bip · biiip e o campo fica verde. Só então a assinatura é gravada.${m === 'p' && ed != null ? ` A nova assinatura substitui o padrão ${ed + 1}.` : ''}</span>${ed != null ? ' <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>' : ''}`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (gt === 'contagem') { $('#lc-msg').innerHTML = ''; colPronta(); return; }
   if (m === 'p' && ed != null) { $('#lc-msg').innerHTML = `<span class="inf">Assine de novo: a nova assinatura substitui o padrão ${ed + 1}.</span> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   $('#lc-msg').innerHTML = m === 'ruido' ? '<span class="inf">Encoste a ponta no centro do campo, sem escrever, e mantenha parada por pelo menos 2 s. A medição começa sozinha.</span>' : m === 'ruido-ok' ? `<span class="okm">✓ Medição do ruído concluída${COL.ruido_sg ? ` · σ velocidade ${br(COL.ruido_sg[1], 2)} mm/s` : ''}. Levante a caneta e toque em Continuar, ou aperte Enter.</span>` : '';
   LIVE.endWarn = null; LIVE.exitWarn = false; colPronta();
 }
-function colPronta() { somUI(); const pronta = ['solo', 'q', 'p'].includes(LIVE.mode) && !LIVE.raw.some(s => s.c) && !(LIVE.mode === 'p' && LIVE.editIdx == null && nP() >= COL_MAX); if (pronta) waitBeep(); else waitStop(); }
+function colPronta() { somUI(); const d = $('#lc'); if (!d) return; const g = GATE_MODES.includes(LIVE.mode) ? LIVE.gate || 'fechado' : ''; d.classList.toggle('g-fechado', g === 'fechado'); d.classList.toggle('g-contagem', g === 'contagem'); d.classList.toggle('g-aberto', g === 'aberto'); }
 /* ruído: 2 s de contato com a caneta parada → desvio das derivadas (base das faixas de ruído e do limiar das trocas de jerk) */
 /* a medição começa sozinha quando a caneta encosta e fica parada; só termina quando quem opera aperta o botão (ou Enter),
    mesmo que a caneta continue encostada. Vale o último trecho parado de pelo menos 2 s. */
@@ -3649,7 +3679,7 @@ function colRuido(run) {
   else { COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência'); }
   colParaQuestionada();
 }
-function colParaQuestionada() { LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.ruido_sg ? 'Ruído registrado · agora a questionada' : 'Agora a assinatura questionada');
+function colParaQuestionada() { LIVE.gate = 'fechado'; LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.ruido_sg ? 'Ruído registrado · agora a questionada' : 'Agora a assinatura questionada');
 }
 function colValida() {
   const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
@@ -3663,18 +3693,19 @@ function colConcluir() {
   if (LIVE.mode === 'ruido') { if (!LIVE.ruidoRun) { $('#lc-msg').textContent = 'Ainda não há medição: encoste a caneta no centro e mantenha parada por 2 s.'; return; } return colRuido(LIVE.ruidoRun); }
   const a = colValida(); if (!a) return;
   if (LIVE.mode === 'q') {
-    COL.Q = a; COL.refImg = refImage(a.s); log('coleta: questionada', `${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantida)' : ''}${a.mouse ? ' · mouse' : ''}`);
+    gateFechar(true); COL.Q = a; COL.refImg = refImage(a.s); log('coleta: questionada', `${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantida)' : ''}${a.mouse ? ' · mouse' : ''}`);
     LIVE.mode = 'p'; LIVE._clear(); colUI(); colSave(); lcToast('Questionada registrada. Agora os padrões.'); return;
   }
   const ed = LIVE.editIdx, i = ed != null ? ed : slotNext(); if (i >= COL_MAX) return;
   a.thumb = refImage(a.s, 156, 64); COL.P[i] = a; LIVE.editIdx = null; LIVE.selIdx = null;
   log(ed != null ? 'coleta: refez padrão' : 'coleta: padrão', `P${String(i + 1).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
-  colSave();
-  if (nP() >= COL_MAX) { waitStop(); beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`${COL_MAX} padrões coletados · encerrando a coleta`); log('coleta: 20 padrões', 'encerrada automaticamente'); return setTimeout(colFinalizar, 900); }
-  LIVE._clear(); colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
+  colSave(); waitStop(); LIVE.gate = 'fechado';
+  if (nP() >= COL_MAX) { beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`${COL_MAX} padrões coletados · encerrando a coleta`); log('coleta: 20 padrões', 'encerrada automaticamente'); return setTimeout(colFinalizar, 900); }
+  beep(440, 0.16, 0.16); LIVE._clear(); colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
 }
 function colSlotAcao(act) {
   const i = LIVE.selIdx;
+  waitStop(); LIVE.gate = 'fechado';
   if (act === 'cancelar') { LIVE.selIdx = null; LIVE.editIdx = null; LIVE._clear(); colUI(); return; }
   if (i == null) return;
   if (act === 'refazer') { LIVE.editIdx = i; LIVE.selIdx = null; LIVE._clear(); colUI(); return; }
@@ -3743,7 +3774,7 @@ function openCapMenu() {
   });
   $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
-  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); if (LIVE.mute) waitStop(); else colPronta(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
+  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
     const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
   $('#real-save').addEventListener('click', () => S.realCol && colBaixar(S.realCol));
   $('#real-exit').addEventListener('click', () => { S.real = false; REALCASE = null; S.name = NAMES[4]; S.mode = MODE0(S.name); log('voltou à simulação', '—'); loadCase(); });
