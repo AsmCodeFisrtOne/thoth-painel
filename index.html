@@ -213,7 +213,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 .lc-line { height: 1.5px; background: linear-gradient(90deg, rgba(120,110,90,.0), rgba(120,110,90,.45) 8%, rgba(120,110,90,.45) 92%, rgba(120,110,90,0)) }
 .lc-cross { position: absolute; left: 1%; top: -34px; font: 300 30px var(--sans); color: #a49c89 }
 .lc-lab { text-align: center; margin-top: 14px; font-size: 13px; letter-spacing: .28em; text-transform: uppercase; color: #9b937f; transition: opacity .5s }
-#lc.inked .lc-lab { opacity: 0 } #lc.inked .lc-cross { opacity: .5 }
+#lc.inked .lc-lab:not(.done) { opacity: 0 } .lc-lab.done { color: #1f7a35; font-weight: 600 } .lc-msg .okm { color: #1f7a35 } #lc.inked .lc-cross { opacity: .5 }
 .lc-bot { left: 0; right: 0; bottom: 0; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 26px 22px; flex-wrap: wrap }
 .lc-meter { display: flex; align-items: center; gap: 10px; font: 12px var(--mono); color: #6f6959 } .lc-k { letter-spacing: .12em; text-transform: uppercase; font: 600 10.5px var(--sans) }
 .lc-bar { width: 180px; height: 6px; border-radius: 3px; background: rgba(28,42,77,.1); overflow: hidden } .lc-bar i { display: block; height: 100%; background: linear-gradient(90deg, #6ea1ff, #1c2a4d); transform-origin: left; transform: scaleX(0); transition: transform 60ms linear }
@@ -1131,9 +1131,9 @@ function registroDeAmostras(S0) { // S0: [[t (s), x (mm), y (mm), pressão 0–1
   for (let i = 0; i < n; i++) { const [t, x, y, p, c] = S0[i]; r.t_us[i] = Math.round((t - t0) * 1e6); if (i && r.t_us[i] <= r.t_us[i - 1]) r.t_us[i] = r.t_us[i - 1] + 1; r.X[i] = Math.round(x / RES); r.Y[i] = Math.round(y / RES); r.C[i] = c ? 1 : 0; r.P[i] = c ? Math.max(1, Math.min(8191, Math.round(p * 8191))) : 0; }
   return r;
 }
-function recorte(R, pad = 0.25) { // tira o ar antes do 1º toque e depois do último (inclusive o caminho até o botão)
+function recorte(R, pad = 0.25) { // começa no 1º toque; depois do último, guarda só 0,25 s de ar (sem o caminho até o botão)
   let a = R.findIndex(s => s[4]), b = -1; for (let i = R.length - 1; i >= 0; i--) if (R[i][4]) { b = i; break; } if (a < 0) return null;
-  while (a > 0 && R[a - 1][0] >= R[a][0] - pad && R[a][0] - R[a - 1][0] < 0.06) a--;
+  // começa exatamente no 1º toque: o movimento no ar antes dele é preparação para assinar, não assinatura
   let e = b; while (e < R.length - 1 && R[e + 1][0] <= R[b][0] + pad && R[e + 1][0] - R[e][0] < 0.06) e++;
   return R.slice(a, e + 1);
 }
@@ -3366,7 +3366,7 @@ function liveEnsureDom() {
     <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
     <div class="lc-ref" id="lc-ref" hidden aria-hidden="true"><img id="lc-ref-img" alt="" draggable="false"><span>questionada · só referência visual</span></div>
     <div class="lc-bot lc-ui"><div class="lc-prog" id="lc-prog" hidden><div class="lc-dots" id="lc-dots"></div><div class="lc-prec" id="lc-prec"></div></div><div class="lc-meter"><span class="lc-k">pressão</span><div class="lc-bar"><i id="lc-fill"></i></div><span class="lc-v" id="lc-pv">0,00</span><span class="lc-st" id="lc-st">aguardando a caneta</span></div>
-      <div class="lc-acts"><span class="lc-msg" id="lc-msg"></span><button type="button" class="lc-b" id="lc-skip" hidden>Pular</button><button type="button" class="lc-b" id="lc-undo" hidden>Descartar o último</button><button type="button" class="lc-b" id="lc-clear">Limpar</button><button type="button" class="lc-b" id="lc-end" hidden>Encerrar e analisar</button><button type="button" class="lc-b pri" id="lc-ok">Concluir</button></div></div>`;
+      <div class="lc-acts"><span class="lc-msg" id="lc-msg"></span><button type="button" class="lc-b" id="lc-skip" hidden>Pular</button><button type="button" class="lc-b" id="lc-redo" hidden>Medir de novo</button><button type="button" class="lc-b" id="lc-undo" hidden>Descartar o último</button><button type="button" class="lc-b" id="lc-clear">Limpar</button><button type="button" class="lc-b" id="lc-end" hidden>Encerrar e analisar</button><button type="button" class="lc-b pri" id="lc-ok">Concluir</button></div></div>`;
   document.body.appendChild(d);
   const ink = $('#lc-ink'), cur = $('#lc-cur'); let last = null, hover = null, raf = 0, pNow = 0;
   const fit = () => { placeField(); const r = window.devicePixelRatio || 1; for (const c of [ink, cur]) { c.width = Math.round(innerWidth * r); c.height = Math.round(innerHeight * r); c.getContext('2d').setTransform(r, 0, 0, r, 0, 0); } redrawInk(); };
@@ -3389,6 +3389,7 @@ function liveEnsureDom() {
   function take(e) {
     if (e.target.closest && e.target.closest('.lc-ui')) { hover = null; kick(); return; }
     if (e.pointerType === 'touch') return;
+    if (LIVE.mode === 'ruido-ok') { hover = { c: 0, cx: e.clientX, cy: e.clientY }; pNow = e.buttons & 1 ? e.pressure : 0; kick(); return; } // medição encerrada: nada é gravado até continuar
     const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : []; const list = evs.length ? evs : [e];
     for (const ev of list) {
       if (ev.pointerType === 'pen') LIVE.sawPen = true;
@@ -3412,7 +3413,8 @@ function liveEnsureDom() {
   $('#lc-clear').addEventListener('click', clear); LIVE._clear = clear;
   $('#lc-x').addEventListener('click', () => (LIVE.mode === 'solo' ? liveClose(false) : colSair()));
   $('#lc-ok').addEventListener('click', () => (LIVE.mode === 'solo' ? liveFinish() : colConcluir()));
-  $('#lc-undo').addEventListener('click', colDescartar); $('#lc-end').addEventListener('click', colEncerrar); $('#lc-skip').addEventListener('click', () => colRuido(null));
+  $('#lc-undo').addEventListener('click', colDescartar); $('#lc-end').addEventListener('click', colEncerrar); $('#lc-skip').addEventListener('click', () => colRuido(null)); $('#lc-redo').addEventListener('click', () => { LIVE.mode = 'ruido'; LIVE._clear(); colUI(); });
+  document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Enter' && !e.repeat) { const b = $('#lc-ok'); if (!b.hidden && !b.disabled) { e.preventDefault(); b.click(); } } });
   document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Escape') (LIVE.mode === 'solo' ? liveClose(false) : colSair()); });
   window.addEventListener('resize', () => { if (!d.hidden) fit(); });
   LIVE._fit = fit; LIVE._redraw = redrawInk; LIVE._resetLast = () => { last = null; hover = null; pNow = 0; };
@@ -3442,7 +3444,7 @@ function liveFinish() {
 function liveProcess(R) {
   let a = R.findIndex(s => s.c), b = -1; for (let i = R.length - 1; i >= 0; i--) if (R[i].c) { b = i; break; }
   if (a < 0) return null;
-  const pad = 0.25; while (a > 0 && R[a - 1].t >= R[a].t - pad && R[a].t - R[a - 1].t < 0.06) a--; // ar antes do 1º toque (aproximação)
+  const pad = 0.25; // começa no 1º toque: o movimento no ar antes dele é preparação, não assinatura
   let e = b; while (e < R.length - 1 && R[e + 1].t <= R[b].t + pad && R[e + 1].t - R[e].t < 0.06) e++; // ar depois do último (sem o caminho até o botão)
   const S0 = R.slice(a, e + 1), t0 = S0[0].t, T = S0.map(s => s.t - t0), dur = T[T.length - 1];
   const n = Math.floor(dur * FS) + 1; if (n < 40) return null;
@@ -3577,13 +3579,13 @@ function refImage(S0) { // miniatura fixa da questionada (só imagem: não anima
 }
 function colUI() {
   const m = LIVE.mode, n = COL ? COL.P.length : 0, show = (id, v) => { const e = $(id); if (e) e.hidden = !v; };
-  const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', q: 'Assinatura questionada', p: `Padrão ${Math.min(n + 1, COL_MAX)} de ${COL_MAX}` }[m] || '';
+  const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', 'ruido-ok': 'Ruído da mesa ✓ <em>passo 1 concluído</em>', q: 'Assinatura questionada', p: `Padrão ${Math.min(n + 1, COL_MAX)} de ${COL_MAX}` }[m] || '';
   $('#lc-step').innerHTML = step + (m === 'p' || m === 'q' ? ` <em>${escH(COL.signatario)}</em>` : '');
-  $('.lc-lab').textContent = m === 'ruido' ? 'Encoste a caneta aqui e segure parada' : 'Assine aqui';
+  $('.lc-lab').textContent = m === 'ruido' ? 'Encoste a caneta aqui e segure parada' : m === 'ruido-ok' ? '✓ Ruído medido' : 'Assine aqui'; $('.lc-lab').classList.toggle('done', m === 'ruido-ok');
   show('#lc-ref', m === 'p' && COL && COL.refImg); if (m === 'p' && COL && COL.refImg) $('#lc-ref-img').src = COL.refImg;
-  show('#lc-prog', m === 'p'); show('#lc-undo', m === 'p' && n > 0); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido');
-  show('#lc-ok', m !== 'ruido'); show('#lc-clear', m !== 'ruido');
-  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: 'Salvar padrão' }[m] || 'Concluir';
+  show('#lc-prog', m === 'p'); show('#lc-undo', m === 'p' && n > 0); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', m === 'ruido-ok');
+  show('#lc-ok', m !== 'ruido'); show('#lc-clear', m !== 'ruido' && m !== 'ruido-ok');
+  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: 'Salvar padrão', 'ruido-ok': 'Continuar para a questionada →' }[m] || 'Concluir';
   $('#lc-skip').textContent = 'Pular (usar ruído de referência)';
   if (m === 'p') {
     const e = $('#lc-end'); e.disabled = n < N_MIN; e.textContent = `Encerrar e analisar (${n})`;
@@ -3592,7 +3594,7 @@ function colUI() {
     $('#lc-prec').innerHTML = z === null ? `<b>${n}</b> padrões · faltam ${N_MIN - n} para o mínimo (${N_MIN})` :
       `<b>${n}</b> padrões · precisão da régua: <span class="z${z}">${['insuficiente (sem veredito)', 'reduzida', 'normal'][z]}</span> · limite ${fDist(lim)} (com 20: ${fDist(l20)})`;
   }
-  $('#lc-msg').textContent = m === 'ruido' ? 'Encoste a ponta no centro do campo, sem escrever, e segure parada por 2 s.' : '';
+  $('#lc-msg').innerHTML = m === 'ruido' ? 'Encoste a ponta no centro do campo, sem escrever, e segure parada por 2 s.' : m === 'ruido-ok' ? `<span class="okm">✓ Medição do ruído concluída${COL.ruido_sg ? ` · σ velocidade ${br(COL.ruido_sg[1], 2)} mm/s` : ''}. Levante a caneta e toque em Continuar, ou aperte Enter.</span>` : '';
   LIVE.endWarn = null; LIVE.exitWarn = false;
 }
 /* ruído: 2 s de contato com a caneta parada → desvio das derivadas (base das faixas de ruído e do limiar das trocas de jerk) */
@@ -3613,9 +3615,11 @@ function ruidoDe(run) {
   return { sg: out, medido: med, q_mm: q };
 }
 function colRuido(run) {
-  if (run && run.length > 40) { const r = ruidoDe(run); COL.ruido_sg = r.sg; COL.ruido = { medido: r.medido, q_mm: r.q_mm }; log('coleta: ruído da mesa', `σ velocidade ${br(r.sg[1], 3)} mm/s · resolução da posição ${br(r.q_mm, 3)} mm`); lcToast('Ruído medido'); }
-  else { COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência'); }
-  LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave();
+  if (run && run.length > 40) { const r = ruidoDe(run); COL.ruido_sg = r.sg; COL.ruido = { medido: r.medido, q_mm: r.q_mm }; log('coleta: ruído da mesa', `σ velocidade ${br(r.sg[1], 3)} mm/s · resolução da posição ${br(r.q_mm, 3)} mm`); LIVE.mode = 'ruido-ok'; colUI(); colSave(); return; }
+  COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência');
+  colParaQuestionada();
+}
+function colParaQuestionada() { LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave(); lcToast('Agora a assinatura questionada');
 }
 function colValida() {
   const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
@@ -3626,6 +3630,7 @@ function colValida() {
   return { s: serial(R), quando: Date.now(), w: +sw.toFixed(1), h: +sh.toFixed(1), fora, mouse: !!LIVE.mouse };
 }
 function colConcluir() {
+  if (LIVE.mode === 'ruido-ok') return colParaQuestionada();
   const a = colValida(); if (!a) return;
   if (LIVE.mode === 'q') {
     COL.Q = a; COL.refImg = refImage(a.s); log('coleta: questionada', `${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantida)' : ''}${a.mouse ? ' · mouse' : ''}`);
