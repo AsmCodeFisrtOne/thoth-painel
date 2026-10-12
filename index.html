@@ -287,11 +287,15 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
 @media (max-width: 760px) { .sigrow { flex-direction: column } .varp { flex-basis: auto; border-left: 0; border-top: 1px solid var(--line); padding: 8px 0 0 } }
 /* ---- estabilidade da coleta ---- */
 .cap1 { margin: 4px 0 0 !important; font-size: 11.5px }
-.fm-row { display: flex; gap: 14px; align-items: stretch } .fm-cw { flex: 1 1 auto; min-width: 0 } #cv-formas { width: 100%; height: 280px; cursor: pointer; display: block }
-#fm-side { flex: 0 0 330px; border-left: 1px solid var(--line); padding-left: 14px; display: flex; flex-direction: column; gap: 6px } .fm-t { font-weight: 600; font-size: 12.5px }
+#card-sig .sigrow { min-height: 430px }
+.fm-side { flex: 0 0 340px; border-left: 3px solid var(--q); background: color-mix(in srgb, var(--q) 6%, var(--panel)); border-radius: 0 8px 8px 0; padding: 10px 12px; display: flex; flex-direction: column; gap: 7px }
+.fm-side[hidden] { display: none } .fm-h { display: flex; align-items: center; gap: 8px; font-size: 14px } .fm-tag { font-size: 10px; text-transform: uppercase; letter-spacing: .05em; color: var(--amber); border: 1px solid var(--amber); border-radius: 99px; padding: 0 6px }
+.fm-leg { display: flex; flex-wrap: wrap; gap: 2px 10px; font-size: 11px; color: var(--muted) } .fm-leg i { display: inline-block; width: 14px; height: 4px; border-radius: 2px; margin-right: 4px; vertical-align: middle }
+.fm-big { font-size: 13px } .fm-big b { font-size: 22px; color: var(--ink); margin-right: 2px } .fm-det { display: flex; flex-direction: column; gap: 6px; border-top: 1px solid var(--line); padding-top: 7px } .fm-u { font-weight: 600; font-size: 12.5px }
 .fm-ths { display: flex; flex-wrap: wrap; gap: 6px } .fm-th { display: inline-flex; flex-direction: column; align-items: center; font: 9.5px var(--mono); color: var(--muted) }
 .fm-th img { width: 92px; height: 46px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel) } #cv-fmp { width: 100%; height: 110px; display: block }
-@media (max-width: 760px) { .fm-row { flex-direction: column } #fm-side { flex: none; border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 8px } }
+.fm-sw .btn.on { background: var(--q); color: #fff; border-color: var(--q) }
+@media (max-width: 760px) { .fm-side { flex: none; border-left: 0; border-top: 3px solid var(--q); border-radius: 0 0 8px 8px } #card-sig .sigrow { min-height: 0 } }
 .estab { overflow-x: auto } .estab table { border-collapse: separate; border-spacing: 2px; font-size: 11px } .estab th { font-weight: 500; color: var(--muted); text-align: right; padding-right: 6px; white-space: nowrap }
 .estab thead th { text-align: center; padding: 0; font: 10px var(--mono) } .estab td.c { width: 26px; height: 18px; border-radius: 3px } .estab td.tr { padding-left: 8px; color: var(--muted); white-space: nowrap; font-size: 10.5px }
 .estab td.tr b { color: var(--amber) } .estab .out th { color: var(--red) } .estab .sum { margin: 6px 0 0; font-size: 12px } .estab .sum b { color: var(--ink) }
@@ -343,22 +347,22 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
       <span class="note">⤢ no canto de um gráfico para ampliar · dados não saem do sistema</span>
     </div>
     <div class="grid">
-      <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços, o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
-      <div class="card" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
-      <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas><p class="fine cap1">Inclinação e direção da caneta ao escrever; precisa do clip.</p></div>
-      <div class="card rows2"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
+      <div class="card c-full" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços, o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
+      <div class="card c-full" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas><p class="fine cap1">Quanto tempo a caneta passou em cada velocidade: cinza = padrões, azul = questionada.</p></div>
       <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><p class="fine cap1">Pressão ao longo do caminho da caneta, não do tempo: faixa cinza = pessoa, azul = questionada.</p><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3>Impulso por traço (∫ pressão dt)</h3><canvas id="cv-imp" class="ch"></canvas><p class="fine cap1">Pressão somada no tempo em cada traço: cinza = média dos padrões (± 2 desvios), azul = questionada.</p></div>
+      <div class="card rows3"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
       <div class="card"><h3>Curva de deformação: tempo × caminho</h3><canvas id="cv-def" class="ch"></canvas><p class="fine cap1">Tempo gasto até cada ponto do caminho: onde a curva sobe mais, a escrita foi mais lenta.</p><div class="shift" data-k="def">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-vel">Velocidade</h3><canvas id="cv-vel" class="ch"></canvas><p class="fine cap1">Velocidade da caneta ao longo da assinatura: cinza = padrões, azul = questionada.</p><div class="shift" data-k="vel">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><p class="fine cap1">Quanto a velocidade muda a cada instante: picos são arrancadas e freadas.</p><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><p class="fine cap1">Esforço do movimento: acima de zero acelerando, abaixo freando.</p><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas><p class="fine cap1">Energia total gasta acelerando (+) e freando (−): cinza = padrões (± 2 desvios), azul = questionada.</p></div>
+      <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas><p class="fine cap1">Inclinação e direção da caneta ao escrever; precisa do clip.</p></div>
       <div class="card span2"><h3 class="var" id="t-area">Área sob a velocidade e tempo</h3><canvas id="cv-area" class="ch"></canvas><p class="fine cap1">Barra: distância que a caneta percorreu (escuro no papel, claro no ar) · losango: tempo gasto · faixas: variação da pessoa.</p></div>
       <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine cap1">Ritmos que compõem a velocidade: quanto do movimento acontece em cada frequência.</p><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
-      <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><p class="fine cap1">Mudanças bruscas no movimento: picos marcam hesitações e retomadas.</p><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><p class="fine cap1">Variações ainda mais finas: picos marcam microcorreções do traço.</p><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
+      <div class="card span2"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><p class="fine cap1">Mudanças bruscas no movimento: picos marcam hesitações e retomadas.</p><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><p class="fine cap1">Variações ainda mais finas: picos marcam microcorreções do traço.</p><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi colhido) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
@@ -1482,8 +1486,9 @@ function drawSignature(cv) {
   };
   if (ANIM.upto !== null) { drawSigAnim(c, X, Y, P, R); return; }
   D.PP.forEach((p, k) => stroke(R[k][0], R[k][1], p.C, P.band, 0.7, 0.45));
+  if (FM_ON) fmOverlay(c, X, Y, P, R[NP()]); else {
   c.setLineDash([1.5, 2.5]); stroke(R[NP()][0], R[NP()][1], D.Q.C, P.acc, 0.9, 0.9, true); c.setLineDash([]);
-  stroke(R[NP()][0], R[NP()][1], D.Q.C, P.acc, 1.4, 1);
+  stroke(R[NP()][0], R[NP()][1], D.Q.C, P.acc, 1.4, 1); }
   if (dragRect) { c.strokeStyle = P.amb; c.setLineDash([4, 3]); c.lineWidth = 1.2; c.strokeRect(Math.min(dragRect[0], dragRect[2]), Math.min(dragRect[1], dragRect[3]), Math.abs(dragRect[2] - dragRect[0]), Math.abs(dragRect[3] - dragRect[1])); c.setLineDash([]); }
 }
 /* ---------------- animação da construção da assinatura ---------------- */
@@ -2169,7 +2174,7 @@ function renderAnalise() {
   $('#btn-anal').hidden = true; // a ação aparece no balão junto da seleção
   if (!S.zoom || S.trecho) zToastHide();
   $('#tr-banner').hidden = !S.trecho; if (S.trecho) $('#tr-banner-t').textContent = `Análise do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% · exploratória · medidas, elipses e tabela só deste pedaço`;
-  $('#card-zoom').hidden = !Z; $('#card-sig').classList.toggle('span2', !Z);
+  $('#card-zoom').hidden = !Z;
   $('#t-sig').textContent = Z ? 'Desenho · trecho em destaque' : `Desenho: ${NP()} padrões + questionada, registrados`;
   $('#t-zoom').textContent = Z ? `Zoom ${br(Z[0], 0)}–${br(Z[1], 0)}%` : '';
   const sv = suavN() ? ` · suavizado ${suavN()}/10` : '';
@@ -2598,7 +2603,7 @@ function bind() {
   cv.addEventListener('pointermove', e => { if (!start) return; const p = pos(e); dragRect = [...start, ...p]; drawSignature(cv); });
   cv.addEventListener('pointerup', e => {
     if (!start) return; const p = pos(e), r0 = dragRect; start = null; dragRect = null;
-    if (Math.abs(r0[2] - r0[0]) < 6 || Math.abs(r0[3] - r0[1]) < 6) { drawSignature(cv); return; }
+    if (Math.abs(r0[2] - r0[0]) < 6 || Math.abs(r0[3] - r0[1]) < 6) { if (FM_ON) fmPick(p); drawSignature(cv); return; }
     const [ax, ay] = drawXform.inv(Math.min(r0[0], r0[2]), Math.max(r0[1], r0[3])), [bx, by] = drawXform.inv(Math.max(r0[0], r0[2]), Math.min(r0[1], r0[3]));
     const k = D.ri, [RX, RY] = D.REG[k], ref = D.PP[k], us = [];
     for (let i = 0; i < RX.length; i++) if (ref.C[i] && RX[i] >= ax && RX[i] <= bx && RY[i] >= ay && RY[i] <= by && ref.u[i] >= 0 && ref.u[i] <= 100) us.push(ref.u[i]);
@@ -4053,23 +4058,31 @@ function fmCalc() {
   }
   FM_SEL = -1; return (D._fm = { UQ, UP });
 }
-let FM_SEL = -1;
-function renderFormas() {
-  const card = $('#card-formas'); if (!card || !D || !V) return;
-  const cv = $('#cv-formas'), P = pal(), { UQ } = fmCalc(), R = D.REG[NP()], Q = D.Q, { c, w, h } = setup(cv, cv.clientHeight || 260);
-  if (FM_SEL < 0 || !UQ[FM_SEL]) FM_SEL = UQ.findIndex(u => Number.isFinite(u.z));
-  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (let i = 0; i < R[0].length; i++) if (Q.C[i]) { x0 = Math.min(x0, R[0][i]); x1 = Math.max(x1, R[0][i]); y0 = Math.min(y0, R[1][i]); y1 = Math.max(y1, R[1][i]); }
-  const sc = Math.min((w - 24) / (x1 - x0), (h - 24) / (y1 - y0)), ox = (w - sc * (x1 - x0)) / 2, oy = (h - sc * (y1 - y0)) / 2, X = v => ox + (v - x0) * sc, Y = v => h - oy - (v - y0) * sc;
+let FM_SEL = -1, FM_ON = true, FM_XY = null;
+/* desenho: chamado por drawSignature no lugar da questionada azul, com as mesmas coordenadas do desenho */
+function fmOverlay(c, X, Y, P, R) {
+  const { UQ } = fmCalc(), Q = D.Q; if (FM_SEL < 0 || !UQ[FM_SEL]) FM_SEL = UQ.findIndex(u => Number.isFinite(u.z));
   const path = (a, b) => { c.beginPath(); for (let i = a; i <= b; i++) (i === a ? c.moveTo(X(R[0][i]), Y(R[1][i])) : c.lineTo(X(R[0][i]), Y(R[1][i]))); c.stroke(); };
-  c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = P.line; c.lineWidth = 1.5; for (const [s, e] of Q.segs) path(s, e - 1);
-  const colZ = z => { if (!Number.isFinite(z)) return P.band; const a = Math.min(1, 0.3 + Math.abs(z) / 3); c.globalAlpha = a; return z < 0 ? P.acc : P.red; };
-  UQ.forEach((u, k) => { c.strokeStyle = colZ(u.z); c.lineWidth = k === FM_SEL ? 5 : 3; path(u.a, u.b); c.globalAlpha = 1; });
-  cv._fm = { UQ, X, Y, R };
+  c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = P.fg; c.globalAlpha = 0.35; c.lineWidth = 1.2; for (const [s, e] of Q.segs) path(s, e - 1); c.globalAlpha = 1;
+  UQ.forEach((u, k) => { const z = u.z; if (Number.isFinite(z)) { c.strokeStyle = z < 0 ? P.acc : P.red; c.globalAlpha = Math.min(1, 0.3 + Math.abs(z) / 3); } else { c.strokeStyle = P.mut; c.globalAlpha = 0.55; } c.lineWidth = k === FM_SEL ? 5 : 3; path(u.a, u.b); c.globalAlpha = 1; });
   const u = UQ[FM_SEL];
-  if (u) { const m = (u.a + u.b) >> 1, mx = X(R[0][m]), my = Y(R[1][m]); c.strokeStyle = P.fg; c.lineWidth = 1.2; c.setLineDash([3, 2]); c.beginPath(); c.arc(mx, my, 16, 0, 7); c.stroke(); c.setLineDash([]); c.fillStyle = P.fg; c.font = '600 11px ' + css('--sans'); c.textAlign = 'left'; c.fillText('unidade ' + (FM_SEL + 1), mx + 20, my - 12); }
-  fmSide(u);
+  if (u) { const m = (u.a + u.b) >> 1, mx = X(R[0][m]), my = Y(R[1][m]); c.strokeStyle = P.fg; c.lineWidth = 1.3; c.setLineDash([3, 2]); c.beginPath(); c.arc(mx, my, 17, 0, 7); c.stroke(); c.setLineDash([]); c.font = '600 11px ' + css('--sans'); c.textAlign = 'left'; c.fillStyle = P.panel; c.fillRect(mx + 19, my - 24, c.measureText('unidade ' + (FM_SEL + 1)).width + 6, 15); c.fillStyle = P.fg; c.fillText('unidade ' + (FM_SEL + 1), mx + 22, my - 12); }
+  FM_XY = { X, Y, R, UQ };
+}
+function fmPick([px, py]) {
+  if (!FM_XY) return; const { X, Y, R, UQ } = FM_XY; let best = -1, bd = 14;
+  UQ.forEach((u, k) => { for (let i = u.a; i <= u.b; i++) { const d = Math.hypot(X(R[0][i]) - px, Y(R[1][i]) - py); if (d < bd) { bd = d; best = k; } } });
+  if (best >= 0 && best !== FM_SEL) { FM_SEL = best; fmSide(fmCalc().UQ[best]); log('pressão por forma', `unidade ${best + 1} da questionada`); }
+}
+function renderFormas() {
+  const box = $('#fm-side'); if (!box || !D || !V) return; box.hidden = !FM_ON;
+  $$('[data-fm]').forEach(b => b.classList.toggle('on', (b.dataset.fm === '1') === FM_ON));
+  $('#sig-cap').hidden = FM_ON; $('#fm-cap').hidden = !FM_ON;
+  if (!FM_ON) return;
+  const { UQ } = fmCalc(); if (FM_SEL < 0 || !UQ[FM_SEL]) FM_SEL = UQ.findIndex(u => Number.isFinite(u.z));
+  fmSide(UQ[FM_SEL]);
   const nq = UQ.length, ncom = UQ.filter(v => Number.isFinite(v.z)).length, fora = UQ.filter(v => Math.abs(v.z) > 2), nm = fora.filter(v => v.z < 0).length;
-  $('#fm-sum').innerHTML = `<b>Resumo:</b> das ${nq} unidades de forma da questionada, ${ncom} têm gêmeas suficientes nos padrões (${FM_MIN} ou mais); em ${fora.length} a pressão sai da faixa da pessoa naquela forma${fora.length ? ` (${nm} com menos pressão, ${fora.length - nm} com mais)` : ''}. Mesmo numa assinatura verdadeira, cerca de 1 em cada 20 unidades sai da faixa por acaso (aqui, ~${br(ncom / 20, 1)}). Comparação exploratória: não entra nas elipses nem na tabela verdade.`;
+  $('#fm-sum').innerHTML = `<div class="fm-big"><b>${fora.length}</b> de ${ncom} unidades comparáveis com pressão fora da faixa da pessoa</div><div class="fine" style="margin:0">${fora.length ? `${nm} com menos pressão, ${fora.length - nm} com mais · ` : ''}${nq} unidades na questionada, ${nq - ncom} sem gêmeas suficientes (${FM_MIN}+) · por acaso, numa assinatura verdadeira, ~${br(ncom / 20, 1)} sairiam da faixa (1 em 20)</div>`;
 }
 function fmThumb(k, v) {
   const RR = D.REG[k], a0 = v.prev ? v.prev.a : v.a, cv2 = document.createElement('canvas'), W = 92, H = 46, r = 2; cv2.width = W * r; cv2.height = H * r; const x = cv2.getContext('2d'); x.scale(r, r);
@@ -4080,10 +4093,10 @@ function fmThumb(k, v) {
   return `<span class="fm-th"><img src="${cv2.toDataURL()}" alt="">P${String(k + 1).padStart(2, '0')}</span>`;
 }
 function fmSide(u) {
-  const side = $('#fm-side');
+  const side = $('#fm-det'); if (!side) return;
   if (!u) { side.innerHTML = '<p class="fine">Nenhuma unidade da questionada tem gêmeas suficientes nos padrões.</p>'; return; }
   const ctx = u.prev ? `<b>vinda de</b> ${fmDesc(u.prev)}` : 'início de traço (depois de levantar a caneta)', nt = u.tw.length;
-  side.innerHTML = `<div class="fm-t">Unidade ${FM_SEL + 1} da questionada</div><div class="fine" style="margin:0">${fmDesc(u)} · ${ctx}</div>
+  side.innerHTML = `<div class="fm-u">Unidade ${FM_SEL + 1} da questionada</div><div class="fine" style="margin:0">${fmDesc(u)} · ${ctx}</div>
     <div class="fine" style="margin:4px 0 0">${nt ? `${nt} gêmea${nt > 1 ? 's' : ''} nos padrões (mesma forma e mesmo contexto)${nt > 6 ? ' · 6 mais parecidas' : ''}:` : 'Nenhuma gêmea nos padrões: esta forma não aparece do mesmo jeito na pessoa.'}</div>
     <div class="fm-ths">${u.tw.slice(0, 6).map(t => fmThumb(t.k, t.v)).join('')}</div>
     ${nt >= FM_MIN ? `<canvas id="cv-fmp"></canvas><div class="fine" style="margin:0">Pressão do início ao fim da unidade · cinza: gêmeas da pessoa (média ± 2 desvios) · azul: questionada${Number.isFinite(u.z) ? ` · média: ${u.z >= 0 ? '+' : ''}${br(u.z, 1)} desvios` : ''}</div>` : nt ? `<div class="fine" style="margin:0">Menos de ${FM_MIN} gêmeas: poucas para comparar a pressão.</div>` : ''}`;
@@ -4093,18 +4106,20 @@ function fmSide(u) {
   const F = frame(cp, [0, 100], [Math.max(0, ya), yb], { h: 110, ml: 38, xlabel: '% da unidade', ylabel: UP() === 'gf' ? 'gf' : '' });
   bandFill(F, gx, lo, hi, F.P.band); polyline(F, gx, m, F.P.band, 1); polyline(F, gx, u.pr, F.P.acc, 1.8); F.done();
 }
-{ // cartão em largura total, antes da estabilidade da coleta; toque numa unidade para escolher
-  const card = document.createElement('div'); card.className = 'card'; card.id = 'card-formas'; card.style.gridColumn = '1 / -1';
-  card.innerHTML = `<h3><span>Pressão em formas parecidas · comparada pela geometria, não pelo tempo</span><span class="fine">azul: menos pressão que a pessoa nessa forma · vermelho: mais · cinza: forma sem gêmeas suficientes</span></h3>
-  <div class="fm-row"><div class="fm-cw"><canvas id="cv-formas" aria-label="Questionada dividida em unidades de forma; toque numa unidade"></canvas></div><div id="fm-side"></div></div>
-  <p class="fine" style="margin:6px 0 0">Cada pedaço colorido da questionada é comparado com os pedaços de mesma forma, vindos da mesma forma anterior, em qualquer lugar dos padrões; toque num pedaço para ver as gêmeas.</p><p class="fine" id="fm-sum" style="margin:4px 0 0"></p>`;
-  const ref = $('#card-estab'); ref.parentNode.insertBefore(card, ref);
-  $('#cv-formas').addEventListener('click', e => {
-    const cv = e.currentTarget, M = cv._fm; if (!M) return; const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top - (cv._off || 0); let best = -1, bd = 14;
-    M.UQ.forEach((u, k) => { for (let i = u.a; i <= u.b; i++) { const d = Math.hypot(M.X(M.R[0][i]) - px, M.Y(M.R[1][i]) - py); if (d < bd) { bd = d; best = k; } } });
-    if (best >= 0) { FM_SEL = best; renderFormas(); }
-  });
-  const _ra = renderAnalise; renderAnalise = function () { const r = _ra.apply(this, arguments); renderFormas(); return r; };
+{ // painel ao lado do desenho principal; o botão no título liga e desliga as cores de pressão por forma
+  const row = $('#cv-sig').closest('.sigrow'), vp = $('#varp'), box = document.createElement('div'); box.id = 'fm-side'; box.className = 'fm-side';
+  box.innerHTML = `<div class="fm-h"><b>Pressão em formas parecidas</b><span class="fm-tag">exploratória</span></div>
+    <div class="fm-leg"><span><i style="background:var(--q)"></i>menos pressão que a pessoa nessa forma</span><span><i style="background:var(--red)"></i>mais pressão</span><span><i style="background:var(--muted);opacity:.55"></i>sem gêmeas suficientes</span></div>
+    <div id="fm-sum"></div><div id="fm-det" class="fm-det"></div>`;
+  row.insertBefore(box, vp);
+  const h = $('#card-sig h3'), sw = document.createElement('span'); sw.className = 'grp fm-sw';
+  sw.innerHTML = '<span>Cores:</span><button type="button" class="btn" data-fm="0">traçado</button><button type="button" class="btn" data-fm="1">pressão por forma</button>';
+  h.insertBefore(sw, h.querySelector('.grp.anim'));
+  sw.addEventListener('click', e => { const b = e.target.closest('[data-fm]'); if (!b) return; FM_ON = b.dataset.fm === '1'; log('desenho', FM_ON ? 'cores de pressão por forma' : 'cores de traçado'); renderFormas(); drawSignature($('#cv-sig')); });
+  const cap = $('#card-sig > p.fine:last-of-type'); cap.id = 'sig-cap';
+  const fc = document.createElement('p'); fc.className = 'fine'; fc.id = 'fm-cap'; fc.innerHTML = 'Pressão por forma: a questionada é cortada em retas, curvas e laços; cada pedaço é comparado com os pedaços de mesma forma, vindos da mesma forma anterior, em qualquer lugar dos <span class="np">20</span> padrões (cinza claro). Toque num pedaço colorido para ver as gêmeas e a pressão. Não depende de tempo nem da ordem dos traços; não entra nas elipses nem na tabela verdade.';
+  cap.after(fc);
+  const _ra = renderAnalise; renderAnalise = function () { const r = _ra.apply(this, arguments); const cv = $('#cv-sig'), h0 = cv.clientHeight, w0 = cv.clientWidth; renderFormas(); if (cv.clientHeight !== h0 || cv.clientWidth !== w0 || FM_ON) drawSignature(cv); return r; };
 }
 
 bind(); watermark(); loadCase();
