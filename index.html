@@ -361,7 +361,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <span class="note">⤢ no canto de um gráfico para ampliar · dados não saem do sistema</span>
     </div>
     <div class="grid">
-      <div class="card c-full" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços; I (verde) = início, T (vermelho) = término e ‖ (âmbar) = parada, com a duração (caneta parada no papel por 0,1 s ou mais); o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
+      <div class="card c-full" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços; I (verde) = início, T (vermelho) = término e ‖ (âmbar) = parada, com a duração (caneta parada no papel por 0,1 s ou mais); ^ (roxo) = micro-levantamento: a caneta sai do papel e volta a menos de 1 mm, com o tempo no ar; o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
       <div class="card c-full" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas><p class="fine cap1">Quanto tempo a caneta passou em cada velocidade: cinza = padrões, azul = questionada.</p></div>
       <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><p class="fine cap1">Pressão ao longo do caminho da caneta, não do tempo: faixa cinza = pessoa, azul = questionada.</p><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
@@ -1530,14 +1530,21 @@ function drawSigAnim(c, X, Y, P, R) {
   const i0 = p.segs[0][0], iF = p.segs[p.segs.length - 1][1] - 1;
   if (n >= i0) badge(i0, 'I', P.grn, br_ + 4);
   for (const z of sigPausas(p)) { if (z.a > n) break; const [x, y] = badge(z.m, '‖', P.amb, 0); c.font = `${narrow ? 8 : 9.5}px ` + css('--mono'); c.fillStyle = P.amb; c.textAlign = 'left'; c.fillText(br(z.dur, 2) + ' s', x + br_ + 2, y + 3); c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); }
+  for (const z of sigMicroLev(p)) { if (z.b > n) break; const [x, y] = badge(z.b, '^', '#8a4fd1', br_ + 4); c.font = `${narrow ? 8 : 9.5}px ` + css('--mono'); c.fillStyle = '#8a4fd1'; c.textAlign = 'left'; c.fillText(br(z.dur, 2) + ' s', x + br_ + 2, y + 3); c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); }
   if (n >= iF) badge(iF, 'T', P.red, br_ + 4);
   // ponta da caneta
   const tip = [X(RX[n]), Y(RY[n])], down = !!p.C[n];
   c.fillStyle = down ? P.red : P.panel; c.strokeStyle = down ? P.red : col; c.lineWidth = 1.5; c.beginPath(); c.arc(tip[0], tip[1], down ? 4 : 5, 0, 7); c.fill(); c.stroke();
   // legenda: só construção (qual traço, caneta no papel ou no ar); sem tempo nem pressão
   c.textAlign = 'left'; c.fillStyle = P.fg; c.font = (narrow ? '11px ' : '12px ') + css('--mono');
-  const l1 = `${k < NP() ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · traço ${nt} de ${p.segs.length} · ${sigPausas(p).length} parada${sigPausas(p).length === 1 ? '' : 's'}`, l2 = (down ? 'caneta no papel' : 'caneta no ar') + ' · reprodução do trajeto';
+  const l1 = `${k < NP() ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · traço ${nt} de ${p.segs.length} · ${sigPausas(p).length} parada${sigPausas(p).length === 1 ? '' : 's'} · ${sigMicroLev(p).length} micro-levantamento${sigMicroLev(p).length === 1 ? '' : 's'}`, l2 = (down ? 'caneta no papel' : 'caneta no ar') + ' · reprodução do trajeto';
   if (narrow) { c.fillText(l1, 8, 15); c.fillText(l2, 8, 30); } else c.fillText(l1 + ' · ' + l2, 8, 16);
+}
+/* micro-levantamentos: a caneta sai do papel e volta a menos de 1 mm de onde saiu (no desenho parece um traço contínuo) */
+function sigMicroLev(p) {
+  if (p._ml) return p._ml; const out = [];
+  for (let k = 1; k < p.segs.length; k++) { const a = p.segs[k - 1][1] - 1, b = p.segs[k][0], d = Math.hypot(p.x[b] - p.x[a], p.y[b] - p.y[a]); if (d < 1) out.push({ a, b, d, dur: (b - a) / FS }); }
+  return (p._ml = out);
 }
 /* paradas: caneta no papel com velocidade quase nula por 0,1 s ou mais (limiar: 8% da velocidade mediana no papel, mínimo 4 mm/s) */
 function sigPausas(p) {
@@ -3616,7 +3623,8 @@ function liveHeader() {
 }
 function liveDraw() {
   const L = LIVE.data; if (!L) return; const M = L.m;
-  $('#lv-meta').textContent = `${Math.round(L.rate)} amostras/s medidas · reamostrado a ${FS}/s${L.mouse ? ' · capturado com mouse: a pressão não é real' : ''}`;
+  const fl = []; { let a = -1; for (let i = 0; i <= L.n; i++) { const g = i < L.n && L.G[i]; if (g && a < 0) a = i; else if (!g && a >= 0) { fl.push((i - a) / FS); a = -1; } } }
+  $('#lv-meta').textContent = `${Math.round(L.rate)} amostras/s medidas · reamostrado a ${FS}/s · ${fl.length ? `${fl.length} falha${fl.length > 1 ? 's' : ''} de leitura da mesa (maior ${Math.round(Math.max(...fl) * 1000)} ms, faixa cinza)` : 'sem falhas de leitura da mesa'}${L.mouse ? ' · capturado com mouse: a pressão não é real' : ''}`;
   const tiles = [['Tamanho na mesa', `${br(M.w, 0)} × ${br(M.h, 0)}`, 'mm (largura × altura)' + (M.foraTam ? ' · fora do usual' : '')], ['Duração', br(M.dur, 2), 's'], ['Traços', String(M.tracos), M.tracos - 1 === 1 ? '1 levantamento' : `${M.tracos - 1} levantamentos`], ['Caminho no papel', br(M.path, 0), 'mm'], ['Velocidade média', br(M.vmed, 0), 'mm/s'],
     ['Velocidade máxima', br(M.vmax, 0), 'mm/s'], ['Tempo no ar', br(M.ar, 2), 's entre traços'], ['Pressão média', br(M.pm, 2), 'adimensional (0–1)'], ['Pressão máxima', br(M.pmax, 2), 'adimensional (0–1)'],
     ['Aceleração RMS', br(M.aRMS, 2), 'm/s²'], ['Espectro em 5–8 Hz', br(M.e58, 1), '% da velocidade'], ['Inclinação', '—', 'sem dado (sem clip)']];
@@ -3670,8 +3678,9 @@ function liveSig(cv, upto) {
     const i0 = L.segs[0][0], iF = L.segs[L.segs.length - 1][1] - 1, pz = sigPausas(L);
     if (N >= i0) badge(i0, 'I', P.grn, r + 4, true);
     for (const z of pz) { if (z.a > N) break; const [x, y] = badge(z.m, '‖', P.amb, 0, true); c.font = `${narrow ? 8 : 9.5}px ` + css('--mono'); c.fillStyle = P.amb; c.textAlign = 'left'; c.fillText(br(z.dur, 2) + ' s', x + r + 2, y + 3); c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); }
+    const ml = sigMicroLev(L); for (const z of ml) { if (z.b > N) break; const [x, y] = badge(z.b, '^', '#8a4fd1', r + 4, true); c.font = `${narrow ? 8 : 9.5}px ` + css('--mono'); c.fillStyle = '#8a4fd1'; c.textAlign = 'left'; c.fillText(br(z.dur, 2) + ' s no ar', x + r + 2, y + 3); c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); }
     if (N >= iF) badge(iF, 'T', P.red, r + 4, true);
-    c.textAlign = 'left'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText(`${L.segs.length} traço${L.segs.length > 1 ? 's' : ''} · ${pz.length} parada${pz.length === 1 ? '' : 's'} (caneta parada no papel ≥ 0,1 s) · I início · T término`, 8, 12); }
+    c.textAlign = 'left'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText(`${L.segs.length} traço${L.segs.length > 1 ? 's' : ''} · ${pz.length} parada${pz.length === 1 ? '' : 's'} (caneta parada no papel ≥ 0,1 s) · ${ml.length} micro-levantamento${ml.length === 1 ? '' : 's'} (^, sai e volta a menos de 1 mm) · I início · T término`, 8, 12); }
   if (upto != null && N < L.n - 1) { c.fillStyle = L.C[N] ? P.red : 'transparent'; c.strokeStyle = P.red; c.lineWidth = 1.5; c.beginPath(); c.arc(X(L.x[N]), Y(L.y[N]), 4.5, 0, 7); L.C[N] ? c.fill() : c.stroke(); }
   c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'left'; c.fillText(`escala: 10 mm = ${br(10 * sc, 0)} px · espessura do traço pela pressão medida`, 8, h - 4);
   if (upto != null) { c.textAlign = 'right'; c.fillText(`${br(L.t[N], 2)} s`, w - 8, h - 4); }
