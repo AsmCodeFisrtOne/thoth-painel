@@ -377,7 +377,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine cap1">Ritmos que compõem a velocidade: quanto do movimento acontece em cada frequência.</p><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><p class="fine cap1">Mudanças bruscas no movimento: picos marcam hesitações e retomadas.</p><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><p class="fine cap1">Variações ainda mais finas: picos marcam microcorreções do traço.</p><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
-      <div class="card" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi colhido) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
+      <div class="card" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi coletado) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o relatório.</p></div>
       <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os <span class="np">20</span> padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos <span class="np">20</span> padrões sai quando testado contra os outros <span class="np-1">19</span>). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Cada linha é uma análise separada, com o seu resultado; o painel não junta as linhas numa conclusão. O conjunto mostra onde a assinatura se afasta e onde não. Os números de cada linha estão nos gráficos e no anexo do relatório.</p></div>
@@ -612,10 +612,10 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
     <article class="card tut" id="tut-varpu" data-card="varpu">
       <h3><span>Variabilidade de punho</span><span class="fine">exemplo ilustrativo · no caso: ao lado do desenho principal e no relatório da Grafoscopia Tradicional</span></h3>
       <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
-      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a mesma questionada diante de padrões cada vez mais variáveis"></canvas></div>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: padrões de três pessoas, de muito estável a instável, e a carinha correspondente"></canvas></div>
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
-      <div class="tuttxt"><p><b>O que é.</b> Mede quanto os padrões da pessoa variam entre si: a mediana da variação (desvio ÷ média) em 7 medidas. As carinhas resumem o nível, de "muito estável" a "instável".</p><p><b>Como usar.</b> Antes de ler as elipses, veja a carinha: quanto mais variável a pessoa, mais difícil uma assinatura ficar fora da faixa, e menos sensíveis são as comparações.</p></div>
+      <div class="tuttxt"><p><b>O que é.</b> Mede quanto os padrões da pessoa variam entre si (só os padrões; a questionada não entra): a mediana da variação (desvio ÷ média) em 7 medidas. As carinhas resumem o nível, de "muito estável" a "instável".</p><p><b>Como usar.</b> Antes de ler as elipses, veja a carinha: quanto mais variável a pessoa, mais difícil uma assinatura ficar fora da faixa, e menos sensíveis são as comparações.</p></div>
       <div class="tutwarn"><b>Cuidados</b><ul><li>Variação alta pode ser natural da pessoa ou vir da coleta (postura, cansaço): confira o mapa de estabilidade.</li><li>Os cortes dos níveis ainda serão calibrados com coletas reais de várias pessoas.</li></ul></div>
     </article>
     <article class="card tut" id="tut-estab" data-card="estab">
@@ -664,7 +664,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <button type="button" class="capopt" id="capm-solo"><span class="ci">✎</span><span><b>Assinatura avulsa</b><em>Uma assinatura e seus gráficos. Sem comparação.</em></span></button>
       <button type="button" class="capopt" id="capm-caso"><span class="ci">⧉</span><span><b>Caso completo</b><em>Questionada + 5 a 20 padrões. O painel funciona inteiro com os dados coletados.</em></span></button>
       <button type="button" class="capopt" id="capm-mxnew"><span class="ci">◎</span><span><b>Criar matriz</b><em>Uma única assinatura salva com nome: será a questionada de casos futuros. Pode copiar outra matriz como modelo.</em></span></button>
-      <button type="button" class="capopt" id="capm-copia"><span class="ci">✍</span><span><b>Caso a partir de uma matriz</b><em>A matriz é a questionada; colhem-se os padrões de quem se quer comparar, como na perícia real.</em></span></button>
+      <button type="button" class="capopt" id="capm-copia"><span class="ci">✍</span><span><b>Caso a partir de uma matriz</b><em>A matriz é a questionada; coletam-se os padrões de quem se quer comparar, como na perícia real.</em></span></button>
       <button type="button" class="capopt" id="capm-resume" hidden><span class="ci">↺</span><span><b>Retomar coleta interrompida</b><em id="capm-resume-t"></em></span></button>
       <label class="capopt" for="capm-file"><span class="ci">⇪</span><span><b>Abrir coleta salva</b><em>Arquivo .json gerado por “salvar coleta”.</em></span></label><input type="file" id="capm-file" accept=".json,application/json" hidden>
     </div><p class="fine" id="capm-st"></p>
@@ -1881,7 +1881,7 @@ function tvLinha(ks) {
   const L = { ...base, d2: r.d2, d2diag: r.d2diag, pval: TH.hotP(r.d2, n, p), out };
   if (r.d2 <= L.lim95) return { ...L, res: 'TÍPICA', why: 'dentro da variação da pessoa' };
   if (r.d2 > L.limC && r.d2diag <= L.limC) return { ...L, res: 'INCONCLUSIVA', why: `cada medida está normal; só a relação entre elas destoa (com ${n} padrões, pode ser acaso)` };
-  if (r.d2 > L.limC) return out >= 2 ? { ...L, res: 'INCONCLUSIVA', why: `régua instável: ${out} padrões da própria pessoa também saem` } : { ...L, res: 'ATÍPICA', why: 'fora com folga, mesmo descontando as 48 comparações' };
+  if (r.d2 > L.limC) return out >= 2 ? { ...L, res: 'INCONCLUSIVA', why: `régua instável: ${out} padrões da própria pessoa também saem` } : { ...L, res: 'ATÍPICA', why: `fora com folga, mesmo descontando as ${K} comparações` };
   return { ...L, res: 'INCONCLUSIVA', why: 'na borda: passou do limite da pessoa, não do limite da tabela; pode ser acaso' };
 }
 const tvRes = ks => { const k = ks.slice().sort().join('|'); V._tv = V._tv || {}; return V._tv[k] || (V._tv[k] = tvLinha(ks)); };
@@ -2456,7 +2456,7 @@ async function makePDF() {
   const saved = { eixo: S.eixo, suav: S.suav, trecho: S.trecho, zoom: S.zoom, shifts: { ...S.shifts } }, adjNow = ajustes(), codeNow = vistaCode();
   resetPadrao(); view(); renderTV(); const codePad = vistaCode();
   try {
-  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4' }), K = await keys();
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true }), K = await keys();
   const W = 210, L = 18, R = W - 18; let y = 20;
   const now = new Date();
   const body = JSON.stringify({ processo: '0001234-56.2026.8.26.0100', signatario: D.name, questionada: D.packs[0].sha, padroes: D.packs.slice(1).map(p => p.sha), vista_padrao: codePad, vista_anexo: adjNow.length ? codeNow : null, vistas: S.vistas.map(v => v.code), obs: S.obs && S.obs.h, cego: S.blind ? 'mantido' : 'revelado ' + S.revealed, grandeza: S.g, combinacoes: TVROWS.map(r => [r.ks.join('+'), r.L.res]), hip: S.hip, fund: $('#fund').value, data: now.toISOString() });
@@ -3569,7 +3569,8 @@ function drawSIN(cv, T) {
   const A = nar ? { x: 14, y: 26, w: w - 28, h: h * 0.5 } : { x: 24, y: 30, w: w * 0.6, h: h * 0.62 }, G = nar ? { x: 14, y: A.y + A.h + 20, w: w - 28, h: h - A.h - 60 } : { x: 24, y: A.y + A.h + 26, w: w * 0.6, h: h - A.h - 72 };
   const X = x => A.x + x * A.w, Y = y => A.y + y * A.h, r = nar ? 7 : 9;
   const idx = f => Math.min(n - 1, Math.max(0, Math.round(f))); let N;
-  if (k === 0) N = idx(ph(T, 0.4, 6.4) * (n - 1)); else if (k === 2) N = idx(lerp(W.pausa - 30, W.pausaF + 8, ph(T, st[0] + 0.5, st[1] - 1.5))); else if (k === 3) N = idx(lerp(W.micro - 30, W.micro + 15, ph(T, st[0] + 0.5, st[1] - 1.5))); else if (k === 4) N = idx(lerp(W.fim - 40, n - 1, ph(T, st[0] + 0.3, st[1] - 1.5))); else N = n - 1;
+  // desenho contínuo só no passo 0; depois fica inteiro e cada sinal pulsa no lugar (sem voltar o traçado)
+  N = k === 0 ? idx(ph(T, 0.4, 6.4) * (n - 1)) : n - 1;
   // trajeto no ar (pontilhado) e tinta
   c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = P.acc; c.globalAlpha = 0.45; c.lineWidth = 1; c.setLineDash([2, 4]); c.beginPath(); let pen = false;
   for (let i = 0; i <= N; i++) { if (S[i].C) { pen = false; continue; } pen ? c.lineTo(X(S[i].x), Y(S[i].y)) : c.moveTo(X(S[i].x), Y(S[i].y)); pen = true; } c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
@@ -3579,6 +3580,8 @@ function drawSIN(cv, T) {
   if (k >= 2 && N >= W.pausa) { const p = S[W.pausa], dur = (S[Math.min(N, W.pausaF)].t - p.t); t2badge(c, X(p.x), Y(p.y), '‖', P.amb, true, r, P, sans); c.textAlign = 'left'; halo(br(Math.max(0, dur), 2) + ' s', X(p.x) + r + 4, Y(p.y) + 4, P.amb, 'bold 12px ' + sans); }
   if (k >= 3 && N >= W.micro) { const p = S[W.micro], dur = p.t - S[W.micro - 15].t; t2badge(c, X(p.x), Y(p.y) - r - 5 - 2 * r - 4, '^', '#8a4fd1', true, r, P, sans); c.textAlign = 'left'; halo(br(dur, 2) + ' s no ar', X(p.x) + r + 4, Y(p.y) - 3 * r - 5, '#8a4fd1', 'bold 12px ' + sans); }
   if (k >= 4 && N >= W.fim) t2badge(c, X(S[W.fim].x), Y(S[W.fim].y) + r + 6, 'T', P.red, true, r, P, sans);
+  { const ev = [null, S[0], S[W.pausa], S[W.micro], S[W.fim]][k], dy = k === 3 ? -(3 * r + 9) : k === 1 || k === 4 ? r + 6 : 0;
+    if (ev && k < 5) { const pr = r + 5 + 4 * (0.5 + 0.5 * Math.sin(T * 5)); c.strokeStyle = [0, P.grn, P.amb, '#8a4fd1', P.red][k]; c.lineWidth = 2; c.globalAlpha = 0.75; c.beginPath(); c.arc(X(ev.x), Y(ev.y) + dy, pr, 0, 7); c.stroke(); c.globalAlpha = 1; } }
   const tip = S[N]; c.beginPath(); c.arc(X(tip.x), Y(tip.y), 4.5, 0, 7); c.fillStyle = tip.C ? P.red : P.panel; c.fill(); c.strokeStyle = P.red; c.lineWidth = 1.4; c.stroke();
   // legenda dos sinais
   if (!nar) { const L = [['1', 'ordem dos traços', P.acc, false, 0], ['I', 'início', P.grn, true, 1], ['‖', 'parada (≥ 0,1 s no papel)', P.amb, true, 2], ['^', 'micro-levantamento (< 1 mm)', '#8a4fd1', true, 3], ['T', 'término', P.red, true, 4]];
@@ -3587,6 +3590,7 @@ function drawSIN(cv, T) {
   if (k >= 2) { const GX = t => G.x + G.w * t / W.T, vm = 1.6, GY = v => G.y + G.h - (G.h - 6) * Math.min(v, vm) / vm; t2frame(c, P, G.x, G.y, G.w, G.h);
     c.fillStyle = P.amb; c.globalAlpha = 0.16; let a0 = -1; for (let i = 0; i <= n; i++) { const air = i < n && !S[i].C; if (air && a0 < 0) a0 = i; else if (!air && a0 >= 0) { c.fillRect(GX(S[a0].t), G.y, GX(S[i - 1].t) - GX(S[a0].t), G.h); a0 = -1; } } c.globalAlpha = 1;
     c.strokeStyle = P.acc; c.lineWidth = 1.4; c.beginPath(); for (let i = 0; i <= N; i++) i ? c.lineTo(GX(S[i].t), GY(S[i].v)) : c.moveTo(GX(S[i].t), GY(S[i].v)); c.stroke();
+    { const ti = [0, 0, W.pausa, W.micro, W.fim][k]; if (k >= 2 && k <= 4) { const xx = GX(S[ti].t); c.strokeStyle = [0, 0, P.amb, '#8a4fd1', P.red][k]; c.lineWidth = 1.5; c.globalAlpha = 0.5 + 0.4 * Math.sin(T * 5); c.beginPath(); c.moveTo(xx, G.y); c.lineTo(xx, G.y + G.h); c.stroke(); c.globalAlpha = 1; } }
     c.textAlign = 'left'; halo('velocidade no tempo · faixa clara = caneta no ar', G.x + 4, G.y - 5, P.mut, '11px ' + sans);
     if (k === 2 || k === 5) { const x0 = GX(S[W.pausa].t), x1 = GX(S[W.pausaF].t); c.strokeStyle = P.amb; c.lineWidth = 2; c.strokeRect(x0 - 2, G.y + 2, x1 - x0 + 4, G.h - 4); }
     if (k === 3 || k === 5) { const x0 = GX(S[W.micro - 15].t), x1 = GX(S[W.micro].t); c.strokeStyle = '#8a4fd1'; c.lineWidth = 2; c.strokeRect(x0 - 2, G.y + 2, x1 - x0 + 4, G.h - 4); } }
@@ -3641,9 +3645,9 @@ function drawMED(cv, T) {
 }
 /* ---------- 4. variabilidade de punho ---------- */
 const VPU_STEPS = [
-  [0, 7, 'Padrões muito estáveis: as 20 assinaturas quase iguais, elipse pequena. A questionada, um pouco diferente, já cai fora da faixa da pessoa.'],
-  [7, 14, 'A mesma questionada, no mesmo lugar, diante de uma pessoa de variação moderada: a elipse cresce e ela fica na borda.'],
-  [14, 22, 'Diante de uma pessoa instável, a mesma questionada fica dentro da faixa. Quanto mais a pessoa varia, maior a diferença necessária para sair da faixa. Por isso a carinha fica ao lado do desenho: ela diz quão sensíveis são as comparações.']];
+  [0, 7, 'A variabilidade de punho olha só para os padrões: as 20 assinaturas da pessoa comparadas entre si. A questionada não entra nesse cálculo. Aqui, uma pessoa muito estável: assinaturas quase iguais, nuvem pequena.'],
+  [7, 14, 'Outra pessoa, de variação moderada: as assinaturas diferem mais entre si, e a nuvem dos padrões cresce.'],
+  [14, 22, 'Uma pessoa instável: cada assinatura sai de um jeito. A carinha resume essa variação e diz quão larga é a faixa da pessoa. Quanto mais larga, maior a diferença necessária para algo sair dela: as comparações ficam menos sensíveis.']];
 const VPU_END = 22;
 function t2face(c, x, y, r, lv, P) {
   const col = VAR_LV[lv][1], sm = [1, 0.7, 0.35, 0, -0.5, -0.9][lv]; c.beginPath(); c.arc(x, y, r, 0, 7); c.fillStyle = col; c.fill();
@@ -3653,19 +3657,27 @@ function t2face(c, x, y, r, lv, P) {
 }
 function drawVPU(cv, T) {
   const k = tStep(VPU_STEPS, T), st = VPU_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
-  const sp = [0.35, 0.85, 1.6], prev = k ? sp[k - 1] : sp[0], s = lerp(prev, sp[k], ph(T, st[0] + 0.3, st[0] + 2.5)), lvls = [0, 2, 5], cx = nar ? w / 2 : w * 0.38, cy = h * 0.48, U = Math.min(w, h) * 0.09;
-  const r = t2rng(77), pts = Array.from({ length: 20 }, () => [t2gauss(r), t2gauss(r)]);
+  const sp = [0.35, 0.85, 1.6], prev = k ? sp[k - 1] : sp[0], s = lerp(prev, sp[k], ph(T, st[0] + 0.3, st[0] + 2.5)), lv = s < 0.6 ? 0 : s < 1.2 ? 2 : 5, pct = s < 0.6 ? '~3%' : s < 1.2 ? '~8%' : '~30%';
+  // 1) os 20 padrões sobrepostos
+  const A = nar ? { x: 16, y: 34, w: w - 32, h: h * 0.3 } : { x: 20, y: 44, w: w * 0.34, h: h * 0.5 }, r = t2rng(31);
+  c.textAlign = 'left'; halo('20 padrões sobrepostos', A.x, A.y - 12, P.mut, '600 12px ' + sans);
+  c.strokeStyle = P.band; c.lineWidth = 1.1; c.globalAlpha = 0.55;
+  for (let j = 0; j < 20; j++) { const am = 1 + (r() - 0.5) * 0.5 * s, sh = (r() - 0.5) * 0.12 * s, dy = (r() - 0.5) * 0.25 * s, fr = 3 + (r() - 0.5) * 0.3 * s; c.beginPath();
+    for (let i = 0; i <= 120; i++) { const u = i / 120, x = A.x + (u + sh * u) * A.w * 0.9, y = A.y + A.h * (0.85 - 0.6 * am * Math.abs(Math.sin(u * Math.PI * fr)) + dy * 0.3); i ? c.lineTo(x, y) : c.moveTo(x, y); } c.stroke(); }
+  c.globalAlpha = 1;
+  // 2) nuvem: cada ponto é um padrão (duas medidas)
+  const cx = nar ? w * 0.32 : w * 0.58, cy = nar ? h * 0.66 : h * 0.46, U = Math.min(w, h) * (nar ? 0.042 : 0.08), rp = t2rng(77), pts = Array.from({ length: 20 }, () => [t2gauss(rp), t2gauss(rp)]);
   c.fillStyle = P.band; pts.forEach(([a, b]) => { c.beginPath(); c.arc(cx + (a * 1.2 - b * 0.4) * U * s, cy + (b * 0.8) * U * s, 3.6, 0, 7); c.fill(); });
   [[2.45, [6, 4]], [3.03, [2, 3]]].forEach(([kk, d]) => { c.strokeStyle = P.band; c.lineWidth = 1.4; c.setLineDash(d); c.beginPath(); c.ellipse(cx, cy, 1.25 * U * s * kk, 0.8 * U * s * kk, -0.3, 0, 7); c.stroke(); }); c.setLineDash([]);
-  const res = s < 0.6 ? [P.red, 'FORA da faixa'] : s < 1.2 ? [P.amb, 'na borda'] : [P.grn, 'DENTRO da faixa'], qx = cx + U * 2.3, qy = cy - U * 1.1;
-  c.beginPath(); c.arc(qx, qy, 7, 0, 7); c.fillStyle = res[0]; c.fill(); c.textAlign = 'left'; halo('Q', qx + 10, qy + 4, P.fg, 'bold 13px ' + sans);
-  halo('mesma questionada: ' + res[1], 20, h - 14, res[0], 'bold 14px ' + sans);
-  const lv = s < 0.6 ? 0 : s < 1.2 ? 2 : 5, fx = nar ? w - 50 : w * 0.8; t2face(c, fx, h * 0.38, nar ? 26 : 42, lv, P); c.textAlign = 'center'; halo(String(lv + 1).padStart(2, '0') + ' · ' + VAR_LV[lv][0], fx, h * 0.38 + (nar ? 44 : 64), VAR_LV[lv][1], 'bold 14px ' + sans);
-  c.textAlign = 'left'; halo('padrões da pessoa', 20, 22, P.mut, '600 12px ' + sans);
+  c.textAlign = 'center'; halo('cada ponto = um padrão', cx, nar ? h * 0.46 : 30, P.mut, '600 12px ' + sans);
+  // 3) carinha
+  const fx = nar ? w * 0.78 : w * 0.85, fy = nar ? h * 0.66 : h * 0.4; t2face(c, fx, fy, nar ? 26 : 42, lv, P);
+  c.textAlign = 'center'; halo(String(lv + 1).padStart(2, '0') + ' · ' + VAR_LV[lv][0], fx, fy + (nar ? 44 : 64), VAR_LV[lv][1], 'bold 14px ' + sans);
+  c.textAlign = 'left'; halo(nar ? 'variação: ' + pct + ' · só padrões' : 'variação entre os padrões: ' + pct + ' · só padrões, sem a questionada', nar ? 16 : 20, h - 14, P.fg, 'bold 13px ' + sans);
 }
 /* ---------- 5. estabilidade da coleta ---------- */
 const EST_STEPS = [
-  [0, 7, 'Cada coluna é um padrão, na ordem em que foi colhido; cada linha, uma medida. A cor diz quanto aquele padrão ficou longe da média da pessoa: azul abaixo, vermelho acima.'],
+  [0, 7, 'Cada coluna é um padrão, na ordem em que foi coletado; cada linha, uma medida. A cor diz quanto aquele padrão ficou longe da média da pessoa: azul abaixo, vermelho acima.'],
   [7, 13, 'Uma coluna com várias cores fortes é um padrão fora do comum. Aqui, P13: algo aconteceu naquela assinatura (interrupção, mudança de postura).'],
   [13, 20, 'Uma linha que vai do azul ao vermelho é tendência: aqui o tempo sobe ao longo da coleta, sinal de cansaço. O começo também pode sair diferente (aquecimento).'],
   [20, 26, 'Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis. Por isso o protocolo pede aquecimento, pausas e mesma postura.']];
@@ -3747,7 +3759,7 @@ function liveEnsureDom() {
   d.innerHTML = `<canvas id="lc-ink"></canvas><canvas id="lc-cur"></canvas>
     <div class="lc-top lc-ui"><div class="lc-brand"><b>THOTH</b><span>Captura ao vivo · mesa Huion H420X</span></div><div class="lc-step" id="lc-step"></div><button type="button" class="lc-som" id="lc-som">🔔 som</button><div class="lc-badge">demonstração · sem cadeia de custódia</div><button type="button" class="lc-x" id="lc-x" aria-label="Cancelar captura" title="Cancelar (Esc)">✕</button></div>
     <div class="lc-field" id="lc-field" aria-hidden="true"><i class="tl"></i><i class="tr"></i><i class="bl"></i><i class="br"></i><span class="lc-cross">×</span><div class="lc-line"></div><div class="lc-lab">Assine aqui</div><div class="lc-count" id="lc-count" aria-live="assertive"></div><div class="lc-rule"><span id="lc-rule"></span><em>10 mm · tamanho real na mesa</em></div></div>
-    <div class="lc-gal lc-ui" id="lc-gal" hidden aria-label="Padrões colhidos"></div>
+    <div class="lc-gal lc-ui" id="lc-gal" hidden aria-label="Padrões coletados"></div>
     <div class="lc-ref" id="lc-ref" hidden aria-hidden="true"><img id="lc-ref-img" alt="" draggable="false"><span id="lc-ref-t">questionada · só referência visual</span></div>
     <div class="lc-bot lc-ui"><div class="lc-prog" id="lc-prog" hidden><div class="lc-dots" id="lc-dots"></div><div class="lc-prec" id="lc-prec"></div></div><div class="lc-meter"><span class="lc-k">pressão</span><div class="lc-bar"><i id="lc-fill"></i></div><span class="lc-v" id="lc-pv">0,00</span><span class="lc-st" id="lc-st">aguardando a caneta</span></div>
       <div class="lc-acts"><span class="lc-msg" id="lc-msg"></span><button type="button" class="lc-b" id="lc-skip" hidden>Pular</button><button type="button" class="lc-b" id="lc-redo" hidden>Medir de novo</button><button type="button" class="lc-b" id="lc-undo" hidden>Descartar o último</button><button type="button" class="lc-b" id="lc-clear">Limpar</button><button type="button" class="lc-b" id="lc-end" hidden>Encerrar e analisar</button><button type="button" class="lc-b pri" id="lc-ok">Concluir</button></div></div>`;
@@ -4049,10 +4061,10 @@ function colUI() {
   $('.lc-lab').textContent = gt === 'fechado' ? 'Aguarde' : gt === 'contagem' ? 'Prepare-se' : $('.lc-lab').textContent;
   if (m === 'p') {
     const e = $('#lc-end'); e.disabled = n < N_MIN; e.textContent = `Encerrar e analisar (${n})`;
-    // bolinhas fixas (uma por padrão): verde quando colhido; contorno azul no que está sendo colhido agora
+    // bolinhas fixas (uma por padrão): verde quando coletado; contorno azul no que está sendo coletado agora
     const alvo = ed != null ? ed : n >= COL_MAX ? -1 : slotNext();
-    $('#lc-dots').innerHTML = Array.from({ length: COL_MAX }, (_, i) => `<i class="${COL.P[i] ? 'f' : ''} ${i === alvo ? 'cur' : ''}" title="padrão ${i + 1}${COL.P[i] ? ' · colhido' : ''}${i === N_MIN - 1 ? ' · mínimo para analisar' : i === N_VER - 1 ? ' · classificação a partir daqui' : i === N_OK - 1 ? ' · precisão normal a partir daqui' : ''}"><em>${i + 1}</em></i>`).join('');
-    // galeria fixa com as 20 posições: cada padrão colhido aparece no seu lugar; tocar abre refazer / excluir
+    $('#lc-dots').innerHTML = Array.from({ length: COL_MAX }, (_, i) => `<i class="${COL.P[i] ? 'f' : ''} ${i === alvo ? 'cur' : ''}" title="padrão ${i + 1}${COL.P[i] ? ' · coletado' : ''}${i === N_MIN - 1 ? ' · mínimo para analisar' : i === N_VER - 1 ? ' · classificação a partir daqui' : i === N_OK - 1 ? ' · precisão normal a partir daqui' : ''}"><em>${i + 1}</em></i>`).join('');
+    // galeria fixa com as 20 posições: cada padrão coletado aparece no seu lugar; tocar abre refazer / excluir
     $('#lc-gal').innerHTML = Array.from({ length: COL_MAX }, (_, i) => { const a = COL.P[i]; if (a && !a.thumb) a.thumb = refImage(a.s, 156, 64);
       return a ? `<button type="button" class="lc-slot f${i === alvo ? ' cur' : ''}${i === LIVE.selIdx || i === LIVE.disc ? ' sel' : ''}" data-slot="${i}" title="Padrão ${i + 1}: tocar para refazer ou excluir"><img src="${a.thumb}" alt=""><b>${i + 1}</b></button>`
         : `<span class="lc-slot e${i === alvo ? ' cur' : ''}"><b>${i + 1}</b></span>`; }).join('');
@@ -4064,7 +4076,7 @@ function colUI() {
   if (m === 'p' && LIVE.selIdx != null) { const i = LIVE.selIdx; $('#lc-msg').innerHTML = `<span class="inf">Padrão ${i + 1}:</span> <button type="button" class="lc-mini" data-act="refazer">Refazer</button> <button type="button" class="lc-mini" data-act="excluir">Excluir</button> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (m === 'p' && n >= COL_MAX && ed == null) { $('#lc-msg').innerHTML = `<span class="okm">✓ ${COL_MAX} padrões coletados.</span> <span class="inf">Toque num padrão para refazer ou excluir, ou em Encerrar e analisar.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (pz) { $('#lc-msg').innerHTML = `<span class="inf">⏸ Pausa curta: a pessoa solta a caneta e relaxa a mão. A próxima assinatura pode ser liberada em ${Math.ceil((LIVE.pauseUntil - Date.now()) / 1000)} s.</span> <button type="button" class="lc-mini" data-act="sempausa">pular pausa</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
-  if (aq && gt === 'fechado') { $('#lc-msg').innerHTML = `<span class="inf">Antes de ${m === 'q' ? 'colher a assinatura' : 'colher os padrões'}, 2 assinaturas de aquecimento, que são descartadas: a primeira assinatura do dia costuma sair diferente. Mesma postura e mesmo papel durante toda a coleta.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (aq && gt === 'fechado') { $('#lc-msg').innerHTML = `<span class="inf">Antes de ${m === 'q' ? 'coletar a assinatura' : 'coletar os padrões'}, 2 assinaturas de aquecimento, que são descartadas: a primeira assinatura do dia costuma sair diferente. Mesma postura e mesmo papel durante toda a coleta.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (LIVE.disc != null && m === 'p') { $('#lc-msg').innerHTML = `<span class="warnm">⚠ Padrão ${LIVE.disc + 1} ficou diferente dos anteriores: ${escH(LIVE.discTxt)}.</span> <button type="button" class="lc-mini" data-act="refazer-disc">Refazer</button> <button type="button" class="lc-mini" data-act="manter">Manter</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (gt === 'fechado' && !(m === 'p' && ed == null && n >= COL_MAX)) { $('#lc-msg').innerHTML = `<span class="inf">Quando a pessoa estiver pronta, toque em Liberar ou aperte Enter: bip · bip · biiip e o campo fica verde. Só então a assinatura é gravada.${m === 'p' && ed != null ? ` A nova assinatura substitui o padrão ${ed + 1}.` : ''}</span>${ed != null ? ' <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>' : ''}`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (gt === 'contagem') { $('#lc-msg').innerHTML = ''; colPronta(); return; }
@@ -4246,7 +4258,7 @@ function openCapMenu() {
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
   document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p' && !(COL && COL.gt)) { LIVE.disc = null; waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
     const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
-  /* ---------- matrizes: uma questionada salva com nome; os padrões são colhidos em cada caso ---------- */
+  /* ---------- matrizes: uma questionada salva com nome; os padrões são coletados em cada caso ---------- */
   const show = (n) => ['capm-1', 'capm-2', 'capm-3', 'capm-5'].forEach(k => ($('#' + k).hidden = k !== n));
   const novoId = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, '0')).join('');
   let mxSel = null;
@@ -4255,7 +4267,7 @@ function openCapMenu() {
     const L = await mxList(), box = $('#mx-list'); $('#mx-err').textContent = ''; $('#mx-go').hidden = !mxSel; $('#mx-who-l').hidden = !mxSel; $('#mx-ruido-l').hidden = !mxSel;
     box.innerHTML = L.length ? L.map(x => mxItem(x, mxSel)).join('') : '<p class="fine">Nenhuma matriz salva ainda. Use “Criar matriz” no menu, ou importe um arquivo de matriz.</p>';
   };
-  // caso a partir de uma matriz: a matriz é a questionada; colhem-se os padrões de quem se quer comparar
+  // caso a partir de uma matriz: a matriz é a questionada; coletam-se os padrões de quem se quer comparar
   $('#capm-copia').addEventListener('click', () => { mxSel = null; show('capm-3'); mxRender(); });
   $('#mx-back').addEventListener('click', () => show('capm-1'));
   $('#mx-list').addEventListener('click', async e => {
@@ -4595,7 +4607,7 @@ function gtSigPNG(a, ppm = 16) { // imagem com 1 mm de margem: colocada no PDF c
 }
 async function gtPDF() {
   const st = $('#gt-pdf-st'); st.textContent = 'Montando o relatório…'; await new Promise(r => setTimeout(r, 30));
-  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4' }), Wp = 210, L = 18, R = Wp - 18, { it, keys } = gtCalc(), U = it.filter(gtUsada), col = GT.col, now = new Date(); let y = 20;
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true }), Wp = 210, L = 18, R = Wp - 18, { it, keys } = gtCalc(), U = it.filter(gtUsada), col = GT.col, now = new Date(); let y = 20;
   const T = (t, x, yy, o = {}) => { doc.setFont('helvetica', o.b ? 'bold' : 'normal'); doc.setFontSize(o.s || 10); doc.setTextColor(o.c || '#1b2230'); const ln = doc.splitTextToSize(latin(String(t).replace(/²/g, '^2')), o.w || R - x); doc.text(ln, x, yy); return yy + ln.length * (o.s || 10) * 0.42 + (o.gap ?? 1.5); };
   const need = h => { if (y + h > 280) { doc.addPage(); y = 20; } };
   const H2 = t => { need(14); y += 3; y = T(t, L, y, { b: true, s: 12 }); doc.setDrawColor('#c9cfd9'); doc.line(L, y - 1, R, y - 1); y += 3; };
