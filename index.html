@@ -286,6 +286,12 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
 .varp .vn { font-size: 9.5px; color: var(--muted); line-height: 1.35; margin-top: 3px } .varp .vn b { color: var(--ink) }
 @media (max-width: 760px) { .sigrow { flex-direction: column } .varp { flex-basis: auto; border-left: 0; border-top: 1px solid var(--line); padding: 8px 0 0 } }
 /* ---- estabilidade da coleta ---- */
+.cap1 { margin: 4px 0 0 !important; font-size: 11.5px }
+.fm-row { display: flex; gap: 14px; align-items: stretch } .fm-cw { flex: 1 1 auto; min-width: 0 } #cv-formas { width: 100%; height: 280px; cursor: pointer; display: block }
+#fm-side { flex: 0 0 330px; border-left: 1px solid var(--line); padding-left: 14px; display: flex; flex-direction: column; gap: 6px } .fm-t { font-weight: 600; font-size: 12.5px }
+.fm-ths { display: flex; flex-wrap: wrap; gap: 6px } .fm-th { display: inline-flex; flex-direction: column; align-items: center; font: 9.5px var(--mono); color: var(--muted) }
+.fm-th img { width: 92px; height: 46px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel) } #cv-fmp { width: 100%; height: 110px; display: block }
+@media (max-width: 760px) { .fm-row { flex-direction: column } #fm-side { flex: none; border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 8px } }
 .estab { overflow-x: auto } .estab table { border-collapse: separate; border-spacing: 2px; font-size: 11px } .estab th { font-weight: 500; color: var(--muted); text-align: right; padding-right: 6px; white-space: nowrap }
 .estab thead th { text-align: center; padding: 0; font: 10px var(--mono) } .estab td.c { width: 26px; height: 18px; border-radius: 3px } .estab td.tr { padding-left: 8px; color: var(--muted); white-space: nowrap; font-size: 10.5px }
 .estab td.tr b { color: var(--amber) } .estab .out th { color: var(--red) } .estab .sum { margin: 6px 0 0; font-size: 12px } .estab .sum b { color: var(--ink) }
@@ -339,20 +345,20 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
     <div class="grid">
       <div class="card span2" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços, o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
       <div class="card" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
-      <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas></div>
+      <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas><p class="fine cap1">Inclinação e direção da caneta ao escrever; precisa do clip.</p></div>
       <div class="card rows2"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
-      <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas></div>
-      <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card"><h3>Impulso por traço (∫ pressão dt)</h3><canvas id="cv-imp" class="ch"></canvas></div>
-      <div class="card"><h3>Curva de deformação: tempo × caminho</h3><canvas id="cv-def" class="ch"></canvas><div class="shift" data-k="def">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card"><h3 class="var" id="t-vel">Velocidade</h3><canvas id="cv-vel" class="ch"></canvas><div class="shift" data-k="vel">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas></div>
-      <div class="card"><h3 class="var" id="t-area">Área sob a velocidade</h3><canvas id="cv-area" class="ch"></canvas><p class="fine" style="margin:0">Área sob a curva de velocidade: na resultante, a distância que a ponta da caneta percorreu; em X ou Y, o quanto andou naquela direção. Parte escura: caneta no papel; clara: no ar. Faixa: média ± 2 desvios dos padrões. Não muda com a suavização.</p></div>
-      <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
-      <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
+      <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas><p class="fine cap1">Quanto tempo a caneta passou em cada velocidade: cinza = padrões, azul = questionada.</p></div>
+      <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><p class="fine cap1">Pressão ao longo do caminho da caneta, não do tempo: faixa cinza = pessoa, azul = questionada.</p><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3>Impulso por traço (∫ pressão dt)</h3><canvas id="cv-imp" class="ch"></canvas><p class="fine cap1">Pressão somada no tempo em cada traço: cinza = média dos padrões (± 2 desvios), azul = questionada.</p></div>
+      <div class="card"><h3>Curva de deformação: tempo × caminho</h3><canvas id="cv-def" class="ch"></canvas><p class="fine cap1">Tempo gasto até cada ponto do caminho: onde a curva sobe mais, a escrita foi mais lenta.</p><div class="shift" data-k="def">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-vel">Velocidade</h3><canvas id="cv-vel" class="ch"></canvas><p class="fine cap1">Velocidade da caneta ao longo da assinatura: cinza = padrões, azul = questionada.</p><div class="shift" data-k="vel">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><p class="fine cap1">Quanto a velocidade muda a cada instante: picos são arrancadas e freadas.</p><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><p class="fine cap1">Esforço do movimento: acima de zero acelerando, abaixo freando.</p><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas><p class="fine cap1">Energia total gasta acelerando (+) e freando (−): cinza = padrões (± 2 desvios), azul = questionada.</p></div>
+      <div class="card span2"><h3 class="var" id="t-area">Área sob a velocidade e tempo</h3><canvas id="cv-area" class="ch"></canvas><p class="fine cap1">Barra: distância que a caneta percorreu (escuro no papel, claro no ar) · losango: tempo gasto · faixas: variação da pessoa.</p></div>
+      <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine cap1">Ritmos que compõem a velocidade: quanto do movimento acontece em cada frequência.</p><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
+      <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><p class="fine cap1">Mudanças bruscas no movimento: picos marcam hesitações e retomadas.</p><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><p class="fine cap1">Variações ainda mais finas: picos marcam microcorreções do traço.</p><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi colhido) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
@@ -1371,7 +1377,7 @@ function nice(lo, hi, n = 5) {
 }
 function fmtTick(v, st) { const d = st >= 1 ? 0 : Math.min(4, Math.ceil(-Math.log10(st))); return Math.abs(v) >= 1e4 || (Math.abs(v) > 0 && Math.abs(v) < 1e-3) ? v.toExponential(1).replace('.', ',') : v.toFixed(d).replace('.', ',').replace('-', '−'); }
 function frame(cv, xr, yr, o = {}) {
-  const P = pal(), { c, w, h } = setup(cv, o.h), m = { l: o.ml ?? 46, r: 10, t: o.mt ?? 8, b: o.xlabel ? 32 : 20 };
+  const P = pal(), { c, w, h } = setup(cv, o.h), m = { l: o.ml ?? 46, r: o.mr ?? 10, t: o.mt ?? 8, b: o.xlabel ? 32 : 20 };
   const X = v => m.l + (v - xr[0]) / (xr[1] - xr[0]) * (w - m.l - m.r), Y = v => h - m.b - (v - yr[0]) / (yr[1] - yr[0]) * (h - m.t - m.b);
   c.font = '10px ' + css('--mono'); c.fillStyle = P.mut; c.strokeStyle = P.grid; c.lineWidth = 1;
   const tx = nice(xr[0], xr[1], Math.max(3, Math.floor((w - 60) / 70))), ty = nice(yr[0], yr[1], 4);
@@ -1634,13 +1640,22 @@ function velArea(p, sel, g) {
 }
 function drawArea(cv) {
   const g = S.g, A = D.PP.map((p, k) => velArea(p, V.sels[k], g)), Q = velArea(D.Q, V.selq, g), tot = A.map(([c, a]) => c + a);
-  const mu = TH.mean(tot), sd = TH.std(tot, 1), ymax = Math.max(...tot, Q[0] + Q[1], mu + 2 * sd) * 1.12;
-  const N = NP(), XQ = N + 2, F = frame(cv, [0.3, N + 2.7], [0, ymax], { xlabel: `padrões P1–P${N} · Q = questionada`, ylabel: 'mm', xfmt: v => (v === XQ ? 'Q' : v >= 1 && v <= N && (v === 1 || v % 5 === 0) ? 'P' + v : '') }), { c, X, Y, P } = F;
+  // tempo do mesmo trecho (do primeiro ao último ponto selecionado, papel + ar), no eixo da direita
+  const dur = (p, s) => { const [a, b] = selRange(s); return p.t[b] - p.t[a]; }, T = D.PP.map((p, k) => dur(p, V.sels[k])), TQ = dur(D.Q, V.selq);
+  const mu = TH.mean(tot), sd = TH.std(tot, 1), ymax = Math.max(...tot, Q[0] + Q[1], mu + 2 * sd) * 1.12, tmu = TH.mean(T), tsd = TH.std(T, 1), tmax = Math.max(...T, TQ, tmu + 2 * tsd) * 1.12;
+  const N = NP(), XQ = N + 2, F = frame(cv, [0.3, N + 2.7], [0, ymax], { xlabel: `padrões P1–P${N} · Q = questionada`, ylabel: 'mm', mr: 40, mt: 20, xfmt: v => (v === XQ ? 'Q' : v >= 1 && v <= N && (v === 1 || v % 5 === 0) ? 'P' + v : '') }), { c, X, Y, P } = F;
   c.fillStyle = P.band; c.globalAlpha = 0.18; c.fillRect(X(0.3), Y(mu + 2 * sd), X(N + 2.7) - X(0.3), Y(mu - 2 * sd) - Y(mu + 2 * sd)); c.globalAlpha = 1;
   c.strokeStyle = P.band; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(X(0.3), Y(mu)); c.lineTo(X(N + 2.7), Y(mu)); c.stroke(); c.setLineDash([]);
-  const bw = (X(1) - X(0)) * 0.7, bar = (x, [cn, ar], col) => { c.fillStyle = col; c.fillRect(X(x) - bw / 2, Y(cn), bw, Y(0) - Y(cn)); c.globalAlpha = 0.4; c.fillRect(X(x) - bw / 2, Y(cn + ar), bw, Y(cn) - Y(cn + ar)); c.globalAlpha = 1; };
+  const bw = (X(1) - X(0)) * 0.6, bar = (x, [cn, ar], col) => { c.fillStyle = col; c.fillRect(X(x) - bw / 2, Y(cn), bw, Y(0) - Y(cn)); c.globalAlpha = 0.4; c.fillRect(X(x) - bw / 2, Y(cn + ar), bw, Y(cn) - Y(cn + ar)); c.globalAlpha = 1; };
   A.forEach((v, k) => bar(k + 1, v, P.band)); bar(XQ, Q, P.acc);
+  const YT = v => F.h - F.m.b - v / tmax * (F.h - F.m.t - F.m.b);
+  c.strokeStyle = P.amb; c.lineWidth = 1; c.globalAlpha = 0.7; c.setLineDash([2, 3]); for (const v of [tmu - 2 * tsd, tmu + 2 * tsd]) { c.beginPath(); c.moveTo(X(0.3), YT(v)); c.lineTo(X(N + 2.7), YT(v)); c.stroke(); } c.setLineDash([]); c.globalAlpha = 1;
+  const dia = (x, y, fill) => { c.beginPath(); c.moveTo(x, y - 6); c.lineTo(x + 5, y); c.lineTo(x, y + 6); c.lineTo(x - 5, y); c.closePath(); c.fillStyle = fill; c.fill(); c.strokeStyle = P.panel; c.lineWidth = 1; c.stroke(); };
+  c.strokeStyle = P.amb; c.lineWidth = 1.2; c.beginPath(); T.forEach((t, k) => (k ? c.lineTo(X(k + 1), YT(t)) : c.moveTo(X(1), YT(t)))); c.stroke();
+  T.forEach((t, k) => dia(X(k + 1), YT(t), P.amb)); dia(X(XQ), YT(TQ), P.red);
   F.done();
+  c.fillStyle = P.amb; c.font = '10px ' + css('--mono'); c.textAlign = 'left'; const tk = nice(0, tmax, 4); for (const v of tk.ticks) c.fillText(fmtTick(v, tk.st) + ' s', F.w - F.m.r + 3, YT(v) + 3);
+  c.font = '10.5px ' + css('--sans'); c.fillStyle = P.mut; c.fillText('▮ distância (mm, eixo da esquerda)', F.m.l, 12); c.fillStyle = P.amb; c.textAlign = 'right'; c.fillText('◆ tempo (s, eixo da direita) · vermelho = questionada', F.w - F.m.r, 12);
 }
 function drawEnergy(cv) {
   const en = (p, s) => { const pw = TH.power(p, S.g); let a = 0, b = 0; for (let i = 0; i < s.length; i++) if (s[i] && p.C[i]) { if (pw[i] > 0) a += pw[i] / FS; else b += pw[i] / FS; } return [a, b]; };
@@ -2158,7 +2173,7 @@ function renderAnalise() {
   $('#t-sig').textContent = Z ? 'Desenho · trecho em destaque' : `Desenho: ${NP()} padrões + questionada, registrados`;
   $('#t-zoom').textContent = Z ? `Zoom ${br(Z[0], 0)}–${br(Z[1], 0)}%` : '';
   const sv = suavN() ? ` · suavizado ${suavN()}/10` : '';
-  const T = { vel: `Velocidade · ${v}${zc}${sv}`, area: `Área sob a velocidade (distância percorrida) · ${v}${z}`, hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${zc}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${zc}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${zc}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${zc}${sv}` };
+  const T = { vel: `Velocidade · ${v}${zc}${sv}`, area: `Área sob a velocidade (distância) e tempo · ${v}${z}`, hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${zc}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${zc}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${zc}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${zc}${sv}` };
   for (const k in T) $('#t-' + k).textContent = T[k];
   $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% (exploratório)` : 'Medidas globais';
   $('#t-maha').textContent = `Distância à pessoa${z} · par de medidas`;
@@ -2664,7 +2679,7 @@ function bind() {
   realUI();
   // ampliar: botão "⤢" no canto de cada gráfico (o arrasto fica livre para zoom, giro e seleção)
   $$('#pane-analise .card canvas').forEach(cv => {
-    if (!cv.id || cv.id === 'cv-big') return; const card = cv.closest('.card'), h = card && card.querySelector('h3'); if (!h || card.querySelector('.ampl')) return;
+    if (!cv.id || cv.id === 'cv-big' || cv.closest('#card-formas')) return; const card = cv.closest('.card'), h = card && card.querySelector('h3'); if (!h || card.querySelector('.ampl')) return;
     const b = document.createElement('button'); b.type = 'button'; b.className = 'ampl'; b.title = 'Ampliar este gráfico na tela inteira'; b.setAttribute('aria-label', 'Ampliar gráfico'); b.textContent = '⤢ ampliar';
     b.addEventListener('click', e => { e.stopPropagation(); openBig(cv.id); });
     if (h.id) { b.classList.add('abs'); card.classList.add('has-ampl'); card.appendChild(b); } else h.appendChild(b); // títulos reescritos pelo painel: botão fora do título
@@ -3981,6 +3996,115 @@ function renderEstab() {
   const cw = $('#cv-sig').parentElement, row = document.createElement('div'); row.className = 'sigrow'; cw.parentNode.insertBefore(row, cw); row.appendChild(cw);
   const vp = document.createElement('div'); vp.id = 'varp'; vp.className = 'varp'; vp.setAttribute('aria-label', 'Variabilidade de punho dos padrões'); row.appendChild(vp);
   const _ra = renderAnalise; renderAnalise = function () { const r = _ra.apply(this, arguments); renderVarP(); renderEstab(); return r; };
+}
+
+/* ================= pressão em formas parecidas =================
+   A assinatura é cortada em "unidades de forma" (retas, curvas, laços) nos mínimos de velocidade e nos levantamentos.
+   Cada unidade é descrita pela direção do traço ao longo dela (16 pontos por comprimento), pelo comprimento e pela
+   forma que veio antes (contexto). Para cada unidade da questionada, procura-se em cada padrão a unidade mais parecida
+   ("gêmea"), em qualquer posição. A pressão da questionada é comparada com a das gêmeas.
+   Limiar de semelhança FM_LIM e pesos [A CALIBRAR com coletas reais]. Usa o desenho registrado (D.REG), não o tempo. */
+const FM_K = 16, FM_LIM = 30, FM_MIN = 3, FM_PERF = 20;
+const fmWrap = a => { while (a > Math.PI) a -= 2 * Math.PI; while (a < -Math.PI) a += 2 * Math.PI; return a; };
+function fmResamp(R, a, b, n) { // n posições (índices fracionários) igualmente espaçadas pelo comprimento
+  const s = [0]; for (let i = a + 1; i <= b; i++) s.push(s[s.length - 1] + Math.hypot(R[0][i] - R[0][i - 1], R[1][i] - R[1][i - 1]));
+  const L = s[s.length - 1], out = []; let j = 0;
+  for (let k = 0; k < n; k++) { const t = L * k / (n - 1); while (j < s.length - 2 && s[j + 1] < t) j++; const f = s[j + 1] > s[j] ? (t - s[j]) / (s[j + 1] - s[j]) : 0; out.push(a + j + Math.min(1, Math.max(0, f))); }
+  return { L, ix: out };
+}
+const fmAt = (arr, x) => { const i = Math.floor(x), f = x - i; return i + 1 < arr.length ? arr[i] * (1 - f) + arr[i + 1] * f : arr[i]; };
+function fmUnits(p, R) {
+  const U = [];
+  for (const [s, e] of p.segs) {
+    const cut = [s, ...p.mins.filter(m => m > s + 2 && m < e - 3), e - 1];
+    for (let k = 0; k < cut.length - 1; k++) {
+      const a = cut[k], b = cut[k + 1]; if (b - a < 5) continue;
+      const { L, ix } = fmResamp(R, a, b, FM_K + 1); if (L < 1) continue;
+      const px = ix.map(x => fmAt(R[0], x)), py = ix.map(x => fmAt(R[1], x)), dir = [];
+      for (let j = 0; j < FM_K; j++) dir.push(Math.atan2(py[j + 1] - py[j], px[j + 1] - px[j]));
+      let turn = 0; for (let j = 1; j < FM_K; j++) turn += fmWrap(dir[j] - dir[j - 1]);
+      const pr = fmResamp(R, a, b, FM_PERF).ix.map(x => fmAt(p.gf, x));
+      let pm = 0; for (let i = a; i <= b; i++) pm += p.gf[i]; pm /= b - a + 1;
+      U.push({ a, b, L, dir, turn, chord: Math.atan2(py[FM_K] - py[0], px[FM_K] - px[0]), first: a === s, pm, pr });
+    }
+  }
+  U.forEach((u, k) => { u.prev = u.first || !k ? null : U[k - 1]; });
+  return U;
+}
+const fmAng = (d1, d2) => { let s = 0; for (let j = 0; j < d1.length; j++) s += Math.abs(fmWrap(d1[j] - d2[j])); return s / d1.length * 180 / Math.PI; };
+function fmDist(u, v) {
+  const ctx = u.prev && v.prev ? fmAng(u.prev.dir, v.prev.dir) : !u.prev && !v.prev ? 0 : 45;
+  return fmAng(u.dir, v.dir) + 40 * Math.abs(Math.log(u.L / v.L)) + 0.5 * ctx;
+}
+const FM_DIR = ['para a direita', 'subindo à direita', 'para cima', 'subindo à esquerda', 'para a esquerda', 'descendo à esquerda', 'para baixo', 'descendo à direita'];
+const fmDirTxt = a => FM_DIR[((Math.round(a / (Math.PI / 4)) % 8) + 8) % 8];
+function fmDesc(u) {
+  const t = u.turn * 180 / Math.PI, sent = t > 0 ? 'anti-horário' : 'horário';
+  return Math.abs(t) < 40 ? `reta ${fmDirTxt(u.chord)}` : Math.abs(t) >= 300 ? `laço ${sent}` : `curva ${t > 0 ? 'anti-horária' : 'horária'} de ~${Math.round(Math.abs(t) / 10) * 10}°, ${fmDirTxt(u.chord)}`;
+}
+function fmCalc() {
+  if (D._fm) return D._fm;
+  const N = NP(), UQ = fmUnits(D.Q, D.REG[N]), UP = D.PP.map((p, k) => fmUnits(p, D.REG[k]));
+  for (const u of UQ) {
+    u.tw = []; UP.forEach((L, k) => { let best = null, bd = Infinity; for (const v of L) { const d = fmDist(u, v); if (d < bd) { bd = d; best = v; } } if (best && bd < FM_LIM) u.tw.push({ k, v: best, d: bd }); });
+    u.tw.sort((x, y) => x.d - y.d);
+    const pm = u.tw.map(t => t.v.pm), mu = TH.mean(pm), sd = pm.length > 1 ? TH.std(pm, 1) : 0;
+    u.mu = mu; u.sd = sd; u.z = u.tw.length >= FM_MIN && sd > 1e-9 ? (u.pm - mu) / sd : NaN;
+  }
+  FM_SEL = -1; return (D._fm = { UQ, UP });
+}
+let FM_SEL = -1;
+function renderFormas() {
+  const card = $('#card-formas'); if (!card || !D || !V) return;
+  const cv = $('#cv-formas'), P = pal(), { UQ } = fmCalc(), R = D.REG[NP()], Q = D.Q, { c, w, h } = setup(cv, cv.clientHeight || 260);
+  if (FM_SEL < 0 || !UQ[FM_SEL]) FM_SEL = UQ.findIndex(u => Number.isFinite(u.z));
+  let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (let i = 0; i < R[0].length; i++) if (Q.C[i]) { x0 = Math.min(x0, R[0][i]); x1 = Math.max(x1, R[0][i]); y0 = Math.min(y0, R[1][i]); y1 = Math.max(y1, R[1][i]); }
+  const sc = Math.min((w - 24) / (x1 - x0), (h - 24) / (y1 - y0)), ox = (w - sc * (x1 - x0)) / 2, oy = (h - sc * (y1 - y0)) / 2, X = v => ox + (v - x0) * sc, Y = v => h - oy - (v - y0) * sc;
+  const path = (a, b) => { c.beginPath(); for (let i = a; i <= b; i++) (i === a ? c.moveTo(X(R[0][i]), Y(R[1][i])) : c.lineTo(X(R[0][i]), Y(R[1][i]))); c.stroke(); };
+  c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = P.line; c.lineWidth = 1.5; for (const [s, e] of Q.segs) path(s, e - 1);
+  const colZ = z => { if (!Number.isFinite(z)) return P.band; const a = Math.min(1, 0.3 + Math.abs(z) / 3); c.globalAlpha = a; return z < 0 ? P.acc : P.red; };
+  UQ.forEach((u, k) => { c.strokeStyle = colZ(u.z); c.lineWidth = k === FM_SEL ? 5 : 3; path(u.a, u.b); c.globalAlpha = 1; });
+  cv._fm = { UQ, X, Y, R };
+  const u = UQ[FM_SEL];
+  if (u) { const m = (u.a + u.b) >> 1, mx = X(R[0][m]), my = Y(R[1][m]); c.strokeStyle = P.fg; c.lineWidth = 1.2; c.setLineDash([3, 2]); c.beginPath(); c.arc(mx, my, 16, 0, 7); c.stroke(); c.setLineDash([]); c.fillStyle = P.fg; c.font = '600 11px ' + css('--sans'); c.textAlign = 'left'; c.fillText('unidade ' + (FM_SEL + 1), mx + 20, my - 12); }
+  fmSide(u);
+  const nq = UQ.length, ncom = UQ.filter(v => Number.isFinite(v.z)).length, fora = UQ.filter(v => Math.abs(v.z) > 2), nm = fora.filter(v => v.z < 0).length;
+  $('#fm-sum').innerHTML = `<b>Resumo:</b> das ${nq} unidades de forma da questionada, ${ncom} têm gêmeas suficientes nos padrões (${FM_MIN} ou mais); em ${fora.length} a pressão sai da faixa da pessoa naquela forma${fora.length ? ` (${nm} com menos pressão, ${fora.length - nm} com mais)` : ''}. Mesmo numa assinatura verdadeira, cerca de 1 em cada 20 unidades sai da faixa por acaso (aqui, ~${br(ncom / 20, 1)}). Comparação exploratória: não entra nas elipses nem na tabela verdade.`;
+}
+function fmThumb(k, v) {
+  const RR = D.REG[k], a0 = v.prev ? v.prev.a : v.a, cv2 = document.createElement('canvas'), W = 92, H = 46, r = 2; cv2.width = W * r; cv2.height = H * r; const x = cv2.getContext('2d'); x.scale(r, r);
+  let xa = Infinity, xb = -Infinity, ya = Infinity, yb = -Infinity; for (let i = a0; i <= v.b; i++) { xa = Math.min(xa, RR[0][i]); xb = Math.max(xb, RR[0][i]); ya = Math.min(ya, RR[1][i]); yb = Math.max(yb, RR[1][i]); }
+  const s = Math.min((W - 12) / (xb - xa || 1), (H - 10) / (yb - ya || 1)), ox = (W - s * (xb - xa)) / 2, oy = (H - s * (yb - ya)) / 2, P = pal();
+  const ln = (a, b, col, lw) => { x.strokeStyle = col; x.lineWidth = lw; x.beginPath(); for (let i = a; i <= b; i++) { const px = ox + (RR[0][i] - xa) * s, py = H - oy - (RR[1][i] - ya) * s; i === a ? x.moveTo(px, py) : x.lineTo(px, py); } x.stroke(); };
+  x.lineCap = 'round'; x.lineJoin = 'round'; if (v.prev) ln(v.prev.a, v.prev.b, P.band, 1.3); ln(v.a, v.b, P.fg, 2.2);
+  return `<span class="fm-th"><img src="${cv2.toDataURL()}" alt="">P${String(k + 1).padStart(2, '0')}</span>`;
+}
+function fmSide(u) {
+  const side = $('#fm-side');
+  if (!u) { side.innerHTML = '<p class="fine">Nenhuma unidade da questionada tem gêmeas suficientes nos padrões.</p>'; return; }
+  const ctx = u.prev ? `<b>vinda de</b> ${fmDesc(u.prev)}` : 'início de traço (depois de levantar a caneta)', nt = u.tw.length;
+  side.innerHTML = `<div class="fm-t">Unidade ${FM_SEL + 1} da questionada</div><div class="fine" style="margin:0">${fmDesc(u)} · ${ctx}</div>
+    <div class="fine" style="margin:4px 0 0">${nt ? `${nt} gêmea${nt > 1 ? 's' : ''} nos padrões (mesma forma e mesmo contexto)${nt > 6 ? ' · 6 mais parecidas' : ''}:` : 'Nenhuma gêmea nos padrões: esta forma não aparece do mesmo jeito na pessoa.'}</div>
+    <div class="fm-ths">${u.tw.slice(0, 6).map(t => fmThumb(t.k, t.v)).join('')}</div>
+    ${nt >= FM_MIN ? `<canvas id="cv-fmp"></canvas><div class="fine" style="margin:0">Pressão do início ao fim da unidade · cinza: gêmeas da pessoa (média ± 2 desvios) · azul: questionada${Number.isFinite(u.z) ? ` · média: ${u.z >= 0 ? '+' : ''}${br(u.z, 1)} desvios` : ''}</div>` : nt ? `<div class="fine" style="margin:0">Menos de ${FM_MIN} gêmeas: poucas para comparar a pressão.</div>` : ''}`;
+  const cp = $('#cv-fmp'); if (!cp) return;
+  const gx = Array.from({ length: FM_PERF }, (_, i) => i / (FM_PERF - 1) * 100), T = u.tw.map(t => t.v.pr), m = gx.map((_, i) => TH.mean(T.map(r => r[i]))), s = gx.map((_, i) => TH.std(T.map(r => r[i]), 1));
+  const lo = m.map((v, i) => v - 2 * s[i]), hi = m.map((v, i) => v + 2 * s[i]), [ya, yb] = extent([lo, hi, u.pr], 0.1);
+  const F = frame(cp, [0, 100], [Math.max(0, ya), yb], { h: 110, ml: 38, xlabel: '% da unidade', ylabel: UP() === 'gf' ? 'gf' : '' });
+  bandFill(F, gx, lo, hi, F.P.band); polyline(F, gx, m, F.P.band, 1); polyline(F, gx, u.pr, F.P.acc, 1.8); F.done();
+}
+{ // cartão em largura total, antes da estabilidade da coleta; toque numa unidade para escolher
+  const card = document.createElement('div'); card.className = 'card'; card.id = 'card-formas'; card.style.gridColumn = '1 / -1';
+  card.innerHTML = `<h3><span>Pressão em formas parecidas · comparada pela geometria, não pelo tempo</span><span class="fine">azul: menos pressão que a pessoa nessa forma · vermelho: mais · cinza: forma sem gêmeas suficientes</span></h3>
+  <div class="fm-row"><div class="fm-cw"><canvas id="cv-formas" aria-label="Questionada dividida em unidades de forma; toque numa unidade"></canvas></div><div id="fm-side"></div></div>
+  <p class="fine" style="margin:6px 0 0">Cada pedaço colorido da questionada é comparado com os pedaços de mesma forma, vindos da mesma forma anterior, em qualquer lugar dos padrões; toque num pedaço para ver as gêmeas.</p><p class="fine" id="fm-sum" style="margin:4px 0 0"></p>`;
+  const ref = $('#card-estab'); ref.parentNode.insertBefore(card, ref);
+  $('#cv-formas').addEventListener('click', e => {
+    const cv = e.currentTarget, M = cv._fm; if (!M) return; const r = cv.getBoundingClientRect(), px = e.clientX - r.left, py = e.clientY - r.top - (cv._off || 0); let best = -1, bd = 14;
+    M.UQ.forEach((u, k) => { for (let i = u.a; i <= u.b; i++) { const d = Math.hypot(M.X(M.R[0][i]) - px, M.Y(M.R[1][i]) - py); if (d < bd) { bd = d; best = k; } } });
+    if (best >= 0) { FM_SEL = best; renderFormas(); }
+  });
+  const _ra = renderAnalise; renderAnalise = function () { const r = _ra.apply(this, arguments); renderFormas(); return r; };
 }
 
 bind(); watermark(); loadCase();
