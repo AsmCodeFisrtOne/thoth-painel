@@ -551,7 +551,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
         <p><b>Como usar.</b> Você escolhe as duas medidas dos eixos (velocidade, pressão, tempo e outras). Troque os pares para descobrir em qual combinação a questionada se afasta. Preste atenção no caso da etapa 7: cada medida parece normal sozinha, mas a combinação não é a da pessoa. É isso que a elipse mostra e uma lista de valores separados não mostra.</p>
       </div>
       <div class="tutwarn"><b>Cuidados</b><ul>
-        <li>A elipse de um par só não decide o relatório. A palavra grande no alto do gráfico (TÍPICA, ATÍPICA ou INCONCLUSIVA) vem sempre de quatro medidas avaliadas juntas: tempo total, pressão média, inclinação média da caneta e número de pequenas correções do movimento em cada traço. As elipses servem para mostrar onde a questionada se afasta.</li>
+        <li>Cada elipse é a análise de um par só. O título "Este par" e a cor do ponto mostram o resultado desse par (TÍPICA, ATÍPICA ou INCONCLUSIVA). O painel não junta medidas num resultado final: a conclusão é do perito.</li>
         <li>Quem testa muitos pares acaba achando algum "fora" por acaso, como quem joga uma moeda muitas vezes e uma hora tira várias caras seguidas. Por isso a tabela verdade usa a linha mais larga.</li>
         <li>Se a própria pessoa tem mais de um padrão fora da elipse, ela varia muito; nesse caso o painel não marca ATÍPICA, marca INCONCLUSIVA.</li>
         <li>A seta na borda não é a posição da questionada; mostra só a direção. Use "escala real" para ver onde ela está.</li></ul></div>
@@ -569,7 +569,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
         <p><b>Quais medidas.</b> O painel começa com as três medidas que mais andam ligadas entre si nos padrões da pessoa, escolhidas sem olhar a questionada. Você pode trocar qualquer uma nos seletores X, Y e Z; cada escolha fica no registro de acessos.</p>
       </div>
       <div class="tutwarn"><b>Cuidados</b><ul>
-        <li>O 3D é para explorar. A palavra grande no alto do gráfico continua vindo das quatro medidas principais, como na elipse.</li>
+        <li>O 3D é para explorar. O título "Este trio" e a cor mostram o resultado só deste trio; o painel não junta os resultados numa conclusão.</li>
         <li>Se escolher a rotação da caneta como uma das medidas, aparece um aviso amarelo: essa medida ainda não foi validada em bancada.</li>
         <li>Questionada longe demais vira seta na borda, como na elipse; use "escala real" para ver onde ela está.</li></ul></div>
     </article>
@@ -581,6 +581,69 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
       <div class="tuttxt"><p><b>O que é.</b> A pergunta da elipse ("a questionada combina com a pessoa nessas medidas?") feita para 47 combinações de pares e trios de medidas de uma vez. Cada quadrado ou faixa colorida é uma elipse resumida numa cor.</p><p><b>Como ler.</b> Verde T: típica. Vermelho A: atípica. Laranja I: inconclusiva, sempre com o motivo. O tracinho: tempo e velocidade não se comparam, porque a velocidade é o caminho dividido pelo tempo.</p><p><b>Como usar.</b> Procure onde os A se juntam: numa linha, numa coluna, num grupo de trios. É ali que a assinatura se afasta. Toque num quadrado para ler o motivo; toque de novo para abrir a combinação no gráfico.</p></div>
       <div class="tutwarn"><b>Cuidados</b><ul><li>Cada linha é uma análise separada, com o seu resultado. Nenhuma linha decide o caso: o painel não junta os resultados numa conclusão; isso cabe ao perito.</li><li>A tabela é mais exigente que a elipse sozinha (limite da tabela), porque testa muitas combinações; por isso um ponto "fora" na elipse pode aparecer como I na tabela.</li><li>Nenhum número aparece na tabela: os números de cada linha estão nos gráficos e no anexo do relatório.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-sinais" data-card="sinais">
+      <h3><span>Sinais do desenho: ordem, início, término, paradas e micro-levantamentos</span><span class="fine">exemplo ilustrativo · no caso: animação do desenho (aba Análise) e captura ao vivo</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: uma assinatura sendo reproduzida com os sinais de ordem, início, término, paradas e micro-levantamentos"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> Ao reproduzir a assinatura, cada sinal aparece no momento em que acontece: números na ordem dos traços, I no começo, T no fim, ‖ onde a caneta ficou parada no papel e ^ onde ela subiu e voltou quase no mesmo ponto.</p><p><b>Como usar.</b> Toque em ▶ animar no desenho da Análise ou em ▶ reproduzir na captura ao vivo. A linha no alto conta traços, paradas e micro-levantamentos.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Paradas e micro-levantamentos também ocorrem na escrita natural: ângulos agudos, idade, cansaço. Compare quantidade e lugar com os padrões da própria pessoa.</li><li>Parada = caneta no papel, quase parada, por 0,1 s ou mais. Micro-levantamento = sai e volta a menos de 1 mm. São critérios do sistema, ajustáveis.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-formas" data-card="formas">
+      <h3><span>Pressão em formas parecidas</span><span class="fine">exemplo ilustrativo · no caso: desenho principal, cores "pressão por forma"</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: um pedaço da questionada comparado com pedaços de mesma forma nos padrões"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A questionada é cortada em retas, curvas e laços. Cada pedaço é comparado com os pedaços de mesma forma, vindos da mesma forma anterior, em qualquer lugar dos padrões. A pressão da questionada é posta contra a faixa da pessoa naquela forma.</p><p><b>Como usar.</b> No desenho principal, escolha "Cores: pressão por forma" e toque num pedaço colorido para ver as gêmeas e o perfil de pressão.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Exploratório: com muitas unidades, cerca de 1 em 20 sai da faixa por acaso. Não entra nas elipses nem na tabela verdade.</li><li>"Gêmeas" é um nome do sistema para trechos homólogos; não confundir com singularidade gráfica, que exige saber o que é raro na população.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-media" data-card="media">
+      <h3><span>Média × nuvem: por que a linha dos padrões é mais lisa</span><span class="fine">exemplo ilustrativo · no caso: gráficos de curva da aba Análise</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: 20 curvas viram uma média lisa com uma nuvem; a questionada aparece dentro da nuvem"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A linha cinza é a média de 20 assinaturas; a nuvem é até onde cada uma costuma ir. A questionada é uma assinatura só, então é naturalmente mais "nervosa" que a média.</p><p><b>Como usar.</b> Leia a questionada contra a nuvem. Trechos longos fora da nuvem importam; escapadas curtas, não.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Compare com a nuvem, não com a linha do meio.</li><li>Os números (medidas, elipses, tabela verdade) comparam assinatura com assinatura e não sofrem esse efeito.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-varpu" data-card="varpu">
+      <h3><span>Variabilidade de punho</span><span class="fine">exemplo ilustrativo · no caso: ao lado do desenho principal e no relatório da Grafoscopia Tradicional</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a mesma questionada diante de padrões cada vez mais variáveis"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> Mede quanto os padrões da pessoa variam entre si: a mediana da variação (desvio ÷ média) em 7 medidas. As carinhas resumem o nível, de "muito estável" a "instável".</p><p><b>Como usar.</b> Antes de ler as elipses, veja a carinha: quanto mais variável a pessoa, mais difícil uma assinatura ficar fora da faixa, e menos sensíveis são as comparações.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Variação alta pode ser natural da pessoa ou vir da coleta (postura, cansaço): confira o mapa de estabilidade.</li><li>Os cortes dos níveis ainda serão calibrados com coletas reais de várias pessoas.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-estab" data-card="estab">
+      <h3><span>Estabilidade da coleta</span><span class="fine">exemplo ilustrativo · no caso: aba Análise › Estabilidade da coleta</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: o mapa de calor das medidas ao longo dos padrões, com um padrão fora do comum e uma tendência"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> Um quadrado por padrão (na ordem da coleta) e por medida, colorido pela distância à média da pessoa. Mostra padrões fora do comum e tendências ao longo da coleta.</p><p><b>Como usar.</b> Coluna com várias cores fortes: veja o que aconteceu naquele padrão. Linha que vai do azul ao vermelho: aquecimento no começo ou cansaço no fim.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</li><li>O protocolo (aquecimento, pausa a cada 5, mesma postura) existe para evitar isso.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-areat" data-card="areat">
+      <h3><span>Área sob a velocidade e tempo</span><span class="fine">exemplo ilustrativo · no caso: aba Análise › Área sob a velocidade e tempo</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: barras de distância e losangos de tempo; a questionada com a mesma distância e muito mais tempo"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A barra é a distância que a caneta percorreu (escuro no papel, claro no ar); o losango é o tempo gasto, no eixo da direita. As faixas são a variação da pessoa.</p><p><b>Como usar.</b> Leia os dois juntos: mesma distância em muito mais tempo é escrita lenta sobre o mesmo traçado; tempo igual com distância diferente é outro traçado.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>É leitura visual: não entra nas elipses nem na tabela verdade.</li><li>Tempo e velocidade nunca são combinados nas análises, porque a velocidade é o caminho dividido pelo tempo.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-coleta" data-card="coleta">
+      <h3><span>Coleta na mesa e Grafoscopia Tradicional</span><span class="fine">exemplo ilustrativo · no caso: Captura ao vivo e aba Grafoscopia Tradicional</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: o semáforo da coleta, a galeria de 20 assinaturas e o relatório em tamanho real"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> O semáforo sincroniza quem opera e quem assina: nada é gravado fora da janela verde. Na Grafoscopia Tradicional, 20 assinaturas sem refazer; o perito decide quais não usar, com motivo, e gera o relatório para anexar ao laudo.</p><p><b>Como usar.</b> Preencha a anamnese com as condições da coleta. Imprima o relatório em escala 100% e confira com a régua de 50 mm.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Nenhuma assinatura é refeita ou apagada: as não usadas continuam no relatório, com o motivo.</li><li>O relatório descreve a escrita de quem forneceu os padrões; não compara com a questionada e não conclui sobre autoria.</li></ul></div>
     </article>
 
 
@@ -3469,6 +3532,207 @@ function tutInvite() {
   $('#tutinv-go').onclick = () => close(true); $('#tutinv-no').onclick = () => close(false); box.onclick = e => { if (e.target === box) close(false); };
   document.addEventListener('keydown', esc); box.hidden = false; setTimeout(() => $('#tutinv-go').focus(), 50);
 }
+
+/* ================= tutorial: cartões novos (sinais do desenho, pressão por forma, média × nuvem, variabilidade de punho,
+   estabilidade da coleta, área + tempo, coleta e Grafoscopia Tradicional). Exemplos inventados, só para ensinar. ================= */
+const T2 = {};
+const t2rng = s => () => ((s = (s * 1664525 + 1013904223) >>> 0) / 4294967296);
+const t2gauss = r => Math.sqrt(-2 * Math.log(r() + 1e-9)) * Math.cos(2 * Math.PI * r());
+function t2badge(c, x, y, txt, col, fill, r, P, sans) { c.beginPath(); c.arc(x, y, r, 0, 7); c.fillStyle = fill ? col : P.panel; c.fill(); if (!fill) { c.strokeStyle = col; c.lineWidth = 1.3; c.stroke(); } c.fillStyle = fill ? '#fff' : col; c.font = `bold ${Math.round(r * 1.25)}px ` + sans; c.textAlign = 'center'; c.fillText(txt, x, y + r * 0.45); }
+function t2frame(c, P, x, y, w, h) { c.strokeStyle = P.line; c.lineWidth = 1; c.strokeRect(x, y, w, h); }
+/* palavra de exemplo (coordenadas 0–1): três arcos com uma parada e um micro-levantamento, um laço e um corte */
+function t2word() {
+  if (T2.word) return T2.word; const S = []; let t = 0; const add = (x, y, C, dt = 0.012) => { t += dt; S.push({ x, y, C, t }); };
+  const arcs = i => { const u = i / 180; return [0.02 + 0.5 * u, 0.62 - 0.42 * Math.abs(Math.sin(u * Math.PI * 3))]; };
+  for (let i = 0; i <= 180; i++) { const [x, y] = arcs(i); if (i === 60) for (let h = 0; h < 27; h++) add(x, y, 1); if (i === 90) { for (let h = 0; h < 15; h++) add(x + 0.0004 * h, y - 0.01 * Math.sin(Math.PI * h / 14), 0); } add(x, y, 1); }
+  const a = S[S.length - 1]; for (let h = 1; h <= 20; h++) add(a.x + (0.6 - a.x) * h / 20, a.y + (0.36 - a.y) * h / 20 - 0.08 * Math.sin(Math.PI * h / 20), 0);
+  for (let i = 0; i <= 110; i++) { const u = i / 110 * 2 * Math.PI; add(0.66 - 0.06 * Math.cos(u) + 0.04 * u / 6.28, 0.42 - 0.2 * Math.sin(u), 1); }
+  const b = S[S.length - 1]; for (let h = 1; h <= 25; h++) add(b.x + (0.04 - b.x) * h / 25, b.y + (0.78 - b.y) * h / 25 - 0.1 * Math.sin(Math.PI * h / 25), 0);
+  for (let i = 0; i <= 70; i++) { const u = i / 70; add(0.04 + 0.72 * u, 0.78 + 0.015 * Math.sin(u * 7), 1); }
+  // velocidade (unidades por s) e marcos
+  S.forEach((p, i) => { const q = S[Math.max(0, i - 1)]; p.v = i ? Math.hypot(p.x - q.x, p.y - q.y) / (p.t - q.t) : 0; });
+  const segs = []; let st = -1; S.forEach((p, i) => { if (p.C && st < 0) st = i; if ((!p.C || i === S.length - 1) && st >= 0) { segs.push([st, p.C ? i : i - 1]); st = -1; } });
+  const pausa = S.findIndex((p, i) => i > 0 && p.C && Math.abs(p.x - S[i - 1].x) < 1e-9 && Math.abs(p.y - S[i - 1].y) < 1e-9), pausaF = pausa + 25;
+  return (T2.word = { S, segs, pausa, pausaF, micro: segs[1][0], fim: segs[segs.length - 1][1], T: t });
+}
+/* ---------- 1. sinais do desenho ---------- */
+const SIN_STEPS = [
+  [0, 7, 'A assinatura é reproduzida na ordem em que foi feita. Cada número aparece onde a caneta pousou no papel: é a ordem dos traços.'],
+  [7, 12, 'I (verde) marca o início: o primeiro toque da caneta no papel.'],
+  [12, 20, '‖ (âmbar) marca uma parada: a caneta ficou encostada e praticamente parada por 0,1 s ou mais. O tempo da parada aparece ao lado.'],
+  [20, 27, '^ (roxo) marca um micro-levantamento: a caneta saiu do papel e voltou a menos de 1 mm de onde saiu. No desenho parece um traço contínuo, mas houve um instante no ar.'],
+  [27, 32, 'T (vermelho) marca o término: o último ponto com a caneta no papel.'],
+  [32, 40, 'Na perícia: compare quantidade e lugar dos sinais com os padrões da própria pessoa. Paradas e micro-levantamentos também acontecem na escrita natural, em ângulos agudos, com a idade ou com o cansaço.']];
+const SIN_END = 40;
+function drawSIN(cv, T) {
+  const k = tStep(SIN_STEPS, T), st = SIN_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560, W = t2word(), S = W.S, n = S.length;
+  const A = nar ? { x: 14, y: 26, w: w - 28, h: h * 0.5 } : { x: 24, y: 30, w: w * 0.6, h: h * 0.62 }, G = nar ? { x: 14, y: A.y + A.h + 20, w: w - 28, h: h - A.h - 60 } : { x: 24, y: A.y + A.h + 26, w: w * 0.6, h: h - A.h - 72 };
+  const X = x => A.x + x * A.w, Y = y => A.y + y * A.h, r = nar ? 7 : 9;
+  const idx = f => Math.min(n - 1, Math.max(0, Math.round(f))); let N;
+  if (k === 0) N = idx(ph(T, 0.4, 6.4) * (n - 1)); else if (k === 2) N = idx(lerp(W.pausa - 30, W.pausaF + 8, ph(T, st[0] + 0.5, st[1] - 1.5))); else if (k === 3) N = idx(lerp(W.micro - 30, W.micro + 15, ph(T, st[0] + 0.5, st[1] - 1.5))); else if (k === 4) N = idx(lerp(W.fim - 40, n - 1, ph(T, st[0] + 0.3, st[1] - 1.5))); else N = n - 1;
+  // trajeto no ar (pontilhado) e tinta
+  c.lineCap = 'round'; c.lineJoin = 'round'; c.strokeStyle = P.acc; c.globalAlpha = 0.45; c.lineWidth = 1; c.setLineDash([2, 4]); c.beginPath(); let pen = false;
+  for (let i = 0; i <= N; i++) { if (S[i].C) { pen = false; continue; } pen ? c.lineTo(X(S[i].x), Y(S[i].y)) : c.moveTo(X(S[i].x), Y(S[i].y)); pen = true; } c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+  c.strokeStyle = P.acc; c.lineWidth = nar ? 2.2 : 3; c.beginPath(); pen = false; for (let i = 0; i <= N; i++) { if (!S[i].C) { pen = false; continue; } pen ? c.lineTo(X(S[i].x), Y(S[i].y)) : c.moveTo(X(S[i].x), Y(S[i].y)); pen = true; } c.stroke();
+  W.segs.forEach(([a], j) => { if (a <= N) t2badge(c, X(S[a].x), Y(S[a].y) - r - 5, String(j + 1), P.acc, false, r, P, sans); });
+  if (k >= 1 && N >= W.segs[0][0]) t2badge(c, X(S[0].x), Y(S[0].y) + r + 6, 'I', P.grn, true, r, P, sans);
+  if (k >= 2 && N >= W.pausa) { const p = S[W.pausa], dur = (S[Math.min(N, W.pausaF)].t - p.t); t2badge(c, X(p.x), Y(p.y), '‖', P.amb, true, r, P, sans); c.textAlign = 'left'; halo(br(Math.max(0, dur), 2) + ' s', X(p.x) + r + 4, Y(p.y) + 4, P.amb, 'bold 12px ' + sans); }
+  if (k >= 3 && N >= W.micro) { const p = S[W.micro], dur = p.t - S[W.micro - 15].t; t2badge(c, X(p.x), Y(p.y) - r - 5 - 2 * r - 4, '^', '#8a4fd1', true, r, P, sans); c.textAlign = 'left'; halo(br(dur, 2) + ' s no ar', X(p.x) + r + 4, Y(p.y) - 3 * r - 5, '#8a4fd1', 'bold 12px ' + sans); }
+  if (k >= 4 && N >= W.fim) t2badge(c, X(S[W.fim].x), Y(S[W.fim].y) + r + 6, 'T', P.red, true, r, P, sans);
+  const tip = S[N]; c.beginPath(); c.arc(X(tip.x), Y(tip.y), 4.5, 0, 7); c.fillStyle = tip.C ? P.red : P.panel; c.fill(); c.strokeStyle = P.red; c.lineWidth = 1.4; c.stroke();
+  // legenda dos sinais
+  if (!nar) { const L = [['1', 'ordem dos traços', P.acc, false, 0], ['I', 'início', P.grn, true, 1], ['‖', 'parada (≥ 0,1 s no papel)', P.amb, true, 2], ['^', 'micro-levantamento (< 1 mm)', '#8a4fd1', true, 3], ['T', 'término', P.red, true, 4]];
+    L.forEach(([t, d, col, f, kk], i) => { const yy = 50 + i * 40; c.globalAlpha = k >= kk ? 1 : 0.25; t2badge(c, w * 0.68, yy, t, col, f, 10, P, sans); c.textAlign = 'left'; halo(d, w * 0.68 + 18, yy + 5, P.fg, '600 13px ' + sans); }); c.globalAlpha = 1; }
+  // velocidade no tempo: parada = zero no papel; micro-levantamento = faixa no ar
+  if (k >= 2) { const GX = t => G.x + G.w * t / W.T, vm = 1.6, GY = v => G.y + G.h - (G.h - 6) * Math.min(v, vm) / vm; t2frame(c, P, G.x, G.y, G.w, G.h);
+    c.fillStyle = P.amb; c.globalAlpha = 0.16; let a0 = -1; for (let i = 0; i <= n; i++) { const air = i < n && !S[i].C; if (air && a0 < 0) a0 = i; else if (!air && a0 >= 0) { c.fillRect(GX(S[a0].t), G.y, GX(S[i - 1].t) - GX(S[a0].t), G.h); a0 = -1; } } c.globalAlpha = 1;
+    c.strokeStyle = P.acc; c.lineWidth = 1.4; c.beginPath(); for (let i = 0; i <= N; i++) i ? c.lineTo(GX(S[i].t), GY(S[i].v)) : c.moveTo(GX(S[i].t), GY(S[i].v)); c.stroke();
+    c.textAlign = 'left'; halo('velocidade no tempo · faixa clara = caneta no ar', G.x + 4, G.y - 5, P.mut, '11px ' + sans);
+    if (k === 2 || k === 5) { const x0 = GX(S[W.pausa].t), x1 = GX(S[W.pausaF].t); c.strokeStyle = P.amb; c.lineWidth = 2; c.strokeRect(x0 - 2, G.y + 2, x1 - x0 + 4, G.h - 4); }
+    if (k === 3 || k === 5) { const x0 = GX(S[W.micro - 15].t), x1 = GX(S[W.micro].t); c.strokeStyle = '#8a4fd1'; c.lineWidth = 2; c.strokeRect(x0 - 2, G.y + 2, x1 - x0 + 4, G.h - 4); } }
+  if (k === 5 && T > st[0] + 1) { c.textAlign = nar ? 'left' : 'right'; halo('compare com os padrões da pessoa', nar ? 14 : w - 20, nar ? h - 6 : h - 14, P.fg, 'bold 13px ' + sans); }
+}
+/* ---------- 2. pressão em formas parecidas ---------- */
+const FOR_STEPS = [
+  [0, 6, 'A questionada é cortada em pedaços de forma simples: retas, curvas e laços. Aqui acende a unidade 8, uma curva que desce.'],
+  [6, 11, 'O que vem antes importa: a mesma curva feita depois de uma subida é apertada de um jeito, depois de uma reta, de outro. Em cinza, o pedaço anterior (o contexto).'],
+  [11, 18, 'Nos padrões, o sistema procura os pedaços de mesma forma e mesmo contexto, em qualquer lugar da assinatura: as "gêmeas". Não importa o tempo nem a ordem.'],
+  [18, 25, 'A pressão da unidade, do início ao fim, é desenhada contra a faixa das gêmeas da pessoa. Aqui a questionada apertou bem menos.'],
+  [25, 32, 'No desenho principal, cada pedaço ganha uma cor: azul = menos pressão que a pessoa naquela forma, vermelho = mais, cinza = sem gêmeas suficientes.']];
+const FOR_END = 32;
+function drawFOR(cv, T) {
+  const k = tStep(FOR_STEPS, T), st = FOR_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const hump = (ox, oy, sc, n, jit, seed) => { const r = t2rng(seed), pts = []; for (let i = 0; i <= 240; i++) { const u = i / 240; pts.push([ox + sc * 3.2 * u, oy - sc * 0.9 * Math.abs(Math.sin(u * Math.PI * n)) + (r() - 0.5) * jit]); } return pts; };
+  const line = (pts, a, b, col, lw, al = 1) => { c.globalAlpha = al; c.strokeStyle = col; c.lineWidth = lw; c.lineCap = 'round'; c.beginPath(); for (let i = a; i <= b; i++) i === a ? c.moveTo(...pts[i]) : c.lineTo(...pts[i]); c.stroke(); c.globalAlpha = 1; };
+  const L = nar ? { ox: 20, oy: h * 0.3, sc: (w - 40) / 3.4 } : { ox: 30, oy: h * 0.6, sc: Math.min(w * 0.1, h * 0.4) }, Q = hump(L.ox, L.oy, L.sc, 3, 0, 1);
+  const U = [100, 120], Cx = [80, 100];
+  halo('questionada', L.ox, L.oy - L.sc * 1.15, P.mut, '600 12px ' + sans);
+  if (k < 4) { line(Q, 0, 240, P.acc, 2.4, 0.35); if (k >= 1) line(Q, Cx[0], Cx[1], P.band, 6); line(Q, U[0], U[1], P.acc, 6, ph(T, 0.5, 2)); c.textAlign = 'left'; halo('unidade 8', Q[U[1]][0] + 8, Q[U[1]][1], P.acc, 'bold 12px ' + sans); if (k >= 1) halo('contexto', Q[Cx[0]][0] - 40, Q[Cx[0]][1] + 18, P.band, 'bold 12px ' + sans); }
+  else { const z = [-0.6, -2.4, 0.3, NaN, -2.8, -0.2, 1.1, -2.1, -0.4, NaN, 0.8, -1.6]; for (let j = 0; j < 12; j++) { const a = j * 20, b = a + 20, zz = z[j], col = Number.isFinite(zz) ? (zz < 0 ? P.acc : P.red) : P.mut, al = Number.isFinite(zz) ? Math.min(1, 0.3 + Math.abs(zz) / 3) : 0.5; line(Q, a, b, col, 4, al * ph(T, st[0] + 0.3 + j * 0.25, st[0] + 0.8 + j * 0.25)); }
+    c.textAlign = 'left'; halo('azul = menos pressão · vermelho = mais · cinza = sem gêmeas', L.ox, L.oy + 26, P.fg, '600 12px ' + sans); }
+  // padrões com as gêmeas
+  if (k >= 2 && k < 4 && !nar) { const pos = [[0.5, 0.18, 120, 3], [0.5, 0.48, 60, 9], [0.5, 0.78, 180, 15]];
+    pos.forEach(([fx, fy, at, id], j) => { const g = ph(T, 11 + j * 1.4, 12 + j * 1.4); if (k === 2 && g <= 0) return; const pp = hump(w * fx, h * fy + 20, w * 0.035, 3, 1.2, id + 5), aa = at - 20; c.globalAlpha = k === 2 ? g : 1;
+      line(pp, 0, 240, P.band, 1.4); line(pp, aa - 20, aa, P.band, 4, 0.6); line(pp, aa, at, '#f0b429', 6); line(pp, aa, at, P.fg, 1.8); c.globalAlpha = 1; c.textAlign = 'left'; halo('P' + String(id).padStart(2, '0'), w * fx, h * fy - 22, P.mut, '600 11px ' + sans);
+      c.strokeStyle = '#f0b429'; c.globalAlpha = 0.6 * (k === 2 ? g : 1); c.setLineDash([3, 3]); c.lineWidth = 1; c.beginPath(); c.moveTo(Q[110][0] + 10, Q[110][1]); c.lineTo(pp[aa + 10][0], pp[aa + 10][1]); c.stroke(); c.setLineDash([]); c.globalAlpha = 1; }); }
+  if (k === 3 || (k === 2 && nar)) { const R = nar ? { x: 20, y: h * 0.5, w: w - 40, h: h * 0.42 } : { x: w * 0.74, y: h * 0.18, w: w * 0.24, h: h * 0.6 }, gp = k === 3 ? ph(T, st[0] + 0.5, st[0] + 4) : 0;
+    if (k === 3) { t2frame(c, P, R.x, R.y, R.w, R.h); const X = u => R.x + u * R.w, Y = v => R.y + R.h - v * R.h; c.fillStyle = P.band; c.globalAlpha = 0.3; c.beginPath(); for (let i = 0; i <= 40; i++) { const u = i / 40; c.lineTo(X(u), Y(0.62 + 0.15 * Math.sin(u * Math.PI))); } for (let i = 40; i >= 0; i--) { const u = i / 40; c.lineTo(X(u), Y(0.46 + 0.15 * Math.sin(u * Math.PI))); } c.fill(); c.globalAlpha = 1;
+      c.strokeStyle = P.acc; c.lineWidth = 2.4; c.beginPath(); for (let i = 0; i <= 40 * gp; i++) { const u = i / 40; i ? c.lineTo(X(u), Y(0.3 + 0.08 * Math.sin(u * Math.PI))) : c.moveTo(X(u), Y(0.3)); } c.stroke();
+      c.textAlign = 'left'; halo('pressão do início ao fim da unidade', R.x, R.y - 8, P.fg, '600 12px ' + sans); halo('faixa: gêmeas da pessoa', R.x + 6, R.y + 16, P.mut, '11px ' + sans); if (gp > 0.9) halo('questionada: −2,7 desvios', R.x + 6, Y(0.2), P.acc, 'bold 12px ' + sans); } }
+}
+/* ---------- 3. média × nuvem ---------- */
+const MED_STEPS = [
+  [0, 7, 'Os 20 padrões, um a um: cada assinatura tem os seus picos, em instantes um pouco diferentes.'],
+  [7, 14, 'A linha cinza é a média ponto a ponto. Picos que caem em instantes diferentes se cancelam e a média fica lisa. A nuvem em volta mostra até onde cada assinatura costuma ir.'],
+  [14, 22, 'A questionada é uma assinatura só: é naturalmente mais "nervosa" que a média. Compare com a nuvem, não com a linha do meio. Escapadas curtas são normais (cerca de 5% dos pontos). As medidas e as elipses comparam assinatura com assinatura e não sofrem esse efeito.']];
+const MED_END = 22;
+function drawMED(cv, T) {
+  const k = tStep(MED_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans);
+  const R = { x: 40, y: 20, w: w - 60, h: h - 50 }, f = (u, s) => 0.5 + 0.18 * Math.sin(u * 9 + s * 0.25) + 0.12 * Math.sin(u * 23 + s * 0.9) + 0.07 * Math.sin(u * 41 + s * 1.7);
+  const X = u => R.x + u * R.w, Y = v => R.y + R.h - v * R.h; t2frame(c, P, R.x, R.y, R.w, R.h);
+  const fade = k === 0 ? 1 : k === 1 ? 1 - 0.8 * ph(T, 7.5, 10) : 0.15, g0 = k === 0 ? ph(T, 0.3, 6) : 1;
+  c.lineWidth = 0.9; for (let s = 0; s < 20; s++) { if (s / 20 > g0) break; c.strokeStyle = P.band; c.globalAlpha = 0.7 * fade; c.beginPath(); for (let i = 0; i <= 240; i++) { const u = i / 240; i ? c.lineTo(X(u), Y(f(u, s))) : c.moveTo(X(u), Y(f(u, s))); } c.stroke(); } c.globalAlpha = 1;
+  if (k >= 1) { const g = ph(T, 8, 11), M = [], lo = [], hi = []; for (let i = 0; i <= 240; i++) { const u = i / 240; let a = 0, b = 0; for (let s = 0; s < 20; s++) { const v = f(u, s); a += v; b += v * v; } const m = a / 20, sd = Math.sqrt(Math.max(0, b / 20 - m * m)); M.push(m); lo.push(m - 2 * sd); hi.push(m + 2 * sd); }
+    c.fillStyle = P.band; c.globalAlpha = 0.3 * g; c.beginPath(); hi.forEach((v, i) => c.lineTo(X(i / 240), Y(v))); for (let i = 240; i >= 0; i--) c.lineTo(X(i / 240), Y(lo[i])); c.fill(); c.globalAlpha = 1;
+    c.strokeStyle = P.band; c.lineWidth = 2; c.globalAlpha = g; c.setLineDash(k === 2 ? [5, 4] : []); c.beginPath(); M.forEach((v, i) => (i ? c.lineTo(X(i / 240), Y(v)) : c.moveTo(X(i / 240), Y(v)))); c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
+    c.textAlign = 'left'; halo('linha do meio: lisa', R.x + 8, R.y + 16, P.band, 'bold 12px ' + sans); halo('nuvem: até onde a pessoa vai', R.x + 160, R.y + 16, P.mut, '12px ' + sans); }
+  if (k === 2) { const gq = ph(T, 14.3, 18); c.strokeStyle = P.acc; c.lineWidth = 2; c.beginPath(); for (let i = 0; i <= 240 * gq; i++) { const u = i / 240; i ? c.lineTo(X(u), Y(f(u, 7.3))) : c.moveTo(X(u), Y(f(u, 7.3))); } c.stroke();
+    if (gq > 0.95) { c.textAlign = 'right'; halo('questionada: mais "nervosa", mas dentro da nuvem = normal', R.x + R.w - 8, R.y + R.h - 10, P.acc, 'bold 12.5px ' + sans); } }
+}
+/* ---------- 4. variabilidade de punho ---------- */
+const VPU_STEPS = [
+  [0, 7, 'Padrões muito estáveis: as 20 assinaturas quase iguais, elipse pequena. A questionada, um pouco diferente, já cai fora da faixa da pessoa.'],
+  [7, 14, 'A mesma questionada, no mesmo lugar, diante de uma pessoa de variação moderada: a elipse cresce e ela fica na borda.'],
+  [14, 22, 'Diante de uma pessoa instável, a mesma questionada fica dentro da faixa. Quanto mais a pessoa varia, maior a diferença necessária para sair da faixa. Por isso a carinha fica ao lado do desenho: ela diz quão sensíveis são as comparações.']];
+const VPU_END = 22;
+function t2face(c, x, y, r, lv, P) {
+  const col = VAR_LV[lv][1], sm = [1, 0.7, 0.35, 0, -0.5, -0.9][lv]; c.beginPath(); c.arc(x, y, r, 0, 7); c.fillStyle = col; c.fill();
+  c.fillStyle = '#1d1d1d'; [-1, 1].forEach(s => { c.beginPath(); c.ellipse(x + s * r * 0.3, y - r * 0.15, r * 0.09, r * 0.11, 0, 0, 7); c.fill(); });
+  c.strokeStyle = '#1d1d1d'; c.lineWidth = r * 0.09; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - r * 0.38, y + r * 0.3); c.quadraticCurveTo(x, y + r * 0.3 + sm * r * 0.4, x + r * 0.38, y + r * 0.3); c.stroke();
+  if (lv >= 4) { c.beginPath(); c.moveTo(x - r * 0.45, y - r * 0.45); c.lineTo(x - r * 0.18, y - r * 0.32); c.moveTo(x + r * 0.45, y - r * 0.45); c.lineTo(x + r * 0.18, y - r * 0.32); c.stroke(); }
+}
+function drawVPU(cv, T) {
+  const k = tStep(VPU_STEPS, T), st = VPU_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const sp = [0.35, 0.85, 1.6], prev = k ? sp[k - 1] : sp[0], s = lerp(prev, sp[k], ph(T, st[0] + 0.3, st[0] + 2.5)), lvls = [0, 2, 5], cx = nar ? w / 2 : w * 0.38, cy = h * 0.48, U = Math.min(w, h) * 0.09;
+  const r = t2rng(77), pts = Array.from({ length: 20 }, () => [t2gauss(r), t2gauss(r)]);
+  c.fillStyle = P.band; pts.forEach(([a, b]) => { c.beginPath(); c.arc(cx + (a * 1.2 - b * 0.4) * U * s, cy + (b * 0.8) * U * s, 3.6, 0, 7); c.fill(); });
+  [[2.45, [6, 4]], [3.03, [2, 3]]].forEach(([kk, d]) => { c.strokeStyle = P.band; c.lineWidth = 1.4; c.setLineDash(d); c.beginPath(); c.ellipse(cx, cy, 1.25 * U * s * kk, 0.8 * U * s * kk, -0.3, 0, 7); c.stroke(); }); c.setLineDash([]);
+  const res = s < 0.6 ? [P.red, 'FORA da faixa'] : s < 1.2 ? [P.amb, 'na borda'] : [P.grn, 'DENTRO da faixa'], qx = cx + U * 2.3, qy = cy - U * 1.1;
+  c.beginPath(); c.arc(qx, qy, 7, 0, 7); c.fillStyle = res[0]; c.fill(); c.textAlign = 'left'; halo('Q', qx + 10, qy + 4, P.fg, 'bold 13px ' + sans);
+  halo('mesma questionada: ' + res[1], 20, h - 14, res[0], 'bold 14px ' + sans);
+  const lv = s < 0.6 ? 0 : s < 1.2 ? 2 : 5, fx = nar ? w - 50 : w * 0.8; t2face(c, fx, h * 0.38, nar ? 26 : 42, lv, P); c.textAlign = 'center'; halo(String(lv + 1).padStart(2, '0') + ' · ' + VAR_LV[lv][0], fx, h * 0.38 + (nar ? 44 : 64), VAR_LV[lv][1], 'bold 14px ' + sans);
+  c.textAlign = 'left'; halo('padrões da pessoa', 20, 22, P.mut, '600 12px ' + sans);
+}
+/* ---------- 5. estabilidade da coleta ---------- */
+const EST_STEPS = [
+  [0, 7, 'Cada coluna é um padrão, na ordem em que foi colhido; cada linha, uma medida. A cor diz quanto aquele padrão ficou longe da média da pessoa: azul abaixo, vermelho acima.'],
+  [7, 13, 'Uma coluna com várias cores fortes é um padrão fora do comum. Aqui, P13: algo aconteceu naquela assinatura (interrupção, mudança de postura).'],
+  [13, 20, 'Uma linha que vai do azul ao vermelho é tendência: aqui o tempo sobe ao longo da coleta, sinal de cansaço. O começo também pode sair diferente (aquecimento).'],
+  [20, 26, 'Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis. Por isso o protocolo pede aquecimento, pausas e mesma postura.']];
+const EST_END = 26;
+function drawEST(cv, T) {
+  const k = tStep(EST_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const rows = ['tempo', 'velocidade', 'aceleração', 'pressão', 'jerk', 'caminho', 'espectro'], r = t2rng(5), Z = rows.map((_, i) => Array.from({ length: 20 }, (_, j) => { let z = t2gauss(r) * 0.7; if (j === 12 && [0, 1, 3, 4].includes(i)) z = [2.6, -2.4, 2.3, 2.5][[0, 1, 3, 4].indexOf(i)]; if (i === 0 && k >= 2) z = -1.6 + 3.2 * j / 19 + t2gauss(r) * 0.25; return z; }));
+  const lw = nar ? 70 : 100, cw = (w - lw - 30) / 20, ch = Math.min(34, (h - 80) / 7), y0 = 40, cols = k === 0 ? Math.floor(ph(T, 0.3, 6) * 20) : 20;
+  c.textAlign = 'right'; rows.forEach((n, i) => halo(n, lw - 6, y0 + i * ch + ch * 0.65, P.mut, '12px ' + sans));
+  c.textAlign = 'center'; for (let j = 0; j < 20; j++) { c.fillStyle = k === 1 && j === 12 ? P.red : P.mut; c.font = '10px ' + css('--mono'); c.fillText(String(j + 1), lw + j * cw + cw / 2, y0 - 8); }
+  for (let j = 0; j < cols; j++) for (let i = 0; i < 7; i++) { const z = Z[i][j]; c.fillStyle = z < 0 ? P.acc : P.red; c.globalAlpha = 0.12 + 0.88 * Math.min(1, Math.abs(z) / 3); c.fillRect(lw + j * cw + 1, y0 + i * ch + 1, cw - 2, ch - 2); } c.globalAlpha = 1;
+  if (k === 1) { c.strokeStyle = P.fg; c.lineWidth = 2; c.strokeRect(lw + 12 * cw, y0 - 2, cw, 7 * ch + 4); c.textAlign = 'left'; halo('P13: fora do comum', lw + 13 * cw + 6, y0 + 7 * ch + 18, P.red, 'bold 13px ' + sans); }
+  if (k === 2) { c.strokeStyle = P.fg; c.lineWidth = 2; c.strokeRect(lw - 2, y0, 20 * cw + 4, ch); c.textAlign = 'left'; halo(nar ? '↗ tempo sobe: cansaço' : '↗ tempo sobe ao longo da coleta: cansaço', nar ? 8 : lw, y0 + 7 * ch + 18, P.amb, 'bold 13px ' + sans); }
+  if (k === 3) { c.textAlign = 'left'; halo(nar ? 'faixa mais larga → menos sensível' : 'faixa da pessoa mais larga → comparações menos sensíveis', nar ? 8 : lw, y0 + 7 * ch + 18, P.fg, 'bold 13px ' + sans); }
+}
+/* ---------- 6. área sob a velocidade + tempo ---------- */
+const ART_STEPS = [
+  [0, 6, 'As barras são a distância que a caneta percorreu em cada assinatura: parte escura no papel, clara no ar. A faixa é a variação da pessoa.'],
+  [6, 12, 'Os losangos laranja são o tempo total de cada assinatura, lido no eixo da direita. O tracejado laranja é a faixa de tempo da pessoa.'],
+  [12, 19, 'A questionada (azul e losango vermelho) percorreu a mesma distância da pessoa, mas levou muito mais tempo: é o caso típico de uma escrita lenta e cuidadosa sobre o mesmo traçado.'],
+  [19, 24, 'Leia sempre os dois juntos: distância igual com tempo muito maior, ou tempo igual com distância diferente, contam histórias diferentes. Não entra nas elipses: é leitura visual.']];
+const ART_END = 24;
+function drawART(cv, T) {
+  const k = tStep(ART_STEPS, T), st = ART_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans);
+  const R = { x: 50, y: 30, w: w - 110, h: h - 70 }, r = t2rng(9), D = Array.from({ length: 20 }, () => [300 + t2gauss(r) * 8, 90 + t2gauss(r) * 10]), Tm = Array.from({ length: 20 }, () => 4.5 + t2gauss(r) * 0.15), Q = [298, 92], TQ = 7.9;
+  const X = i => R.x + R.w * (i + 0.5) / 22, Y = v => R.y + R.h - R.h * v / 460, YT = v => R.y + R.h - R.h * v / 10, bw = R.w / 22 * 0.62, gb = k === 0 ? ph(T, 0.3, 3) : 1;
+  t2frame(c, P, R.x, R.y, R.w, R.h); c.fillStyle = P.band; c.globalAlpha = 0.18; c.fillRect(R.x, Y(410), R.w, Y(370) - Y(410)); c.globalAlpha = 1;
+  const bar = (i, [a, b], col) => { c.fillStyle = col; c.fillRect(X(i) - bw / 2, Y(a * gb), bw, Y(0) - Y(a * gb)); c.globalAlpha = 0.4; c.fillRect(X(i) - bw / 2, Y((a + b) * gb), bw, Y(a * gb) - Y((a + b) * gb)); c.globalAlpha = 1; };
+  D.forEach((d, i) => bar(i, d, P.band)); if (k >= 2) bar(21, Q, P.acc);
+  c.textAlign = 'right'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); [0, 200, 400].forEach(v => c.fillText(v + ' mm', R.x - 4, Y(v) + 3));
+  if (k >= 1) { const g = k === 1 ? ph(T, 6.3, 9) : 1, dia = (x, y, col) => { c.beginPath(); c.moveTo(x, y - 6); c.lineTo(x + 5, y); c.lineTo(x, y + 6); c.lineTo(x - 5, y); c.closePath(); c.fillStyle = col; c.fill(); };
+    c.strokeStyle = P.amb; c.setLineDash([2, 3]); c.globalAlpha = 0.7 * g; [4.2, 4.8].forEach(v => { c.beginPath(); c.moveTo(R.x, YT(v)); c.lineTo(R.x + R.w, YT(v)); c.stroke(); }); c.setLineDash([]); c.globalAlpha = g;
+    c.strokeStyle = P.amb; c.lineWidth = 1.2; c.beginPath(); Tm.forEach((t, i) => (i ? c.lineTo(X(i), YT(t)) : c.moveTo(X(i), YT(t)))); c.stroke(); Tm.forEach((t, i) => dia(X(i), YT(t), P.amb)); c.globalAlpha = 1;
+    c.textAlign = 'left'; c.fillStyle = P.amb; [0, 4, 8].forEach(v => c.fillText(v + ' s', R.x + R.w + 4, YT(v) + 3));
+    if (k >= 2) { dia(X(21), YT(TQ * (k === 2 ? ph(T, 12.5, 15) : 1) || 0.01), P.red); } }
+  c.textAlign = 'center'; c.fillStyle = P.mut; c.font = '11px ' + sans; c.fillText('P1 … P20', X(9.5), R.y + R.h + 14); if (k >= 2) { c.fillStyle = P.acc; c.font = 'bold 11px ' + sans; c.fillText('Q', X(21), R.y + R.h + 14); }
+  if (k === 2 && T > 15) { c.textAlign = 'right'; halo('mesma distância, muito mais tempo', R.x + R.w - 30, YT(TQ) - 10, P.red, 'bold 13px ' + sans); }
+  if (k === 3) { c.textAlign = 'left'; halo('barra = distância · losango = tempo', R.x + 8, R.y + 16, P.fg, 'bold 13px ' + sans); }
+}
+/* ---------- 7. coleta e Grafoscopia Tradicional ---------- */
+const COL_STEPS = [
+  [0, 6, 'Semáforo: com o campo cinza, nada é gravado. O operador libera (botão ou Enter): bip · bip · biiip e o campo fica verde. Só então a assinatura é gravada, a partir do primeiro toque.'],
+  [6, 12, 'A pessoa assina em silêncio, no campo em tamanho real. Enter encerra: bip grave, campo cinza de novo. As bolinhas verdes contam as assinaturas.'],
+  [12, 19, 'Na Grafoscopia Tradicional são 20 assinaturas e nenhuma é refeita. Depois, o perito pode deixar de usar alguma, sempre com o motivo, que fica registrado.'],
+  [19, 26, 'O relatório em PDF traz os gráficos dinâmicos, as medidas, a variabilidade, a anamnese e as assinaturas em tamanho real (1:1), com uma régua de 50 mm para conferir a impressão.']];
+const COL_END = 26;
+function drawCOL(cv, T) {
+  const k = tStep(COL_STEPS, T), st = COL_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const sig = (x, y, s, prog = 1) => { c.strokeStyle = P.fg; c.lineWidth = Math.max(1, s * 0.03); c.lineCap = 'round'; c.beginPath(); const n = Math.floor(160 * prog); for (let i = 0; i <= n; i++) { const u = i / 160; const px = x + s * 3 * u, py = y - s * 0.7 * Math.abs(Math.sin(u * Math.PI * 3)) + (u > 0.8 ? s * 0.4 * Math.sin((u - 0.8) * 30) : 0); i ? c.lineTo(px, py) : c.moveTo(px, py); } c.stroke(); };
+  if (k <= 1) { const F = { x: w * 0.15, y: h * 0.18, w: w * 0.7, h: h * 0.48 }; let col = P.line, lab = 'aguarde', bip = '';
+    if (k === 0) { const t = T - st[0]; if (t > 1.5) { lab = 'prepare-se'; bip = t < 2.3 ? '3 · bip' : t < 3.1 ? '2 · bip' : 'ASSINE · biiip'; } if (t > 3.1) { col = P.grn; lab = 'assine aqui'; } }
+    else { col = T < st[1] - 1.2 ? P.grn : P.line; lab = T < st[1] - 1.2 ? 'gravando' : 'Enter · bip grave'; }
+    c.fillStyle = col; c.globalAlpha = col === P.grn ? 0.12 : 0.06; c.fillRect(F.x, F.y, F.w, F.h); c.globalAlpha = 1; c.strokeStyle = col; c.lineWidth = 2.5; c.strokeRect(F.x, F.y, F.w, F.h);
+    c.textAlign = 'center'; halo(lab, F.x + F.w / 2, F.y + 22, col === P.grn ? P.grn : P.mut, 'bold 14px ' + sans); if (bip) halo(bip, F.x + F.w / 2, F.y - 10, P.amb, 'bold 16px ' + sans);
+    if (k === 1) { const ss = Math.min(F.w * 0.26, F.h * 0.6); sig(F.x + F.w / 2 - 1.5 * ss, F.y + F.h * 0.82, ss, ph(T, st[0] + 0.3, st[1] - 1.5)); }
+    const nd = k === 1 && T > st[1] - 1.2 ? 4 : 3; for (let i = 0; i < 20; i++) { c.beginPath(); c.arc(F.x + i * (F.w / 20) + F.w / 40, F.y + F.h + 26, Math.min(7, F.w / 50), 0, 7); c.fillStyle = i < nd ? P.grn : P.panel; c.fill(); c.strokeStyle = i < nd ? P.grn : P.line; c.lineWidth = 1.2; c.stroke(); } }
+  if (k === 2) { const cols = nar ? 4 : 10, cw2 = (w - 40) / cols, chh = Math.min(70, (h - 60) / (20 / cols)); for (let i = 0; i < 20; i++) { const x = 20 + (i % cols) * cw2, y = 30 + Math.floor(i / cols) * chh, off = i === 7 && T > st[0] + 2.5;
+      c.globalAlpha = off ? 0.4 : 1; c.strokeStyle = P.line; c.setLineDash(off ? [3, 3] : []); c.strokeRect(x + 3, y + 3, cw2 - 6, chh - 6); c.setLineDash([]); sig(x + 10, y + chh * 0.62, (cw2 - 20) / 3); c.globalAlpha = 1; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'left'; c.fillText('A' + String(i + 1).padStart(2, '0'), x + 6, y + chh - 8);
+      if (off) { c.textAlign = 'left'; halo('não usada: pessoa interrompida (telefone)', x, y + chh + 12, P.red, 'bold 12px ' + sans); } } }
+  if (k === 3) { const pw = Math.min(w * 0.42, (h - 28) / 1.414), ph_ = pw * 1.414, px = w / 2 - pw / 2, py = 14; c.fillStyle = '#fff'; c.fillRect(px, py, pw, Math.min(ph_, h - 28)); c.strokeStyle = P.line; c.strokeRect(px, py, pw, Math.min(ph_, h - 28));
+    c.fillStyle = '#1b2230'; c.font = 'bold 12px ' + sans; c.textAlign = 'left'; c.fillText('7. Assinaturas em tamanho real (1:1)', px + 12, py + 22); const mm = pw / 210;
+    c.strokeStyle = '#1b2230'; c.lineWidth = 1; c.beginPath(); c.moveTo(px + 12, py + 40); c.lineTo(px + 12 + 50 * mm, py + 40); for (let i = 0; i <= 50; i += 10) { c.moveTo(px + 12 + i * mm, py + 40); c.lineTo(px + 12 + i * mm, py + 35); } c.stroke(); c.font = '9px ' + sans; c.fillText('50 mm', px + 14 + 50 * mm, py + 42);
+    for (let i = 0; i < 6; i++) { const x = px + 12 + (i % 2) * pw / 2, y = py + 70 + Math.floor(i / 2) * 50 * mm * 0.9; sig(x, y + 14 * mm, 16 * mm); c.strokeStyle = P.amb; c.beginPath(); c.moveTo(x, y + 22 * mm); c.lineTo(x + 48 * mm, y + 22 * mm); c.stroke(); c.fillStyle = P.amb; c.font = '9px ' + sans; c.fillText('48,5 mm', x + 18 * mm, y + 22 * mm + 10); } }
+}
+/* registro dos cartões novos no tutorial */
+Object.assign(TPOSTER, { sinais: 36, formas: 21, media: 20, varpu: 20, estab: 16, areat: 17, coleta: 4.5 });
+{ const _rt = renderTut; renderTut = function () { if (!tutBuilt) { tcRegister('sinais', SIN_STEPS, SIN_END, drawSIN); tcRegister('formas', FOR_STEPS, FOR_END, drawFOR); tcRegister('media', MED_STEPS, MED_END, drawMED); tcRegister('varpu', VPU_STEPS, VPU_END, drawVPU); tcRegister('estab', EST_STEPS, EST_END, drawEST); tcRegister('areat', ART_STEPS, ART_END, drawART); tcRegister('coleta', COL_STEPS, COL_END, drawCOL); } return _rt.apply(this, arguments); }; }
 
 /* ================= captura ao vivo pela mesa (demonstração, sem padrões) =================
    A mesa (Huion H420X, driver com Windows Ink) chega ao navegador como caneta: posição, pressão (0–1, adimensional),
