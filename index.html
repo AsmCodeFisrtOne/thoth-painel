@@ -3657,6 +3657,15 @@ function liveSig(cv, upto) {
   // tinta: espessura pela pressão medida (adimensional), como uma esferográfica
   const ink = css('--ink'); c.strokeStyle = ink; c.lineCap = 'round'; const mm = Math.max(0.6, sc * 0.11);
   for (let i = 1; i <= N; i++) if (L.C[i] && L.C[i - 1]) { c.lineWidth = mm * (0.35 + 1.25 * Math.pow((L.P[i] + L.P[i - 1]) / 2, 0.9)); c.beginPath(); c.moveTo(X(L.x[i - 1]), Y(L.y[i - 1])); c.lineTo(X(L.x[i]), Y(L.y[i])); c.stroke(); }
+  // ordem dos traços (número onde a caneta pousou), início (I), término (T) e paradas (‖ com a duração): mesmos sinais da animação da Análise
+  if (L.segs.length) { const narrow = w < 500, r = narrow ? 5 : 7, acc = P.acc; c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans');
+    const badge = (i, txt, cor, dy, fill) => { const x = X(L.x[i]), y = Y(L.y[i]) + dy; c.fillStyle = fill ? cor : P.panel; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); if (!fill) { c.strokeStyle = cor; c.lineWidth = 1; c.stroke(); } c.fillStyle = fill ? '#fff' : cor; c.fillText(txt, x, y + (narrow ? 3 : 3.5)); return [x, y]; };
+    L.segs.forEach(([a0], k) => { if (a0 <= N) badge(a0, String(k + 1), acc, -r - 4, false); });
+    const i0 = L.segs[0][0], iF = L.segs[L.segs.length - 1][1] - 1, pz = sigPausas(L);
+    if (N >= i0) badge(i0, 'I', P.grn, r + 4, true);
+    for (const z of pz) { if (z.a > N) break; const [x, y] = badge(z.m, '‖', P.amb, 0, true); c.font = `${narrow ? 8 : 9.5}px ` + css('--mono'); c.fillStyle = P.amb; c.textAlign = 'left'; c.fillText(br(z.dur, 2) + ' s', x + r + 2, y + 3); c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); }
+    if (N >= iF) badge(iF, 'T', P.red, r + 4, true);
+    c.textAlign = 'left'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.fillText(`${L.segs.length} traço${L.segs.length > 1 ? 's' : ''} · ${pz.length} parada${pz.length === 1 ? '' : 's'} (caneta parada no papel ≥ 0,1 s) · I início · T término`, 8, 12); }
   if (upto != null && N < L.n - 1) { c.fillStyle = L.C[N] ? P.red : 'transparent'; c.strokeStyle = P.red; c.lineWidth = 1.5; c.beginPath(); c.arc(X(L.x[N]), Y(L.y[N]), 4.5, 0, 7); L.C[N] ? c.fill() : c.stroke(); }
   c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'left'; c.fillText(`escala: 10 mm = ${br(10 * sc, 0)} px · espessura do traço pela pressão medida`, 8, h - 4);
   if (upto != null) { c.textAlign = 'right'; c.fillText(`${br(L.t[N], 2)} s`, w - 8, h - 4); }
