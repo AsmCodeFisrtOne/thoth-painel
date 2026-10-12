@@ -258,6 +258,7 @@ body.live-on footer.f { display: none } body.live-on #real-bar { display: none }
 .mxitem:hover, .mxitem.on { border-color: var(--accent); background: var(--soft) } .mxitem img { width: 110px; height: 44px; object-fit: contain; background: #fbfaf6; border-radius: 6px } .mxitem .mxt { flex: 1; min-width: 0 } .mxitem b { display: block; font-size: 13.5px } .mxitem em { font-style: normal; font-size: 11.5px; color: var(--muted) }
 .mxitem .mxa { display: flex; gap: 4px } .mxitem .mxa button { font: 11.5px var(--sans); border: 1px solid var(--line); background: var(--panel); color: var(--muted); border-radius: 6px; padding: 3px 7px; cursor: pointer } .mxitem .mxa button.del:hover { color: var(--red); border-color: var(--red) }
 #lc.copia .lc-ref { padding: 10px 12px; border-color: rgba(47,111,214,.35); background: rgba(255,255,255,.75) } #lc.copia .lc-ref img { width: 340px; height: 130px; opacity: 1 } #lc.copia .lc-ref span { color: #2f6fd6; font-weight: 600 }
+.mxsaved { margin: 10px 0 0; padding: 9px 12px; border: 1px solid var(--line); border-left: 3px solid var(--green); border-radius: 8px; background: var(--panel); color: var(--green); font-weight: 600; font-size: 13px } .mxsaved[hidden] { display: none }
 .lc-fly { position: fixed; left: 0; top: 0; z-index: 9998; pointer-events: none; transform-origin: 0 0; transition: transform .9s cubic-bezier(.45,0,.2,1), opacity .9s ease-in .15s }
 
 /* ---- botões: tons neutros do próprio painel (tinta e azul-marinho); o azul de destaque fica só no foco ---- */
@@ -274,6 +275,21 @@ body.live-on footer.f { display: none } body.live-on #real-bar { display: none }
 #btn-live:hover { transform: none; background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.45); box-shadow: none }
 select { border-color: var(--btn-line) } select:hover { border-color: var(--muted) }
 .lc-mini { border-color: rgba(28,42,77,.25); color: #1c2a4d } .lc-mini:hover { background: #f1f3f7 }
+
+/* ---- variabilidade de punho (ao lado do desenho) ---- */
+.sigrow { display: flex; gap: 12px; align-items: stretch; flex: 1 1 auto; min-height: 220px } .sigrow > .cw { flex: 1 1 auto }
+.varp { flex: 0 0 150px; border-left: 1px solid var(--line); padding: 2px 0 2px 12px; display: flex; flex-direction: column; gap: 4px }
+.varp .vt { font: 600 11.5px var(--sans); color: var(--ink) } .varp .vs { font-size: 10px; color: var(--muted); margin: -3px 0 2px }
+.varp .vl { display: flex; align-items: center; gap: 7px; padding: 1px 8px; border-radius: 10px } .varp .vl svg { flex: 0 0 auto; filter: saturate(.7) opacity(.5) }
+.varp .vl b { font-size: 10.5px; color: var(--muted); font-weight: 500; line-height: 1.15 } .varp .vl.on { padding: 3px 5px } .varp .vl.on svg { filter: none }
+.varp .vl.on b { font-size: 11.5px; font-weight: 700 } .varp .vl em { display: block; font-style: normal; font-size: 9.5px; color: var(--muted); font-weight: 400 }
+.varp .vn { font-size: 9.5px; color: var(--muted); line-height: 1.35; margin-top: 3px } .varp .vn b { color: var(--ink) }
+@media (max-width: 760px) { .sigrow { flex-direction: column } .varp { flex-basis: auto; border-left: 0; border-top: 1px solid var(--line); padding: 8px 0 0 } }
+/* ---- estabilidade da coleta ---- */
+.estab { overflow-x: auto } .estab table { border-collapse: separate; border-spacing: 2px; font-size: 11px } .estab th { font-weight: 500; color: var(--muted); text-align: right; padding-right: 6px; white-space: nowrap }
+.estab thead th { text-align: center; padding: 0; font: 10px var(--mono) } .estab td.c { width: 26px; height: 18px; border-radius: 3px } .estab td.tr { padding-left: 8px; color: var(--muted); white-space: nowrap; font-size: 10.5px }
+.estab td.tr b { color: var(--amber) } .estab .out th { color: var(--red) } .estab .sum { margin: 6px 0 0; font-size: 12px } .estab .sum b { color: var(--ink) }
+.lc-msg .warnm { color: #a8700c; font-weight: 600 }
 </style>
 
 <div class="wrap">
@@ -305,7 +321,8 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
       <div class="card span2 lv-c" style="--d:7"><h3>5ª derivada · microcorreções</h3><canvas id="lv-d5"></canvas></div>
     </div>
   </section>
-  <div id="real-bar" class="realbar" hidden><span id="real-bar-t"></span><span class="grp"><button type="button" class="btn" id="real-mx">salvar matriz</button><button type="button" class="btn" id="real-save">salvar coleta</button><button type="button" class="btn" id="real-exit">voltar à simulação</button></span></div>
+  <div id="mx-saved" class="mxsaved" hidden></div>
+  <div id="real-bar" class="realbar" hidden><span id="real-bar-t"></span><span class="grp"><button type="button" class="btn" id="real-save">salvar coleta</button><button type="button" class="btn" id="real-exit">voltar à simulação</button></span></div>
   <section class="pane" id="pane-analise">
     <div id="vista" class="vista ok" role="status"><span id="vista-t"></span><span class="vc">código da vista <b id="vista-c"></b></span><button type="button" class="btn" id="btn-padrao" hidden>voltar à vista padrão</button></div>
     <div id="obs" class="obs"><div id="obs-form"><label for="obs-txt"><b>1º passo · Observações iniciais na vista padrão</b></label><textarea id="obs-txt" placeholder="Só fatos. Ex.: questionada com 8,24 s contra 4,55 ± 0,13 s nos padrões; 17 levantamentos contra 11 ± 1; no gráfico em tempo real, pausas antes do S e do d; traços na mesma ordem e sentido dos padrões."></textarea><div class="grp"><button type="button" class="primary" id="obs-reg">registrar observações</button><span class="fine" id="obs-hint"></span></div></div><div id="obs-done" hidden></div></div>
@@ -336,6 +353,7 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
       <div class="card span2"><h3 class="var" id="t-fft">FFT</h3><canvas id="cv-fft" class="ch"></canvas><p class="fine">Faixas: 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck).</p></div>
       <div class="card span2 c-left"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2 c-right"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
+      <div class="card" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi colhido) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
       <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os <span class="np">20</span> padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos <span class="np">20</span> padrões sai quando testado contra os outros <span class="np-1">19</span>). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Cada linha é uma análise separada, com o seu resultado; o painel não junta as linhas numa conclusão. O conjunto mostra onde a assinatura se afasta e onde não. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
@@ -557,25 +575,37 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
     <div class="capopts">
       <button type="button" class="capopt" id="capm-solo"><span class="ci">✎</span><span><b>Assinatura avulsa</b><em>Uma assinatura e seus gráficos. Sem comparação.</em></span></button>
       <button type="button" class="capopt" id="capm-caso"><span class="ci">⧉</span><span><b>Caso completo</b><em>Questionada + 5 a 20 padrões. O painel funciona inteiro com os dados coletados.</em></span></button>
-      <button type="button" class="capopt" id="capm-copia"><span class="ci">✍</span><span><b>Tentativa de cópia de uma matriz</b><em>Uma pessoa tenta copiar a assinatura de uma matriz salva. Só a questionada é colhida; os padrões vêm da matriz.</em></span></button>
+      <button type="button" class="capopt" id="capm-mxnew"><span class="ci">◎</span><span><b>Criar matriz</b><em>Uma única assinatura salva com nome: será a questionada de casos futuros. Pode copiar outra matriz como modelo.</em></span></button>
+      <button type="button" class="capopt" id="capm-copia"><span class="ci">✍</span><span><b>Caso a partir de uma matriz</b><em>A matriz é a questionada; colhem-se os padrões de quem se quer comparar, como na perícia real.</em></span></button>
       <button type="button" class="capopt" id="capm-resume" hidden><span class="ci">↺</span><span><b>Retomar coleta interrompida</b><em id="capm-resume-t"></em></span></button>
       <label class="capopt" for="capm-file"><span class="ci">⇪</span><span><b>Abrir coleta salva</b><em>Arquivo .json gerado por “salvar coleta”.</em></span></label><input type="file" id="capm-file" accept=".json,application/json" hidden>
     </div><p class="fine" id="capm-st"></p>
     <div class="row"><button type="button" class="btn" id="capm-x">fechar</button></div></div>
-  <div id="capm-3" hidden><b class="tt">Matrizes salvas</b>
+  <div id="capm-3" hidden><b class="tt">Caso a partir de uma matriz</b><p class="fine" style="margin:0">Escolha a matriz (a questionada) e informe quem vai fornecer os padrões.</p>
     <div id="mx-list" class="mxlist"></div>
-    <label class="capf" id="mx-who-l" hidden>Quem vai tentar copiar (opcional)<input type="text" id="mx-who" maxlength="60" placeholder="Ex.: Imitador 1" autocomplete="off"></label>
+    <label class="capf" id="mx-who-l" hidden>Quem fornece os padrões<input type="text" id="mx-who" maxlength="80" placeholder="Nome da pessoa" autocomplete="off"></label>
+    <label class="capc" id="mx-ruido-l" hidden><input type="checkbox" id="mx-ruido" checked> Medir o ruído da mesa antes (2 s com a caneta parada)</label>
     <p class="fine bad" id="mx-err"></p>
-    <div class="row"><button type="button" class="primary" id="mx-go" hidden>Começar a tentativa</button><label class="btn" for="mx-file">importar matriz…</label><input type="file" id="mx-file" accept=".json,application/json" hidden><button type="button" class="btn" id="mx-back">voltar</button></div></div>
+    <div class="row"><button type="button" class="primary" id="mx-go" hidden>Começar os padrões</button><label class="btn" for="mx-file">importar matriz…</label><input type="file" id="mx-file" accept=".json,application/json" hidden><button type="button" class="btn" id="mx-back">voltar</button></div></div>
   <div id="capm-4" hidden><b class="tt">Salvar matriz</b>
     <p>A matriz guarda os padrões deste caso e a <b>questionada como assinatura de referência</b>, a que aparece na tela para ser copiada nas tentativas.</p>
     <label class="capf">Nome da matriz<input type="text" id="mx-nome" maxlength="60" autocomplete="off"></label>
     <p class="fine bad" id="mx-err2"></p>
     <div class="row"><button type="button" class="primary" id="mx-save">Salvar matriz</button><button type="button" class="btn" id="mx-cancel">cancelar</button></div></div>
+  <div id="capm-5" hidden><b class="tt">Criar matriz</b>
+    <p class="fine" style="margin:0">Uma única assinatura, salva com nome. Ela será a questionada dos casos criados a partir dela.</p>
+    <label class="capf">Nome da matriz<input type="text" id="nm-nome" maxlength="60" placeholder="Ex.: Contrato 12 – assinatura do vendedor" autocomplete="off"></label>
+    <label class="capf">Quem assina (opcional, fica oculto até ser revelado)<input type="text" id="nm-autor" maxlength="60" autocomplete="off"></label>
+    <label class="capf">Tipo (opcional, oculto)<select id="nm-tipo"><option value="não informado">não informar</option><option value="verdadeira">verdadeira</option><option value="imitação">imitação</option></select></label>
+    <label class="capf">Modelo a copiar (para testes de falsificação)<select id="nm-modelo"></select></label>
+    <label class="capc"><input type="checkbox" id="nm-ruido" checked> Medir o ruído da mesa antes (2 s com a caneta parada)</label>
+    <p class="fine bad" id="nm-err"></p>
+    <div class="row"><button type="button" class="primary" id="nm-go">Começar</button><button type="button" class="btn" id="nm-back">voltar</button></div></div>
   <div id="capm-2" hidden><b class="tt">Novo caso coletado</b>
     <label class="capf">Signatário declarado<input type="text" id="cf-nome" maxlength="80" placeholder="Nome de quem fornece os padrões" autocomplete="off"></label>
     <label class="capf">Tipo da questionada (fica oculto até ser revelado, como no modo cego)<select id="cf-tipo"><option value="não informado">não informar</option><option value="verdadeira">verdadeira: a mesma pessoa assina a questionada</option><option value="imitação">imitação: outra pessoa assina a questionada</option></select></label>
     <label class="capc"><input type="checkbox" id="cf-ruido" checked> Medir o ruído da mesa antes (2 s com a caneta parada; recomendado)</label>
+    <p class="fine"><b>Protocolo:</b> mesma postura e mesmo papel durante toda a coleta; 2 assinaturas de aquecimento, descartadas, antes da primeira; pausa curta a cada 5 padrões; aviso se um padrão sair muito diferente dos anteriores.</p>
     <p class="fine">Ordem: ruído → questionada → padrões (mínimo 5, ideal 20). A classificação das combinações exige ao menos 8 padrões; com menos de 15, a precisão é reduzida. A questionada aparece na tela dos padrões só como referência visual.</p>
     <p class="fine bad" id="cf-err"></p>
     <div class="row"><button type="button" class="primary" id="cf-go">Começar a coleta</button><button type="button" class="btn" id="cf-back">voltar</button></div></div>
@@ -2497,7 +2527,7 @@ function render() {
   $$('.np').forEach(e => (e.textContent = NP())); $$('.nk').forEach(e => (e.textContent = V ? V.MH.keys.length : 4)); $$('.nkc').forEach(e => (e.textContent = TV_K())); $$('.np1').forEach(e => (e.textContent = NP() + 1)); $$('.np-1').forEach(e => (e.textContent = NP() - 1));
   $('#h-q').textContent = REAL() ? `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · coleta na mesa H420X · ${new Date(pq.cab.data_hora_utc).toLocaleString('pt-BR')}` : `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · Thoth nº 0123A1B2C3D4E5F6EE · 03/10/2026 14:32:07 UTC (GNSS)`;
   $('#h-pad').textContent = REAL() ? `Padrões: ${NP()} colheitas na mesa · sem clip · pressão adimensional · precisão ${precisao()}` : 'Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita';
-  $('#real-bar').hidden = !REAL(); if (REAL()) $('#real-bar-t').innerHTML = `<b>${D.col.matriz ? 'Tentativa de cópia' : 'Caso coletado na mesa'}</b> · ${D.col.matriz ? `matriz "${escH(D.col.matriz.nome)}" (padrões de ${escH(D.name)})${D.col.copiador ? ' · copiada por ' + escH(D.col.copiador) : ''}` : escH(D.name)} · questionada + ${NP()} padrões · <span class="${NP() >= N_OK ? 'ok' : NP() >= N_VER ? 'warnt' : 'bad'}">precisão ${precisao()}${NP() < N_OK ? ` (${NP() < N_VER ? 'combinações sem classificação: menos de ' + N_VER + ' padrões' : 'faixa de 95% de um par até ' + fDist(TH.hotLim(0.95, NP(), 2)) + ' contra ' + fDist(TH.hotLim(0.95, 20, 2)) + ' com 20'})` : ''}</span> · demonstração, sem cadeia de custódia`;
+  $('#real-bar').hidden = !REAL(); if (REAL()) $('#real-bar-t').innerHTML = `<b>Caso coletado na mesa</b> · ${D.col.matriz ? `questionada = matriz "${escH(D.col.matriz.nome)}" · ${NP()} padrões de ${escH(D.name)}` : escH(D.name) + ` · questionada + ${NP()} padrões`} · <span class="${NP() >= N_OK ? 'ok' : NP() >= N_VER ? 'warnt' : 'bad'}">precisão ${precisao()}${NP() < N_OK ? ` (${NP() < N_VER ? 'combinações sem classificação: menos de ' + N_VER + ' padrões' : 'faixa de 95% de um par até ' + fDist(TH.hotLim(0.95, NP(), 2)) + ' contra ' + fDist(TH.hotLim(0.95, 20, 2)) + ' com 20'})` : ''}</span> · demonstração, sem cadeia de custódia`;
   $('#h-sig').textContent = `Signatário declarado: ${D.name}`;
   // modo cego: o tipo da questionada (só existe na simulação) fica oculto; revelar é uma ação registrada
   $('#h-modo-t').textContent = (REAL() ? 'Coleta real' : 'Simulação') + (S.blind ? ' · tipo da questionada oculto (modo cego)' : ' · questionada: ' + (MODE_NOME[D.mode] || D.mode) + ` (revelado às ${S.revealed})`);
@@ -3451,14 +3481,14 @@ function liveEnsureDom() {
   $('#lc-clear').addEventListener('click', clear); LIVE._clear = clear;
   $('#lc-x').addEventListener('click', () => (LIVE.mode === 'solo' ? liveClose(false) : colSair()));
   $('#lc-ok').addEventListener('click', okClick);
-  $('#lc-undo').addEventListener('click', colDescartar); $('#lc-end').addEventListener('click', colEncerrar); $('#lc-skip').addEventListener('click', () => colRuido(null)); $('#lc-redo').addEventListener('click', () => { LIVE.mode = 'ruido'; LIVE._clear(); colUI(); });
+  $('#lc-undo').addEventListener('click', colDescartar); $('#lc-end').addEventListener('click', colEncerrar); $('#lc-skip').addEventListener('click', () => ($('#lc-skip').dataset.mode === 'aquec' ? aquecFim(true) : colRuido(null))); $('#lc-redo').addEventListener('click', () => { LIVE.mode = 'ruido'; LIVE._clear(); colUI(); });
   document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Enter' && !e.repeat) { const b = $('#lc-ok'); if (!b.hidden && !b.disabled) { e.preventDefault(); b.click(); } } });
   document.addEventListener('keydown', e => { if (!d.hidden && e.key === 'Escape') (LIVE.mode === 'solo' ? liveClose(false) : colSair()); });
   window.addEventListener('resize', () => { if (!d.hidden) fit(); });
   LIVE._fit = fit; LIVE._redraw = redrawInk; LIVE._resetLast = () => { last = null; hover = null; pNow = 0; };
 }
 function liveOpen(mode = 'solo') {
-  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.gate = 'fechado'; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.editIdx = null; LIVE.selIdx = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
+  liveEnsureDom(); const d = $('#lc'); LIVE.mode = mode; LIVE.gate = 'fechado'; LIVE.disc = null; LIVE.aquecN = 0; LIVE.pauseUntil = 0; LIVE.armed = false; LIVE.ruidoRun = null; LIVE.editIdx = null; LIVE.selIdx = null; LIVE.raw = []; LIVE.mouse = false; LIVE.sawPen = false; LIVE._resetLast(); d.classList.remove('inked', 'leaving'); $('#lc-msg').textContent = ''; colUI();
   d.hidden = false; document.body.style.overflow = 'hidden'; LIVE._fit(); if (typeof colPronta === 'function') colPronta();
   const el = document.documentElement; if (el.requestFullscreen && !document.fullscreenElement) el.requestFullscreen().then(() => setTimeout(LIVE._fit, 60)).catch(() => {});
   if (mode === 'solo') log('captura ao vivo', 'abriu a tela de assinatura (mesa)');
@@ -3602,7 +3632,7 @@ function livePlay() {
    processamento → alinhamento. Sem clip: inclinação sem dado. Pressão adimensional. Demonstração, sem cadeia de custódia. */
 let COL = null;
 const COL_MAX = 20, COL_KEY = 'thoth-coleta-andamento';
-const colSave = () => { try { localStorage.setItem(COL_KEY, JSON.stringify({ ...COL, refImg: undefined, matrizImg: undefined, P: COL.P.map(a => (a ? { ...a, thumb: undefined } : null)) })); } catch (_) {} };
+const colSave = () => { try { localStorage.setItem(COL_KEY, JSON.stringify({ ...COL, refImg: undefined, matrizImg: undefined, modeloImg: undefined, P: COL.P.map(a => (a ? { ...a, thumb: undefined } : null)) })); } catch (_) {} };
 const colLoad = () => { try { const v = JSON.parse(localStorage.getItem(COL_KEY) || 'null'); return v && v.formato === 'thoth-coleta-v1' ? v : null; } catch (_) { return null; } };
 const colDrop = () => { try { localStorage.removeItem(COL_KEY); } catch (_) {} };
 const serial = R => R.map(s => [+s.t.toFixed(6), +s.x.toFixed(4), +s.y.toFixed(4), +s.p.toFixed(4), s.c ? 1 : 0]);
@@ -3648,17 +3678,22 @@ function refImage(S0, W = 400, H = 160) { // miniatura fixa (só imagem: não an
 function colUI() {
   const m = LIVE.mode, n = nP(), ed = LIVE.editIdx, show = (id, v) => { const e = $(id); if (e) e.hidden = !v; };
   const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', 'ruido-rec': 'Ruído da mesa <em>medindo…</em>', 'ruido-ok': 'Ruído da mesa ✓ <em>passo 1 concluído</em>', q: 'Assinatura questionada', p: ed != null ? `Refazendo o padrão ${ed + 1}` : n >= COL_MAX ? `${COL_MAX} padrões coletados` : `Padrão ${slotNext() + 1} de ${COL_MAX}` }[m] || '';
-  $('#lc-step').innerHTML = (m === 'q' && COL && COL.matriz ? 'Tentativa de cópia' : step) + (m === 'p' || m === 'q' ? ` <em>${escH(COL.matriz ? (COL.copiador || 'quem copia') + ' → ' + COL.matriz.nome : COL.signatario)}</em>` : '');
+  $('#lc-step').innerHTML = (m === 'q' && COL && COL.novaMatriz ? `Matriz: ${escH(COL.novaMatriz.nome)}` : m === 'p' && COL && COL.matriz ? `${step.replace('</em>', '')}` : step) + (m === 'p' ? ` <em>${escH(COL.signatario)}${COL.matriz ? ' × matriz ' + escH(COL.matriz.nome) : ''}</em>` : m === 'q' && !COL.novaMatriz ? ` <em>${escH(COL.signatario)}</em>` : '');
   $('.lc-lab').textContent = m === 'ruido' || m === 'ruido-rec' ? 'Encoste a caneta aqui e segure parada' : m === 'ruido-ok' ? '✓ Ruído medido' : 'Assine aqui'; $('.lc-lab').classList.toggle('done', m === 'ruido-ok');
-  const copia = m === 'q' && COL && COL.matriz && COL.matrizImg, refOk = (m === 'p' && COL && COL.refImg) || copia;
-  show('#lc-ref', refOk); if (refOk) { $('#lc-ref-img').src = copia ? COL.matrizImg : COL.refImg; $('#lc-ref-t').textContent = copia ? `matriz "${COL.matriz.nome}" · copie esta assinatura` : 'questionada · só referência visual'; }
+  const copia = m === 'q' && COL && COL.modeloImg, refOk = (m === 'p' && COL && COL.refImg) || copia;
+  show('#lc-ref', refOk); if (refOk) { $('#lc-ref-img').src = copia ? COL.modeloImg : COL.refImg; $('#lc-ref-t').textContent = copia ? `modelo "${COL.novaMatriz.modelo.nome}" · copie esta assinatura` : COL.matriz ? `questionada (matriz "${COL.matriz.nome}") · só referência visual` : 'questionada · só referência visual'; }
   $('#lc').classList.toggle('copia', !!copia);
   show('#lc-prog', m === 'p'); show('#lc-gal', m === 'p'); show('#lc-undo', false); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', false);
-  const gt = GATE_MODES.includes(m) ? LIVE.gate || 'fechado' : null;
-  show('#lc-ok', true); show('#lc-clear', m !== 'ruido' && (!gt || gt === 'aberto')); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX) || gt === 'contagem';
-  $('#lc-ok').textContent = { solo: 'Concluir', q: 'Concluir questionada', p: ed != null ? `Salvar no padrão ${ed + 1}` : 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
-  $('#lc-skip').textContent = 'Pular (usar ruído de referência)';
-  if (gt === 'fechado') $('#lc-ok').textContent = m === 'q' ? 'Liberar a questionada ▶' : m === 'p' ? (ed != null ? `Liberar: refazer o padrão ${ed + 1} ▶` : `Liberar o padrão ${slotNext() + 1} ▶`) : 'Liberar a assinatura ▶';
+  const gt = GATE_MODES.includes(m) ? LIVE.gate || 'fechado' : null, aq = emAquecimento(), pz = (LIVE.pauseUntil || 0) > Date.now() && gt === 'fechado';
+  show('#lc-ok', true); show('#lc-clear', m !== 'ruido' && (!gt || gt === 'aberto')); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX) || gt === 'contagem' || pz;
+  if (aq) { show('#lc-skip', gt === 'fechado'); $('#lc-skip').dataset.mode = 'aquec'; } else $('#lc-skip').dataset.mode = '';
+  $('#lc-ok').textContent = { solo: 'Concluir', q: COL && COL.novaMatriz ? 'Concluir e salvar a matriz' : 'Concluir questionada', p: ed != null ? `Salvar no padrão ${ed + 1}` : 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
+  $('#lc-skip').textContent = aq ? 'Pular aquecimento' : 'Pular (usar ruído de referência)';
+  if (aq) $('#lc-step').innerHTML = `Aquecimento ${(LIVE.aquecN || 0) + 1} de 2 <em>não é gravado</em>`;
+  if (pz) $('#lc-ok').textContent = `Pausa · ${Math.ceil((LIVE.pauseUntil - Date.now()) / 1000)} s`;
+  else if (gt === 'fechado' && aq) $('#lc-ok').textContent = `Liberar o aquecimento ${(LIVE.aquecN || 0) + 1} ▶`;
+  else if (gt === 'aberto' && aq) $('#lc-ok').textContent = 'Concluir aquecimento';
+  else if (gt === 'fechado') $('#lc-ok').textContent = m === 'q' ? (COL && COL.novaMatriz ? 'Liberar a assinatura da matriz ▶' : 'Liberar a questionada ▶') : m === 'p' ? (ed != null ? `Liberar: refazer o padrão ${ed + 1} ▶` : `Liberar o padrão ${slotNext() + 1} ▶`) : 'Liberar a assinatura ▶';
   else if (gt === 'contagem') $('#lc-ok').textContent = 'bip · bip · biiip…';
   $('.lc-lab').textContent = gt === 'fechado' ? 'Aguarde' : gt === 'contagem' ? 'Prepare-se' : $('.lc-lab').textContent;
   if (m === 'p') {
@@ -3668,7 +3703,7 @@ function colUI() {
     $('#lc-dots').innerHTML = Array.from({ length: COL_MAX }, (_, i) => `<i class="${COL.P[i] ? 'f' : ''} ${i === alvo ? 'cur' : ''}" title="padrão ${i + 1}${COL.P[i] ? ' · colhido' : ''}${i === N_MIN - 1 ? ' · mínimo para analisar' : i === N_VER - 1 ? ' · classificação a partir daqui' : i === N_OK - 1 ? ' · precisão normal a partir daqui' : ''}"><em>${i + 1}</em></i>`).join('');
     // galeria fixa com as 20 posições: cada padrão colhido aparece no seu lugar; tocar abre refazer / excluir
     $('#lc-gal').innerHTML = Array.from({ length: COL_MAX }, (_, i) => { const a = COL.P[i]; if (a && !a.thumb) a.thumb = refImage(a.s, 156, 64);
-      return a ? `<button type="button" class="lc-slot f${i === alvo ? ' cur' : ''}${i === LIVE.selIdx ? ' sel' : ''}" data-slot="${i}" title="Padrão ${i + 1}: tocar para refazer ou excluir"><img src="${a.thumb}" alt=""><b>${i + 1}</b></button>`
+      return a ? `<button type="button" class="lc-slot f${i === alvo ? ' cur' : ''}${i === LIVE.selIdx || i === LIVE.disc ? ' sel' : ''}" data-slot="${i}" title="Padrão ${i + 1}: tocar para refazer ou excluir"><img src="${a.thumb}" alt=""><b>${i + 1}</b></button>`
         : `<span class="lc-slot e${i === alvo ? ' cur' : ''}"><b>${i + 1}</b></span>`; }).join('');
     const z = n < N_MIN ? null : n < N_VER ? 0 : n < N_OK ? 1 : 2, lim = n >= N_MIN ? TH.hotLim(0.95, n, 2) : NaN, l20 = TH.hotLim(0.95, 20, 2);
     $('#lc-prec').innerHTML = z === null ? `<b>${n}</b> padrões · faltam ${N_MIN - n} para o mínimo (${N_MIN})` :
@@ -3676,6 +3711,9 @@ function colUI() {
   }
   if (m === 'p' && LIVE.selIdx != null) { const i = LIVE.selIdx; $('#lc-msg').innerHTML = `<span class="inf">Padrão ${i + 1}:</span> <button type="button" class="lc-mini" data-act="refazer">Refazer</button> <button type="button" class="lc-mini" data-act="excluir">Excluir</button> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (m === 'p' && n >= COL_MAX && ed == null) { $('#lc-msg').innerHTML = `<span class="okm">✓ ${COL_MAX} padrões coletados.</span> <span class="inf">Toque num padrão para refazer ou excluir, ou em Encerrar e analisar.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (pz) { $('#lc-msg').innerHTML = `<span class="inf">⏸ Pausa curta: a pessoa solta a caneta e relaxa a mão. A próxima assinatura pode ser liberada em ${Math.ceil((LIVE.pauseUntil - Date.now()) / 1000)} s.</span> <button type="button" class="lc-mini" data-act="sempausa">pular pausa</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (aq && gt === 'fechado') { $('#lc-msg').innerHTML = `<span class="inf">Antes de ${m === 'q' ? 'colher a assinatura' : 'colher os padrões'}, 2 assinaturas de aquecimento, que são descartadas: a primeira assinatura do dia costuma sair diferente. Mesma postura e mesmo papel durante toda a coleta.</span>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
+  if (LIVE.disc != null && m === 'p') { $('#lc-msg').innerHTML = `<span class="warnm">⚠ Padrão ${LIVE.disc + 1} ficou diferente dos anteriores: ${escH(LIVE.discTxt)}.</span> <button type="button" class="lc-mini" data-act="refazer-disc">Refazer</button> <button type="button" class="lc-mini" data-act="manter">Manter</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (gt === 'fechado' && !(m === 'p' && ed == null && n >= COL_MAX)) { $('#lc-msg').innerHTML = `<span class="inf">Quando a pessoa estiver pronta, toque em Liberar ou aperte Enter: bip · bip · biiip e o campo fica verde. Só então a assinatura é gravada.${m === 'p' && ed != null ? ` A nova assinatura substitui o padrão ${ed + 1}.` : ''}</span>${ed != null ? ' <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>' : ''}`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
   if (gt === 'contagem') { $('#lc-msg').innerHTML = ''; colPronta(); return; }
   if (m === 'p' && ed != null) { $('#lc-msg').innerHTML = `<span class="inf">Assine de novo: a nova assinatura substitui o padrão ${ed + 1}.</span> <button type="button" class="lc-mini" data-act="cancelar">Cancelar</button>`; LIVE.endWarn = null; LIVE.exitWarn = false; colPronta(); return; }
@@ -3712,22 +3750,25 @@ function colRuido(run) {
   else { COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência'); }
   colParaQuestionada();
 }
-function colParaQuestionada() { LIVE.gate = 'fechado'; LIVE.mode = 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.ruido_sg ? 'Ruído registrado · agora a questionada' : 'Agora a assinatura questionada');
+function colParaQuestionada() { LIVE.gate = 'fechado'; LIVE.mode = COL.Q ? 'p' : 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.Q ? (COL.ruido_sg ? 'Ruído registrado · agora os padrões' : 'Agora os padrões') : COL.ruido_sg ? 'Ruído registrado · agora a assinatura' : 'Agora a assinatura');
 }
 function colValida() {
   const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
   if (nc < 30) { msg.textContent = 'Assinatura curta demais: assine de novo.'; $('#lc').classList.add('shake'); setTimeout(() => $('#lc').classList.remove('shake'), 400); return null; }
   const [sw, sh] = sigSize(R), fora = sw < SIZE_OK[0] || sw > SIZE_OK[1];
   if (fora && LIVE.sizeWarn !== R.length) { LIVE.sizeWarn = R.length; msg.textContent = `Assinatura com ${br(sw, 0)} mm de largura, fora do tamanho usual (${SIZE_OK[0]} a ${SIZE_OK[1]} mm). Limpar e assinar de novo, ou ${$('#lc-ok').textContent} para usar assim.`; return null; }
-  if (!liveProcess(R)) { msg.textContent = 'Não deu para processar: assine de novo.'; return null; }
-  return { s: serial(R), quando: Date.now(), w: +sw.toFixed(1), h: +sh.toFixed(1), fora, mouse: !!LIVE.mouse };
+  const L = liveProcess(R); if (!L) { msg.textContent = 'Não deu para processar: assine de novo.'; return null; }
+  const mt = { dur: L.m.dur, path: L.m.path, vmed: L.m.vmed, pm: L.m.pm, aRMS: L.m.aRMS, e58: L.m.e58, tracos: L.m.tracos };
+  return { s: serial(R), quando: Date.now(), w: +sw.toFixed(1), h: +sh.toFixed(1), fora, mouse: !!LIVE.mouse, mt };
 }
 function colConcluir() {
+  if (emAquecimento() && LIVE.gate === 'aberto') { if (!LIVE.raw.some(s => s.c)) { $('#lc-msg').textContent = 'Assine o aquecimento antes de concluir.'; return; }
+    LIVE.aquecN = (LIVE.aquecN || 0) + 1; log('coleta: aquecimento', `${LIVE.aquecN} de 2 descartado`); gateFechar(true); LIVE._clear(); lcToast(`Aquecimento ${LIVE.aquecN} descartado`); if (LIVE.aquecN >= 2) return aquecFim(false); return colUI(); }
   if (LIVE.mode === 'ruido') { if (!LIVE.ruidoRun) { $('#lc-msg').textContent = 'Ainda não há medição: encoste a caneta no centro e mantenha parada por 2 s.'; return; } return colRuido(LIVE.ruidoRun); }
   const a = colValida(); if (!a) return;
   if (LIVE.mode === 'q') {
     gateFechar(true); COL.Q = a; COL.refImg = refImage(a.s);
-    if (COL.matriz) { log('coleta: tentativa de cópia', `matriz "${COL.matriz.nome}"${COL.copiador ? ' · ' + COL.copiador : ''} · ${br(a.w, 0)} × ${br(a.h, 0)} mm`); colSave(); lcToast('Tentativa registrada · montando o caso'); return setTimeout(colFinalizar, 700); }
+    if (COL.novaMatriz) return mxSalvarNova(a);
     log('coleta: questionada', `${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantida)' : ''}${a.mouse ? ' · mouse' : ''}`);
     LIVE.mode = 'p'; LIVE._clear(); colUI(); colSave(); lcToast('Questionada registrada. Agora os padrões.'); return;
   }
@@ -3736,9 +3777,29 @@ function colConcluir() {
   log(ed != null ? 'coleta: refez padrão' : 'coleta: padrão', `P${String(i + 1).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
   colSave(); waitStop(); LIVE.gate = 'fechado';
   if (nP() >= COL_MAX) { beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`${COL_MAX} padrões coletados · encerrando a coleta`); log('coleta: 20 padrões', 'encerrada automaticamente'); return setTimeout(colFinalizar, 900); }
-  beep(440, 0.16, 0.16); LIVE._clear(); colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
+  beep(440, 0.16, 0.16); LIVE._clear();
+  const dz = discrepancia(i); if (dz) { LIVE.disc = i; LIVE.discTxt = dz; log('coleta: aviso de padrão discrepante', `P${String(i + 1).padStart(2, '0')} · ${dz}`); }
+  else if (ed == null && nP() % 5 === 0 && nP() < COL_MAX) pausa();
+  colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
+}
+const emAquecimento = () => !!(COL && !COL.aquecFeito && LIVE.aquecOn !== false && ((LIVE.mode === 'q' && !COL.Q) || (LIVE.mode === 'p' && nP() === 0 && LIVE.editIdx == null)));
+function aquecFim(pulou) { COL.aquecFeito = true; LIVE.aquecN = 0; log('coleta: aquecimento', pulou ? 'pulado pelo operador' : '2 assinaturas descartadas'); colSave(); gateFechar(false); colUI(); }
+let pauseT = 0;
+function pausa() { LIVE.pauseUntil = Date.now() + 10000; clearInterval(pauseT); pauseT = setInterval(() => { if (Date.now() >= LIVE.pauseUntil) { clearInterval(pauseT); LIVE.pauseUntil = 0; } if (LIVE.mode === 'p') colUI(); }, 500); }
+/* aviso de padrão discrepante: compara o novo padrão com os anteriores (mediana e desvio robusto, com piso de 5%) */
+const DISC_NOME = { dur: 'duração', path: 'caminho', vmed: 'velocidade', pm: 'pressão', aRMS: 'aceleração', e58: 'espectro 5–8 Hz' };
+function discrepancia(i) {
+  const a = COL.P[i]; if (!a || !a.mt) return null; const outros = COL.P.filter((x, j) => x && j !== i && x.mt); if (outros.length < 4) return null;
+  const hits = [];
+  for (const k of Object.keys(DISC_NOME)) { const v = outros.map(x => x.mt[k]).filter(Number.isFinite); if (v.length < 4 || !Number.isFinite(a.mt[k])) continue;
+    const med = TH.median(v), mad = Math.max(1.4826 * TH.median(v.map(x => Math.abs(x - med))), 0.05 * Math.abs(med) || 1e-9), z = (a.mt[k] - med) / mad; if (Math.abs(z) > 3.5) hits.push([k, z]); }
+  if (!(hits.length >= 2 || hits.some(([, z]) => Math.abs(z) > 5))) return null;
+  return hits.sort((x, y) => Math.abs(y[1]) - Math.abs(x[1])).slice(0, 3).map(([k, z]) => `${DISC_NOME[k]} ${z > 0 ? '+' : '−'}${br(Math.abs(z), 1)} desvios`).join(', ');
 }
 function colSlotAcao(act) {
+  if (act === 'sempausa') { LIVE.pauseUntil = 0; clearInterval(pauseT); log('coleta: pausa', 'pulada pelo operador'); colUI(); return; }
+  if (act === 'manter') { log('coleta: padrão discrepante mantido', `P${String(LIVE.disc + 1).padStart(2, '0')} · ${LIVE.discTxt}`); LIVE.disc = null; colUI(); return; }
+  if (act === 'refazer-disc') { const i = LIVE.disc; LIVE.disc = null; LIVE.selIdx = i; return colSlotAcao('refazer'); }
   const i = LIVE.selIdx;
   waitStop(); LIVE.gate = 'fechado';
   if (act === 'cancelar') { LIVE.selIdx = null; LIVE.editIdx = null; LIVE._clear(); colUI(); return; }
@@ -3772,7 +3833,7 @@ async function abrirReal(col) {
   try { await loadCase(); } catch (e) { $('#loading').hidden = true; S.real = false; REALCASE = null; alert('Não foi possível montar o caso: ' + e.message); loadCase(); }
 }
 /* ---------- arquivo da coleta ---------- */
-const colCorpo = c => { const o = Object.assign({}, c); delete o.sha256; delete o.refImg; delete o.matrizImg; o.P = o.P.filter(Boolean).map(a => { const b = { ...a }; delete b.thumb; return b; }); return o; };
+const colCorpo = c => { const o = Object.assign({}, c); delete o.sha256; delete o.refImg; delete o.matrizImg; delete o.modeloImg; o.P = o.P.filter(Boolean).map(a => { const b = { ...a }; delete b.thumb; return b; }); return o; };
 async function colBaixar(c) {
   const corpo = colCorpo(c), sha = await TH.sha256hex(TH.canonJSON(corpo)), blob = new Blob([JSON.stringify({ ...corpo, sha256: sha })], { type: 'application/json' });
   const a = document.createElement('a'), nome = c.signatario.normalize('NFD').replace(/\p{Mn}/gu, '').replace(/[^\w]+/g, '_').slice(0, 30);
@@ -3795,10 +3856,19 @@ const mxPut = x => mxTx('readwrite', st => st.put(x)), mxDel = id => mxTx('readw
 const mxList = async () => ((await mxTx('readonly', st => st.getAll())) || []).sort((a, b) => (a.criado < b.criado ? 1 : -1));
 function mxBaixar(x) { const a = document.createElement('a'), nome = x.nome.normalize('NFD').replace(/\p{Mn}/gu, '').replace(/[^\w]+/g, '_').slice(0, 40);
   a.href = URL.createObjectURL(new Blob([JSON.stringify(x)], { type: 'application/json' })); a.download = `thoth-matriz-${nome}.json`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); log('exportou matriz', x.nome); }
+async function mxSalvarNova(a) {
+  const n = COL.novaMatriz, x = { formato: 'thoth-matriz-v2', id: COL.id, nome: n.nome, criado: new Date().toISOString(), autor: n.autor, tipo: n.tipo, modelo: n.modelo, mesa: COL.mesa,
+    ruido_sg: COL.ruido_sg, ruido: COL.ruido, ref: { s: a.s, w: a.w, h: a.h, quando: a.quando } };
+  x.sha256 = await TH.sha256hex(TH.canonJSON(mxCorpo(x)));
+  try { await mxPut(x); } catch (err) { $('#lc-msg').textContent = 'Não foi possível salvar a matriz neste navegador: ' + err.message; return; }
+  log('salvou matriz', `"${x.nome}" · ${br(a.w, 0)} × ${br(a.h, 0)} mm${x.modelo ? ' · cópia do modelo "' + x.modelo.nome + '"' : ''} · SHA-256 ${x.sha256.slice(0, 16)}…`);
+  colDrop(); beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`✓ Matriz "${x.nome}" salva`);
+  setTimeout(() => { waitStop(); liveClose(false); const t = $('#mx-saved'); if (t) { t.textContent = `✓ Matriz "${x.nome}" salva. Para usar: Captura ao vivo → Caso a partir de uma matriz.`; t.hidden = false; clearTimeout(t._t); t._t = setTimeout(() => (t.hidden = true), 9000); } }, 1100);
+}
 /* ---------- menu e formulário ---------- */
 function openCapMenu() {
-  const m = $('#capm'); $('#capm-1').hidden = false; $('#capm-2').hidden = true; $('#capm-3').hidden = true; $('#capm-4').hidden = true; $('#capm-st').textContent = ''; $('#capm-file').value = '';
-  const r = colLoad(); $('#capm-resume').hidden = !r; if (r) $('#capm-resume-t').textContent = `${r.signatario} · ${r.Q ? 'questionada ✓' : 'sem questionada'} · ${r.P.filter(Boolean).length} de ${COL_MAX} padrões`;
+  const m = $('#capm'); ['capm-2', 'capm-3', 'capm-4', 'capm-5'].forEach(k => { const e = $('#' + k); if (e) e.hidden = true; }); $('#capm-1').hidden = false; $('#capm-st').textContent = ''; $('#capm-file').value = '';
+  const r = colLoad(); $('#capm-resume').hidden = !r; if (r) $('#capm-resume-t').textContent = r.novaMatriz ? `criação da matriz "${r.novaMatriz.nome}" (ainda sem assinatura)` : `${r.signatario} · ${r.Q ? 'questionada ✓' : 'sem questionada'} · ${r.P.filter(Boolean).length} de ${COL_MAX} padrões${r.matriz ? ' · matriz ' + r.matriz.nome : ''}`;
   m.hidden = false;
 }
 {
@@ -3815,18 +3885,20 @@ function openCapMenu() {
     close(); log('coleta: iniciou caso', `${nome} · tipo da questionada ${COL.tipo === 'não informado' ? 'não informado' : 'informado e oculto'}`); colSave();
     liveOpen($('#cf-ruido').checked ? 'ruido' : 'q');
   });
-  $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); if (COL.matrizRef) COL.matrizImg = refImage(COL.matrizRef.s, 680, 260); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
+  $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); if (COL.novaMatriz && COL.novaMatriz.modelo) mxGet(COL.novaMatriz.modelo.id).then(m => { if (m) { COL.modeloImg = refImage(m.ref.s, 680, 260); colUI(); } }); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
-  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
+  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { LIVE.disc = null; waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
     const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
-  /* ---------- matrizes ---------- */
-  const show = (n) => ['capm-1', 'capm-2', 'capm-3', 'capm-4'].forEach(k => ($('#' + k).hidden = k !== n));
+  /* ---------- matrizes: uma questionada salva com nome; os padrões são colhidos em cada caso ---------- */
+  const show = (n) => ['capm-1', 'capm-2', 'capm-3', 'capm-5'].forEach(k => ($('#' + k).hidden = k !== n));
+  const novoId = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, '0')).join('');
   let mxSel = null;
+  const mxItem = (x, sel, acoes = true) => `<div class="mxitem${x.id === sel ? ' on' : ''}" data-mx="${x.id}"><img src="${refImage(x.ref.s, 220, 88)}" alt=""><span class="mxt"><b>${escH(x.nome)}</b><em>criada em ${new Date(x.criado).toLocaleDateString('pt-BR')} · ${x.ref.w ? br(x.ref.w, 0) + ' × ' + br(x.ref.h, 0) + ' mm' : ''}</em></span>${acoes ? `<span class="mxa"><button type="button" data-mxe="${x.id}">exportar</button><button type="button" class="del" data-mxd="${x.id}">excluir</button></span>` : ''}</div>`;
   const mxRender = async () => {
-    const L = await mxList(), box = $('#mx-list'); $('#mx-err').textContent = ''; $('#mx-go').hidden = !mxSel; $('#mx-who-l').hidden = !mxSel;
-    box.innerHTML = L.length ? L.map(x => `<div class="mxitem${x.id === mxSel ? ' on' : ''}" data-mx="${x.id}"><img src="${refImage(x.ref.s, 220, 88)}" alt=""><span class="mxt"><b>${escH(x.nome)}</b><em>${escH(x.signatario)} · ${x.P.length} padrões · ${new Date(x.criado).toLocaleDateString('pt-BR')}</em></span><span class="mxa"><button type="button" data-mxe="${x.id}">exportar</button><button type="button" class="del" data-mxd="${x.id}">excluir</button></span></div>`).join('')
-      : '<p class="fine">Nenhuma matriz salva ainda. Colete um caso completo e use “salvar matriz”, ou importe um arquivo de matriz.</p>';
+    const L = await mxList(), box = $('#mx-list'); $('#mx-err').textContent = ''; $('#mx-go').hidden = !mxSel; $('#mx-who-l').hidden = !mxSel; $('#mx-ruido-l').hidden = !mxSel;
+    box.innerHTML = L.length ? L.map(x => mxItem(x, mxSel)).join('') : '<p class="fine">Nenhuma matriz salva ainda. Use “Criar matriz” no menu, ou importe um arquivo de matriz.</p>';
   };
+  // caso a partir de uma matriz: a matriz é a questionada; colhem-se os padrões de quem se quer comparar
   $('#capm-copia').addEventListener('click', () => { mxSel = null; show('capm-3'); mxRender(); });
   $('#mx-back').addEventListener('click', () => show('capm-1'));
   $('#mx-list').addEventListener('click', async e => {
@@ -3836,32 +3908,79 @@ function openCapMenu() {
     if (it) { mxSel = it.dataset.mx; mxRender(); setTimeout(() => $('#mx-who').focus(), 30); }
   });
   $('#mx-go').addEventListener('click', async () => {
-    const x = await mxGet(mxSel); if (!x) return;
-    COL = { formato: 'thoth-coleta-v1', id: Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, '0')).join(''), criado: new Date().toISOString(), signatario: x.signatario, tipo: 'imitação',
-      mesa: x.mesa, tela: [screen.width, screen.height], ruido_sg: x.ruido_sg, ruido: x.ruido, Q: null, P: x.P.map(a => ({ ...a })), descartes: 0,
-      matriz: { id: x.id, nome: x.nome, sha256: x.sha256 }, matrizRef: x.ref, copiador: $('#mx-who').value.trim() || null };
-    COL.matrizImg = refImage(x.ref.s, 680, 260); $('#capm').hidden = true;
-    log('coleta: tentativa de cópia', `matriz "${x.nome}" (${x.P.length} padrões de ${x.signatario})${COL.copiador ? ' · ' + COL.copiador : ''} · tipo da questionada oculto`); colSave(); liveOpen('q');
+    const x = await mxGet(mxSel); if (!x) return; const quem = $('#mx-who').value.trim(); if (quem.length < 3) { $('#mx-err').textContent = 'Informe quem vai fornecer os padrões.'; return; }
+    const oculto = [x.tipo && x.tipo !== 'não informado' ? x.tipo : null, x.autor ? 'assinada por ' + x.autor : null, x.modelo ? 'copiando o modelo "' + x.modelo.nome + '"' : null].filter(Boolean).join(' · ');
+    COL = { formato: 'thoth-coleta-v1', id: novoId(), criado: new Date().toISOString(), signatario: quem, tipo: oculto ? 'matriz: ' + oculto : 'não informado',
+      mesa: 'Huion Inspiroy H420X · navegador (Windows Ink) · área inteira 106 × 66 mm', tela: [screen.width, screen.height], ruido_sg: null, ruido: null,
+      Q: { ...x.ref, fora: false, mouse: false }, P: [], descartes: 0, matriz: { id: x.id, nome: x.nome, sha256: x.sha256 } };
+    COL.refImg = refImage(x.ref.s); $('#capm').hidden = true;
+    log('coleta: caso a partir de matriz', `matriz "${x.nome}" como questionada · padrões de ${quem} · tipo da questionada oculto`); colSave();
+    liveOpen($('#mx-ruido').checked ? 'ruido' : 'p');
   });
-  $('#mx-file').addEventListener('change', async e => { const f = e.target.files[0]; if (!f) return; try { const x = JSON.parse(await f.text()); if (x.formato !== 'thoth-matriz-v1' || !x.ref || !Array.isArray(x.P)) throw new Error('não é uma matriz do Thoth');
+  $('#mx-file').addEventListener('change', async e => { const f = e.target.files[0]; if (!f) return; try { const x = JSON.parse(await f.text()); if (!/^thoth-matriz-v[12]$/.test(x.formato) || !x.ref) throw new Error('não é uma matriz do Thoth');
     const sha = await TH.sha256hex(TH.canonJSON(mxCorpo(x))); if (x.sha256 !== sha) throw new Error('o conteúdo não confere com o SHA-256 gravado (arquivo alterado)');
     await mxPut(x); log('importou matriz', `${x.nome} · SHA-256 ${sha.slice(0, 16)}…`); mxSel = x.id; mxRender(); } catch (err) { $('#mx-err').textContent = '✗ ' + err.message; } e.target.value = ''; });
-  $('#real-mx').addEventListener('click', () => {
-    const c = S.realCol; if (!c) return; if (c.matriz) { $('#capm').hidden = false; show('capm-4'); $('#mx-err2').textContent = 'Este caso já é uma tentativa de cópia: a questionada é a cópia, não serve de referência.'; $('#mx-save').hidden = true; return; }
-    $('#mx-save').hidden = false; $('#mx-err2').textContent = ''; $('#mx-nome').value = `${c.signatario} – ${new Date().toLocaleDateString('pt-BR')}`; $('#capm').hidden = false; show('capm-4'); setTimeout(() => $('#mx-nome').select(), 30);
-  });
-  $('#mx-cancel').addEventListener('click', () => ($('#capm').hidden = true));
-  $('#mx-save').addEventListener('click', async () => {
-    const c = S.realCol, nome = $('#mx-nome').value.trim(); if (nome.length < 2) { $('#mx-err2').textContent = 'Dê um nome à matriz.'; return; }
-    const x = { formato: 'thoth-matriz-v1', id: Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, '0')).join(''), nome, criado: new Date().toISOString(), signatario: c.signatario, mesa: c.mesa,
-      ruido_sg: c.ruido_sg, ruido: c.ruido, ref: { s: c.Q.s, w: c.Q.w, h: c.Q.h, quando: c.Q.quando }, P: c.P.filter(Boolean).map(a => { const b = { ...a }; delete b.thumb; return b; }), origem: c.id };
-    x.sha256 = await TH.sha256hex(TH.canonJSON(mxCorpo(x)));
-    try { await mxPut(x); } catch (err) { $('#mx-err2').textContent = 'Não foi possível salvar neste navegador: ' + err.message; return; }
-    log('salvou matriz', `"${nome}" · ${x.P.length} padrões de ${c.signatario} · referência = questionada · SHA-256 ${x.sha256.slice(0, 16)}…`); $('#capm').hidden = true;
-    const t = $('#real-bar-t'); if (t) { const n = document.createElement('span'); n.className = 'ok'; n.textContent = ` · ✓ matriz "${nome}" salva`; t.appendChild(n); }
+  // criar matriz: independente das coletas; uma única assinatura, salva com nome
+  const mxModelos = async () => { const L = await mxList(); $('#nm-modelo').innerHTML = '<option value="">nenhum (assinatura livre)</option>' + L.map(x => `<option value="${x.id}">${escH(x.nome)}</option>`).join(''); };
+  $('#capm-mxnew').addEventListener('click', () => { show('capm-5'); $('#nm-err').textContent = ''; mxModelos(); setTimeout(() => $('#nm-nome').focus(), 30); });
+  $('#nm-back').addEventListener('click', () => show('capm-1'));
+  $('#nm-go').addEventListener('click', async () => {
+    const nome = $('#nm-nome').value.trim(); if (nome.length < 2) { $('#nm-err').textContent = 'Dê um nome à matriz.'; return; }
+    const mid = $('#nm-modelo').value, mod = mid ? await mxGet(mid) : null;
+    COL = { formato: 'thoth-coleta-v1', id: novoId(), criado: new Date().toISOString(), signatario: nome, tipo: 'não informado', mesa: 'Huion Inspiroy H420X · navegador (Windows Ink) · área inteira 106 × 66 mm', tela: [screen.width, screen.height],
+      ruido_sg: null, ruido: null, Q: null, P: [], descartes: 0, novaMatriz: { nome, autor: $('#nm-autor').value.trim() || null, tipo: $('#nm-tipo').value, modelo: mod ? { id: mod.id, nome: mod.nome, sha256: mod.sha256 } : null } };
+    if (mod) COL.modeloImg = refImage(mod.ref.s, 680, 260);
+    $('#capm').hidden = true; log('matriz: iniciou criação', `"${nome}"${mod ? ' · copiando o modelo "' + mod.nome + '"' : ''} · dados de autoria ocultos`); colSave();
+    liveOpen($('#nm-ruido').checked ? 'ruido' : 'q');
   });
   $('#real-save').addEventListener('click', () => S.realCol && colBaixar(S.realCol));
   $('#real-exit').addEventListener('click', () => { S.real = false; REALCASE = null; S.name = NAMES[4]; S.mode = MODE0(S.name); log('voltou à simulação', '—'); loadCase(); });
+}
+
+/* ================= variabilidade de punho dos padrões e estabilidade da coleta =================
+   Variação típica = mediana do coeficiente de variação (desvio ÷ média) dos padrões nas medidas principais.
+   Cortes dos 6 níveis: 4 · 7 · 10 · 15 · 25 % [A CALIBRAR com coletas reais de várias pessoas]. */
+const VAR_KEYS = ['tempo total (s)', 'velocidade média (mm/s)', 'aceleração RMS (m/s²)', 'pressão média (gf)', 'trocas de jerk / traço', 'caminho total (mm)', '% do espectro em 5–8 Hz'];
+const VAR_CUT = [4, 7, 10, 15, 25], VAR_LV = [['muito estável', '#2e9e4f'], ['estável', '#7cbb34'], ['moderada', '#e0a91a'], ['variável', '#ec8a22'], ['muito variável', '#d8402b'], ['instável', '#9e1f18']];
+const VAR_NOME = { 'tempo total (s)': 'tempo', 'velocidade média (mm/s)': 'velocidade', 'aceleração RMS (m/s²)': 'aceleração', 'pressão média (gf)': 'pressão', 'trocas de jerk / traço': 'jerk', 'caminho total (mm)': 'caminho', '% do espectro em 5–8 Hz': 'espectro 5–8 Hz' };
+function varFace(i, c, on) {
+  const mouth = ['M9.5 19.5 Q17 27 24.5 19.5', 'M11 20 Q17 25 23 20', 'M12 21 Q17 23 22 21', 'M12 22 L22 22', 'M12 24 Q17 19 22 24', 'M11 25 Q17 18 23 25'][i];
+  const brows = i >= 4 ? '<path d="M9.5 10.5 L14 12.5 M24.5 10.5 L20 12.5" stroke="#1d1d1d" stroke-width="1.6" stroke-linecap="round"/>' : i === 3 ? '<path d="M10 11.5 L14 11.5 M20 11.5 L24 11.5" stroke="#1d1d1d" stroke-width="1.4" stroke-linecap="round"/>' : '';
+  const eyes = i === 5 ? '<path d="M10.5 13.5 L14 15.5 L10.5 17 M23.5 13.5 L20 15.5 L23.5 17" stroke="#1d1d1d" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' : `<ellipse cx="13" cy="15" rx="1.6" ry="${i <= 1 ? 1.9 : 1.7}" fill="#1d1d1d"/><ellipse cx="21" cy="15" rx="1.6" ry="${i <= 1 ? 1.9 : 1.7}" fill="#1d1d1d"/>`;
+  const cheeks = i === 0 ? '<ellipse cx="9.5" cy="19.5" rx="2.3" ry="1.4" fill="#ff8fa3" opacity=".55"/><ellipse cx="24.5" cy="19.5" rx="2.3" ry="1.4" fill="#ff8fa3" opacity=".55"/>' : '';
+  const sz = on ? 32 : 26;
+  return `<svg width="${sz}" height="${sz}" viewBox="0 0 34 34" aria-hidden="true"><defs><radialGradient id="vg${i}" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="17" cy="17" r="15.5" fill="${c}"/><circle cx="17" cy="17" r="15.5" fill="url(#vg${i})"/>${brows}${cheeks}${eyes}<path d="${mouth}" fill="none" stroke="#1d1d1d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+function varCalc() {
+  const M = V.M, cv = VAR_KEYS.map(k => { const a = M.map(m => m[k]).filter(Number.isFinite), mu = TH.mean(a); return [k, Math.abs(mu) > 1e-9 && a.length > 2 ? 100 * TH.std(a, 1) / Math.abs(mu) : NaN]; }).filter(([, v]) => Number.isFinite(v));
+  const typ = TH.median(cv.map(([, v]) => v)), lv = VAR_CUT.findIndex(c => typ < c), top = cv.slice().sort((a, b) => b[1] - a[1])[0];
+  return { typ, lv: lv < 0 ? 5 : lv, top, cv };
+}
+function renderVarP() {
+  const box = $('#varp'); if (!box || !D || !V) return; const R = varCalc();
+  box.innerHTML = `<div class="vt">Variabilidade de punho</div><div class="vs">dos ${NP()} padrões${S.trecho ? ' · no trecho' : ''} · <span title="cortes dos níveis ainda a calibrar com coletas reais">a calibrar</span></div>` +
+    VAR_LV.map(([t, c], i) => { const on = i === R.lv; return `<div class="vl${on ? ' on' : ''}" style="${on ? `background:${c}1c;box-shadow:inset 0 0 0 1.5px ${c}` : ''}">${varFace(i, c, on)}<b style="${on ? 'color:' + c : ''}">${String(i + 1).padStart(2, '0')} · ${t}${on ? `<em>variação típica ${br(R.typ, 1)}%</em>` : ''}</b></div>`; }).join('') +
+    `<div class="vn">Quanto mais variável, maior a diferença que a questionada precisa ter para sair da faixa da pessoa.${R.top ? ` Medida mais variável: <b>${VAR_NOME[R.top[0]]} (${br(R.top[1], 0)}%)</b>.` : ''}</div>`;
+}
+/* estabilidade: z de cada padrão em cada medida, na ordem da coleta; tendência = correlação com a ordem */
+function renderEstab() {
+  const box = $('#estab'); if (!box || !D || !V) return; const M = V.M, n = M.length, P = pal();
+  const rows = VAR_KEYS.map(k => { const a = M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1) || 1, z = a.map(v => (v - mu) / sd);
+    const ix = a.map((_, i) => i), mi = TH.mean(ix), r = a.reduce((s, v, i) => s + (v - mu) * (i - mi), 0) / Math.sqrt(a.reduce((s, v) => s + (v - mu) ** 2, 0) * ix.reduce((s, i) => s + (i - mi) ** 2, 0) || 1);
+    return { k, z, r }; });
+  const col = z => { const a = Math.min(1, Math.abs(z) / 3), base = z < 0 ? P.acc : P.red; return `background:${base};opacity:${(0.12 + 0.88 * a).toFixed(2)}`; };
+  const outCols = Array.from({ length: n }, (_, j) => rows.filter(r => Math.abs(r.z[j]) > 2).length);
+  let h = `<table><thead><tr><th></th>${Array.from({ length: n }, (_, j) => `<th class="${outCols[j] >= 2 ? 'out' : ''}">${j + 1}</th>`).join('')}<th></th></tr></thead><tbody>`;
+  for (const r of rows) h += `<tr><th>${VAR_NOME[r.k]}</th>${r.z.map((z, j) => `<td class="c" style="${col(z)}" title="P${String(j + 1).padStart(2, '0')} · ${VAR_NOME[r.k]}: ${z >= 0 ? '+' : ''}${br(z, 1)} desvios"></td>`).join('')}<td class="tr">${Math.abs(r.r) >= 0.5 ? `<b>${r.r > 0 ? '↗ sobe' : '↘ desce'} ao longo da coleta</b>` : 'sem tendência'}</td></tr>`;
+  h += '</tbody></table>';
+  const fora = outCols.map((c, j) => [c, j]).filter(([c]) => c >= 2).map(([, j]) => 'P' + String(j + 1).padStart(2, '0')), tend = rows.filter(r => Math.abs(r.r) >= 0.5).map(r => VAR_NOME[r.k]);
+  h += `<p class="sum">${fora.length ? `<b>Fora do comum:</b> ${fora.join(', ')} (2 ou mais medidas além de 2 desvios). ` : 'Nenhum padrão fora do comum. '}${tend.length ? `<b>Tendência ao longo da coleta:</b> ${tend.join(', ')}.` : 'Sem tendência ao longo da coleta.'}</p>`;
+  box.innerHTML = h; box.className = 'estab';
+}
+{ // monta a coluna ao lado do desenho e liga ao redesenho da análise
+  const cw = $('#cv-sig').parentElement, row = document.createElement('div'); row.className = 'sigrow'; cw.parentNode.insertBefore(row, cw); row.appendChild(cw);
+  const vp = document.createElement('div'); vp.id = 'varp'; vp.className = 'varp'; vp.setAttribute('aria-label', 'Variabilidade de punho dos padrões'); row.appendChild(vp);
+  const _ra = renderAnalise; renderAnalise = function () { const r = _ra.apply(this, arguments); renderVarP(); renderEstab(); return r; };
 }
 
 bind(); watermark(); loadCase();
