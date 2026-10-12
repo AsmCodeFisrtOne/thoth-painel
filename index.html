@@ -335,7 +335,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
     <div class="lv-bar"><div class="lv-tt"><span class="lv-dot" aria-hidden="true"></span><b>Captura ao vivo</b><span class="fine" id="lv-meta"></span></div><div class="grp"><button type="button" class="btn" id="lv-new">✎ nova captura</button><button type="button" class="btn" id="lv-exit">voltar ao caso simulado</button></div></div>
     <p class="lv-note">Demonstração com uma assinatura sozinha: sem padrões, sem comparação, sem classificação e sem relatório. A pressão é a da mesa, <b>adimensional</b> (0 a 1, sem calibração em gramas-força). Sem o clip não há inclinação. Faixa âmbar nos gráficos: caneta no ar; faixa cinza: caneta fora do alcance da mesa.</p>
     <div class="grid lv-grid">
-      <div class="card c-full lv-c" style="--d:0"><h3><span>Desenho capturado na mesa</span><button type="button" class="btn" id="lv-play">▶ reproduzir no tempo real</button></h3><canvas id="lv-sig"></canvas></div>
+      <div class="card c-full lv-c" style="--d:0"><h3><span>Desenho capturado na mesa</span><span class="grp"><button type="button" class="btn" id="lv-all" hidden>assinatura inteira</button><button type="button" class="btn" id="lv-play">▶ reproduzir no tempo real</button></span></h3><canvas id="lv-sig" style="cursor:crosshair;touch-action:none"></canvas><p class="fine cap1">Arraste um retângulo sobre o desenho para escolher um trecho: os gráficos e as medidas do trecho passam a mostrar só esse pedaço (exploratório).</p></div>
       <div class="card c-full lv-c" style="--d:1"><h3>Medidas desta assinatura</h3><div id="lv-tiles" class="lv-tiles"></div></div>
       <div class="card span2 lv-c" style="--d:2"><h3>Velocidade · |v|</h3><canvas id="lv-vel"></canvas></div>
       <div class="card span2 lv-c" style="--d:3"><h3>Pressão · adimensional (0–1)</h3><canvas id="lv-pres"></canvas></div>
@@ -3555,7 +3555,7 @@ function liveFinish() {
   const L = liveProcess(R); if (!L) { msg.textContent = 'Não deu para processar: assine de novo.'; return; }
   waitStop(); beep(440, 0.16, 0.16);
   L.m.w = sw; L.m.h = sh; L.m.foraTam = fora;
-  LIVE.data = L; LIVE.snap = $('#lc-ink').toDataURL();
+  LIVE.data = L; LIVE.sel = null; { const b = $('#lv-all'); if (b) b.hidden = true; } LIVE.snap = $('#lc-ink').toDataURL();
   log('captura ao vivo', `assinatura capturada · ${br(L.m.dur, 2)} s · ${L.m.tracos} traços · ${br(L.m.w, 0)} × ${br(L.m.h, 0)} mm${L.m.foraTam ? ' (fora do tamanho usual, mantida)' : ''} · ${Math.round(L.rate)} amostras/s${L.mouse ? ' · mouse (sem pressão)' : ''}`);
   liveEnter(true);
 }
@@ -3620,6 +3620,8 @@ function liveDraw() {
   const tiles = [['Tamanho na mesa', `${br(M.w, 0)} × ${br(M.h, 0)}`, 'mm (largura × altura)' + (M.foraTam ? ' · fora do usual' : '')], ['Duração', br(M.dur, 2), 's'], ['Traços', String(M.tracos), M.tracos - 1 === 1 ? '1 levantamento' : `${M.tracos - 1} levantamentos`], ['Caminho no papel', br(M.path, 0), 'mm'], ['Velocidade média', br(M.vmed, 0), 'mm/s'],
     ['Velocidade máxima', br(M.vmax, 0), 'mm/s'], ['Tempo no ar', br(M.ar, 2), 's entre traços'], ['Pressão média', br(M.pm, 2), 'adimensional (0–1)'], ['Pressão máxima', br(M.pmax, 2), 'adimensional (0–1)'],
     ['Aceleração RMS', br(M.aRMS, 2), 'm/s²'], ['Espectro em 5–8 Hz', br(M.e58, 1), '% da velocidade'], ['Inclinação', '—', 'sem dado (sem clip)']];
+  if (LIVE.sel) { const [a, b] = LIVE.sel; let pth = 0, pm = 0, np_ = 0; for (let i = a; i <= b; i++) if (L.C[i]) { pth += L.vabs[i] / FS; pm += L.P[i]; np_++; } const du = (b - a) / FS;
+    tiles.unshift(['Trecho selecionado', `${br(L.t[a], 2)}–${br(L.t[b], 2)}`, 's'], ['Trecho · duração', br(du, 2), 's'], ['Trecho · caminho', br(pth, 0), 'mm'], ['Trecho · velocidade média', br(pth / Math.max(du, 1e-6), 0), 'mm/s'], ['Trecho · pressão média', br(pm / Math.max(np_, 1), 2), 'adimensional (0–1)']); }
   $('#lv-tiles').innerHTML = tiles.map(([k, v, u]) => `<div class="lt"><span class="k">${k}</span><b>${v}</b><span class="u">${u}</span></div>`).join('');
   liveSig($('#lv-sig'));
   const tx = Array.from(L.t), air = (F) => liveAir(F, L);
@@ -3636,27 +3638,31 @@ function liveAir(F, L) { // faixas claras: caneta no ar (âmbar) e fora do alcan
   c.restore();
 }
 function liveCurve(cv, xs, ys, ylabel, under, yr) {
-  const F = frame(cv, [0, xs[xs.length - 1]], yr || robust([ys], 0.998), { xlabel: 'tempo real (s)', ylabel });
+  const SL = LIVE.sel, xr = SL ? [xs[SL[0]], xs[SL[1]]] : [0, xs[xs.length - 1]], part = SL ? ys.slice(SL[0], SL[1] + 1) : ys;
+  const F = frame(cv, xr, yr || robust([part], 0.998), { xlabel: SL ? `tempo real (s) · trecho ${br(xr[0], 2)}–${br(xr[1], 2)} s` : 'tempo real (s)', ylabel });
   if (under) under(F); polyline(F, xs, ys, F.P.acc, 1.2); F.done();
 }
 function liveFFT(cv) {
-  const L = LIVE.data, fq = Array.from({ length: 400 }, (_, i) => 20 * i / 399), { fr, A } = TH.spectrum(L.vabs.subarray(L.i0, L.i1 + 1)), v = TH.interp(fq, fr, A), mx = Math.max(...v) || 1;
+  const L = LIVE.data, fq = Array.from({ length: 400 }, (_, i) => 20 * i / 399), [fa, fb] = LIVE.sel || [L.i0, L.i1], { fr, A } = TH.spectrum(L.vabs.subarray(fa, fb + 1)), v = TH.interp(fq, fr, A), mx = Math.max(...v) || 1;
   const F = frame(cv, [0, 20], [0, 1.08], { xlabel: 'Hz', ylabel: 'amplitude relativa' }), { c, X, Y, P } = F;
   [[0, 5, P.grn], [5, 8, P.red], [8, 13, P.amb]].forEach(([a, b, col]) => { c.fillStyle = col; c.globalAlpha = 0.1; c.fillRect(X(a), Y(1.08), X(b) - X(a), Y(0) - Y(1.08)); }); c.globalAlpha = 1;
   polyline(F, fq, v.map(x => x / mx), P.acc, 1.3); F.done();
+  if (LIVE.sel) { c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); c.textAlign = 'right'; c.fillText(`só o trecho (${br((fb - fa) / FS, 2)} s)${(fb - fa) / FS < 0.5 ? ' · curto: resolução de ' + br(FS / (fb - fa + 1), 1) + ' Hz' : ''}`, F.w - F.m.r - 4, F.m.t + 12); }
 }
 function liveSig(cv, upto) {
   const L = LIVE.data, P = pal(), { c, w, h } = setup(cv, cv.clientHeight || 300);
   let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity; for (let i = 0; i < L.n; i++) if (L.C[i]) { x0 = Math.min(x0, L.x[i]); x1 = Math.max(x1, L.x[i]); y0 = Math.min(y0, L.y[i]); y1 = Math.max(y1, L.y[i]); }
   const pd = 3; x0 -= pd; x1 += pd; y0 -= pd; y1 += pd; const sc = Math.min((w - 20) / (x1 - x0), (h - 30) / (y1 - y0)), ox = (w - sc * (x1 - x0)) / 2, oy = (h - 14 - sc * (y1 - y0)) / 2;
-  const X = v => ox + (v - x0) * sc, Y = v => h - 14 - oy - (v - y0) * sc, N = upto == null ? L.n - 1 : Math.min(upto, L.n - 1);
+  const X = v => ox + (v - x0) * sc, Y = v => h - 14 - oy - (v - y0) * sc, N = upto == null ? L.n - 1 : Math.min(upto, L.n - 1), SL = LIVE.sel, fora = i => SL && (i < SL[0] || i > SL[1]); cv._xf = { X, Y, off: cv._off || 0 };
   // caneta no ar: pontilhado fino (só onde a mesa leu a caneta)
   c.strokeStyle = P.acc; c.globalAlpha = 0.45; c.lineWidth = 0.9; c.setLineDash([1.5, 3]); c.beginPath(); let pen = false;
   for (let i = 0; i <= N; i++) { if (L.C[i] || L.G[i]) { pen = false; continue; } if (pen) c.lineTo(X(L.x[i]), Y(L.y[i])); else { c.moveTo(X(L.x[i]), Y(L.y[i])); pen = true; } }
   c.stroke(); c.setLineDash([]); c.globalAlpha = 1;
   // tinta: espessura pela pressão medida (adimensional), como uma esferográfica
   const ink = css('--ink'); c.strokeStyle = ink; c.lineCap = 'round'; const mm = Math.max(0.6, sc * 0.11);
-  for (let i = 1; i <= N; i++) if (L.C[i] && L.C[i - 1]) { c.lineWidth = mm * (0.35 + 1.25 * Math.pow((L.P[i] + L.P[i - 1]) / 2, 0.9)); c.beginPath(); c.moveTo(X(L.x[i - 1]), Y(L.y[i - 1])); c.lineTo(X(L.x[i]), Y(L.y[i])); c.stroke(); }
+  if (SL) { c.strokeStyle = P.sel; c.globalAlpha = 0.55; c.lineWidth = Math.max(8, mm * 4); c.lineJoin = 'round'; c.beginPath(); let pn = false; for (let i = SL[0]; i <= Math.min(SL[1], N); i++) { if (!L.C[i]) { pn = false; continue; } pn ? c.lineTo(X(L.x[i]), Y(L.y[i])) : c.moveTo(X(L.x[i]), Y(L.y[i])); pn = true; } c.stroke(); c.globalAlpha = 1; c.strokeStyle = ink; }
+  for (let i = 1; i <= N; i++) if (L.C[i] && L.C[i - 1]) { c.globalAlpha = fora(i) ? 0.3 : 1; c.lineWidth = mm * (0.35 + 1.25 * Math.pow((L.P[i] + L.P[i - 1]) / 2, 0.9)); c.beginPath(); c.moveTo(X(L.x[i - 1]), Y(L.y[i - 1])); c.lineTo(X(L.x[i]), Y(L.y[i])); c.stroke(); } c.globalAlpha = 1;
+  if (LIVE.drag) { const [a, b, e, f] = LIVE.drag; c.strokeStyle = P.amb; c.setLineDash([4, 3]); c.lineWidth = 1.2; c.strokeRect(Math.min(a, e), Math.min(b, f), Math.abs(e - a), Math.abs(f - b)); c.setLineDash([]); }
   // ordem dos traços (número onde a caneta pousou), início (I), término (T) e paradas (‖ com a duração): mesmos sinais da animação da Análise
   if (L.segs.length) { const narrow = w < 500, r = narrow ? 5 : 7, acc = P.acc; c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans');
     const badge = (i, txt, cor, dy, fill) => { const x = X(L.x[i]), y = Y(L.y[i]) + dy; c.fillStyle = fill ? cor : P.panel; c.beginPath(); c.arc(x, y, r, 0, 7); c.fill(); if (!fill) { c.strokeStyle = cor; c.lineWidth = 1; c.stroke(); } c.fillStyle = fill ? '#fff' : cor; c.fillText(txt, x, y + (narrow ? 3 : 3.5)); return [x, y]; };
@@ -3675,6 +3681,19 @@ function livePlay() {
   const t0 = performance.now(); $('#lv-play').textContent = '■ parar';
   const step = now => { const k = Math.floor((now - t0) / 1000 * FS); liveSig($('#lv-sig'), k); if (k < L.n - 1) LIVE.play = requestAnimationFrame(step); else { LIVE.play = null; liveSig($('#lv-sig')); $('#lv-play').textContent = '▶ reproduzir no tempo real'; } };
   LIVE.play = requestAnimationFrame(step); log('captura ao vivo', 'reproduziu a assinatura no tempo real');
+}
+{ // trecho: arrastar um retângulo sobre o desenho escolhe o pedaço mostrado nos gráficos
+  const cv = $('#lv-sig'), pos = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top - (cv._off || 0)]; }; let st = null;
+  cv.addEventListener('pointerdown', e => { if (LIVE.play || !LIVE.data) return; st = pos(e); LIVE.drag = [...st, ...st]; cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', e => { if (!st) return; LIVE.drag = [...st, ...pos(e)]; liveSig(cv); });
+  const fim = e => { if (!st) return; const r0 = LIVE.drag; st = null; LIVE.drag = null; const L = LIVE.data, xf = cv._xf;
+    if (Math.abs(r0[2] - r0[0]) < 6 || Math.abs(r0[3] - r0[1]) < 6) { liveSig(cv); return; }
+    const xa = Math.min(r0[0], r0[2]), xb = Math.max(r0[0], r0[2]), ya = Math.min(r0[1], r0[3]), yb = Math.max(r0[1], r0[3]); let a = -1, b = -1;
+    for (let i = 0; i < L.n; i++) if (L.C[i]) { const x = xf.X(L.x[i]), y = xf.Y(L.y[i]); if (x >= xa && x <= xb && y >= ya && y <= yb) { if (a < 0) a = i; b = i; } }
+    if (b - a < 10) { liveSig(cv); return; }
+    LIVE.sel = [a, b]; $('#lv-all').hidden = false; log('captura ao vivo: trecho', `${br(L.t[a], 2)}–${br(L.t[b], 2)} s (exploratório)`); liveDraw(); };
+  cv.addEventListener('pointerup', fim); cv.addEventListener('pointercancel', () => { st = null; LIVE.drag = null; liveSig(cv); });
+  $('#lv-all').addEventListener('click', () => { LIVE.sel = null; $('#lv-all').hidden = true; log('captura ao vivo: trecho', 'voltou à assinatura inteira'); liveDraw(); });
 }
 { // ligações: botão do cabeçalho, barra da vista e redesenho
   const _render = render;
