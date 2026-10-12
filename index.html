@@ -278,13 +278,13 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
 
 /* ---- variabilidade de punho (ao lado do desenho) ---- */
 .sigrow { display: flex; gap: 12px; align-items: stretch; flex: 1 1 auto; min-height: 220px } .sigrow > .cw { flex: 1 1 auto }
-.varp { flex: 0 0 150px; border-left: 1px solid var(--line); padding: 2px 0 2px 12px; display: flex; flex-direction: column; gap: 4px }
-.varp .vt { font: 600 11.5px var(--sans); color: var(--ink) } .varp .vs { font-size: 10px; color: var(--muted); margin: -3px 0 2px }
-.varp .vl { display: flex; align-items: center; gap: 7px; padding: 1px 8px; border-radius: 10px } .varp .vl svg { flex: 0 0 auto; filter: saturate(.7) opacity(.5) }
-.varp .vl b { font-size: 10.5px; color: var(--muted); font-weight: 500; line-height: 1.15 } .varp .vl.on { padding: 3px 5px } .varp .vl.on svg { filter: none }
-.varp .vl.on b { font-size: 11.5px; font-weight: 700 } .varp .vl em { display: block; font-style: normal; font-size: 9.5px; color: var(--muted); font-weight: 400 }
-.varp .vn { font-size: 9.5px; color: var(--muted); line-height: 1.35; margin-top: 3px } .varp .vn b { color: var(--ink) }
-@media (max-width: 760px) { .sigrow { flex-direction: column } .varp { flex-basis: auto; border-left: 0; border-top: 1px solid var(--line); padding: 8px 0 0 } }
+.varp { flex: 0 0 215px; border-left: 1px solid var(--line); padding: 8px 0 8px 14px; display: flex; flex-direction: column; gap: 5px }
+.varp .vt { font: 600 14px var(--sans); color: var(--ink) } .varp .vs { font-size: 11.5px; color: var(--muted); margin: -2px 0 4px }
+.varp .vl { flex: 1 1 0; max-height: 92px; min-height: 44px; display: flex; align-items: center; gap: 10px; padding: 2px 10px; border-radius: 12px } .varp .vl svg { flex: 0 0 auto; filter: saturate(.7) opacity(.5) }
+.varp .vl b { font-size: 13px; color: var(--muted); font-weight: 500; line-height: 1.2 } .varp .vl.on svg { filter: none }
+.varp .vl.on b { font-size: 14.5px; font-weight: 700 } .varp .vl em { display: block; font-style: normal; font-size: 11.5px; color: var(--muted); font-weight: 400; margin-top: 2px }
+.varp .vn { font-size: 11.5px; color: var(--muted); line-height: 1.4; margin-top: 4px } .varp .vn b { color: var(--ink) }
+@media (max-width: 760px) { .sigrow { flex-direction: column } .varp { flex-basis: auto; border-left: 0; border-top: 1px solid var(--line); padding: 8px 0 0 } .varp .vl { flex: none } }
 /* ---- estabilidade da coleta ---- */
 .cap1 { margin: 4px 0 0 !important; font-size: 11.5px }
 #card-sig .sigrow { min-height: 430px }
@@ -296,6 +296,18 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
 .fm-th img { width: 92px; height: 46px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel) } #cv-fmp { width: 100%; height: 110px; display: block }
 .fm-sw .btn.on { background: var(--q); color: #fff; border-color: var(--q) }
 @media (max-width: 760px) { .fm-side { flex: none; border-left: 0; border-top: 3px solid var(--q); border-radius: 0 0 8px 8px } #card-sig .sigrow { min-height: 0 } }
+body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { display: none !important }
+.gt-intro { grid-column: 1 / -1; max-width: 860px } .gt-intro p { font-size: 13.5px; line-height: 1.5 } .gt-form { display: flex; flex-wrap: wrap; gap: 10px 18px; margin: 8px 0 }
+.gt-form label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted) } .gt-form label.ck { flex-direction: row; align-items: center; gap: 6px }
+.gt-form input:not([type]) { min-width: 260px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); font: inherit; font-size: 13px }
+.gt-acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center } .btn.pri { background: #1f2d4f !important; color: #fff !important; border-color: #1f2d4f !important } .btn.pri:hover { background: #2c3e68 !important }
+.gt-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 3px 14px; font-size: 12.5px; margin: 8px 0 } .gt-kv span { color: var(--muted) } .gt-kv b { font-weight: 500; overflow-wrap: anywhere }
+#gt-amn { width: 100%; box-sizing: border-box; font: inherit; font-size: 13.5px; line-height: 1.5; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--ink); resize: vertical; margin-top: 6px }
+.gt-gal { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px } .gt-it { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: var(--panel); max-width: 100% } .gt-it canvas { display: block; max-width: 100% }
+.gt-it.off { opacity: .55; border-style: dashed } .gt-cap { font-size: 12px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap } .gt-cap label.ck { margin-left: auto; display: inline-flex; gap: 4px; align-items: center; cursor: pointer }
+.gt-mot { font-size: 11.5px; color: var(--red); margin-top: 2px; max-width: 260px } .gt-ask { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap } .gt-ask[hidden] { display: none } .gt-ask input { flex: 1 1 140px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-size: 12px; background: var(--panel); color: var(--ink) }
+.gt-var { grid-column: span 1 } .gt-vp { border-left: 0; padding-left: 0 } .gt-vp .vl { flex: none } .gt-med { grid-column: span 3 } .gt-tab td:first-child { white-space: nowrap }
+@media (max-width: 1150px) { .gt-var, .gt-med { grid-column: 1 / -1 } }
 .estab { overflow-x: auto } .estab table { border-collapse: separate; border-spacing: 2px; font-size: 11px } .estab th { font-weight: 500; color: var(--muted); text-align: right; padding-right: 6px; white-space: nowrap }
 .estab thead th { text-align: center; padding: 0; font: 10px var(--mono) } .estab td.c { width: 26px; height: 18px; border-radius: 3px } .estab td.tr { padding-left: 8px; color: var(--muted); white-space: nowrap; font-size: 10.5px }
 .estab td.tr b { color: var(--amber) } .estab .out th { color: var(--red) } .estab .sum { margin: 6px 0 0; font-size: 12px } .estab .sum b { color: var(--ink) }
@@ -306,7 +318,7 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
   <div id="wm" aria-hidden="true"></div>
   <header class="dev">
     <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
-    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no laudo.">revelar (fica registrado)</button></div><div class="sub" id="h-pad">Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
+    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no laudo.">revelar (fica registrado)</button></div><div class="sub" id="h-pad">Padrões: 20 coletas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
     <div class="livebtn"><button type="button" id="btn-live" title="Assinar na mesa digitalizadora e ver os gráficos dessa assinatura (demonstração)"><span class="pen">✎</span> Captura ao vivo</button></div>
     <div class="ghost"><button type="button" id="btn-mode" title="Alternar a questionada: imitação, verdadeira ou mesma forma com construção diferente">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
   </header>
@@ -314,6 +326,7 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
     <button type="button" class="tab on" data-tab="analise">Análise</button>
     <button type="button" class="tab" data-tab="crus">Dados crus (somente leitura)</button>
     <button type="button" class="tab" data-tab="integ">Integridade e laudo</button>
+    <button type="button" class="tab" data-tab="gt">Grafoscopia Tradicional</button>
     <button type="button" class="tab" data-tab="tut">Tutorial</button>
   </nav>
 
@@ -374,7 +387,7 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
     <div class="banner"><b class="tag">SOMENTE LEITURA</b><span>Dados exatamente como recebidos, sem filtro nem alinhamento. Sem edição, seleção, cópia, impressão ou exportação. Cada página aberta fica no registro de acessos.</span><button type="button" class="btn" id="btn-verify">Verificar hashes agora</button></div>
     <div class="qbox" id="crus-q"></div>
     <div class="two">
-      <div class="card"><h3>Padrões · <span class="np">20</span> colheitas do perito <span class="fine">toque numa linha para ver as amostras</span></h3><div id="crus-p"></div></div>
+      <div class="card"><h3>Padrões · <span class="np">20</span> coletas do perito <span class="fine">toque numa linha para ver as amostras</span></h3><div id="crus-p"></div></div>
       <div class="card" id="crus-d"></div>
     </div>
   </section>
@@ -398,6 +411,7 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
     <div class="card"><h3>Registro de acessos · encadeado por hash (ninguém apaga nem altera)</h3><div class="tw"><table class="raw"><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Detalhe</th><th>Hash</th></tr></thead><tbody id="log"></tbody></table></div></div>
   </section>
 
+  <section class="pane" id="pane-gt" hidden><div class="grid" id="gt"></div></section>
   <section class="pane" id="pane-tut" hidden>
     <div class="bar tutintro"><b>Tutorial</b><span>Cada cartão mostra, com uma animação curta, como ler um ajuste do painel. Os exemplos usam valores inventados para ensinar; os dados do caso estão na aba Análise.</span></div>
     <article class="card tut" id="tut-modos" data-card="modos">
@@ -635,7 +649,7 @@ select { border-color: var(--btn-line) } select:hover { border-color: var(--mute
   <div class="row"><button type="button" class="btn on" id="tutinv-go">Abrir o tutorial</button><button type="button" class="btn" id="tutinv-no">Ir para a análise</button></div>
   <label><input type="checkbox" id="tutinv-hide"> Não mostrar de novo neste aparelho</label>
 </div></div>
-<div id="loading"><div class="box"><b>Preparando o caso</b><span id="loadtxt" class="fine">Simulando as colheitas</span><div class="track"><div id="loadbar"></div></div></div></div>
+<div id="loading"><div class="box"><b>Preparando o caso</b><span id="loadtxt" class="fine">Simulando as coletas</span><div class="track"><div id="loadbar"></div></div></div></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script>
@@ -1252,7 +1266,7 @@ async function montarCaso(nome, modo, base, DADOS, prog = () => {}) {
   const tick = () => new Promise(r => setTimeout(r, 0)), ap = DADOS.aparelho, cal = DADOS.calibracao, s0 = hashStr(nome);
   const calSha = await sha256regCal(cal), RR = [], pr = rngOf((s0 + 4242) >>> 0), pessoa = { kb: pr.uni(1.2, 3.5), kw: pr.uni(0.1, 0.3) };
   { let sv = 0; for (let i = 0; i < 20; i++) sv += trSpeed(trajectory(base, rngOf((s0 + 101 + i) >>> 0), false)); pessoa.vref = sv / 20; }
-  for (let i = 0; i < 20; i++) { prog(`Simulando a colheita P${String(i + 1).padStart(2, '0')} de 20`, i / 30); await tick(); RR.push(capture(base, (s0 + 101 + i) >>> 0, 'p', ap, i === 12 ? [1.6, 4] : null, pessoa)); }
+  for (let i = 0; i < 20; i++) { prog(`Simulando a coleta P${String(i + 1).padStart(2, '0')} de 20`, i / 30); await tick(); RR.push(capture(base, (s0 + 101 + i) >>> 0, 'p', ap, i === 12 ? [1.6, 4] : null, pessoa)); }
   prog('Simulando a assinatura questionada', 20 / 30); await tick();
   const RQ = modo === 'imitação' ? capture(base, (s0 + 999) >>> 0, 'q', ap) : modo === 'construção' ? capture(base, (s0 + 555) >>> 0, 'c', ap, null, pessoa) : capture(base, (s0 + 777) >>> 0, 'p', ap, null, pessoa);
   prog('Montando, cifrando e assinando os 21 pacotes', 22 / 30); await tick();
@@ -1282,7 +1296,7 @@ async function montarCaso(nome, modo, base, DADOS, prog = () => {}) {
 }
 
 return { FS, NU, SGW, SGO, NOISE, RES, rngOf, hashStr, interp, mean, std, median, savgol, sg, findPeaks, spectrum, Fsf, Fppf, hotLim, hotP, capture, process, comp, power,
-         noiseFloor, measures, KEYS, MAHA, alignAll, uOf, maha, register, dtwPath, edges, nivelParaGf, canonJSON, cabecalho, registroBytes, lerRegistro, montarPacote, abrirPacote, assinar, verificar, sha256hex, sha256regCal, nonceDe, montagem, hexOf, cpfFicticio, montarCaso, montarCasoReal, recorte };
+         noiseFloor, measures, KEYS, MAHA, alignAll, uOf, maha, register, dtwPath, edges, nivelParaGf, canonJSON, cabecalho, registroBytes, lerRegistro, montarPacote, abrirPacote, assinar, verificar, sha256hex, sha256regCal, nonceDe, montagem, hexOf, cpfFicticio, montarCaso, montarCasoReal, recorte, registroDeAmostras };
 })();
 
 
@@ -2372,7 +2386,7 @@ async function makePDF() {
   doc.setFillColor(23, 33, 51); doc.rect(0, 0, W, 14, 'F'); doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text('THOTH · Laudo de análise dinâmica de assinatura', L, 9);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text('SIMULAÇÃO · dados sintéticos para demonstração', R, 9, { align: 'right' });
   y = 24; y = T(`Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: ${PERITO} · emitido em ${now.toLocaleString('pt-BR')}`, L, y, { s: 8.5, c: [93, 104, 120] });
-  y = T(REAL() ? `Signatário declarado: ${D.name} · coleta de demonstração na mesa Huion H420X (navegador, sem clip, pressão adimensional) · questionada: contador 1 · padrões: ${NP()} colheitas (contadores 2–${NP() + 1})${NP() < N_OK ? ' · precisão ' + precisao() : ''}` : `Signatário declarado: ${D.name} · Thoth nº 0123A1B2C3D4E5F6EE · questionada: contador 184 · padrões: 20 colheitas (contadores 201–220)`, L, y, { s: 8.5, c: [93, 104, 120], gap: 4 });
+  y = T(REAL() ? `Signatário declarado: ${D.name} · coleta de demonstração na mesa Huion H420X (navegador, sem clip, pressão adimensional) · questionada: contador 1 · padrões: ${NP()} coletas (contadores 2–${NP() + 1})${NP() < N_OK ? ' · precisão ' + precisao() : ''}` : `Signatário declarado: ${D.name} · Thoth nº 0123A1B2C3D4E5F6EE · questionada: contador 184 · padrões: 20 coletas (contadores 201–220)`, L, y, { s: 8.5, c: [93, 104, 120], gap: 4 });
   H2('1. Observações iniciais e conclusão do perito');
   y = T(`Observações iniciais, registradas às ${S.obs.ts} na vista padrão (tempo real, assinatura inteira, sem suavização)${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de o perito já ter usado ajustes (o primeiro às ${S.obs.adjTs})`} · hash ${S.obs.h.slice(0, 16)}:`, L, y, { b: true, s: 8.5 });
   y = T(S.obs.txt, L + 3, y, { i: true, gap: S.obs.aviso ? 1 : 2.5 });
@@ -2546,13 +2560,14 @@ function render() {
   const pq = D.packs[0]; document.body.classList.toggle('real-on', REAL());
   $$('.np').forEach(e => (e.textContent = NP())); $$('.nk').forEach(e => (e.textContent = V ? V.MH.keys.length : 4)); $$('.nkc').forEach(e => (e.textContent = TV_K())); $$('.np1').forEach(e => (e.textContent = NP() + 1)); $$('.np-1').forEach(e => (e.textContent = NP() - 1));
   $('#h-q').textContent = REAL() ? `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · coleta na mesa H420X · ${new Date(pq.cab.data_hora_utc).toLocaleString('pt-BR')}` : `Questionada: pacote ${pq.sha.slice(0, 4)}…${pq.sha.slice(-4)} · Thoth nº 0123A1B2C3D4E5F6EE · 03/10/2026 14:32:07 UTC (GNSS)`;
-  $('#h-pad').textContent = REAL() ? `Padrões: ${NP()} colheitas na mesa · sem clip · pressão adimensional · precisão ${precisao()}` : 'Padrões: 20 colheitas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita';
+  $('#h-pad').textContent = REAL() ? `Padrões: ${NP()} coletas na mesa · sem clip · pressão adimensional · precisão ${precisao()}` : 'Padrões: 20 coletas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita';
   $('#real-bar').hidden = !REAL(); if (REAL()) $('#real-bar-t').innerHTML = `<b>Caso coletado na mesa</b> · ${D.col.matriz ? `questionada = matriz "${escH(D.col.matriz.nome)}" · ${NP()} padrões de ${escH(D.name)}` : escH(D.name) + ` · questionada + ${NP()} padrões`} · <span class="${NP() >= N_OK ? 'ok' : NP() >= N_VER ? 'warnt' : 'bad'}">precisão ${precisao()}${NP() < N_OK ? ` (${NP() < N_VER ? 'combinações sem classificação: menos de ' + N_VER + ' padrões' : 'faixa de 95% de um par até ' + fDist(TH.hotLim(0.95, NP(), 2)) + ' contra ' + fDist(TH.hotLim(0.95, 20, 2)) + ' com 20'})` : ''}</span> · demonstração, sem cadeia de custódia`;
   $('#h-sig').textContent = `Signatário declarado: ${D.name}`;
   // modo cego: o tipo da questionada (só existe na simulação) fica oculto; revelar é uma ação registrada
   $('#h-modo-t').textContent = (REAL() ? 'Coleta real' : 'Simulação') + (S.blind ? ' · tipo da questionada oculto (modo cego)' : ' · questionada: ' + (MODE_NOME[D.mode] || D.mode) + ` (revelado às ${S.revealed})`);
   $('#btn-reveal').hidden = !S.blind;
-  if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else if (S.tab === 'tut') renderTut(); else renderInteg();
+  document.body.classList.toggle('gt-on', S.tab === 'gt');
+  if (S.tab === 'analise') renderAnalise(); else if (S.tab === 'crus') renderCrus(); else if (S.tab === 'tut') renderTut(); else if (S.tab === 'gt') renderGT(); else renderInteg();
 }
 async function loadCase() {
   if (ANIM.upto !== null) stopAnim(false);
@@ -3697,7 +3712,7 @@ function refImage(S0, W = 400, H = 160) { // miniatura fixa (só imagem: não an
 }
 function colUI() {
   const m = LIVE.mode, n = nP(), ed = LIVE.editIdx, show = (id, v) => { const e = $(id); if (e) e.hidden = !v; };
-  const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', 'ruido-rec': 'Ruído da mesa <em>medindo…</em>', 'ruido-ok': 'Ruído da mesa ✓ <em>passo 1 concluído</em>', q: 'Assinatura questionada', p: ed != null ? `Refazendo o padrão ${ed + 1}` : n >= COL_MAX ? `${COL_MAX} padrões coletados` : `Padrão ${slotNext() + 1} de ${COL_MAX}` }[m] || '';
+  const step = { solo: '', ruido: 'Ruído da mesa <em>passo 1</em>', 'ruido-rec': 'Ruído da mesa <em>medindo…</em>', 'ruido-ok': 'Ruído da mesa ✓ <em>passo 1 concluído</em>', q: 'Assinatura questionada', p: COL && COL.gt ? (n >= COL_MAX ? `${COL_MAX} assinaturas coletadas` : `Grafoscopia tradicional · assinatura ${slotNext() + 1} de ${COL_MAX}`) : ed != null ? `Refazendo o padrão ${ed + 1}` : n >= COL_MAX ? `${COL_MAX} padrões coletados` : `Padrão ${slotNext() + 1} de ${COL_MAX}` }[m] || '';
   $('#lc-step').innerHTML = (m === 'q' && COL && COL.novaMatriz ? `Matriz: ${escH(COL.novaMatriz.nome)}` : m === 'p' && COL && COL.matriz ? `${step.replace('</em>', '')}` : step) + (m === 'p' ? ` <em>${escH(COL.signatario)}${COL.matriz ? ' × matriz ' + escH(COL.matriz.nome) : ''}</em>` : m === 'q' && !COL.novaMatriz ? ` <em>${escH(COL.signatario)}</em>` : '');
   $('.lc-lab').textContent = m === 'ruido' || m === 'ruido-rec' ? 'Encoste a caneta aqui e segure parada' : m === 'ruido-ok' ? '✓ Ruído medido' : 'Assine aqui'; $('.lc-lab').classList.toggle('done', m === 'ruido-ok');
   const copia = m === 'q' && COL && COL.modeloImg, refOk = (m === 'p' && COL && COL.refImg) || copia;
@@ -3705,15 +3720,15 @@ function colUI() {
   $('#lc').classList.toggle('copia', !!copia);
   show('#lc-prog', m === 'p'); show('#lc-gal', m === 'p'); show('#lc-undo', false); show('#lc-end', m === 'p'); show('#lc-skip', m === 'ruido'); show('#lc-redo', false);
   const gt = GATE_MODES.includes(m) ? LIVE.gate || 'fechado' : null, aq = emAquecimento(), pz = (LIVE.pauseUntil || 0) > Date.now() && gt === 'fechado';
-  show('#lc-ok', true); show('#lc-clear', m !== 'ruido' && (!gt || gt === 'aberto')); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX) || gt === 'contagem' || pz;
+  show('#lc-ok', true); show('#lc-clear', m !== 'ruido' && (!gt || gt === 'aberto') && !(COL && COL.gt)); $('#lc-ok').disabled = (m === 'ruido' && !LIVE.ruidoRun) || (m === 'p' && ed == null && n >= COL_MAX) || gt === 'contagem' || pz;
   if (aq) { show('#lc-skip', gt === 'fechado'); $('#lc-skip').dataset.mode = 'aquec'; } else $('#lc-skip').dataset.mode = '';
-  $('#lc-ok').textContent = { solo: 'Concluir', q: COL && COL.novaMatriz ? 'Concluir e salvar a matriz' : 'Concluir questionada', p: ed != null ? `Salvar no padrão ${ed + 1}` : 'Salvar padrão', ruido: 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
+  $('#lc-ok').textContent = { solo: 'Concluir', q: COL && COL.novaMatriz ? 'Concluir e salvar a matriz' : 'Concluir questionada', p: COL && COL.gt ? 'Concluir assinatura' : ed != null ? `Salvar no padrão ${ed + 1}` : 'Salvar padrão', ruido: COL && COL.gt ? 'Finalizar ruído e ir para as assinaturas →' : 'Finalizar ruído e ir para a questionada →' }[m] || 'Concluir';
   $('#lc-skip').textContent = aq ? 'Pular aquecimento' : 'Pular (usar ruído de referência)';
   if (aq) $('#lc-step').innerHTML = `Aquecimento ${(LIVE.aquecN || 0) + 1} de 2 <em>não é gravado</em>`;
   if (pz) $('#lc-ok').textContent = `Pausa · ${Math.ceil((LIVE.pauseUntil - Date.now()) / 1000)} s`;
   else if (gt === 'fechado' && aq) $('#lc-ok').textContent = `Liberar o aquecimento ${(LIVE.aquecN || 0) + 1} ▶`;
   else if (gt === 'aberto' && aq) $('#lc-ok').textContent = 'Concluir aquecimento';
-  else if (gt === 'fechado') $('#lc-ok').textContent = m === 'q' ? (COL && COL.novaMatriz ? 'Liberar a assinatura da matriz ▶' : 'Liberar a questionada ▶') : m === 'p' ? (ed != null ? `Liberar: refazer o padrão ${ed + 1} ▶` : `Liberar o padrão ${slotNext() + 1} ▶`) : 'Liberar a assinatura ▶';
+  else if (gt === 'fechado') $('#lc-ok').textContent = m === 'q' ? (COL && COL.novaMatriz ? 'Liberar a assinatura da matriz ▶' : 'Liberar a questionada ▶') : m === 'p' ? (COL && COL.gt ? `Liberar a assinatura ${slotNext() + 1} ▶` : ed != null ? `Liberar: refazer o padrão ${ed + 1} ▶` : `Liberar o padrão ${slotNext() + 1} ▶`) : 'Liberar a assinatura ▶';
   else if (gt === 'contagem') $('#lc-ok').textContent = 'bip · bip · biiip…';
   $('.lc-lab').textContent = gt === 'fechado' ? 'Aguarde' : gt === 'contagem' ? 'Prepare-se' : $('.lc-lab').textContent;
   if (m === 'p') {
@@ -3726,6 +3741,7 @@ function colUI() {
       return a ? `<button type="button" class="lc-slot f${i === alvo ? ' cur' : ''}${i === LIVE.selIdx || i === LIVE.disc ? ' sel' : ''}" data-slot="${i}" title="Padrão ${i + 1}: tocar para refazer ou excluir"><img src="${a.thumb}" alt=""><b>${i + 1}</b></button>`
         : `<span class="lc-slot e${i === alvo ? ' cur' : ''}"><b>${i + 1}</b></span>`; }).join('');
     const z = n < N_MIN ? null : n < N_VER ? 0 : n < N_OK ? 1 : 2, lim = n >= N_MIN ? TH.hotLim(0.95, n, 2) : NaN, l20 = TH.hotLim(0.95, 20, 2);
+    if (COL.gt) $('#lc-prec').innerHTML = `<b>${n}</b> de ${COL_MAX} assinaturas · nenhuma é refeita: o perito decide depois quais usar, com motivo registrado`; else
     $('#lc-prec').innerHTML = z === null ? `<b>${n}</b> padrões · faltam ${N_MIN - n} para o mínimo (${N_MIN})` :
       `<b>${n}</b> padrões · precisão da régua: <span class="z${z}">${['insuficiente (combinações sem classificação)', 'reduzida', 'normal'][z]}</span> · faixa de 95% de um par até ${fDist(lim)} (com 20: ${fDist(l20)})`;
   }
@@ -3770,10 +3786,13 @@ function colRuido(run) {
   else { COL.ruido_sg = null; COL.ruido = null; log('coleta: ruído da mesa', 'pulado: usa o ruído de referência'); }
   colParaQuestionada();
 }
-function colParaQuestionada() { LIVE.gate = 'fechado'; LIVE.mode = COL.Q ? 'p' : 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.Q ? (COL.ruido_sg ? 'Ruído registrado · agora os padrões' : 'Agora os padrões') : COL.ruido_sg ? 'Ruído registrado · agora a assinatura' : 'Agora a assinatura');
+function colParaQuestionada() { if (COL.gt) { LIVE.gate = 'fechado'; LIVE.mode = 'p'; LIVE._clear(); colUI(); colSave(); lcToast(COL.ruido_sg ? 'Ruído registrado · agora as assinaturas' : 'Agora as assinaturas'); return; } LIVE.gate = 'fechado'; LIVE.mode = COL.Q ? 'p' : 'q'; LIVE._clear(); colUI(); colSave(); lcToast(COL.Q ? (COL.ruido_sg ? 'Ruído registrado · agora os padrões' : 'Agora os padrões') : COL.ruido_sg ? 'Ruído registrado · agora a assinatura' : 'Agora a assinatura');
 }
 function colValida() {
   const R = LIVE.raw, nc = R.filter(s => s.c).length, msg = $('#lc-msg');
+  if (COL && COL.gt) { if (!nc) { msg.textContent = 'Nada foi escrito ainda: a assinatura só é registrada depois do primeiro toque da caneta.'; return null; }
+    const [sw, sh] = sigSize(R), L = nc >= 30 ? liveProcess(R) : null, mt = L ? { dur: L.m.dur, path: L.m.path, vmed: L.m.vmed, pm: L.m.pm, aRMS: L.m.aRMS, e58: L.m.e58, tracos: L.m.tracos } : null;
+    return { s: serial(R), quando: Date.now(), w: +sw.toFixed(1), h: +sh.toFixed(1), fora: sw < SIZE_OK[0] || sw > SIZE_OK[1], mouse: !!LIVE.mouse, mt }; }
   if (nc < 30) { msg.textContent = 'Assinatura curta demais: assine de novo.'; $('#lc').classList.add('shake'); setTimeout(() => $('#lc').classList.remove('shake'), 400); return null; }
   const [sw, sh] = sigSize(R), fora = sw < SIZE_OK[0] || sw > SIZE_OK[1];
   if (fora && LIVE.sizeWarn !== R.length) { LIVE.sizeWarn = R.length; msg.textContent = `Assinatura com ${br(sw, 0)} mm de largura, fora do tamanho usual (${SIZE_OK[0]} a ${SIZE_OK[1]} mm). Limpar e assinar de novo, ou ${$('#lc-ok').textContent} para usar assim.`; return null; }
@@ -3794,13 +3813,13 @@ function colConcluir() {
   }
   const ed = LIVE.editIdx, i = ed != null ? ed : slotNext(); if (i >= COL_MAX) return;
   a.thumb = refImage(a.s, 156, 64); COL.P[i] = a; LIVE.editIdx = null; LIVE.selIdx = null;
-  log(ed != null ? 'coleta: refez padrão' : 'coleta: padrão', `P${String(i + 1).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
+  log(COL.gt ? 'grafoscopia: assinatura' : ed != null ? 'coleta: refez padrão' : 'coleta: padrão', `${COL.gt ? 'A' : 'P'}${String(i + 1).padStart(2, '0')} · ${br(a.w, 0)} × ${br(a.h, 0)} mm${a.fora ? ' (fora do tamanho usual, mantido)' : ''}`);
   colSave(); waitStop(); LIVE.gate = 'fechado';
-  if (nP() >= COL_MAX) { beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`${COL_MAX} padrões coletados · encerrando a coleta`); log('coleta: 20 padrões', 'encerrada automaticamente'); return setTimeout(colFinalizar, 900); }
+  if (nP() >= COL_MAX) { beep(988, 0.12); setTimeout(() => beep(1319, 0.2), 150); lcToast(`${COL_MAX} ${COL.gt ? 'assinaturas' : 'padrões'} coletados · encerrando a coleta`); log('coleta: 20 padrões', 'encerrada automaticamente'); return setTimeout(colFinalizar, 900); }
   beep(440, 0.16, 0.16); LIVE._clear();
-  const dz = discrepancia(i); if (dz) { LIVE.disc = i; LIVE.discTxt = dz; log('coleta: aviso de padrão discrepante', `P${String(i + 1).padStart(2, '0')} · ${dz}`); }
+  const dz = COL.gt ? null : discrepancia(i); if (dz) { LIVE.disc = i; LIVE.discTxt = dz; log('coleta: aviso de padrão discrepante', `P${String(i + 1).padStart(2, '0')} · ${dz}`); }
   else if (ed == null && nP() % 5 === 0 && nP() < COL_MAX) pausa();
-  colUI(); lcToast(ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
+  colUI(); lcToast(COL.gt ? `Assinatura ${i + 1} registrada` : ed != null ? `Padrão ${i + 1} refeito` : `Padrão ${i + 1} salvo`);
 }
 const emAquecimento = () => !!(COL && !COL.aquecFeito && LIVE.aquecOn !== false && ((LIVE.mode === 'q' && !COL.Q) || (LIVE.mode === 'p' && nP() === 0 && LIVE.editIdx == null)));
 function aquecFim(pulou) { COL.aquecFeito = true; LIVE.aquecN = 0; log('coleta: aquecimento', pulou ? 'pulado pelo operador' : '2 assinaturas descartadas'); colSave(); gateFechar(false); colUI(); }
@@ -3834,16 +3853,18 @@ function colDescartar() {
 }
 function colEncerrar() {
   const n = nP(); if (n < N_MIN) return;
+  if (COL.gt) { if (n < COL_MAX && LIVE.endWarn !== n) { LIVE.endWarn = n; $('#lc-msg').textContent = `Encerrar com ${n} de ${COL_MAX} assinaturas? Toque de novo em Encerrar para confirmar.`; return; } return colFinalizar(); }
   if (n < N_OK && LIVE.endWarn !== n) { LIVE.endWarn = n; $('#lc-msg').textContent = n < N_VER ? `Com ${n} padrões as combinações não são classificadas (precisam de ${N_VER}); só curvas, medidas e distâncias. Toque de novo em Encerrar para analisar assim.` : `Com ${n} padrões a precisão é reduzida: a faixa de 95% de um par vai até ${fDist(TH.hotLim(0.95, n, 2))}, contra ${fDist(TH.hotLim(0.95, 20, 2))} com 20. Toque de novo em Encerrar para analisar assim.`; return; }
   colFinalizar();
 }
 function colSair() {
   if (!LIVE.exitWarn) { LIVE.exitWarn = true; $('#lc-msg').textContent = 'Sair da coleta? O que já foi coletado fica guardado neste navegador para retomar. Toque ✕ de novo para sair.'; return; }
-  log('coleta: interrompida', `${COL.Q ? 'questionada ✓' : 'sem questionada'} · ${nP()} padrões`); colSave(); liveClose(false);
+  log('coleta: interrompida', COL.gt ? `grafoscopia tradicional · ${nP()} assinaturas` : `${COL.Q ? 'questionada ✓' : 'sem questionada'} · ${nP()} padrões`); colSave(); liveClose(false);
 }
 async function colFinalizar() {
   waitStop(); liveClose(false); colDrop();
   const c = compactP(COL); c.P.forEach(a => delete a.thumb);
+  if (c.gt) { log('grafoscopia: coleta encerrada', `${c.P.length} assinaturas`); return gtAbrir(c, true); }
   log('coleta: encerrada', `questionada + ${c.P.length} padrões${COL.descartes ? ` · ${COL.descartes} excluídos ou refeitos` : ''}`);
   abrirReal(c);
 }
@@ -3888,7 +3909,7 @@ async function mxSalvarNova(a) {
 /* ---------- menu e formulário ---------- */
 function openCapMenu() {
   const m = $('#capm'); ['capm-2', 'capm-3', 'capm-4', 'capm-5'].forEach(k => { const e = $('#' + k); if (e) e.hidden = true; }); $('#capm-1').hidden = false; $('#capm-st').textContent = ''; $('#capm-file').value = '';
-  const r = colLoad(); $('#capm-resume').hidden = !r; if (r) $('#capm-resume-t').textContent = r.novaMatriz ? `criação da matriz "${r.novaMatriz.nome}" (ainda sem assinatura)` : `${r.signatario} · ${r.Q ? 'questionada ✓' : 'sem questionada'} · ${r.P.filter(Boolean).length} de ${COL_MAX} padrões${r.matriz ? ' · matriz ' + r.matriz.nome : ''}`;
+  const r = colLoad(); $('#capm-resume').hidden = !r; if (r) $('#capm-resume-t').textContent = r.gt ? `grafoscopia tradicional · ${r.signatario} · ${r.P.filter(Boolean).length} de ${COL_MAX} assinaturas` : r.novaMatriz ? `criação da matriz "${r.novaMatriz.nome}" (ainda sem assinatura)` : `${r.signatario} · ${r.Q ? 'questionada ✓' : 'sem questionada'} · ${r.P.filter(Boolean).length} de ${COL_MAX} padrões${r.matriz ? ' · matriz ' + r.matriz.nome : ''}`;
   m.hidden = false;
 }
 {
@@ -3905,9 +3926,9 @@ function openCapMenu() {
     close(); log('coleta: iniciou caso', `${nome} · tipo da questionada ${COL.tipo === 'não informado' ? 'não informado' : 'informado e oculto'}`); colSave();
     liveOpen($('#cf-ruido').checked ? 'ruido' : 'q');
   });
-  $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); if (COL.novaMatriz && COL.novaMatriz.modelo) mxGet(COL.novaMatriz.modelo.id).then(m => { if (m) { COL.modeloImg = refImage(m.ref.s, 680, 260); colUI(); } }); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q ? 'p' : 'q'); });
+  $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); if (COL.novaMatriz && COL.novaMatriz.modelo) mxGet(COL.novaMatriz.modelo.id).then(m => { if (m) { COL.modeloImg = refImage(m.ref.s, 680, 260); colUI(); } }); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q || COL.gt ? 'p' : 'q'); });
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
-  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p') { LIVE.disc = null; waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
+  document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p' && !(COL && COL.gt)) { LIVE.disc = null; waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
     const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
   /* ---------- matrizes: uma questionada salva com nome; os padrões são colhidos em cada caso ---------- */
   const show = (n) => ['capm-1', 'capm-2', 'capm-3', 'capm-5'].forEach(k => ($('#' + k).hidden = k !== n));
@@ -3968,7 +3989,7 @@ function varFace(i, c, on) {
   const brows = i >= 4 ? '<path d="M9.5 10.5 L14 12.5 M24.5 10.5 L20 12.5" stroke="#1d1d1d" stroke-width="1.6" stroke-linecap="round"/>' : i === 3 ? '<path d="M10 11.5 L14 11.5 M20 11.5 L24 11.5" stroke="#1d1d1d" stroke-width="1.4" stroke-linecap="round"/>' : '';
   const eyes = i === 5 ? '<path d="M10.5 13.5 L14 15.5 L10.5 17 M23.5 13.5 L20 15.5 L23.5 17" stroke="#1d1d1d" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>' : `<ellipse cx="13" cy="15" rx="1.6" ry="${i <= 1 ? 1.9 : 1.7}" fill="#1d1d1d"/><ellipse cx="21" cy="15" rx="1.6" ry="${i <= 1 ? 1.9 : 1.7}" fill="#1d1d1d"/>`;
   const cheeks = i === 0 ? '<ellipse cx="9.5" cy="19.5" rx="2.3" ry="1.4" fill="#ff8fa3" opacity=".55"/><ellipse cx="24.5" cy="19.5" rx="2.3" ry="1.4" fill="#ff8fa3" opacity=".55"/>' : '';
-  const sz = on ? 32 : 26;
+  const sz = on ? 46 : 38;
   return `<svg width="${sz}" height="${sz}" viewBox="0 0 34 34" aria-hidden="true"><defs><radialGradient id="vg${i}" cx="40%" cy="35%" r="70%"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs><circle cx="17" cy="17" r="15.5" fill="${c}"/><circle cx="17" cy="17" r="15.5" fill="url(#vg${i})"/>${brows}${cheeks}${eyes}<path d="${mouth}" fill="none" stroke="#1d1d1d" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 }
 function varCalc() {
@@ -4120,6 +4141,217 @@ function fmSide(u) {
   const fc = document.createElement('p'); fc.className = 'fine'; fc.id = 'fm-cap'; fc.innerHTML = 'Pressão por forma: a questionada é cortada em retas, curvas e laços; cada pedaço é comparado com os pedaços de mesma forma, vindos da mesma forma anterior, em qualquer lugar dos <span class="np">20</span> padrões (cinza claro). Toque num pedaço colorido para ver as gêmeas e a pressão. Não depende de tempo nem da ordem dos traços; não entra nas elipses nem na tabela verdade.';
   cap.after(fc);
   const _ra = renderAnalise; renderAnalise = function () { const r = _ra.apply(this, arguments); const cv = $('#cv-sig'), h0 = cv.clientHeight, w0 = cv.clientWidth; renderFormas(); if (cv.clientHeight !== h0 || cv.clientWidth !== w0 || FM_ON) drawSignature(cv); return r; };
+}
+
+/* ================= Grafoscopia Tradicional =================
+   Para enriquecer um laudo grafotécnico tradicional (a questionada fica no papel): coletam-se 20 assinaturas na mesa,
+   nenhuma é refeita; o perito decide quais usar, com motivo registrado. O relatório descreve a dinâmica e a variação
+   natural da escrita de quem forneceu os padrões. Não compara com a questionada e não conclui sobre autoria. */
+const GT_KEY = 'thoth-grafo', GT_FMT = 'thoth-grafo-v1';
+let GT = null;
+const gtSave = () => { try { if (GT) localStorage.setItem(GT_KEY, JSON.stringify({ formato: GT_FMT, col: colCorpo(GT.col), excl: GT.excl, amn: GT.amn, proc: GT.proc, perito: GT.perito, sha: GT.sha })); } catch (_) {} };
+const gtLoad = () => { try { const v = JSON.parse(localStorage.getItem(GT_KEY) || 'null'); return v && v.formato === GT_FMT ? v : null; } catch (_) { return null; } };
+const gtId = i => 'A' + String(i + 1).padStart(2, '0');
+const GT_LBL = { 'pressão média (gf)': 'pressão média (adim.)', 'impulso total (kgf·s)': 'impulso total (adim.·s)' };
+const gtLbl = k => GT_LBL[k] || k;
+async function gtAbrir(col, nova, extra = {}) {
+  GT = { col, excl: extra.excl || {}, amn: extra.amn || '', proc: extra.proc != null ? extra.proc : col.proc || '', perito: extra.perito || '', calc: null, sha: null };
+  GT.sha = await TH.sha256hex(TH.canonJSON(colCorpo(col)));
+  if (nova) log('grafoscopia: coleta aberta', `${col.signatario} · ${col.P.length} assinaturas · SHA-256 ${GT.sha.slice(0, 16)}…`);
+  gtSave(); S.tab = 'gt'; if (LIVE.on) { LIVE.on = false; document.body.classList.remove('live-on'); } render(); window.scrollTo(0, 0);
+}
+/* processamento: o mesmo do painel (registro → Savitzky-Golay → medidas), sem pacote cifrado e sem alinhamento */
+function gtCalc() {
+  if (GT.calc) return GT.calc;
+  const col = GT.col, cal = JSON.parse(JSON.stringify(DADOS.calibracao));
+  cal.mesa = { ...cal.mesa, afim_mm: [[TH.RES, 0, 0], [0, TH.RES, 0]], limiar_contato_nivel: 1, ruido_sg: col.ruido_sg || cal.mesa.ruido_sg };
+  cal.pressao = { caneta: 'caneta da mesa', unidade: 'adimensional (0–1)', pontos_nivel_gf: [[8191, 1]] }; cal.clip = null;
+  const NF = TH.noiseFloor(cal), G = 201;
+  const it = col.P.map((a, i) => {
+    try {
+      const p = TH.process(TH.registroDeAmostras(TH.recorte(a.s)), cal), m = TH.measures(p, NF, new Uint8Array(p.t.length).fill(1));
+      m['largura (mm)'] = a.w; m['altura (mm)'] = a.h;
+      // curvas pela posição no traçado (0–100% do caminho com a caneta no papel): comparáveis sem depender do ritmo
+      const L = p.path[p.i1], v = [], pr = [], tt = []; let j = p.i0;
+      for (let g = 0; g < G; g++) { const alvo = L * g / (G - 1); while (j < p.i1 && p.path[j] < alvo) j++; let k = j; while (k < p.i1 && !p.C[k]) k++; v.push(p.vabs[k]); pr.push(p.gf[k]); tt.push(p.t[j] - p.t[p.i0]); }
+      return { i, a, p, m, cv: { v, pr, tt } };
+    } catch (e) { return { i, a, err: 'não processável (assinatura curta demais)' }; }
+  });
+  const keys = TH.KEYS.filter(k => !/inclinação|rotação/.test(k)).concat(['largura (mm)', 'altura (mm)']);
+  return (GT.calc = { it, keys, G });
+}
+const gtUsada = x => !x.err && !GT.excl[x.i];
+function gtVar(U) { // variabilidade de punho: mesma régua do painel (mediana do coeficiente de variação)
+  const cv = VAR_KEYS.map(k => { const a = U.map(x => x.m[k]).filter(Number.isFinite), mu = TH.mean(a); return [k, Math.abs(mu) > 1e-9 && a.length > 2 ? 100 * TH.std(a, 1) / Math.abs(mu) : NaN]; }).filter(([, v]) => Number.isFinite(v));
+  if (!cv.length) return null; const typ = TH.median(cv.map(([, v]) => v)), lv = VAR_CUT.findIndex(c => typ < c), top = cv.slice().sort((a, b) => b[1] - a[1])[0];
+  return { typ, lv: lv < 0 ? 5 : lv, top };
+}
+/* desenho de uma assinatura em escala fixa (px por mm), com cotas em mm */
+function gtSigDraw(c, a, k, ox, oy, P, cotas = true) {
+  const on = a.s.filter(s => s[4]); if (!on.length) return; const xs = on.map(s => s[1]), ys = on.map(s => s[2]), x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+  const X = v => ox + (v - x0) * k, Y = v => oy + (y1 - v) * k, S0 = a.s; c.strokeStyle = P.ink; c.lineCap = 'round'; c.lineJoin = 'round';
+  for (let i = 1; i < S0.length; i++) if (S0[i][4] && S0[i - 1][4]) { c.lineWidth = Math.max(0.6, k * (0.18 + 0.32 * (S0[i][3] + S0[i - 1][3]) / 2)); c.beginPath(); c.moveTo(X(S0[i - 1][1]), Y(S0[i - 1][2])); c.lineTo(X(S0[i][1]), Y(S0[i][2])); c.stroke(); }
+  if (!cotas) return;
+  const W = (x1 - x0) * k, H = (y1 - y0) * k, yb = oy + H + 8, xr = ox + W + 8; c.strokeStyle = P.dim; c.fillStyle = P.dim; c.lineWidth = 1; c.font = '10px ' + css('--mono');
+  const tick = (x, y, h) => { c.beginPath(); c.moveTo(x - (h ? 0 : 3), y - (h ? 3 : 0)); c.lineTo(x + (h ? 0 : 3), y + (h ? 3 : 0)); c.stroke(); };
+  c.beginPath(); c.moveTo(ox, yb); c.lineTo(ox + W, yb); c.stroke(); tick(ox, yb, true); tick(ox + W, yb, true); c.textAlign = 'center'; c.fillText(br(x1 - x0, 1) + ' mm', ox + W / 2, yb + 12);
+  c.beginPath(); c.moveTo(xr, oy); c.lineTo(xr, oy + H); c.stroke(); tick(xr, oy, false); tick(xr, oy + H, false); c.save(); c.translate(xr + 11, oy + H / 2); c.rotate(-Math.PI / 2); c.fillText(br(y1 - y0, 1) + ' mm', 0, 0); c.restore();
+}
+function gtPal() { const P = pal(); P.ink = S.printing ? '#1c2a4d' : css('--ink'); P.dim = P.amb; return P; }
+/* gráficos */
+function gtCurva(cv, campo, ylabel, h) {
+  const { it, G } = gtCalc(), U = it.filter(gtUsada), gx = Array.from({ length: G }, (_, g) => g * 100 / (G - 1)), R = U.map(x => x.cv[campo]);
+  const m = gx.map((_, g) => TH.mean(R.map(r => r[g]))), s = gx.map((_, g) => TH.std(R.map(r => r[g]), 1)), lo = m.map((v, g) => v - 2 * s[g]), hi = m.map((v, g) => v + 2 * s[g]);
+  const [a, b] = extent([lo, hi, ...R], 0.06), F = frame(cv, [0, 100], [campo === 'tt' ? 0 : Math.min(0, a), b], { h, xlabel: 'posição no traçado (% do caminho com a caneta no papel)', ylabel });
+  bandFill(F, gx, lo, hi, F.P.band); R.forEach(r => polyline(F, gx, r, F.P.acc, 0.6)); F.c.globalAlpha = 1; polyline(F, gx, m, F.P.fg, 1.4, Infinity, [5, 3]); F.done();
+}
+function gtBarras(cv, key, h) {
+  const { it } = gtCalc(), N = it.length, U = it.filter(gtUsada), vals = U.map(x => x.m[key]), mu = TH.mean(vals), sd = TH.std(vals, 1), all = it.filter(x => !x.err).map(x => x.m[key]);
+  const ymax = Math.max(...all, mu + 2 * sd) * 1.12, F = frame(cv, [0.3, N + 0.7], [0, ymax], { h, ylabel: gtLbl(key).replace(/^.*\(/, '').replace(')', ''), xlabel: 'assinatura', xfmt: v => (Number.isInteger(v) && v >= 1 && v <= N && (v === 1 || v % 5 === 0) ? 'A' + v : '') }), { c, X, Y, P } = F;
+  c.fillStyle = P.band; c.globalAlpha = 0.18; c.fillRect(X(0.3), Y(mu + 2 * sd), X(N + 0.7) - X(0.3), Y(Math.max(0, mu - 2 * sd)) - Y(mu + 2 * sd)); c.globalAlpha = 1;
+  c.strokeStyle = P.fg; c.setLineDash([5, 3]); c.beginPath(); c.moveTo(X(0.3), Y(mu)); c.lineTo(X(N + 0.7), Y(mu)); c.stroke(); c.setLineDash([]);
+  const bw = (X(1) - X(0)) * 0.62;
+  it.forEach(x => { if (x.err) return; const v = x.m[key], x0 = X(x.i + 1) - bw / 2; if (gtUsada(x)) { c.fillStyle = P.acc; c.fillRect(x0, Y(v), bw, Y(0) - Y(v)); } else { c.strokeStyle = P.mut; c.setLineDash([2, 2]); c.strokeRect(x0, Y(v), bw, Y(0) - Y(v)); c.setLineDash([]); c.fillStyle = P.mut; c.font = '10px ' + css('--sans'); c.textAlign = 'center'; c.fillText('✕', X(x.i + 1), Y(v) - 3); } });
+  F.done();
+}
+const GT_CURVAS = [['vel', 'Velocidade ao longo do traçado', 'v', 'mm/s', 'Velocidade da caneta em cada ponto do traçado: linhas finas = cada assinatura usada, tracejado = média, faixa = média ± 2 desvios.'],
+  ['pres', 'Pressão ao longo do traçado', 'pr', 'adim. (0–1)', 'Pressão da caneta em cada ponto do traçado, adimensional (0 a 1): mesma leitura das linhas e da faixa.'],
+  ['tempo', 'Tempo até cada ponto do traçado', 'tt', 's', 'Quanto tempo a pessoa levou para chegar a cada ponto: onde as curvas sobem mais, a escrita é mais lenta.']];
+const GT_BARRAS = [['tempo total (s)', 'Tempo total por assinatura', 'Duração de cada assinatura: azul = usada, tracejada com ✕ = não usada; faixa = média ± 2 desvios das usadas.'],
+  ['pressão média (gf)', 'Pressão média por assinatura', 'Pressão média com a caneta no papel em cada assinatura (adimensional).'],
+  ['velocidade média (mm/s)', 'Velocidade média por assinatura', 'Caminho percorrido dividido pelo tempo, em cada assinatura.']];
+/* ---------- aba ---------- */
+function renderGT() {
+  document.body.classList.add('gt-on'); const box = $('#gt'); if (!box) return;
+  if (!GT) { const r = colLoad(), sv = gtLoad();
+    box.innerHTML = `<div class="card gt-intro"><h3>Grafoscopia Tradicional · registro dinâmico das assinaturas-padrão</h3>
+      <p>Para enriquecer um laudo grafotécnico tradicional, em que a questionada fica no papel. Coletam-se <b>20 assinaturas</b> na mesa. <b>Nenhuma é refeita</b>: depois, o perito escolhe quais não usar, com o motivo registrado. O relatório em PDF traz os gráficos dinâmicos (pressão, velocidade, tempo), as medidas, a variabilidade de punho, as assinaturas em tamanho real (1:1) com as medidas em mm e a amamnese, para ser anexado ao laudo.</p>
+      <p class="fine">O relatório descreve a escrita de quem forneceu os padrões. Não compara com a questionada e não conclui sobre autoria.</p>
+      <div class="gt-form"><label>Quem fornece as assinaturas <input id="gt-nome" placeholder="nome completo" autocomplete="off"></label><label>Processo / referência <input id="gt-proc0" placeholder="opcional" autocomplete="off"></label>
+      <label class="ck"><input type="checkbox" id="gt-ruido" checked> medir o ruído da mesa antes (2 s com a caneta parada)</label></div>
+      <p class="fine bad" id="gt-err"></p>
+      <div class="gt-acts"><button type="button" class="btn pri" id="gt-start">Iniciar coleta de 20 assinaturas ▶</button>${r && r.gt ? `<button type="button" class="btn" id="gt-resume">Retomar coleta: ${escH(r.signatario)} · ${r.P.filter(Boolean).length} de 20</button>` : ''}${sv ? `<button type="button" class="btn" id="gt-last">Abrir a última: ${escH(sv.col.signatario)} · ${sv.col.P.length} assinaturas</button>` : ''}<label class="btn">Abrir arquivo…<input type="file" id="gt-file" accept=".json,application/json" hidden></label></div>
+      <p class="fine" id="gt-st"></p></div>`;
+    return;
+  }
+  const { it, keys } = gtCalc(), U = it.filter(gtUsada), col = GT.col, nEx = it.length - U.length, vr = U.length >= 3 ? gtVar(U) : null;
+  const k = Math.min(6, ...it.map(x => Math.min(150 / Math.max(x.a.w, 1), 60 / Math.max(x.a.h, 1)))); // mesma escala em todas as miniaturas
+  box.innerHTML = `<div class="card c-full gt-head"><h3><span>Grafoscopia Tradicional · ${escH(col.signatario)}</span><span class="grp"><button type="button" class="btn" id="gt-save">salvar coleta</button><button type="button" class="btn pri" id="gt-pdf">Gerar relatório PDF</button><button type="button" class="btn" id="gt-close">fechar</button></span></h3>
+      <div class="gt-kv"><span>Coleta</span><b>${new Date(col.criado).toLocaleString('pt-BR')}</b><span>Assinaturas</span><b>${it.length} coletadas · ${U.length} usadas · ${nEx} não usadas</b><span>Equipamento</span><b>${escH(col.mesa)}</b><span>Ruído</span><b>${col.ruido_sg ? 'medido antes da coleta' : 'valor de referência'}</b><span>SHA-256 da coleta</span><b class="mono">${GT.sha}</b></div>
+      <div class="gt-form"><label>Processo / referência <input id="gt-proc" value="${escH(GT.proc)}" autocomplete="off"></label><label>Perito responsável <input id="gt-perito" value="${escH(GT.perito)}" autocomplete="off"></label></div><p class="fine" id="gt-pdf-st"></p></div>
+    <div class="card c-full"><h3><span>Amamnese</span><span class="fine">vai para o relatório · cada alteração fica no registro de acessos</span></h3><textarea id="gt-amn" rows="5" placeholder="Situações que envolveram a captura: local, postura (sentado, em pé), apoio, mão usada, estado de saúde relatado, uso de óculos, medicação, nervosismo, interrupções, quem estava presente, o que mais o perito julgar relevante.">${escH(GT.amn)}</textarea></div>
+    <div class="card c-full"><h3><span>Assinaturas coletadas · todas na mesma escala</span><span class="fine">nenhuma foi refeita · desmarque para não usar na análise (motivo obrigatório)</span></h3><div class="gt-gal">${it.map(x => `<div class="gt-it${gtUsada(x) ? '' : ' off'}" data-i="${x.i}"><canvas data-gs="${x.i}" style="width:${Math.ceil(x.a.w * k + 60)}px;height:${Math.ceil(x.a.h * k + 34)}px"></canvas>
+      <div class="gt-cap"><b>${gtId(x.i)}</b> · ${br(x.a.w, 1)} × ${br(x.a.h, 1)} mm${x.err ? ` · <span class="bad">${x.err}</span>` : ` <label class="ck"><input type="checkbox" data-use="${x.i}"${GT.excl[x.i] ? '' : ' checked'}> usar</label>`}</div>
+      ${GT.excl[x.i] ? `<div class="gt-mot">não usada: ${escH(GT.excl[x.i].motivo)}</div>` : ''}<div class="gt-ask" hidden><input placeholder="motivo para não usar" data-mot="${x.i}"><button type="button" class="btn" data-exc="${x.i}">confirmar</button><button type="button" class="btn" data-canc="${x.i}">cancelar</button></div></div>`).join('')}</div>
+      <p class="fine cap1">Cotas em mm medidas na mesa (área ativa 106 × 66 mm). No relatório em PDF, cada assinatura sai em tamanho real (1:1).</p></div>
+    ${U.length < 3 ? '<div class="card c-full"><p class="bad">Menos de 3 assinaturas usadas: não há como calcular a variação.</p></div>' : `
+    <div class="card gt-var"><h3>Variabilidade de punho</h3><div class="varp gt-vp">${VAR_LV.map(([t, cc], i) => { const on = vr && i === vr.lv; return `<div class="vl${on ? ' on' : ''}" style="${on ? `background:${cc}1c;box-shadow:inset 0 0 0 1.5px ${cc}` : ''}">${varFace(i, cc, on)}<b style="${on ? 'color:' + cc : ''}">${String(i + 1).padStart(2, '0')} · ${t}${on ? `<em>variação típica ${br(vr.typ, 1)}%</em>` : ''}</b></div>`; }).join('')}</div><p class="fine cap1">Mediana da variação (desvio ÷ média) das ${U.length} assinaturas usadas em 7 medidas principais; cortes ainda a calibrar.${vr && vr.top ? ` Mais variável: ${VAR_NOME[vr.top[0]]} (${br(vr.top[1], 0)}%).` : ''}</p></div>
+    <div class="card gt-med"><h3>Medidas das ${U.length} assinaturas usadas</h3><div class="tw"><table class="it gt-tab"><thead><tr><th>medida</th><th>média ± desvio</th><th>variação</th><th>mín – máx</th></tr></thead><tbody>${keys.map(key => { const a = U.map(x => x.m[key]).filter(Number.isFinite), mu = TH.mean(a), sd = TH.std(a, 1), d = Math.abs(mu) >= 100 ? 0 : Math.abs(mu) >= 10 ? 1 : 2;
+      return `<tr><td>${gtLbl(key)}</td><td class="mono">${br(mu, d)} ± ${br(sd, d)}</td><td class="mono">${Math.abs(mu) > 1e-9 ? br(100 * sd / Math.abs(mu), 0) + '%' : '—'}</td><td class="mono">${br(Math.min(...a), d)} – ${br(Math.max(...a), d)}</td></tr>`; }).join('')}</tbody></table></div><p class="fine cap1">Variação = desvio ÷ média: quanto a pessoa muda de uma assinatura para outra nessa medida.</p></div>
+    ${GT_CURVAS.map(([id, t, , , cap]) => `<div class="card span2"><h3>${t}</h3><canvas id="gt-c-${id}" class="ch"></canvas><p class="fine cap1">${cap}</p></div>`).join('')}
+    ${GT_BARRAS.map(([, t, cap], j) => `<div class="card span2"><h3>${t}</h3><canvas id="gt-b-${j}" class="ch"></canvas><p class="fine cap1">${cap}</p></div>`).join('')}`}
+    ${nEx ? `<div class="card c-full"><h3>Assinaturas não usadas e motivo</h3><div class="tw"><table class="it"><tbody>${it.filter(x => !gtUsada(x)).map(x => `<tr><td class="mono">${gtId(x.i)}</td><td>${escH(x.err || GT.excl[x.i].motivo)}</td><td class="fine">${x.err ? 'automático' : GT.excl[x.i].ts}</td></tr>`).join('')}</tbody></table></div></div>` : ''}`;
+  const P = gtPal();
+  $$('#gt [data-gs]').forEach(cv => { const x = it[+cv.dataset.gs], { c } = setup(cv, cv.clientHeight); gtSigDraw(c, x.a, k, 6, 6, P); });
+  if (U.length >= 3) { GT_CURVAS.forEach(([id, , campo, yl]) => gtCurva($('#gt-c-' + id), campo, yl)); GT_BARRAS.forEach(([key], j) => gtBarras($('#gt-b-' + j), key)); }
+}
+/* ---------- relatório em PDF ---------- */
+async function gtImg(fn, w, h) {
+  const cv = document.createElement('canvas'); cv.style.cssText = `width:${w}px;height:${h}px;position:fixed;left:-9999px`; document.body.appendChild(cv); S.printing = true;
+  try { fn(cv, h); const x = cv.getContext('2d'); x.globalCompositeOperation = 'destination-over'; x.fillStyle = '#fff'; x.fillRect(0, 0, cv.width, cv.height); return cv.toDataURL('image/png'); } finally { S.printing = false; cv.remove(); }
+}
+function gtSigPNG(a, ppm = 16) { // imagem com 1 mm de margem: colocada no PDF com (largura + 2) mm, sai em tamanho real
+  const on = a.s.filter(s => s[4]), xs = on.map(s => s[1]), ys = on.map(s => s[2]), w = Math.max(...xs) - Math.min(...xs) + 2, h = Math.max(...ys) - Math.min(...ys) + 2;
+  const cv = document.createElement('canvas'); cv.width = Math.ceil(w * ppm); cv.height = Math.ceil(h * ppm); const c = cv.getContext('2d'); c.fillStyle = '#fff'; c.fillRect(0, 0, cv.width, cv.height);
+  S.printing = true; try { gtSigDraw(c, a, ppm, ppm, ppm, gtPal(), false); } finally { S.printing = false; }
+  return { url: cv.toDataURL('image/png'), w: cv.width / ppm, h: cv.height / ppm };
+}
+async function gtPDF() {
+  const st = $('#gt-pdf-st'); st.textContent = 'Montando o relatório…'; await new Promise(r => setTimeout(r, 30));
+  const { jsPDF } = window.jspdf, doc = new jsPDF({ unit: 'mm', format: 'a4' }), Wp = 210, L = 18, R = Wp - 18, { it, keys } = gtCalc(), U = it.filter(gtUsada), col = GT.col, now = new Date(); let y = 20;
+  const T = (t, x, yy, o = {}) => { doc.setFont('helvetica', o.b ? 'bold' : 'normal'); doc.setFontSize(o.s || 10); doc.setTextColor(o.c || '#1b2230'); const ln = doc.splitTextToSize(latin(String(t).replace(/²/g, '^2')), o.w || R - x); doc.text(ln, x, yy); return yy + ln.length * (o.s || 10) * 0.42 + (o.gap ?? 1.5); };
+  const need = h => { if (y + h > 280) { doc.addPage(); y = 20; } };
+  const H2 = t => { need(14); y += 3; y = T(t, L, y, { b: true, s: 12 }); doc.setDrawColor('#c9cfd9'); doc.line(L, y - 1, R, y - 1); y += 3; };
+  y = T('THOTH 1 · GRAFOSCOPIA TRADICIONAL', L, y, { b: true, s: 9, c: '#5d6878' }); y = T('Relatório de registro dinâmico das assinaturas-padrão', L, y + 1, { b: true, s: 15 }); y = T('Anexo ao laudo grafotécnico', L, y, { s: 10.5, c: '#5d6878' }); y += 3;
+  const kv = [['Processo / referência', GT.proc || 'não informado'], ['Fornecedor das assinaturas', col.signatario], ['Perito responsável', GT.perito || 'não informado'], ['Data e hora da coleta', new Date(col.criado).toLocaleString('pt-BR')],
+    ['Equipamento', col.mesa], ['Assinaturas', `${it.length} coletadas · ${U.length} usadas na análise · ${it.length - U.length} não usadas`], ['Ruído da mesa', col.ruido_sg ? 'medido antes da coleta (2 s com a caneta parada)' : 'valor de referência do equipamento'],
+    ['SHA-256 dos dados da coleta', GT.sha], ['Relatório gerado em', now.toLocaleString('pt-BR')]];
+  for (const [a, b] of kv) { const y0 = y; T(a, L, y, { s: 8.5, c: '#5d6878', w: 50 }); y = Math.max(T(b, L + 52, y0, { s: 9, w: R - L - 52 }), y0 + 4.5); }
+  H2('1. Finalidade e limites');
+  y = T(`Este relatório registra a dinâmica da escrita (pressão, velocidade, tempo e traçado) das assinaturas fornecidas por ${col.signatario}, coletadas em mesa digitalizadora, e a variação natural entre elas. Destina-se a enriquecer o exame grafotécnico tradicional. Não compara as assinaturas com a peça questionada e não emite conclusão sobre autoria: o exame e a conclusão são do perito, no laudo.`, L, y, { s: 9.5 });
+  H2('2. Amamnese'); y = T(GT.amn.trim() || '(não preenchida pelo perito)', L, y, { s: 9.5, c: GT.amn.trim() ? '#1b2230' : '#8a919c' });
+  H2('3. Protocolo da coleta');
+  for (const t of ['Cada assinatura só foi gravada depois que o operador a liberou (sinal sonoro de três bipes e campo verde); nada foi gravado fora dessa janela.', 'Campo de assinatura em tamanho real (60 × 20 mm) na mesa; posição e pressão registradas desde o primeiro toque da caneta.', 'Nenhuma assinatura foi refeita, apagada ou substituída durante a coleta. As que o perito decidiu não usar continuam neste relatório, com o motivo.', 'Pressão adimensional (0 a 1), lida da caneta pela mesa; sem clip, portanto sem inclinação nem rotação da caneta.'])
+    y = T('• ' + t, L, y, { s: 9 });
+  H2(`4. Medidas das ${U.length} assinaturas usadas`);
+  if (U.length >= 3) {
+    const vr = gtVar(U); if (vr) y = T(`Variabilidade de punho: nível ${String(vr.lv + 1).padStart(2, '0')} · ${VAR_LV[vr.lv][0]} (variação típica ${br(vr.typ, 1)}%; cortes ainda a calibrar). Medida mais variável: ${VAR_NOME[vr.top[0]]} (${br(vr.top[1], 0)}%).`, L, y, { s: 9.5, b: true });
+    y += 1; const cx = [L, L + 72, L + 112, L + 134]; doc.setFillColor('#eef1f5'); doc.rect(L, y - 3.6, R - L, 5.2, 'F'); ['medida', 'média ± desvio', 'variação', 'mín – máx'].forEach((h, j) => T(h, cx[j] + 1, y, { b: true, s: 8.5 })); y += 5;
+    for (const key of keys) { const a = U.map(x => x.m[key]).filter(Number.isFinite), mu = TH.mean(a), sd = TH.std(a, 1), d = Math.abs(mu) >= 100 ? 0 : Math.abs(mu) >= 10 ? 1 : 2; need(5);
+      [gtLbl(key), `${br(mu, d)} ± ${br(sd, d)}`, Math.abs(mu) > 1e-9 ? br(100 * sd / Math.abs(mu), 0) + '%' : '-', `${br(Math.min(...a), d)} – ${br(Math.max(...a), d)}`].forEach((v, j) => T(v, cx[j] + 1, y, { s: 8.5, gap: 0 })); doc.setDrawColor('#e3e7ee'); doc.line(L, y + 1.4, R, y + 1.4); y += 4.8; }
+    y = T('Variação = desvio ÷ média. Desvio amostral das assinaturas usadas.', L, y + 1, { s: 8, c: '#5d6878' });
+    H2('5. Gráficos dinâmicos');
+    for (const [id, t, campo, yl, cap] of GT_CURVAS) { need(70); y = T(t, L, y, { b: true, s: 9.5 }); const url = await gtImg((cv, h) => gtCurva(cv, campo, yl, h), 760, 250); doc.addImage(url, 'PNG', L, y, R - L, (R - L) * 250 / 760); y += (R - L) * 250 / 760 + 1.5; y = T(cap, L, y, { s: 8, c: '#5d6878' }) + 2; }
+    for (let j = 0; j < GT_BARRAS.length; j += 2) { need(62); const wC = (R - L - 6) / 2, hC = wC * 230 / 420;
+      for (const q of [0, 1]) { const b = GT_BARRAS[j + q]; if (!b) continue; const x0 = L + q * (wC + 6); T(b[1], x0, y, { b: true, s: 9, w: wC }); const url = await gtImg((cv, h) => gtBarras(cv, b[0], h), 420, 230); doc.addImage(url, 'PNG', x0, y + 2, wC, hC); T(b[2], x0, y + hC + 5, { s: 7.5, c: '#5d6878', w: wC }); }
+      y += hC + 16; }
+  } else y = T('Menos de 3 assinaturas usadas: sem medidas de variação.', L, y, { s: 9.5 });
+  const nus = it.filter(x => !gtUsada(x)); H2('6. Assinaturas não usadas e motivo');
+  if (!nus.length) y = T('Todas as assinaturas coletadas foram usadas.', L, y, { s: 9.5 }); else for (const x of nus) { need(6); y = T(`${gtId(x.i)} · ${x.err || GT.excl[x.i].motivo}${x.err ? ' (automático)' : ' · decisão do perito em ' + GT.excl[x.i].ts}`, L, y, { s: 9 }); }
+  doc.addPage(); y = 20; H2('7. Assinaturas em tamanho real (1:1)');
+  y = T('Imprimir em escala 100% ("tamanho real", sem ajustar à página). Confira a impressão com a régua de 50 mm abaixo. Cotas em mm medidas na mesa.', L, y, { s: 9 });
+  const regua = yy => { doc.setDrawColor('#1b2230'); doc.setLineWidth(0.3); doc.line(L, yy, L + 50, yy); for (let i = 0; i <= 50; i += 5) doc.line(L + i, yy, L + i, yy - (i % 10 ? 1.2 : 2.2)); T('0', L - 0.8, yy + 3.2, { s: 6.5 }); T('50 mm', L + 46, yy + 3.2, { s: 6.5 }); };
+  regua(y + 4); y += 12; const colW = (R - L) / 2;
+  for (let j = 0; j < it.length; j += 2) {
+    const par = [it[j], it[j + 1]].filter(Boolean).map(x => ({ x, im: gtSigPNG(x.a) })), hRow = Math.max(...par.map(p => p.im.h)) + 16; if (y + hRow > 282) { doc.addPage(); y = 20; regua(y); y += 8; }
+    par.forEach(({ x, im }, q) => { const x0 = L + q * colW, u = gtUsada(x);
+      T(`${gtId(x.i)} · ${br(x.a.w, 1)} × ${br(x.a.h, 1)} mm · ${u ? 'usada' : 'NÃO USADA'}`, x0, y, { s: 8, b: true, c: u ? '#1b2230' : '#c8372d' });
+      const iy = y + 2; doc.addImage(im.url, 'PNG', x0, iy, im.w, im.h); const W = x.a.w, H = x.a.h, yb = iy + im.h + 1.5, xr = x0 + im.w + 1.5;
+      doc.setDrawColor('#c47a0a'); doc.setLineWidth(0.2); doc.line(x0 + 1, yb, x0 + 1 + W, yb); doc.line(x0 + 1, yb - 1, x0 + 1, yb + 1); doc.line(x0 + 1 + W, yb - 1, x0 + 1 + W, yb + 1); T(br(W, 1) + ' mm', x0 + 1 + W / 2 - 5, yb + 3.2, { s: 7, c: '#c47a0a' });
+      doc.line(xr, iy + 1, xr, iy + 1 + H); doc.line(xr - 1, iy + 1, xr + 1, iy + 1); doc.line(xr - 1, iy + 1 + H, xr + 1, iy + 1 + H); doc.setFontSize(7); doc.setTextColor('#c47a0a'); doc.text(latin(br(H, 1) + ' mm'), xr + 3.2, iy + 1 + H / 2 + 5, { angle: 90 }); });
+    y += hRow;
+  }
+  const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor('#8a919c'); doc.text(latin(`Thoth 1 · Grafoscopia Tradicional · ${col.signatario} · coleta SHA-256 ${GT.sha.slice(0, 16)}… · página ${i} de ${n}`), L, 290); }
+  const nome = col.signatario.normalize('NFD').replace(/\p{Mn}/gu, '').replace(/[^\w]+/g, '_').slice(0, 30);
+  doc.save(`thoth-grafoscopia-${nome}-${col.criado.slice(0, 10)}.pdf`);
+  log('grafoscopia: gerou relatório PDF', `${U.length} usadas · ${it.length - U.length} não usadas · amamnese ${GT.amn.trim().length} caracteres`); st.textContent = '✓ Relatório gerado (o download começa sozinho).';
+}
+/* ---------- eventos da aba ---------- */
+{
+  const novoId = () => Array.from(crypto.getRandomValues(new Uint8Array(6)), b => b.toString(16).padStart(2, '0')).join('');
+  let amnT = 0;
+  document.addEventListener('click', async e => {
+    const t = e.target; if (!t.closest || !t.closest('#gt')) return;
+    if (t.id === 'gt-start') { const nome = $('#gt-nome').value.trim(); if (nome.length < 3) { $('#gt-err').textContent = 'Informe quem vai fornecer as assinaturas.'; return; }
+      COL = { formato: 'thoth-coleta-v1', id: novoId(), criado: new Date().toISOString(), signatario: nome, tipo: 'não se aplica', mesa: 'Huion Inspiroy H420X · navegador (Windows Ink) · área inteira 106 × 66 mm', tela: [screen.width, screen.height], ruido_sg: null, ruido: null, Q: null, P: [], descartes: 0, gt: true, proc: $('#gt-proc0').value.trim() };
+      log('grafoscopia: iniciou coleta', `${nome} · 20 assinaturas · sem refazer`); colSave(); liveOpen($('#gt-ruido').checked ? 'ruido' : 'p'); return; }
+    if (t.id === 'gt-resume') { COL = colLoad(); if (!COL) return; log('grafoscopia: retomou coleta', `${COL.signatario} · ${nP()} assinaturas`); liveOpen('p'); return; }
+    if (t.id === 'gt-last') { const v = gtLoad(); if (v) gtAbrir(v.col, false, v); return; }
+    if (t.id === 'gt-close') { log('grafoscopia: fechou', GT ? GT.col.signatario : ''); GT = null; renderGT(); return; }
+    if (t.id === 'gt-save') { const corpo = { formato: GT_FMT, col: { ...colCorpo(GT.col), sha256: GT.sha }, excl: GT.excl, amn: GT.amn, proc: GT.proc, perito: GT.perito };
+      const a = document.createElement('a'), nome = GT.col.signatario.normalize('NFD').replace(/\p{Mn}/gu, '').replace(/[^\w]+/g, '_').slice(0, 30); a.href = URL.createObjectURL(new Blob([JSON.stringify(corpo)], { type: 'application/json' })); a.download = `thoth-grafoscopia-${nome}-${GT.col.criado.slice(0, 10)}.json`; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+      log('grafoscopia: salvou coleta em arquivo', `SHA-256 ${GT.sha.slice(0, 16)}…`); return; }
+    if (t.id === 'gt-pdf') { try { await gtPDF(); } catch (err) { $('#gt-pdf-st').textContent = 'Não foi possível gerar o PDF: ' + err.message; } return; }
+    const ex = t.dataset.exc, ca = t.dataset.canc;
+    if (ex != null) { const i = +ex, mot = $(`#gt [data-mot="${i}"]`).value.trim(); if (mot.length < 3) { $(`#gt [data-mot="${i}"]`).focus(); $(`#gt [data-mot="${i}"]`).placeholder = 'escreva o motivo (obrigatório)'; return; }
+      GT.excl[i] = { motivo: mot, ts: new Date().toLocaleString('pt-BR') }; log('grafoscopia: assinatura não usada', `${gtId(i)} · motivo: ${mot}`); gtSave(); renderGT(); return; }
+    if (ca != null) { renderGT(); return; }
+  });
+  document.addEventListener('change', async e => {
+    const t = e.target; if (!t.closest || !t.closest('#gt')) return;
+    if (t.dataset.use != null) { const i = +t.dataset.use;
+      if (!t.checked) { const box = t.closest('.gt-it').querySelector('.gt-ask'); box.hidden = false; box.querySelector('input').focus(); return; }
+      if (GT.excl[i]) { log('grafoscopia: assinatura voltou a ser usada', `${gtId(i)} · motivo anterior: ${GT.excl[i].motivo}`); delete GT.excl[i]; gtSave(); renderGT(); } return; }
+    if (t.id === 'gt-proc' || t.id === 'gt-perito') { GT[t.id === 'gt-proc' ? 'proc' : 'perito'] = t.value.trim(); gtSave(); log('grafoscopia: identificação', `${t.id === 'gt-proc' ? 'processo' : 'perito'}: ${t.value.trim()}`); return; }
+    if (t.id === 'gt-amn') { const h = await TH.sha256hex(GT.amn); log('grafoscopia: amamnese registrada', `${GT.amn.trim().length} caracteres · hash ${h.slice(0, 12)}`); return; }
+    if (t.id === 'gt-file') { const f = t.files[0]; if (!f) return; const st = $('#gt-st');
+      try { const v = JSON.parse(await f.text()); if (v.formato !== GT_FMT || !v.col) throw new Error('não é uma coleta de Grafoscopia Tradicional do Thoth');
+        const c = { ...v.col }; const sha = await TH.sha256hex(TH.canonJSON(colCorpo(c))); if (v.col.sha256 !== sha) throw new Error('os dados da coleta não conferem com o SHA-256 gravado (arquivo alterado)');
+        log('grafoscopia: abriu arquivo', `${f.name} · SHA-256 ${sha.slice(0, 16)}… confere`); gtAbrir(c, false, v);
+      } catch (err) { st.textContent = '✗ ' + err.message; st.className = 'fine bad'; } t.value = ''; }
+  });
+  document.addEventListener('input', e => { if (e.target.id === 'gt-amn' && GT) { GT.amn = e.target.value; clearTimeout(amnT); amnT = setTimeout(gtSave, 400); } });
+  document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset && e.target.dataset.mot != null) { e.preventDefault(); $(`#gt [data-exc="${e.target.dataset.mot}"]`).click(); } });
 }
 
 bind(); watermark(); loadCase();
