@@ -306,6 +306,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
 .gt-gal { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px } .gt-it { border: 1px solid var(--line); border-radius: 8px; padding: 6px 8px; background: var(--panel); max-width: 100% } .gt-it canvas { display: block; max-width: 100% }
 .gt-it.off { opacity: .55; border-style: dashed } .gt-cap { font-size: 12px; display: flex; gap: 6px; align-items: center; flex-wrap: wrap } .gt-cap label.ck { margin-left: auto; display: inline-flex; gap: 4px; align-items: center; cursor: pointer }
 .gt-mot { font-size: 11.5px; color: var(--red); margin-top: 2px; max-width: 260px } .gt-ask { display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap } .gt-ask[hidden] { display: none } .gt-ask input { flex: 1 1 140px; padding: 4px 6px; border: 1px solid var(--line); border-radius: 6px; font: inherit; font-size: 12px; background: var(--panel); color: var(--ink) }
+.gt-bars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 6px } .gt-bt { font-size: 12px; font-weight: 600 } @media (max-width: 900px) { .gt-bars { grid-template-columns: minmax(0, 1fr) } }
 .gt-var { grid-column: span 1 } .gt-vp { border-left: 0; padding-left: 0 } .gt-vp .vl { flex: none } .gt-med { grid-column: span 3 } .gt-tab td:first-child { white-space: nowrap }
 @media (max-width: 1150px) { .gt-var, .gt-med { grid-column: 1 / -1 } }
 .estab { overflow-x: auto } .estab table { border-collapse: separate; border-spacing: 2px; font-size: 11px } .estab th { font-weight: 500; color: var(--muted); text-align: right; padding-right: 6px; white-space: nowrap }
@@ -318,21 +319,21 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
   <div id="wm" aria-hidden="true"></div>
   <header class="dev">
     <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
-    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no laudo.">revelar (fica registrado)</button></div><div class="sub" id="h-pad">Padrões: 20 coletas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
+    <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no relatório.">revelar (fica registrado)</button></div><div class="sub" id="h-pad">Padrões: 20 coletas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
     <div class="livebtn"><button type="button" id="btn-live" title="Assinar na mesa digitalizadora e ver os gráficos dessa assinatura (demonstração)"><span class="pen">✎</span> Captura ao vivo</button></div>
     <div class="ghost"><button type="button" id="btn-mode" title="Alternar a questionada: imitação, verdadeira ou mesma forma com construção diferente">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
   </header>
   <nav class="tabs" aria-label="Abas do painel">
     <button type="button" class="tab on" data-tab="analise">Análise</button>
     <button type="button" class="tab" data-tab="crus">Dados crus (somente leitura)</button>
-    <button type="button" class="tab" data-tab="integ">Integridade e laudo</button>
+    <button type="button" class="tab" data-tab="integ">Integridade e relatório</button>
     <button type="button" class="tab" data-tab="gt">Grafoscopia Tradicional</button>
     <button type="button" class="tab" data-tab="tut">Tutorial</button>
   </nav>
 
   <section id="live-view" aria-label="Captura ao vivo">
     <div class="lv-bar"><div class="lv-tt"><span class="lv-dot" aria-hidden="true"></span><b>Captura ao vivo</b><span class="fine" id="lv-meta"></span></div><div class="grp"><button type="button" class="btn" id="lv-new">✎ nova captura</button><button type="button" class="btn" id="lv-exit">voltar ao caso simulado</button></div></div>
-    <p class="lv-note">Demonstração com uma assinatura sozinha: sem padrões, sem comparação, sem classificação e sem laudo. A pressão é a da mesa, <b>adimensional</b> (0 a 1, sem calibração em gramas-força). Sem o clip não há inclinação. Faixa âmbar nos gráficos: caneta no ar; faixa cinza: caneta fora do alcance da mesa.</p>
+    <p class="lv-note">Demonstração com uma assinatura sozinha: sem padrões, sem comparação, sem classificação e sem relatório. A pressão é a da mesa, <b>adimensional</b> (0 a 1, sem calibração em gramas-força). Sem o clip não há inclinação. Faixa âmbar nos gráficos: caneta no ar; faixa cinza: caneta fora do alcance da mesa.</p>
     <div class="grid lv-grid">
       <div class="card c-full lv-c" style="--d:0"><h3><span>Desenho capturado na mesa</span><button type="button" class="btn" id="lv-play">▶ reproduzir no tempo real</button></h3><canvas id="lv-sig"></canvas></div>
       <div class="card c-full lv-c" style="--d:1"><h3>Medidas desta assinatura</h3><div id="lv-tiles" class="lv-tiles"></div></div>
@@ -360,7 +361,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <span class="note">⤢ no canto de um gráfico para ampliar · dados não saem do sistema</span>
     </div>
     <div class="grid">
-      <div class="card c-full" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços, o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
+      <div class="card c-full" id="card-sig"><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine">Cinza: <span class="np">20</span> padrões · azul: questionada · pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos traços; I (verde) = início, T (vermelho) = término e ‖ (âmbar) = parada, com a duração (caneta parada no papel por 0,1 s ou mais); o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
       <div class="card c-full" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas><p class="fine cap1">Quanto tempo a caneta passou em cada velocidade: cinza = padrões, azul = questionada.</p></div>
       <div class="card"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><p class="fine cap1">Pressão ao longo do caminho da caneta, não do tempo: faixa cinza = pessoa, azul = questionada.</p><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
@@ -378,8 +379,8 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><p class="fine cap1">Variações ainda mais finas: picos marcam microcorreções do traço.</p><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi colhido) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
       <div class="card span2 c-left"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
-      <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o laudo.</p></div>
-      <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os <span class="np">20</span> padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos <span class="np">20</span> padrões sai quando testado contra os outros <span class="np-1">19</span>). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Cada linha é uma análise separada, com o seu resultado; o painel não junta as linhas numa conclusão. O conjunto mostra onde a assinatura se afasta e onde não. Os números de cada linha estão nos gráficos e no anexo do laudo.</p></div>
+      <div class="card span2 c-right"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o relatório.</p></div>
+      <div class="card c-full" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os <span class="np">20</span> padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos <span class="np">20</span> padrões sai quando testado contra os outros <span class="np-1">19</span>). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Cada linha é uma análise separada, com o seu resultado; o painel não junta as linhas numa conclusão. O conjunto mostra onde a assinatura se afasta e onde não. Os números de cada linha estão nos gráficos e no anexo do relatório.</p></div>
     </div>
   </section>
 
@@ -395,17 +396,17 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
   <section class="pane" id="pane-integ" hidden>
     <div class="two">
       <div class="card"><h3>Verificação de integridade <button type="button" class="btn" id="btn-verify2">Verificar agora</button></h3><div class="tw"><table class="it"><tbody id="integ"></tbody></table></div>
-        <h3 style="margin-top:8px">Parâmetros de cálculo (vão para o laudo)</h3><div class="tw"><table class="it"><tbody id="params"></tbody></table></div>
-        <h3 style="margin-top:8px">Abrir vista pelo código</h3><p class="fine" style="margin:0 0 4px">O código aparece em cada gráfico e em cada figura do laudo. Ele abre exatamente a mesma vista, para qualquer pessoa conferir uma figura.</p>
+        <h3 style="margin-top:8px">Parâmetros de cálculo (vão para o relatório)</h3><div class="tw"><table class="it"><tbody id="params"></tbody></table></div>
+        <h3 style="margin-top:8px">Abrir vista pelo código</h3><p class="fine" style="margin:0 0 4px">O código aparece em cada gráfico e em cada figura do relatório. Ele abre exatamente a mesma vista, para qualquer pessoa conferir uma figura.</p>
         <div class="grp" style="display:flex;flex-wrap:wrap;gap:6px"><label for="vcode" class="sr">Código da vista</label><input id="vcode" placeholder="ex.: 3F9A1C/tr_s0_r/7C1E" spellcheck="false" autocomplete="off"><button type="button" class="btn" id="vcode-go">abrir</button><button type="button" class="btn" id="vcode-ana">ir para a Análise</button></div><p class="fine" id="vcode-st" role="status"></p>
-        <h3 style="margin-top:8px">Vistas consultadas nesta sessão (vão para o laudo)</h3><div class="tw"><table class="it"><tbody id="vistas"></tbody></table></div></div>
+        <h3 style="margin-top:8px">Vistas consultadas nesta sessão (vão para o relatório)</h3><div class="tw"><table class="it"><tbody id="vistas"></tbody></table></div></div>
       <div class="card"><h3>Hipóteses e conclusão</h3><p class="fine" style="margin:0">O painel não sugere conclusão: nenhum campo vem marcado.</p>
         <div class="hyp"><div><b>Variação natural</b><span>medidas dentro da faixa dos padrões</span></div><div><b>Condição motora (idade, doença, medicação)</b><span>lentidão e mais trocas de aceleração e jerk, sem padrão de cópia</span></div><div><b>Disfarce pelo próprio autor</b><span>forma alterada, com traços motores residuais do autor</span></div><div><b>Imitação por terceiro</b><span>forma copiada, dinâmica de outro motor</span></div></div>
         <div class="grp"><label for="hip-h"><b>Hipótese</b></label><select id="hip-h"></select><label for="hip-c"><b>contra</b></label><select id="hip-c"></select></div>
         <div><b style="font-size:12.5px">Grau de suporte (escala verbal ENFSI / SWGDOC)</b><div class="grp" id="grau" style="margin-top:4px"></div></div>
         <label for="fund" class="fine">Fundamentação do perito</label><textarea id="fund" placeholder="Ex.: a questionada preserva a forma, mas leva quase o dobro do tempo, com mais levantamentos e menos energia na faixa de 5–8 Hz…"></textarea>
-        <div class="laudo"><b>Laudo</b><span>Leva as observações iniciais, a conclusão, medidas, parâmetros, os hashes dos <span class="np1">21</span> pacotes, a verificação de integridade, o registro de acessos e todas as vistas consultadas. Os gráficos do corpo do laudo são sempre da vista padrão; uma vista ajustada só entra em anexo, marcada. Não leva amostras cruas. Exige as observações iniciais.</span><span class="fine" id="obs-st"></span>
-          <button type="button" class="primary" id="btn-pdf">Gerar laudo em PDF</button><span class="fine" id="pdf-status" role="status"></span></div>
+        <div class="laudo"><b>Relatório</b><span>Leva as observações iniciais, a conclusão, medidas, parâmetros, os hashes dos <span class="np1">21</span> pacotes, a verificação de integridade, o registro de acessos e todas as vistas consultadas. Os gráficos do corpo do relatório são sempre da vista padrão; uma vista ajustada só entra em anexo, marcada. Não leva amostras cruas. Exige as observações iniciais.</span><span class="fine" id="obs-st"></span>
+          <button type="button" class="primary" id="btn-pdf">Gerar relatório em PDF</button><span class="fine" id="pdf-status" role="status"></span></div>
       </div>
     </div>
     <div class="card"><h3>Registro de acessos · encadeado por hash (ninguém apaga nem altera)</h3><div class="tw"><table class="raw"><thead><tr><th>Data/hora</th><th>Usuário</th><th>Ação</th><th>Detalhe</th><th>Hash</th></tr></thead><tbody id="log"></tbody></table></div></div>
@@ -472,7 +473,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="tutwarn"><b>Cuidados</b><ul>
         <li>Traço a traço e posição no traçado supõem que a questionada fez os mesmos traços, na mesma ordem. Se ela tiver traços a mais ou feitos em outra ordem, o encaixe pode juntar pedaços que não se correspondem. Confira a ordem dos traços na animação do desenho, em tempo real.</li>
         <li>Nos gráficos de pressão e na curva de deformação o eixo é sempre a posição no traçado, em qualquer modo.</li>
-        <li>No laudo, registre como conclusão o que se confirma em pelo menos dois modos, e diga qual modo sustenta cada observação.</li></ul></div>
+        <li>No relatório, registre como conclusão o que se confirma em pelo menos dois modos, e diga qual modo sustenta cada observação.</li></ul></div>
     </article>
     <article class="card tut" id="tut-gxy" data-card="gxy">
       <h3><span>Grandeza: X, Y ou resultante</span><span class="fine">exemplo ilustrativo · no caso: barra de ajustes da aba Análise</span></h3>
@@ -490,7 +491,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="tutwarn"><b>Cuidados</b><ul>
         <li>Trocar a grandeza muda de uma vez todos os quadros com título em laranja (histograma, velocidade, aceleração, potência, energias, área sob a velocidade, FFT e derivadas). O desenho, a pressão, as medidas, as elipses e a tabela verdade não mudam.</li>
         <li>Em X e Y, valores abaixo do zero não são erro: indicam o sentido do movimento (para a esquerda ou para baixo).</li>
-        <li>A troca fica no registro de acessos e a grandeza usada vai para o laudo.</li></ul></div>
+        <li>A troca fica no registro de acessos e a grandeza usada vai para o relatório.</li></ul></div>
     </article>
     <article class="card tut" id="tut-trd" data-card="trd">
       <h3><span>Trecho e deslocar padrões</span><span class="fine">exemplo ilustrativo · no caso: desenho e gráficos da aba Análise</span></h3>
@@ -499,7 +500,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
       <div class="tuttxt"><p><b>Zoom.</b> Arraste sobre o desenho (uma letra, um traço) ou na horizontal sobre um gráfico de velocidade, aceleração, potência ou derivadas. O pedaço fica amarelo, aparece ampliado com os 20 padrões por cima e as curvas passam a mostrar só ele. <b>É só visual:</b> medidas, elipses e tabela verdade continuam os da assinatura inteira. "assinatura inteira" volta ao todo.</p><p><b>Analisar só este trecho.</b> Ao marcar um zoom, aparece um balão junto da seleção com este botão. Ele abre uma explicação e, se confirmado, calcula medidas, elipses e tabela verdade só no pedaço, como exploração (os títulos avisam "exploratório").</p><p><b>Deslocar padrões.</b> Embaixo de cada gráfico de curva, "padrões ◀ +0,0% ▶" desliza a faixa cinza 0,5% por toque, com a questionada parada. Serve para separar um simples atraso de uma diferença de forma.</p></div>
-      <div class="tutwarn"><b>Cuidados</b><ul><li>Na análise de um trecho curto, os números ficam frágeis: a FFT tem menos resolução e a tabela pode marcar o tremor como inconclusivo.</li><li>Deslocar só muda o desenho; as medidas e o resultado não mudam.</li><li>Zoom, análise de trecho e deslocamentos vão para o registro de acessos e para o laudo.</li></ul></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Na análise de um trecho curto, os números ficam frágeis: a FFT tem menos resolução e a tabela pode marcar o tremor como inconclusivo.</li><li>Deslocar só muda o desenho; as medidas e o resultado não mudam.</li><li>Zoom, análise de trecho e deslocamentos vão para o registro de acessos e para o relatório.</li></ul></div>
     </article>
     <article class="card tut" id="tut-suv" data-card="suv">
       <h3><span>Suavizar as curvas</span><span class="fine">exemplo ilustrativo · no caso: barra de ajustes da aba Análise</span></h3>
@@ -516,7 +517,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="tutwarn"><b>Cuidados</b><ul>
         <li>Nos níveis altos, o tremor desaparece do desenho. Não conclua "não há tremor" olhando uma curva suavizada; confira no nível 0 e na FFT, que não é suavizada.</li>
         <li>Nos níveis altos, o começo e o fim de cada curva ficam em branco; isso é proposital.</li>
-        <li>O título do gráfico mostra "suavizado N/10"; a mudança vai para o registro de acessos, e o laudo informa o nível usado nos gráficos impressos.</li></ul></div>
+        <li>O título do gráfico mostra "suavizado N/10"; a mudança vai para o registro de acessos, e o relatório informa o nível usado nos gráficos impressos.</li></ul></div>
     </article>
     <article class="card tut" id="tut-var" data-card="var">
       <h3><span>Velocidade e área sob a velocidade</span><span class="fine">exemplo ilustrativo · no caso: aba Análise › Velocidade e Área sob a velocidade</span></h3>
@@ -550,7 +551,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
         <p><b>Como usar.</b> Você escolhe as duas medidas dos eixos (velocidade, pressão, tempo e outras). Troque os pares para descobrir em qual combinação a questionada se afasta. Preste atenção no caso da etapa 7: cada medida parece normal sozinha, mas a combinação não é a da pessoa. É isso que a elipse mostra e uma lista de valores separados não mostra.</p>
       </div>
       <div class="tutwarn"><b>Cuidados</b><ul>
-        <li>A elipse de um par só não decide o laudo. A palavra grande no alto do gráfico (TÍPICA, ATÍPICA ou INCONCLUSIVA) vem sempre de quatro medidas avaliadas juntas: tempo total, pressão média, inclinação média da caneta e número de pequenas correções do movimento em cada traço. As elipses servem para mostrar onde a questionada se afasta.</li>
+        <li>A elipse de um par só não decide o relatório. A palavra grande no alto do gráfico (TÍPICA, ATÍPICA ou INCONCLUSIVA) vem sempre de quatro medidas avaliadas juntas: tempo total, pressão média, inclinação média da caneta e número de pequenas correções do movimento em cada traço. As elipses servem para mostrar onde a questionada se afasta.</li>
         <li>Quem testa muitos pares acaba achando algum "fora" por acaso, como quem joga uma moeda muitas vezes e uma hora tira várias caras seguidas. Por isso a tabela verdade usa a linha mais larga.</li>
         <li>Se a própria pessoa tem mais de um padrão fora da elipse, ela varia muito; nesse caso o painel não marca ATÍPICA, marca INCONCLUSIVA.</li>
         <li>A seta na borda não é a posição da questionada; mostra só a direção. Use "escala real" para ver onde ela está.</li></ul></div>
@@ -579,7 +580,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
       <div class="tuttxt"><p><b>O que é.</b> A pergunta da elipse ("a questionada combina com a pessoa nessas medidas?") feita para 47 combinações de pares e trios de medidas de uma vez. Cada quadrado ou faixa colorida é uma elipse resumida numa cor.</p><p><b>Como ler.</b> Verde T: típica. Vermelho A: atípica. Laranja I: inconclusiva, sempre com o motivo. O tracinho: tempo e velocidade não se comparam, porque a velocidade é o caminho dividido pelo tempo.</p><p><b>Como usar.</b> Procure onde os A se juntam: numa linha, numa coluna, num grupo de trios. É ali que a assinatura se afasta. Toque num quadrado para ler o motivo; toque de novo para abrir a combinação no gráfico.</p></div>
-      <div class="tutwarn"><b>Cuidados</b><ul><li>Cada linha é uma análise separada, com o seu resultado. Nenhuma linha decide o caso: o painel não junta os resultados numa conclusão; isso cabe ao perito.</li><li>A tabela é mais exigente que a elipse sozinha (limite da tabela), porque testa muitas combinações; por isso um ponto "fora" na elipse pode aparecer como I na tabela.</li><li>Nenhum número aparece na tabela: os números de cada linha estão nos gráficos e no anexo do laudo.</li></ul></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Cada linha é uma análise separada, com o seu resultado. Nenhuma linha decide o caso: o painel não junta os resultados numa conclusão; isso cabe ao perito.</li><li>A tabela é mais exigente que a elipse sozinha (limite da tabela), porque testa muitas combinações; por isso um ponto "fora" na elipse pode aparecer como I na tabela.</li><li>Nenhum número aparece na tabela: os números de cada linha estão nos gráficos e no anexo do relatório.</li></ul></div>
     </article>
 
 
@@ -640,7 +641,7 @@ body.gt-on header.dev .r, body.gt-on header.dev .ghost, body.gt-on #real-bar { d
   <p><b>Passam a valer só no pedaço:</b> medidas, elipses 2D e 3D, tabela verdade, histograma, impulso, energias, FFT e bússola.</p>
   <p><b>Não muda:</b> os dados crus e o registro; ao voltar à assinatura inteira, todos os resultados voltam a ser os dela.</p>
   <p class="trwarn" id="trinv-warn"></p>
-  <p class="fine" style="margin:0">Quem testa muitos pedaços acaba achando algum "fora" por acaso. Use para entender onde está a diferença, não para escolher um resultado. O trecho analisado vai para o registro de acessos e para o laudo, marcado como exploratório.</p>
+  <p class="fine" style="margin:0">Quem testa muitos pedaços acaba achando algum "fora" por acaso. Use para entender onde está a diferença, não para escolher um resultado. O trecho analisado vai para o registro de acessos e para o relatório, marcado como exploratório.</p>
   <div class="row"><button type="button" class="btn on" id="trinv-go">Analisar o trecho</button><button type="button" class="btn" id="trinv-no">Cancelar</button></div>
 </div></div>
 <div id="tutinv" hidden role="dialog" aria-modal="true" aria-labelledby="tutinv-t"><div class="tibox">
@@ -1500,7 +1501,7 @@ function drawSignature(cv) {
   };
   if (ANIM.upto !== null) { drawSigAnim(c, X, Y, P, R); return; }
   D.PP.forEach((p, k) => stroke(R[k][0], R[k][1], p.C, P.band, 0.7, 0.45));
-  if (FM_ON) fmOverlay(c, X, Y, P, R[NP()]); else {
+  if (FM_ON && !S.printing) fmOverlay(c, X, Y, P, R[NP()]); else {
   c.setLineDash([1.5, 2.5]); stroke(R[NP()][0], R[NP()][1], D.Q.C, P.acc, 0.9, 0.9, true); c.setLineDash([]);
   stroke(R[NP()][0], R[NP()][1], D.Q.C, P.acc, 1.4, 1); }
   if (dragRect) { c.strokeStyle = P.amb; c.setLineDash([4, 3]); c.lineWidth = 1.2; c.strokeRect(Math.min(dragRect[0], dragRect[2]), Math.min(dragRect[1], dragRect[3]), Math.abs(dragRect[2] - dragRect[0]), Math.abs(dragRect[3] - dragRect[1])); c.setLineDash([]); }
@@ -1524,13 +1525,26 @@ function drawSigAnim(c, X, Y, P, R) {
   const narrow = (c.canvas.clientWidth || 600) < 500, br_ = narrow ? 5 : 7;
   let nt = 0; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); c.textAlign = 'center';
   for (const [s] of p.segs) { if (s > n) break; nt++; const x = X(RX[s]), y = Y(RY[s]) - br_ - 4; c.fillStyle = P.panel; c.beginPath(); c.arc(x, y, br_, 0, 7); c.fill(); c.strokeStyle = col; c.lineWidth = 1; c.stroke(); c.fillStyle = col; c.fillText(String(nt), x, y + (narrow ? 3 : 3.5)); }
+  // início, término e paradas (caneta parada no papel), no mesmo estilo dos números dos traços
+  const badge = (i, txt, cor, dy) => { const x = X(RX[i]), y = Y(RY[i]) + dy; c.fillStyle = cor; c.beginPath(); c.arc(x, y, br_, 0, 7); c.fill(); c.fillStyle = '#fff'; c.fillText(txt, x, y + (narrow ? 3 : 3.5)); return [x, y]; };
+  const i0 = p.segs[0][0], iF = p.segs[p.segs.length - 1][1] - 1;
+  if (n >= i0) badge(i0, 'I', P.grn, br_ + 4);
+  for (const z of sigPausas(p)) { if (z.a > n) break; const [x, y] = badge(z.m, '‖', P.amb, 0); c.font = `${narrow ? 8 : 9.5}px ` + css('--mono'); c.fillStyle = P.amb; c.textAlign = 'left'; c.fillText(br(z.dur, 2) + ' s', x + br_ + 2, y + 3); c.textAlign = 'center'; c.font = `bold ${narrow ? 8 : 10}px ` + css('--sans'); }
+  if (n >= iF) badge(iF, 'T', P.red, br_ + 4);
   // ponta da caneta
   const tip = [X(RX[n]), Y(RY[n])], down = !!p.C[n];
   c.fillStyle = down ? P.red : P.panel; c.strokeStyle = down ? P.red : col; c.lineWidth = 1.5; c.beginPath(); c.arc(tip[0], tip[1], down ? 4 : 5, 0, 7); c.fill(); c.stroke();
   // legenda: só construção (qual traço, caneta no papel ou no ar); sem tempo nem pressão
   c.textAlign = 'left'; c.fillStyle = P.fg; c.font = (narrow ? '11px ' : '12px ') + css('--mono');
-  const l1 = `${k < NP() ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · traço ${nt} de ${p.segs.length}`, l2 = (down ? 'caneta no papel' : 'caneta no ar') + ' · reprodução do trajeto';
+  const l1 = `${k < NP() ? 'P' + String(k + 1).padStart(2, '0') : 'questionada'} · traço ${nt} de ${p.segs.length} · ${sigPausas(p).length} parada${sigPausas(p).length === 1 ? '' : 's'}`, l2 = (down ? 'caneta no papel' : 'caneta no ar') + ' · reprodução do trajeto';
   if (narrow) { c.fillText(l1, 8, 15); c.fillText(l2, 8, 30); } else c.fillText(l1 + ' · ' + l2, 8, 16);
+}
+/* paradas: caneta no papel com velocidade quase nula por 0,1 s ou mais (limiar: 8% da velocidade mediana no papel, mínimo 4 mm/s) */
+function sigPausas(p) {
+  if (p._pz) return p._pz; const v = []; for (let i = 0; i < p.vabs.length; i++) if (p.C[i]) v.push(p.vabs[i]);
+  const thr = Math.max(4, 0.08 * TH.median(v)), out = []; let a = -1;
+  for (let i = 0; i <= p.vabs.length; i++) { const lento = i < p.vabs.length && p.C[i] && p.vabs[i] < thr; if (lento && a < 0) a = i; else if (!lento && a >= 0) { if ((i - a) / FS >= 0.1) out.push({ a, b: i - 1, m: (a + i - 1) >> 1, dur: (i - a) / FS }); a = -1; } }
+  return (p._pz = out);
 }
 /* faixa nos gráficos durante a animação: mostra, em cada gráfico, o trecho já percorrido pela assinatura animada */
 const AB_IDS = ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5', 'cv-pres', 'cv-def', 'cv-big'];
@@ -2305,7 +2319,7 @@ async function verifyAll() {
   const nP = D.packs.length; log('verificação de hashes', `${eq} de ${nP} idênticos · ${ok} de ${nP} assinaturas ECDSA válidas · ${dec} de ${nP} cifras íntegras`); return { ok, eq };
 }
 
-/* ---------------- aba Integridade e laudo ---------------- */
+/* ---------------- aba Integridade e relatório ---------------- */
 const HIP = ['Variação natural', 'Condição motora (idade, doença, medicação)', 'Disfarce pelo próprio autor', 'Imitação por terceiro'];
 const GRAU = ['nenhum', 'fraco', 'moderado', 'forte', 'muito forte', 'extremamente forte'];
 function integrity() {
@@ -2357,7 +2371,7 @@ function renderInteg() {
 }
 function renderLog() { $('#log').innerHTML = S.log.slice().reverse().map(l => `<tr><td>${l.ts}</td><td>${l.user}</td><td>${l.acao}</td><td>${l.det}</td><td class="mono">${l.h.slice(0, 10)}…</td></tr>`).join(''); }
 
-/* ---------------- laudo em PDF ---------------- */
+/* ---------------- relatório em PDF ---------------- */
 const latin = s => String(s).replace(/[✓]/g, 'OK').replace(/[✗]/g, 'X').replace(/[⚠]/g, '!').replace(/[◦·]/g, '·').replace(/≤/g, '<=').replace(/σ/g, 'sigma').replace(/[→←]/g, '->').replace(/[ₓ]/g, 'x').replace(/⁷/g, '7').replace(/⁶/g, '6').replace(/⁸/g, '8').replace(/[∠]/g, '').replace(/−/g, '-').replace(/[^\x00-\xFF–—…‘’“”•€]/g, '');
 async function chartImg(fn, w, h) {
   const cv = document.createElement('canvas'); cv._stampable = true; cv.style.width = w + 'px'; cv.style.height = h + 'px'; cv.style.position = 'fixed'; cv.style.left = '-9999px'; document.body.appendChild(cv);
@@ -2366,9 +2380,9 @@ async function chartImg(fn, w, h) {
   finally { S.printing = false; cv.remove(); }
 }
 async function makePDF() {
-  const st = $('#pdf-status'); st.textContent = 'Montando o laudo…';
+  const st = $('#pdf-status'); st.textContent = 'Montando o relatório…';
   if (D.packs.some(p => p.recalc === null)) await verifyAll();
-  // o corpo do laudo é sempre feito na vista padrão; a vista ajustada do momento (se houver) vai só para o Anexo B
+  // o corpo do relatório é sempre feito na vista padrão; a vista ajustada do momento (se houver) vai só para o Anexo B
   const saved = { eixo: S.eixo, suav: S.suav, trecho: S.trecho, zoom: S.zoom, shifts: { ...S.shifts } }, adjNow = ajustes(), codeNow = vistaCode();
   resetPadrao(); view(); renderTV(); const codePad = vistaCode();
   try {
@@ -2383,7 +2397,7 @@ async function makePDF() {
   const need = h => { if (y + h > 278) { doc.addPage(); y = 20; } };
   const H2 = t => { need(14); y += 3; y = T(t, L, y, { b: true, s: 11.5, c: [47, 111, 214], gap: 2 }); };
   const table = (rows, cols, o = {}) => { for (const [ri, r] of rows.entries()) { need(6); let x = L; const head = o.head && ri === 0; let hmax = 0; r.forEach((cell, j) => { const yy = T(cell, x + 1, y + 3.6, { s: o.s || 8, b: head, w: cols[j] - 2, gap: 0 }); hmax = Math.max(hmax, yy - y); x += cols[j]; }); y += Math.max(hmax, 4.8) + 0.8; doc.setDrawColor(head ? 47 : 220, head ? 111 : 222, head ? 214 : 231); doc.line(L, y - 0.6, R, y - 0.6); } y += 2; };
-  doc.setFillColor(23, 33, 51); doc.rect(0, 0, W, 14, 'F'); doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text('THOTH · Laudo de análise dinâmica de assinatura', L, 9);
+  doc.setFillColor(23, 33, 51); doc.rect(0, 0, W, 14, 'F'); doc.setTextColor(255); doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.text('THOTH · Relatório de análise dinâmica de assinatura', L, 9);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.text('SIMULAÇÃO · dados sintéticos para demonstração', R, 9, { align: 'right' });
   y = 24; y = T(`Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: ${PERITO} · emitido em ${now.toLocaleString('pt-BR')}`, L, y, { s: 8.5, c: [93, 104, 120] });
   y = T(REAL() ? `Signatário declarado: ${D.name} · coleta de demonstração na mesa Huion H420X (navegador, sem clip, pressão adimensional) · questionada: contador 1 · padrões: ${NP()} coletas (contadores 2–${NP() + 1})${NP() < N_OK ? ' · precisão ' + precisao() : ''}` : `Signatário declarado: ${D.name} · Thoth nº 0123A1B2C3D4E5F6EE · questionada: contador 184 · padrões: 20 coletas (contadores 201–220)`, L, y, { s: 8.5, c: [93, 104, 120], gap: 4 });
@@ -2406,8 +2420,9 @@ async function makePDF() {
   const rows = [['Medida', 'Padrões (média ± dp)', 'Questionada', 'z']].concat(KEYS.map(k => { const a = V.M.map(m => m[k]), mu = TH.mean(a), sd = TH.std(a, 1), d = DEC(k); return [LBL(k), `${br(mu, d)} ± ${br(sd, d)}`, br(V.MQ[k], d), sd > 1e-9 ? br((V.MQ[k] - mu) / sd, 1) : '—']; }));
   table(rows, [70, 50, 35, 19], { head: true });
   H2('3. Gráficos (vista padrão)');
-  y = T(`Todas as figuras desta seção estão na vista padrão: tempo real, assinatura inteira, sem suavização, sem deslocamento (código da vista ${codePad}). O código vem impresso em cada figura. Para conferir, qualquer pessoa com acesso ao caso abre o painel, aba Integridade e laudo, "abrir vista pelo código", e vê exatamente a mesma figura. Figura sem código, ou cujo código não confira, não pertence a este laudo.`, L, y, { s: 8.5, c: [93, 104, 120], gap: 2 });
-  const IMGS = () => [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
+  y = T(`Todas as figuras desta seção estão na vista padrão: tempo real, assinatura inteira, sem suavização, sem deslocamento (código da vista ${codePad}). O código vem impresso em cada figura. Para conferir, qualquer pessoa com acesso ao caso abre o painel, aba Integridade e relatório, "abrir vista pelo código", e vê exatamente a mesma figura. Figura sem código, ou cujo código não confira, não pertence a este relatório.`, L, y, { s: 8.5, c: [93, 104, 120], gap: 2 });
+  const IMGS = () => [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52],
+    ['Bússola da caneta · raio: inclinação · ângulo: rotação no eixo (a validar) · x: média dos padrões · linha azul: questionada', cv => drawCompass(cv), 120, 90], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
     [`Velocidade · ${SYM[S.g][0]}`, cv => drawCurve(cv, p => compV(p, S.g, 1), 'vel', 'mm/s', D.NF[1] * noiseScale(1)), 174, 50],
     [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => compV(p, S.g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3), 174, 50], [`5ª derivada · ${SYM[S.g][3]}`, cv => drawCurve(cv, p => compV(p, S.g, 5), 'd5', 'x10^8 mm/s^5', D.NF[5] * noiseScale(5), 1e-8), 174, 50],
     [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50], ['Mahalanobis 3D (exploratório)', cv => drawM3(cv, 1), 174, 95]];
@@ -2423,7 +2438,7 @@ async function makePDF() {
   H2('5. Parâmetros de cálculo'); table(params(), [50, 124]);
   H2('6. Pacotes analisados (SHA-256 sobre os dados crus)');
   table([['Pacote', 'Contador', 'SHA-256']].concat(D.packs.map(p => [p.name === 'Q' ? 'Questionada' : p.name, String(p.cnt), p.sha])), [24, 18, 132], { head: true, s: 7 });
-  y = T('O laudo não contém amostras cruas: elas não saem do sistema (6.10.3). Quem precisar conferir recebe acesso próprio ao caso.', L, y, { i: true, s: 8, c: [93, 104, 120], gap: 3 });
+  y = T('O relatório não contém amostras cruas: elas não saem do sistema (6.10.3). Quem precisar conferir recebe acesso próprio ao caso.', L, y, { i: true, s: 8, c: [93, 104, 120], gap: 3 });
   H2('7. Registro de acessos (encadeado por hash)');
   table([['Data/hora', 'Ação', 'Detalhe', 'Hash']].concat(S.log.map(l => [l.ts, l.acao, l.det, l.h.slice(0, 16)])), [32, 36, 76, 30], { head: true, s: 7 });
   H2('8. Vistas consultadas nesta sessão');
@@ -2433,27 +2448,27 @@ async function makePDF() {
     y = T(`D² com a covariância simples dos ${NP()} padrões (a mesma das elipses); D² diag = soma dos z² (sem correlação). Limite corrigido = Hotelling a 1 − 0,01/k, com k = ` + TV_K() + ` linhas. Padrões fora = quantos dos ${NP()} saem do limite de 99% quando testados contra os outros ${NP() - 1}.`, L, y, { s: 7.5, c: [93, 104, 120], gap: 2 });
     const f = (v, d = 1) => (Number.isFinite(v) ? br(v, v > 100 ? 0 : d) : '—'), nm = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
     table([['Combinação', 'D²', 'D² diag', 'lim. 95%', 'lim. corrigido', 'p', 'padrões fora', 'Resultado']].concat(TVROWS.map(r => [nm(r.ks), f(r.L.d2), f(r.L.d2diag), f(r.L.lim95), r.main ? f(r.L.lim99) + ' (99%)' : f(r.L.limC), Number.isFinite(r.L.pval) ? (r.L.pval < 1e-4 ? '< 0,0001' : br(r.L.pval, 4)) : '—', Number.isFinite(r.L.out) ? String(r.L.out) : '—', r.L.res])), [58, 15, 15, 14, 18, 16, 14, 24], { head: true, s: 6.5 }); }
-  // Anexo B: a vista ajustada que estava na tela, se houver — sempre marcada e separada do corpo do laudo
+  // Anexo B: a vista ajustada que estava na tela, se houver — sempre marcada e separada do corpo do relatório
   if (adjNow.length) {
     Object.assign(S, saved); view();
-    H2('Anexo B. Vista ajustada no momento do laudo (exploratória)');
+    H2('Anexo B. Vista ajustada no momento do relatório (exploratória)');
     y = T(`Ajustes ativos: ${adjNow.join(' · ')}. Código da vista ${codeNow}. Estas figuras levam a marca "VISTA AJUSTADA" e não substituem as da seção 3. Os números e os resultados são os da assinatura inteira, na seção 2.${S.trecho ? ` As medidas do trecho ${S.trecho[0]}–${S.trecho[1]}% são exploratórias.` : ''}`, L, y, { s: 8.5, gap: 2 });
     await putImgs(IMGS(), codeNow);
     resetPadrao(); view();
   }
   const n = doc.getNumberOfPages();
   for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(93, 104, 120); doc.text(latin(`Assinado digitalmente (simulado, ECDSA P-256 da sessão ${SES}) · código de verificação ${code}`), L, 287); doc.text(latin(`SHA-256 do conteúdo ${hh.slice(0, 32)}… · assinatura ${sig.slice(0, 24)}…`), L, 290.5); doc.text(`${i}/${n}`, R, 290.5, { align: 'right' }); }
-  const blob = doc.output('blob'), fname = `laudo_thoth_${D.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
-  log('gerou o laudo', `PDF ${n} páginas · código ${code}`);
+  const blob = doc.output('blob'), fname = `relatorio_thoth_${D.name.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '_').toLowerCase()}.pdf`;
+  log('gerou o relatório', `PDF ${n} páginas · código ${code}`);
   const dl = window.claude && window.claude.use ? await window.claude.use('downloads').catch(() => null) : null;
-  if (dl) { try { await dl.save({ filename: fname, data: blob }); st.textContent = `Laudo salvo · código de verificação ${code}`; } catch (e) { st.textContent = e && e.code === 'declined' ? 'Você recusou o salvamento. O laudo pode ser gerado de novo.' : 'Não foi possível salvar o arquivo neste visualizador.'; } }
-  else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); st.textContent = `Laudo gerado · código de verificação ${code}`; }
+  if (dl) { try { await dl.save({ filename: fname, data: blob }); st.textContent = `Relatório salvo · código de verificação ${code}`; } catch (e) { st.textContent = e && e.code === 'declined' ? 'Você recusou o salvamento. O relatório pode ser gerado de novo.' : 'Não foi possível salvar o arquivo neste visualizador.'; } }
+  else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fname; a.click(); st.textContent = `Relatório gerado · código de verificação ${code}`; }
   } finally { Object.assign(S, saved); view(); renderTV(); if (S.tab === 'analise') renderAnalise(); }
 }
 
 /* ---------------- vista padrão, ajustes ativos e código da vista ----------------
    Vista padrão = tempo real, assinatura inteira, sem suavização, sem deslocamento: mostra a assinatura como foi feita.
-   Qualquer outra coisa é "vista ajustada": todo gráfico ganha marca d'água e todo ajuste entra no registro e no laudo.
+   Qualquer outra coisa é "vista ajustada": todo gráfico ganha marca d'água e todo ajuste entra no registro e no relatório.
    O código da vista (caso/vista/verificador) permite a qualquer pessoa reabrir exatamente a mesma vista. */
 const SH_KEYS = ['vel', 'acc', 'pow', 'd4', 'd5', 'pres', 'def'], SH_MAX = 5;
 const SH_NOME = { vel: 'velocidade', acc: 'aceleração', pow: 'potência', d4: '4ª derivada', d5: '5ª derivada', pres: 'pressão', def: 'deformação' };
@@ -2497,7 +2512,7 @@ function applyVista(code) { // reabre uma vista pelo código; devolve um erro em
   }
   Object.assign(S, st); if (S.trecho) S.zoom = S.trecho.slice(); return null;
 }
-function noteVista(origem) { // guarda cada vista diferente consultada (vai para o laudo) e o momento do primeiro ajuste
+function noteVista(origem) { // guarda cada vista diferente consultada (vai para o relatório) e o momento do primeiro ajuste
   if (!D) return; const code = vistaCode(), now = new Date(), ts = now.toLocaleTimeString('pt-BR');
   if (!isPadrao() && !S.firstAdj) S.firstAdj = { ts, t: now.getTime() };
   const v = S.vistas.find(x => x.code === code); if (v) { v.n++; return; }
@@ -2549,7 +2564,7 @@ function renderObs() { // observações iniciais: feitas na vista padrão, regis
   const box = $('#obs'); if (!box || !D) return; const aj = ajustes().length > 0;
   $('#obs-form').hidden = !!S.obs; $('#obs-done').hidden = !S.obs;
   if (S.obs) $('#obs-done').innerHTML = `<b>Observações iniciais registradas</b> às ${S.obs.ts}, na vista padrão${S.obs.antes ? ', antes de qualquer ajuste' : `, depois de já ter usado ajustes (o primeiro às ${S.obs.adjTs})`}${S.obs.aviso ? ' · <span class="warn">mantidas após aviso de conclusão</span>' : ''} · hash ${S.obs.h.slice(0, 12)}…<blockquote>${escH(S.obs.txt)}</blockquote>`;
-  else { $('#obs-reg').disabled = aj; if (!S.obsWarn) $('#obs-hint').textContent = aj ? 'Volte à vista padrão para registrar: as observações iniciais são sobre a assinatura como foi feita.' : 'Só fatos observáveis na vista padrão: duração, número de traços e levantamentos, ordem e sentido, pausas vistas no gráfico em tempo real, valores das medidas. Sem conclusão sobre autoria: ela vai na fundamentação. O laudo só é gerado com este registro.'; }
+  else { $('#obs-reg').disabled = aj; if (!S.obsWarn) $('#obs-hint').textContent = aj ? 'Volte à vista padrão para registrar: as observações iniciais são sobre a assinatura como foi feita.' : 'Só fatos observáveis na vista padrão: duração, número de traços e levantamentos, ordem e sentido, pausas vistas no gráfico em tempo real, valores das medidas. Sem conclusão sobre autoria: ela vai na fundamentação. O relatório só é gerado com este registro.'; }
   box.classList.toggle('done', !!S.obs);
 }
 function resetPadrao() { S.eixo = 'tempo'; S.suav = 0; S.trecho = null; S.zoom = null; S.shifts = {}; }
@@ -2655,7 +2670,7 @@ function bind() {
   $('#btn-verify2').addEventListener('click', async () => { await verifyAll(); renderInteg(); });
   $('#hip-h').addEventListener('change', e => { S.hip.h = e.target.value; });
   $('#hip-c').addEventListener('change', e => { S.hip.c = e.target.value; });
-  $('#btn-pdf').addEventListener('click', async e => { if (!S.obs) { $('#pdf-status').textContent = 'O laudo exige as observações iniciais, registradas na vista padrão (aba Análise, no alto).'; return; } e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o laudo: ' + err.message; } e.target.disabled = false; });
+  $('#btn-pdf').addEventListener('click', async e => { if (!S.obs) { $('#pdf-status').textContent = 'O relatório exige as observações iniciais, registradas na vista padrão (aba Análise, no alto).'; return; } e.target.disabled = true; try { await makePDF(); } catch (err) { $('#pdf-status').textContent = 'Erro ao gerar o relatório: ' + err.message; } e.target.disabled = false; });
   $('#an-play').addEventListener('click', playAnim);
   m3Init();
   const suavUI = () => { $('#suav').value = suavN(); $('#suav-o').textContent = `${suavN()} de 10 · ${SUAV_NOME[suavN()]}`; $('#suav-dica').textContent = suavDica(); $('#suav-dica').title = suavDica(); $('#suav-dica').classList.toggle('warnt', suavFc(suavN()) < 13); };
@@ -2672,15 +2687,15 @@ function bind() {
     // observações iniciais são fatos; palavras de conclusão pedem confirmação (não dá para proibir: podem aparecer com outro sentido)
     const CONC = /\b(falsa|falso|falsifica\w*|imita(ção|çao|cao|da|do|dor\w*)|autêntic\w*|autentic\w*|forjad\w*|fraud\w*|verdadeira|verdadeiro|genuín\w*|genuin\w*|não (é|foi) (dele|dela|do autor|da autora)|mesmo autor|outro autor|outra pessoa|atípica|típica)\b/gi;
     const hits = [...new Set((txt.match(CONC) || []).map(w => w.toLowerCase()))];
-    if (hits.length && S.obsWarn !== txt) { S.obsWarn = txt; $('#obs-hint').innerHTML = `<span class="bad">⚠ O texto parece conter conclusão (${hits.map(escH).join(', ')}).</span> As observações iniciais devem ser fatos: o que se vê e se mede. A conclusão vai na fundamentação, na aba Integridade e laudo. Reescreva, ou toque de novo em "registrar" para manter assim (fica anotado no registro).`; return; }
+    if (hits.length && S.obsWarn !== txt) { S.obsWarn = txt; $('#obs-hint').innerHTML = `<span class="bad">⚠ O texto parece conter conclusão (${hits.map(escH).join(', ')}).</span> As observações iniciais devem ser fatos: o que se vê e se mede. A conclusão vai na fundamentação, na aba Integridade e relatório. Reescreva, ou toque de novo em "registrar" para manter assim (fica anotado no registro).`; return; }
     const aviso = hits.length ? hits : null; S.obsWarn = null;
     const now = new Date(), ts = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR'), h = hex(await crypto.subtle.digest('SHA-256', new TextEncoder().encode([casoId(), ts, txt].join('|'))));
     S.obs = { txt, ts, h, antes: !S.firstAdj, adjTs: S.firstAdj ? S.firstAdj.ts : null, vista: vistaCode(), aviso };
     log('registrou observações iniciais', `na vista padrão (${S.obs.antes ? 'antes de qualquer ajuste' : 'depois de ajustes'}) · ${txt.length} caracteres · hash ${h.slice(0, 12)}${aviso ? ' · mantidas após aviso de conclusão (' + aviso.join(', ') + ')' : ''}`); renderObs(); if (S.tab === 'integ') renderInteg();
   });
-  // modo cego: revelar o tipo da questionada fica registrado e aparece no laudo
+  // modo cego: revelar o tipo da questionada fica registrado e aparece no relatório
   $('#btn-reveal').addEventListener('click', () => { const now = new Date(); S.blind = false; S.revealed = now.toLocaleTimeString('pt-BR'); log('revelou o tipo da questionada', `${MODE_NOME[S.mode]}${S.obs ? '' : ' · antes das observações iniciais'}`); render(); });
-  // reabrir uma vista pelo código (o mesmo que aparece em cada gráfico e no laudo)
+  // reabrir uma vista pelo código (o mesmo que aparece em cada gráfico e no relatório)
   const openCode = () => { const code = $('#vcode').value, err = applyVista(code); if (err) { $('#vcode-st').textContent = '✗ ' + err; $('#vcode-st').className = 'fine bad'; return; }
     suavUI(); view(); log('abriu vista pelo código', `${code.trim()} · ${vistaDesc(code.trim().split('/')[1])}`); $('#vcode-st').textContent = '✓ vista aberta na aba Análise: ' + vistaDesc(code.trim().split('/')[1]); $('#vcode-st').className = 'fine ok'; noteVista('código'); };
   $('#vcode-go').addEventListener('click', openCode); $('#vcode').addEventListener('keydown', e => { if (e.key === 'Enter') openCode(); });
@@ -2718,7 +2733,7 @@ function bind() {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { watermark(); D && render(); });
   new MutationObserver(() => { watermark(); D && render(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 }
-// todo gráfico da análise recebe a marca da vista (padrão ou ajustada) ao terminar de ser desenhado — inclusive os do laudo e os ampliados
+// todo gráfico da análise recebe a marca da vista (padrão ou ajustada) ao terminar de ser desenhado — inclusive os do relatório e os ampliados
 const stampWrap = f => function (cv, ...a) { const r = f.call(this, cv, ...a); stamp(cv); return r; };
 drawSignature = stampWrap(drawSignature); drawZoom = stampWrap(drawZoom); drawCompass = stampWrap(drawCompass); drawHist = stampWrap(drawHist);
 drawPressure = stampWrap(drawPressure); drawDeform = stampWrap(drawDeform); drawImpulse = stampWrap(drawImpulse); drawArea = stampWrap(drawArea);
@@ -3198,7 +3213,7 @@ const SUV_STEPS = [
   [28.5, 34.5, 'No nível 10 fica só o contorno geral do esforço ao longo da assinatura.'],
   [34.5, 41.5, 'O que não muda: a suavização é só no desenho. As medidas, a distância à pessoa, a tabela verdade e o resultado continuam iguais, calculados sempre sem suavização.'],
   [41.5, 47.5, 'Nos níveis altos, o começo e o fim da curva ficam em branco: ali não há movimento suficiente dos dois lados para suavizar sem inventar.'],
-  [47.5, 54, 'Recomendação: procure tremor e pequenas correções no nível 0; suba a barra só para enxergar o desenho geral. O nível usado vai para o registro de acessos e para o laudo.']];
+  [47.5, 54, 'Recomendação: procure tremor e pequenas correções no nível 0; suba a barra só para enxergar o desenho geral. O nível usado vai para o registro de acessos e para o relatório.']];
 const SUV_END = 54, SUV = {};
 function suvData() {
   if (SUV.ok) return SUV;
@@ -3317,7 +3332,7 @@ const TRD_STEPS = [
   [20, 28, 'Deslocar padrões: embaixo de cada gráfico de curva há "padrões ◀ +0,0% ▶". Cada toque desliza a faixa cinza 0,5%; a questionada fica parada.'],
   [28, 35, 'Se a curva azul encaixa na cinza com 1 a 2% de deslocamento, a diferença era só um pequeno atraso, não de movimento.'],
   [35, 43, 'Se não encaixa em nenhuma posição, a diferença é de forma: a questionada faz outro movimento.'],
-  [43, 49, '"zerar todos" volta todos os gráficos a 0%. Os deslocamentos usados vão para o registro de acessos e para o laudo.']];
+  [43, 49, '"zerar todos" volta todos os gráficos a 0%. Os deslocamentos usados vão para o registro de acessos e para o relatório.']];
 const TRD_END = 49;
 function drawTRD(cv, T) {
   const k = tStep(TRD_STEPS, T), st = TRD_STEPS[k], P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560, M = modData();
@@ -3451,7 +3466,7 @@ function tutInvite() {
 /* ================= captura ao vivo pela mesa (demonstração, sem padrões) =================
    A mesa (Huion H420X, driver com Windows Ink) chega ao navegador como caneta: posição, pressão (0–1, adimensional),
    contato e caneta no ar. A área da mesa corresponde à tela inteira, por isso a captura é feita em tela cheia e a
-   posição em mm sai da fração da tela (106 × 66 mm). Nada aqui entra no caso simulado nem no laudo. */
+   posição em mm sai da fração da tela (106 × 66 mm). Nada aqui entra no caso simulado nem no relatório. */
 const LIVE = { on: false, data: null, raw: [], t0: 0, mouse: false, play: null };
 const MESA_MM = [106, 66], FIELD_MM = [60, 20], SIZE_OK = [20, 90];
 const sigSize = R => { let a = Infinity, b = -Infinity, e = Infinity, f = -Infinity; for (const s of R) if (s.c) { a = Math.min(a, s.x); b = Math.max(b, s.x); e = Math.min(e, s.y); f = Math.max(f, s.y); } return a < Infinity ? [b - a, f - e] : [0, 0]; };
@@ -4174,7 +4189,8 @@ function gtCalc() {
       // curvas pela posição no traçado (0–100% do caminho com a caneta no papel): comparáveis sem depender do ritmo
       const L = p.path[p.i1], v = [], pr = [], tt = []; let j = p.i0;
       for (let g = 0; g < G; g++) { const alvo = L * g / (G - 1); while (j < p.i1 && p.path[j] < alvo) j++; let k = j; while (k < p.i1 && !p.C[k]) k++; v.push(p.vabs[k]); pr.push(p.gf[k]); tt.push(p.t[j] - p.t[p.i0]); }
-      return { i, a, p, m, cv: { v, pr, tt } };
+      const { fr, A } = TH.spectrum(p.vabs.subarray(p.i0, p.i1 + 1)), sp = TH.interp(GT_FQ, fr, A), mx = Math.max(...sp), fft = Array.from(sp, z => z / mx);
+      return { i, a, p, m, cv: { v, pr, tt, fft } };
     } catch (e) { return { i, a, err: 'não processável (assinatura curta demais)' }; }
   });
   const keys = TH.KEYS.filter(k => !/inclinação|rotação/.test(k)).concat(['largura (mm)', 'altura (mm)']);
@@ -4184,7 +4200,7 @@ const gtUsada = x => !x.err && !GT.excl[x.i];
 function gtVar(U) { // variabilidade de punho: mesma régua do painel (mediana do coeficiente de variação)
   const cv = VAR_KEYS.map(k => { const a = U.map(x => x.m[k]).filter(Number.isFinite), mu = TH.mean(a); return [k, Math.abs(mu) > 1e-9 && a.length > 2 ? 100 * TH.std(a, 1) / Math.abs(mu) : NaN]; }).filter(([, v]) => Number.isFinite(v));
   if (!cv.length) return null; const typ = TH.median(cv.map(([, v]) => v)), lv = VAR_CUT.findIndex(c => typ < c), top = cv.slice().sort((a, b) => b[1] - a[1])[0];
-  return { typ, lv: lv < 0 ? 5 : lv, top };
+  return { typ, lv: lv < 0 ? 5 : lv, top, cv };
 }
 /* desenho de uma assinatura em escala fixa (px por mm), com cotas em mm */
 function gtSigDraw(c, a, k, ox, oy, P, cotas = true) {
@@ -4214,6 +4230,15 @@ function gtBarras(cv, key, h) {
   it.forEach(x => { if (x.err) return; const v = x.m[key], x0 = X(x.i + 1) - bw / 2; if (gtUsada(x)) { c.fillStyle = P.acc; c.fillRect(x0, Y(v), bw, Y(0) - Y(v)); } else { c.strokeStyle = P.mut; c.setLineDash([2, 2]); c.strokeRect(x0, Y(v), bw, Y(0) - Y(v)); c.setLineDash([]); c.fillStyle = P.mut; c.font = '10px ' + css('--sans'); c.textAlign = 'center'; c.fillText('✕', X(x.i + 1), Y(v) - 3); } });
   F.done();
 }
+const GT_FQ = Float64Array.from({ length: 400 }, (_, i) => 20 * i / 399);
+function gtFFT(cv, h) { // espectro da velocidade de cada assinatura usada, normalizado pelo próprio máximo
+  const { it } = gtCalc(), U = it.filter(gtUsada), fq = Array.from(GT_FQ), R = U.map(x => x.cv.fft), m = fq.map((_, i) => TH.mean(R.map(r => r[i]))), s = fq.map((_, i) => TH.std(R.map(r => r[i]), 1));
+  const F = frame(cv, [0, 20], [0, 1.08], { h, xlabel: 'frequência (Hz)', ylabel: 'amplitude relativa' }), { c, X, Y, P } = F;
+  [[0, 5, P.grn], [5, 8, P.red], [8, 13, P.amb]].forEach(([a, b, col]) => { c.fillStyle = col; c.globalAlpha = 0.1; c.fillRect(X(a), Y(1.08), X(b) - X(a), Y(0) - Y(1.08)); }); c.globalAlpha = 1;
+  c.font = '10px ' + css('--sans'); c.fillStyle = P.mut; c.textAlign = 'center'; [[2.5, 'controlado'], [6.5, 'não controlado'], [10.5, 'tremor fisiológico']].forEach(([x, t]) => c.fillText(t, X(x), Y(1.08) + 12));
+  bandFill(F, fq, m.map((v, i) => v - 2 * s[i]), m.map((v, i) => v + 2 * s[i]), P.band); R.forEach(r => polyline(F, fq, Array.from(r), P.acc, 0.5)); polyline(F, fq, m, P.fg, 1.4, Infinity, [5, 3]); F.done();
+}
+const GT_FFT_CAP = 'Ritmos que compõem a velocidade: faixas 0–5 Hz movimento controlado · 5–8 Hz não controlado e tremor de ação · 8–13 Hz tremor fisiológico (Phillips 1991; Manual Merck). Linhas finas = cada assinatura usada, tracejado = média.';
 const GT_CURVAS = [['vel', 'Velocidade ao longo do traçado', 'v', 'mm/s', 'Velocidade da caneta em cada ponto do traçado: linhas finas = cada assinatura usada, tracejado = média, faixa = média ± 2 desvios.'],
   ['pres', 'Pressão ao longo do traçado', 'pr', 'adim. (0–1)', 'Pressão da caneta em cada ponto do traçado, adimensional (0 a 1): mesma leitura das linhas e da faixa.'],
   ['tempo', 'Tempo até cada ponto do traçado', 'tt', 's', 'Quanto tempo a pessoa levou para chegar a cada ponto: onde as curvas sobem mais, a escrita é mais lenta.']];
@@ -4225,7 +4250,7 @@ function renderGT() {
   document.body.classList.add('gt-on'); const box = $('#gt'); if (!box) return;
   if (!GT) { const r = colLoad(), sv = gtLoad();
     box.innerHTML = `<div class="card gt-intro"><h3>Grafoscopia Tradicional · registro dinâmico das assinaturas-padrão</h3>
-      <p>Para enriquecer um laudo grafotécnico tradicional, em que a questionada fica no papel. Coletam-se <b>20 assinaturas</b> na mesa. <b>Nenhuma é refeita</b>: depois, o perito escolhe quais não usar, com o motivo registrado. O relatório em PDF traz os gráficos dinâmicos (pressão, velocidade, tempo), as medidas, a variabilidade de punho, as assinaturas em tamanho real (1:1) com as medidas em mm e a amamnese, para ser anexado ao laudo.</p>
+      <p>Para enriquecer um laudo grafotécnico tradicional, em que a questionada fica no papel. Coletam-se <b>20 assinaturas</b> na mesa. <b>Nenhuma é refeita</b>: depois, o perito escolhe quais não usar, com o motivo registrado. O relatório em PDF traz os gráficos dinâmicos (pressão, velocidade, tempo), as medidas, a variabilidade de punho, as assinaturas em tamanho real (1:1) com as medidas em mm e a anamnese, para ser anexado ao laudo.</p>
       <p class="fine">O relatório descreve a escrita de quem forneceu os padrões. Não compara com a questionada e não conclui sobre autoria.</p>
       <div class="gt-form"><label>Quem fornece as assinaturas <input id="gt-nome" placeholder="nome completo" autocomplete="off"></label><label>Processo / referência <input id="gt-proc0" placeholder="opcional" autocomplete="off"></label>
       <label class="ck"><input type="checkbox" id="gt-ruido" checked> medir o ruído da mesa antes (2 s com a caneta parada)</label></div>
@@ -4239,7 +4264,7 @@ function renderGT() {
   box.innerHTML = `<div class="card c-full gt-head"><h3><span>Grafoscopia Tradicional · ${escH(col.signatario)}</span><span class="grp"><button type="button" class="btn" id="gt-save">salvar coleta</button><button type="button" class="btn pri" id="gt-pdf">Gerar relatório PDF</button><button type="button" class="btn" id="gt-close">fechar</button></span></h3>
       <div class="gt-kv"><span>Coleta</span><b>${new Date(col.criado).toLocaleString('pt-BR')}</b><span>Assinaturas</span><b>${it.length} coletadas · ${U.length} usadas · ${nEx} não usadas</b><span>Equipamento</span><b>${escH(col.mesa)}</b><span>Ruído</span><b>${col.ruido_sg ? 'medido antes da coleta' : 'valor de referência'}</b><span>SHA-256 da coleta</span><b class="mono">${GT.sha}</b></div>
       <div class="gt-form"><label>Processo / referência <input id="gt-proc" value="${escH(GT.proc)}" autocomplete="off"></label><label>Perito responsável <input id="gt-perito" value="${escH(GT.perito)}" autocomplete="off"></label></div><p class="fine" id="gt-pdf-st"></p></div>
-    <div class="card c-full"><h3><span>Amamnese</span><span class="fine">vai para o relatório · cada alteração fica no registro de acessos</span></h3><textarea id="gt-amn" rows="5" placeholder="Situações que envolveram a captura: local, postura (sentado, em pé), apoio, mão usada, estado de saúde relatado, uso de óculos, medicação, nervosismo, interrupções, quem estava presente, o que mais o perito julgar relevante.">${escH(GT.amn)}</textarea></div>
+    <div class="card c-full"><h3><span>Anamnese</span><span class="fine">vai para o relatório · cada alteração fica no registro de acessos</span></h3><textarea id="gt-amn" rows="5" placeholder="Situações que envolveram a captura: local, postura (sentado, em pé), apoio, mão usada, estado de saúde relatado, uso de óculos, medicação, nervosismo, interrupções, quem estava presente, o que mais o perito julgar relevante.">${escH(GT.amn)}</textarea></div>
     <div class="card c-full"><h3><span>Assinaturas coletadas · todas na mesma escala</span><span class="fine">nenhuma foi refeita · desmarque para não usar na análise (motivo obrigatório)</span></h3><div class="gt-gal">${it.map(x => `<div class="gt-it${gtUsada(x) ? '' : ' off'}" data-i="${x.i}"><canvas data-gs="${x.i}" style="width:${Math.ceil(x.a.w * k + 60)}px;height:${Math.ceil(x.a.h * k + 34)}px"></canvas>
       <div class="gt-cap"><b>${gtId(x.i)}</b> · ${br(x.a.w, 1)} × ${br(x.a.h, 1)} mm${x.err ? ` · <span class="bad">${x.err}</span>` : ` <label class="ck"><input type="checkbox" data-use="${x.i}"${GT.excl[x.i] ? '' : ' checked'}> usar</label>`}</div>
       ${GT.excl[x.i] ? `<div class="gt-mot">não usada: ${escH(GT.excl[x.i].motivo)}</div>` : ''}<div class="gt-ask" hidden><input placeholder="motivo para não usar" data-mot="${x.i}"><button type="button" class="btn" data-exc="${x.i}">confirmar</button><button type="button" class="btn" data-canc="${x.i}">cancelar</button></div></div>`).join('')}</div>
@@ -4249,11 +4274,12 @@ function renderGT() {
     <div class="card gt-med"><h3>Medidas das ${U.length} assinaturas usadas</h3><div class="tw"><table class="it gt-tab"><thead><tr><th>medida</th><th>média ± desvio</th><th>variação</th><th>mín – máx</th></tr></thead><tbody>${keys.map(key => { const a = U.map(x => x.m[key]).filter(Number.isFinite), mu = TH.mean(a), sd = TH.std(a, 1), d = Math.abs(mu) >= 100 ? 0 : Math.abs(mu) >= 10 ? 1 : 2;
       return `<tr><td>${gtLbl(key)}</td><td class="mono">${br(mu, d)} ± ${br(sd, d)}</td><td class="mono">${Math.abs(mu) > 1e-9 ? br(100 * sd / Math.abs(mu), 0) + '%' : '—'}</td><td class="mono">${br(Math.min(...a), d)} – ${br(Math.max(...a), d)}</td></tr>`; }).join('')}</tbody></table></div><p class="fine cap1">Variação = desvio ÷ média: quanto a pessoa muda de uma assinatura para outra nessa medida.</p></div>
     ${GT_CURVAS.map(([id, t, , , cap]) => `<div class="card span2"><h3>${t}</h3><canvas id="gt-c-${id}" class="ch"></canvas><p class="fine cap1">${cap}</p></div>`).join('')}
-    ${GT_BARRAS.map(([, t, cap], j) => `<div class="card span2"><h3>${t}</h3><canvas id="gt-b-${j}" class="ch"></canvas><p class="fine cap1">${cap}</p></div>`).join('')}`}
+    <div class="card span2"><h3>FFT da velocidade</h3><canvas id="gt-fft" class="ch"></canvas><p class="fine cap1">${GT_FFT_CAP}</p></div>
+    <div class="card c-full"><h3>Por assinatura</h3><div class="gt-bars">${GT_BARRAS.map(([, t, cap], j) => `<div><b class="gt-bt">${t}</b><canvas id="gt-b-${j}" class="ch"></canvas><p class="fine cap1">${cap}</p></div>`).join('')}</div></div>`}
     ${nEx ? `<div class="card c-full"><h3>Assinaturas não usadas e motivo</h3><div class="tw"><table class="it"><tbody>${it.filter(x => !gtUsada(x)).map(x => `<tr><td class="mono">${gtId(x.i)}</td><td>${escH(x.err || GT.excl[x.i].motivo)}</td><td class="fine">${x.err ? 'automático' : GT.excl[x.i].ts}</td></tr>`).join('')}</tbody></table></div></div>` : ''}`;
   const P = gtPal();
   $$('#gt [data-gs]').forEach(cv => { const x = it[+cv.dataset.gs], { c } = setup(cv, cv.clientHeight); gtSigDraw(c, x.a, k, 6, 6, P); });
-  if (U.length >= 3) { GT_CURVAS.forEach(([id, , campo, yl]) => gtCurva($('#gt-c-' + id), campo, yl)); GT_BARRAS.forEach(([key], j) => gtBarras($('#gt-b-' + j), key)); }
+  if (U.length >= 3) { GT_CURVAS.forEach(([id, , campo, yl]) => gtCurva($('#gt-c-' + id), campo, yl)); GT_BARRAS.forEach(([key], j) => gtBarras($('#gt-b-' + j), key)); gtFFT($('#gt-fft')); }
 }
 /* ---------- relatório em PDF ---------- */
 async function gtImg(fn, w, h) {
@@ -4278,20 +4304,34 @@ async function gtPDF() {
     ['SHA-256 dos dados da coleta', GT.sha], ['Relatório gerado em', now.toLocaleString('pt-BR')]];
   for (const [a, b] of kv) { const y0 = y; T(a, L, y, { s: 8.5, c: '#5d6878', w: 50 }); y = Math.max(T(b, L + 52, y0, { s: 9, w: R - L - 52 }), y0 + 4.5); }
   H2('1. Finalidade e limites');
-  y = T(`Este relatório registra a dinâmica da escrita (pressão, velocidade, tempo e traçado) das assinaturas fornecidas por ${col.signatario}, coletadas em mesa digitalizadora, e a variação natural entre elas. Destina-se a enriquecer o exame grafotécnico tradicional. Não compara as assinaturas com a peça questionada e não emite conclusão sobre autoria: o exame e a conclusão são do perito, no laudo.`, L, y, { s: 9.5 });
-  H2('2. Amamnese'); y = T(GT.amn.trim() || '(não preenchida pelo perito)', L, y, { s: 9.5, c: GT.amn.trim() ? '#1b2230' : '#8a919c' });
+  y = T(`Este relatório registra a dinâmica da escrita (pressão, velocidade, tempo, traçado e espectro de frequências da velocidade, FFT) das assinaturas fornecidas por ${col.signatario}, coletadas em mesa digitalizadora, e a variação natural entre elas. Destina-se a enriquecer o exame grafotécnico tradicional. Não compara as assinaturas com a peça questionada e não emite conclusão sobre autoria: o exame e a conclusão são do perito no laudo.`, L, y, { s: 9.5 });
+  H2('2. Anamnese'); y = T(GT.amn.trim() || '(não preenchida pelo perito)', L, y, { s: 9.5, c: GT.amn.trim() ? '#1b2230' : '#8a919c' });
   H2('3. Protocolo da coleta');
   for (const t of ['Cada assinatura só foi gravada depois que o operador a liberou (sinal sonoro de três bipes e campo verde); nada foi gravado fora dessa janela.', 'Campo de assinatura em tamanho real (60 × 20 mm) na mesa; posição e pressão registradas desde o primeiro toque da caneta.', 'Nenhuma assinatura foi refeita, apagada ou substituída durante a coleta. As que o perito decidiu não usar continuam neste relatório, com o motivo.', 'Pressão adimensional (0 a 1), lida da caneta pela mesa; sem clip, portanto sem inclinação nem rotação da caneta.'])
     y = T('• ' + t, L, y, { s: 9 });
   H2(`4. Medidas das ${U.length} assinaturas usadas`);
   if (U.length >= 3) {
-    const vr = gtVar(U); if (vr) y = T(`Variabilidade de punho: nível ${String(vr.lv + 1).padStart(2, '0')} · ${VAR_LV[vr.lv][0]} (variação típica ${br(vr.typ, 1)}%; cortes ainda a calibrar). Medida mais variável: ${VAR_NOME[vr.top[0]]} (${br(vr.top[1], 0)}%).`, L, y, { s: 9.5, b: true });
-    y += 1; const cx = [L, L + 72, L + 112, L + 134]; doc.setFillColor('#eef1f5'); doc.rect(L, y - 3.6, R - L, 5.2, 'F'); ['medida', 'média ± desvio', 'variação', 'mín – máx'].forEach((h, j) => T(h, cx[j] + 1, y, { b: true, s: 8.5 })); y += 5;
+    const vr = gtVar(U);
+    if (vr) { // escala de 6 níveis (sem as carinhas): o nível da pessoa em destaque
+      y = T('Variabilidade de punho', L, y, { b: true, s: 10.5 }); y = T(`Quanto as ${U.length} assinaturas usadas variam entre si: mediana da variação (desvio ÷ média) em 7 medidas principais. Quanto mais variável, maior a diferença que uma assinatura precisa ter para sair da faixa da pessoa.`, L, y, { s: 8.5, c: '#5d6878' }) + 1;
+      need(30); const cuts = ['até 4%', '4 a 7%', '7 a 10%', '10 a 15%', '15 a 25%', 'acima de 25%'], wS = (R - L) / 6, hS = 13;
+      VAR_LV.forEach(([t, cc], j) => { const x0 = L + j * wS, on = j === vr.lv; doc.setFillColor(cc); doc.setDrawColor(on ? '#1b2230' : '#ffffff'); doc.setLineWidth(on ? 0.8 : 0.3);
+        doc.setGState(new doc.GState({ opacity: on ? 1 : 0.28 })); doc.rect(x0 + 0.4, y, wS - 0.8, hS, 'F'); doc.setGState(new doc.GState({ opacity: 1 })); if (on) doc.rect(x0 + 0.4, y, wS - 0.8, hS, 'S');
+        T(`${String(j + 1).padStart(2, '0')} · ${t}`, x0 + 2, y + 5.2, { s: 8, b: on, c: on ? '#ffffff' : '#1b2230', w: wS - 3, gap: 0 }); T(cuts[j], x0 + 2, y + 10, { s: 7, c: on ? '#ffffff' : '#5d6878', w: wS - 3, gap: 0 }); });
+      doc.setLineWidth(0.2); y += hS + 4.5;
+      y = T(`Resultado: nível ${String(vr.lv + 1).padStart(2, '0')} · ${VAR_LV[vr.lv][0]} · variação típica ${br(vr.typ, 1)}%. Cortes dos níveis ainda a calibrar com coletas reais de várias pessoas.`, L, y, { s: 9.5, b: true }) + 1;
+      need(8 + 4.6 * vr.cv.length); const vx = [L, L + 60]; T('medida', vx[0] + 1, y, { b: true, s: 8.5 }); T('variação', vx[1] + 1, y, { b: true, s: 8.5 }); y += 4.4;
+      for (const [kk, v] of vr.cv.slice().sort((a, b) => b[1] - a[1])) { T(VAR_NOME[kk], vx[0] + 1, y, { s: 8.5, gap: 0 }); T(br(v, 1) + '%', vx[1] + 1, y, { s: 8.5, gap: 0 }); doc.setFillColor('#8a919c'); doc.rect(vx[1] + 18, y - 2.6, Math.min(80, v * 3.2), 2.6, 'F'); doc.setDrawColor('#e3e7ee'); doc.line(L, y + 1.4, vx[1] + 100, y + 1.4); y += 4.6; }
+      y = T('Barra: variação de cada medida (1 mm = 0,3%). A variação típica é a mediana dessas 7.', L, y + 0.5, { s: 7.5, c: '#5d6878' }) + 3;
+      need(30); y = T('Medidas', L, y, { b: true, s: 10.5 });
+    }
+    need(24); y += 1; const cx = [L, L + 72, L + 112, L + 134]; doc.setFillColor('#eef1f5'); doc.rect(L, y - 3.6, R - L, 5.2, 'F'); ['medida', 'média ± desvio', 'variação', 'mín – máx'].forEach((h, j) => T(h, cx[j] + 1, y, { b: true, s: 8.5 })); y += 5;
     for (const key of keys) { const a = U.map(x => x.m[key]).filter(Number.isFinite), mu = TH.mean(a), sd = TH.std(a, 1), d = Math.abs(mu) >= 100 ? 0 : Math.abs(mu) >= 10 ? 1 : 2; need(5);
       [gtLbl(key), `${br(mu, d)} ± ${br(sd, d)}`, Math.abs(mu) > 1e-9 ? br(100 * sd / Math.abs(mu), 0) + '%' : '-', `${br(Math.min(...a), d)} – ${br(Math.max(...a), d)}`].forEach((v, j) => T(v, cx[j] + 1, y, { s: 8.5, gap: 0 })); doc.setDrawColor('#e3e7ee'); doc.line(L, y + 1.4, R, y + 1.4); y += 4.8; }
     y = T('Variação = desvio ÷ média. Desvio amostral das assinaturas usadas.', L, y + 1, { s: 8, c: '#5d6878' });
     H2('5. Gráficos dinâmicos');
-    for (const [id, t, campo, yl, cap] of GT_CURVAS) { need(70); y = T(t, L, y, { b: true, s: 9.5 }); const url = await gtImg((cv, h) => gtCurva(cv, campo, yl, h), 760, 250); doc.addImage(url, 'PNG', L, y, R - L, (R - L) * 250 / 760); y += (R - L) * 250 / 760 + 1.5; y = T(cap, L, y, { s: 8, c: '#5d6878' }) + 2; }
+    for (const [id, t, campo, yl, cap] of GT_CURVAS) { need(70); y = T(t, L, y, { b: true, s: 9.5 }); const url = await gtImg((cv, h) => gtCurva(cv, campo, yl, h), 760, 250); doc.addImage(url, 'PNG', L, y, R - L, (R - L) * 250 / 760); y += (R - L) * 250 / 760 + 3.5; y = T(cap, L, y, { s: 8, c: '#5d6878' }) + 2; }
+    { need(70); y = T('FFT da velocidade', L, y, { b: true, s: 9.5 }); const url = await gtImg((cv, h) => gtFFT(cv, h), 760, 250); doc.addImage(url, 'PNG', L, y, R - L, (R - L) * 250 / 760); y += (R - L) * 250 / 760 + 3.5; y = T(GT_FFT_CAP, L, y, { s: 8, c: '#5d6878' }) + 2; }
     for (let j = 0; j < GT_BARRAS.length; j += 2) { need(62); const wC = (R - L - 6) / 2, hC = wC * 230 / 420;
       for (const q of [0, 1]) { const b = GT_BARRAS[j + q]; if (!b) continue; const x0 = L + q * (wC + 6); T(b[1], x0, y, { b: true, s: 9, w: wC }); const url = await gtImg((cv, h) => gtBarras(cv, b[0], h), 420, 230); doc.addImage(url, 'PNG', x0, y + 2, wC, hC); T(b[2], x0, y + hC + 5, { s: 7.5, c: '#5d6878', w: wC }); }
       y += hC + 16; }
@@ -4314,7 +4354,7 @@ async function gtPDF() {
   const n = doc.getNumberOfPages(); for (let i = 1; i <= n; i++) { doc.setPage(i); doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5); doc.setTextColor('#8a919c'); doc.text(latin(`Thoth 1 · Grafoscopia Tradicional · ${col.signatario} · coleta SHA-256 ${GT.sha.slice(0, 16)}… · página ${i} de ${n}`), L, 290); }
   const nome = col.signatario.normalize('NFD').replace(/\p{Mn}/gu, '').replace(/[^\w]+/g, '_').slice(0, 30);
   doc.save(`thoth-grafoscopia-${nome}-${col.criado.slice(0, 10)}.pdf`);
-  log('grafoscopia: gerou relatório PDF', `${U.length} usadas · ${it.length - U.length} não usadas · amamnese ${GT.amn.trim().length} caracteres`); st.textContent = '✓ Relatório gerado (o download começa sozinho).';
+  log('grafoscopia: gerou relatório PDF', `${U.length} usadas · ${it.length - U.length} não usadas · anamnese ${GT.amn.trim().length} caracteres`); st.textContent = '✓ Relatório gerado (o download começa sozinho).';
 }
 /* ---------- eventos da aba ---------- */
 {
@@ -4343,7 +4383,7 @@ async function gtPDF() {
       if (!t.checked) { const box = t.closest('.gt-it').querySelector('.gt-ask'); box.hidden = false; box.querySelector('input').focus(); return; }
       if (GT.excl[i]) { log('grafoscopia: assinatura voltou a ser usada', `${gtId(i)} · motivo anterior: ${GT.excl[i].motivo}`); delete GT.excl[i]; gtSave(); renderGT(); } return; }
     if (t.id === 'gt-proc' || t.id === 'gt-perito') { GT[t.id === 'gt-proc' ? 'proc' : 'perito'] = t.value.trim(); gtSave(); log('grafoscopia: identificação', `${t.id === 'gt-proc' ? 'processo' : 'perito'}: ${t.value.trim()}`); return; }
-    if (t.id === 'gt-amn') { const h = await TH.sha256hex(GT.amn); log('grafoscopia: amamnese registrada', `${GT.amn.trim().length} caracteres · hash ${h.slice(0, 12)}`); return; }
+    if (t.id === 'gt-amn') { const h = await TH.sha256hex(GT.amn); log('grafoscopia: anamnese registrada', `${GT.amn.trim().length} caracteres · hash ${h.slice(0, 12)}`); return; }
     if (t.id === 'gt-file') { const f = t.files[0]; if (!f) return; const st = $('#gt-st');
       try { const v = JSON.parse(await f.text()); if (v.formato !== GT_FMT || !v.col) throw new Error('não é uma coleta de Grafoscopia Tradicional do Thoth');
         const c = { ...v.col }; const sha = await TH.sha256hex(TH.canonJSON(colCorpo(c))); if (v.col.sha256 !== sha) throw new Error('os dados da coleta não conferem com o SHA-256 gravado (arquivo alterado)');
