@@ -328,7 +328,7 @@ body.solo .needp::after { content: 'requer padrões · colete os padrões da pes
 body.solo [data-eixo="alinhado"], body.solo [data-eixo="caminho"], body.solo [data-fm="1"] { opacity: .4; pointer-events: none }
 .varp .vneed { margin-top: 10px; padding: 18px 10px; text-align: center; font: 600 13px var(--sans); color: var(--muted); border-radius: 8px; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--line) 35%, transparent) 0 10px, transparent 10px 20px) }
 body.nopress .needpress > :not(h3), body.nopress .needpress h3 > :not(:first-child), body.nopress .needpress h3 .ampl { display: none !important }
-body.nopress .needpress::after { content: 'sem medida de pressão · assinatura feita com mouse (ou caneta sem pressão): o navegador informa um valor fixo'; display: block; margin-top: 8px; padding: 26px 14px; text-align: center; font: 600 13px var(--sans); color: var(--muted); border-radius: 8px; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--line) 35%, transparent) 0 10px, transparent 10px 20px) }
+body.nopress .needpress::after { content: 'sem medida de pressão · assinatura feita com mouse (ou caneta sem pressão)'; display: block; margin-top: 8px; padding: 26px 14px; text-align: center; font: 600 13px var(--sans); color: var(--muted); border-radius: 8px; background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--line) 35%, transparent) 0 10px, transparent 10px 20px) }
 body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
 </style>
 
@@ -2526,7 +2526,7 @@ function integrity() {
     ['Cadeia de hash e contador', chain ? 'ok' : 'bad', chain ? 'sem lacunas' : 'quebrada', SOLO() ? 'assinatura avulsa: um pacote' : `questionada 1 · padrões 2–${n} encadeados`],
     ['Origem dos dados', 'warn', 'coleta de demonstração', 'mesa Huion H420X lida pelo navegador (Windows Ink); sem aparelho Thoth, sem GNSS, sem carimbo do tempo, sem cadeia de custódia'],
     ['Clip (inclinação e rotação)', 'sim', 'sem clip', 'sem dado; a bússola fica desabilitada e as combinações com inclinação ficam de fora'],
-    NOPRESS() ? ['Pressão', 'warn', 'sem medida', 'assinatura feita com mouse (ou caneta sem pressão): o navegador informa um valor fixo; gráficos e medidas de pressão ficam fora'] : ['Pressão', 'sim', 'adimensional (0–1)', 'até 1024 níveis pelo Windows Ink; sem calibração em gramas-força'],
+    NOPRESS() ? ['Pressão', 'warn', 'sem medida', 'assinatura feita com mouse (ou caneta sem pressão); gráficos e medidas de pressão ficam fora'] : ['Pressão', 'sim', 'adimensional (0–1)', 'até 1024 níveis pelo Windows Ink; sem calibração em gramas-força'],
     SOLO() ? ['Padrões', 'sim', 'nenhum', 'assinatura avulsa: só a dinâmica desta assinatura, sem comparação'] : ['Quantidade de padrões', NP() >= N_OK ? 'ok' : NP() >= N_VER ? 'warn' : 'bad', `${NP()} padrões`, `precisão ${precisao()} (classificação das combinações a partir de ${N_VER}; precisão normal a partir de ${N_OK})`]]; }
   return [
     ['Assinatura ECDSA dos pacotes', ver ? (ok === 21 ? 'ok' : 'bad') : 'na', ver ? `${ok} de 21` : 'a conferir', 'chave do Thoth 0123…F6EE (software no lugar do ATECC608B)'],
