@@ -1745,7 +1745,7 @@ function playAnim() {
   const step = now => {
     const f = Math.min(1, (now - t0) / dur), tt = f * T; let i = Math.min(n, Math.floor(tt * TH.FS));
     ANIM.upto = i; drawSignature(cv); abAll();
-    if (f < 1) ANIM.raf = requestAnimationFrame(step); else { ANIM.raf = 0; $('#an-play').textContent = '▶ de novo'; }
+    if (f < 1) ANIM.raf = requestAnimationFrame(step); else { ANIM.raf = 0; ANIM.upto = null; abClear(); drawSignature(cv); $('#an-play').textContent = '▶ de novo'; } // ao terminar, gráficos e desenho voltam ao estado original, sem faixa
   };
   ANIM.raf = requestAnimationFrame(step);
 }
