@@ -72,7 +72,8 @@ b.r-at { color: var(--red) } b.r-ty { color: var(--green) } b.r-in { color: var(
 .dica.warnt { color: var(--amber); font-weight: 600 }
 .grp.suavg { width: min(480px, 100%); flex: 0 0 auto } /* largura fixa: o texto do aviso não muda o resto da barra */
 #suav-dica { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.4em; max-width: 100% } /* uma linha só: o aviso nunca empurra o layout */
-.m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
+.m3warn { margin: 0; font-size: 12px; font-weight: 600; color: var(--amber); background: var(--warnbg); border: 1px solid var(--amber); border-radius: 6px; padding: 4px 8px } .c-full { grid-column: 1 / -1 } .c-left { grid-column: 1 / span 2 }
+.pair2 { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; align-items: stretch } @media (max-width: 1150px) { .pair2 { grid-template-columns: minmax(0, 1fr) } } .c-right { grid-column: 3 / span 2 } .rows2 { grid-row: span 2 } .rows3 { grid-row: span 3 }
 .tut { gap: 8px } .tutintro { font-size: 13px } .tutintro b { margin-right: 4px }
 .tutcap { margin: 0; font-size: 15px; line-height: 1.4; min-height: 4.2em; display: flex; gap: 10px; align-items: baseline }
 .tutcap b { flex: 0 0 auto; font: 600 12px var(--mono); color: var(--accent); background: var(--soft); border-radius: 999px; padding: 2px 9px }
@@ -398,8 +399,10 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
       <div class="card span2"><h3>Fluência por momento gráfico · jerk normalizado <span class="fine">exploratório</span></h3><canvas id="cv-flu" class="ch"></canvas><p class="fine cap1">Quão fluido foi cada momento gráfico (trecho sem levantar o instrumento): quanto menor, mais contínuo; 19 é o movimento mais suave possível. Hesitações, trancos e microcorreções aumentam o valor. <span class="nsolo">Cinza = padrões (média ± 2 desvios), azul = questionada.</span><span class="osolo">Azul = a assinatura.</span> Ponto cinza = momento gráfico curto demais para medir (menos de 0,3 s). Não entra nas elipses nem na tabela verdade.</p></div>
       
       <div class="card needp" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi coletado) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
-      <div class="card span2 c-left needp"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
-      <div class="card span2 c-right needp"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o relatório.</p></div>
+      <div class="pair2">
+      <div class="card needp"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
+      <div class="card needp"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o relatório.</p></div>
+      </div>
       <div class="card c-full needp" id="card-tv"><h3><span>Tabela verdade · todas as combinações</span><span class="fine">toque num quadrado para ver o motivo; toque de novo para abrir no gráfico</span></h3><div id="tv"></div><p class="fine">Cada linha compara a questionada com os <span class="np">20</span> padrões só naquelas medidas. TÍPICA: dentro da variação da pessoa. ATÍPICA: fora com folga mesmo depois de descontar o número de combinações testadas, e a régua é estável (no máximo 1 dos <span class="np">20</span> padrões sai quando testado contra os outros <span class="np-1">19</span>). INCONCLUSIVA: na borda, régua instável, medida que não varia, medidas redundantes ou trecho curto para o espectro. Tempo e velocidade nunca aparecem juntos (a velocidade é o caminho dividido pelo tempo). Cada linha é uma análise separada, com o seu resultado; o painel não junta as linhas numa conclusão. O conjunto mostra onde a assinatura se afasta e onde não. Os números de cada linha estão nos gráficos e no anexo do relatório.</p></div>
     </div>
   </section>
@@ -542,6 +545,15 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
         <li>Nos níveis altos, o começo e o fim de cada curva ficam em branco; isso é proposital.</li>
         <li>O título do gráfico mostra "suavizado N/10"; a mudança vai para o registro de acessos, e o relatório informa o nível usado nos gráficos impressos.</li></ul></div>
     </article>
+    <article class="card tut" id="tut-rui" data-card="rui">
+      <h3><span>Faixa de ruído (pontilhado laranja)</span><span class="fine">exemplo ilustrativo · no caso: gráficos de velocidade, aceleração, 4ª e 5ª derivada</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: o ruído da caneta parada, crescendo a cada derivada, e a faixa ±2σ sobre a 5ª derivada"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> Mesmo com a caneta parada, a mesa acusa pequenas variações de posição. A cada derivada essas variações crescem, por isso pesam muito na 4ª e na 5ª derivada. O painel mede esse ruído com a caneta parada, passa pelo mesmo filtro e desenha a faixa ±2σ em pontilhado laranja.</p><p><b>Como usar.</b> O que fica dentro da faixa não se distingue de ruído. O que sai dela é movimento da pessoa: hesitações, retomadas, microcorreções. Na 4ª e na 5ª derivada, leia só os picos que saem da faixa.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>A faixa vale para a mesa e o filtro em uso; trocando de mesa, a medida de ruído deve ser refeita.</li><li>Mesmo só com ruído, cerca de 5% dos pontos saem de ±2σ por acaso: um pico isolado e pequeno logo acima da faixa não basta.</li></ul></div>
+    </article>
     <article class="card tut" id="tut-var" data-card="var">
       <h3><span>Velocidade e área sob a velocidade</span><span class="fine">exemplo ilustrativo · no caso: aba Análise › Velocidade e Área sob a velocidade</span></h3>
       <p class="tutcap" aria-live="polite"><b class="tc-n">1 de 7</b><span class="tc-t"></span></p>
@@ -558,7 +570,43 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
       <div class="tuttxt"><p><b>O que é.</b> A mesa lê a caneta até cerca de 1 cm acima do papel. Os momentos em que a questionada estava com a caneta no ar aparecem nos gráficos de curva como faixas claras; a linha azul continua, mostrando o movimento no ar.</p><p><b>Como usar.</b> Veja onde e por quanto tempo ela levantou a caneta, e compare com a quantidade de levantamentos da pessoa no quadro de medidas.</p></div>
-      <div class="tutwarn"><b>Cuidados</b><ul><li>Nesta demonstração, o movimento no ar é simulado. No sistema real, só os instantes sem sinal (caneta acima de ~1 cm) são preenchidos por uma curva suave, marcados como estimados e deixados fora das medidas.</li><li>Mais levantamentos não provam imitação: idade, doença e dificuldade também aumentam as paradas.</li></ul></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Nesta demonstração, o movimento no ar é simulado. No sistema real, a mesa só lê a caneta até cerca de 1 cm do papel: acima disso não chegam amostras, o painel liga o último ponto lido ao próximo e, nesse intervalo, a curva não é movimento medido. Trechos longos e planos no ar, com picos só nas bordas, costumam ser isso.</li><li>Mais levantamentos não provam imitação: idade, doença e dificuldade também aumentam as paradas.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-mgt" data-card="mgt">
+      <h3><span>Momento gráfico e traço</span><span class="fine">exemplo ilustrativo · no caso: animação do desenho, pressão, fluência e potência inercial por traço</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: um M escrito sem levantar a caneta, dividido em quatro traços pelas freadas"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> <b>Momento gráfico</b> é o trecho lançado sem levantar o instrumento, do toque ao levantamento (termo da grafoscopia). <b>Traço</b> é a parte do momento gráfico entre duas freadas da caneta, isto é, entre dois mínimos de velocidade (termo dos estudos de movimento da escrita). Um "M" feito sem levantar é um momento gráfico com quatro traços.</p><p><b>Onde aparece.</b> Por momento gráfico: a numeração da animação do desenho, a pressão acumulada, a pressão por momento gráfico e a fluência por momento gráfico. Por traço: a potência inercial por traço, a fluência por traço e o modo "traço a traço", que alinha as curvas pelos levantamentos e pelas freadas.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>A freada é reconhecida quando a velocidade cai pelo menos 25 mm/s e volta a subir. Numa escrita muito lenta e uniforme há poucas freadas, e os traços ficam longos.</li><li>O levantamento vem da mesa (a caneta sai do papel); micro-levantamentos, em que a caneta volta a menos de 1 mm, também separam momentos gráficos.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-pot" data-card="pot">
+      <h3><span>Potência inercial: ao longo do tempo e por traço</span><span class="fine">exemplo ilustrativo · no caso: card Potência inercial, botões "ao longo do tempo" e "por traço"</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: traço lançado e traço guiado, com a velocidade e a potência inercial de cada um"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A potência inercial (a·v) mostra o que a mão faz com o movimento a cada instante: acima de zero, coloca energia (acelera); perto de zero, o movimento segue pelo impulso já adquirido; abaixo de zero, freia. Na vista "por traço", cada traço é esticado de 0 a 100% e dividido pelo seu maior valor, para comparar só a forma.</p><p><b>Como usar.</b> No traço lançado há um impulso no início e uma frenagem, uma vez só. No traço guiado a mão reacelera e freia várias vezes para conduzir a forma: são os reimpulsos. Compare a média azul com a faixa dos padrões e os três números do canto: energia injetada no 1º terço, reimpulsos por traço e pico típico (W/kg, com massa = 1).</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Exploratório: não entra nas elipses nem na tabela verdade.</li><li>Massa = 1: o valor é proporcional à potência da mão, não são watts reais. Serve para comparar com os padrões da mesma pessoa.</li><li>Traços com menos de 0,1 s ficam de fora.</li><li>Escrita conduzida não prova imitação: idade, doença, pouca prática ou apoio ruim também levam a ela. Compare sempre com os padrões da própria pessoa.</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-flu" data-card="flu">
+      <h3><span>Fluência: jerk normalizado e SPARC</span><span class="fine">exemplo ilustrativo · no caso: card Fluência por momento gráfico e quadro de medidas</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: um momento gráfico fluido e um hesitante, com o jerk normalizado e o SPARC de cada um"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> O <b>jerk normalizado</b> mede quanto a aceleração muda ao longo do momento gráfico, ajustado pela duração e pelo tamanho para comparar trechos diferentes. O valor 19 é o do movimento mais suave possível, um só impulso em sino; hesitações, trancos e correções aumentam o valor. O <b>SPARC</b> mede o mesmo pela velocidade vista em frequências: quanto mais perto de zero, mais suave (o movimento mais suave dá cerca de −1,4). O jerk normalizado também é calculado por traço, como na literatura.</p><p><b>Como usar.</b> Compare a questionada com a faixa dos padrões em cada momento gráfico e nas medidas globais.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Exploratório: não entra nas elipses nem na tabela verdade.</li><li>O ruído da mesa também soma ao jerk e puxa o valor para cima: compare só com padrões coletados na mesma mesa e com o mesmo filtro.</li><li>Momentos gráficos com menos de 0,3 s ficam de fora (ponto cinza no gráfico).</li></ul></div>
+    </article>
+    <article class="card tut" id="tut-pmg" data-card="pmg">
+      <h3><span>Pressão por momento gráfico</span><span class="fine">exemplo ilustrativo · no caso: card Pressão, botão "por momento gráfico"</span></h3>
+      <p class="tutcap" aria-live="polite"><b class="tc-n"></b><span class="tc-t"></span></p>
+      <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: a pressão de um momento gráfico, normalizada, comparada com a faixa dos padrões"></canvas></div>
+      <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
+        <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
+      <div class="tuttxt"><p><b>O que é.</b> A pressão do toque (0%) ao levantamento (100%) de cada momento gráfico, dividida pela média do próprio trecho: acima de 1, mais firme que a média do trecho; abaixo, mais leve. Assim um trecho apertado e outro leve ficam na mesma escala e o que se compara é a forma.</p><p><b>Como usar.</b> Veja se a questionada evolui como os padrões: em geral, quem escreve lançado começa firme e alivia no fim. O número do canto resume do 1º ao último terço ("cai X%" ou "sobe X%"). É diferente da pressão em formas parecidas: lá se compara quanto a pessoa aperta em cada tipo de forma; aqui, como a pressão evolui dentro do trecho.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Exploratório: não entra nas elipses nem na tabela verdade.</li><li>Momentos gráficos com menos de 0,2 s ficam de fora (pontos, cortes, retoques).</li><li>Sem pressão (mouse), o botão fica desligado.</li><li>O padrão "firme no início, leve no fim" varia de pessoa para pessoa: o que vale é a faixa dos padrões dela.</li></ul></div>
     </article>
     <article class="card tut" id="tut-elipse" data-card="elipse">
       <h3><span>Distância à pessoa · como ler a elipse</span><span class="fine">exemplo ilustrativo, valores inventados · no caso: aba Análise › Distância à pessoa</span></h3>
@@ -665,8 +713,8 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
       <div class="cw tutw"><canvas class="tutcv" role="img" aria-label="Animação: o semáforo da coleta, a galeria de 20 assinaturas e o relatório em tamanho real"></canvas></div>
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
-      <div class="tuttxt"><p><b>O que é.</b> O semáforo sincroniza quem opera e quem assina: nada é gravado fora da janela verde. Na Grafoscopia Tradicional, 20 assinaturas sem refazer; o perito decide quais não usar, com motivo, e gera o relatório para anexar ao laudo.</p><p><b>Como usar.</b> Preencha a anamnese com as condições da coleta. Imprima o relatório em escala 100% e confira com a régua de 50 mm.</p></div>
-      <div class="tutwarn"><b>Cuidados</b><ul><li>Nenhuma assinatura é refeita ou apagada: as não usadas continuam no relatório, com o motivo.</li><li>O relatório descreve a escrita de quem forneceu os padrões; não compara com a questionada e não conclui sobre autoria.</li></ul></div>
+      <div class="tuttxt"><p><b>O que é.</b> O semáforo sincroniza quem opera e quem assina: nada é gravado fora da janela verde. Na Grafoscopia Tradicional, 20 assinaturas sem refazer; o perito decide quais não usar, com motivo, e gera o relatório para anexar ao laudo.</p><p><b>Como usar.</b> Preencha a anamnese com as condições da coleta. Imprima o relatório em escala 100% e confira com a régua de 50 mm.</p><p><b>Ao abrir e sem padrões.</b> O painel abre vazio, "aguardando captura". Uma assinatura avulsa abre na tela principal com o desenho, as curvas e as medidas dela; as comparações (elipses, tabela verdade, faixas dos padrões) ficam desligadas até haver padrões.</p></div>
+      <div class="tutwarn"><b>Cuidados</b><ul><li>Nenhuma assinatura é refeita ou apagada: as não usadas continuam no relatório, com o motivo.</li><li>O relatório descreve a escrita de quem forneceu os padrões; não compara com a questionada e não conclui sobre autoria.</li><li>Sem pressão (assinatura feita com mouse ou caneta que não mede pressão), tudo o que depende de pressão fica desligado e indicado como "sem pressão".</li></ul></div>
     </article>
 
 
@@ -3646,7 +3694,7 @@ const AIR_STEPS = [
   [0, 7, 'A mesa lê a caneta também no ar, até cerca de 1 cm acima do papel. Entre um momento gráfico e outro, a caneta sobe, anda no ar e desce de novo.'],
   [7, 14, 'No gráfico, os momentos com a caneta no ar aparecem como faixas claras. A linha azul não se interrompe: ali ela mostra o movimento da caneta no ar.'],
   [14, 21, 'As faixas são só da questionada. Mostram onde ela levantou a caneta, quantas vezes e por quanto tempo. Compare com o número de levantamentos da pessoa, no quadro de medidas.'],
-  [21, 29, 'Se a caneta sobe mais de 1 cm, a mesa perde o sinal por um instante. Nesta demonstração esse movimento é simulado; no sistema real, o vão é ligado por uma curva suave, marcado como estimado, e não entra em nenhuma medida.'],
+  [21, 29, 'Se a caneta sobe mais de 1 cm, a mesa perde o sinal por um instante. Nesta demonstração esse movimento é simulado; no sistema real, o painel liga o último ponto lido ao próximo, e nesse vão a curva não é movimento medido.'],
   [29, 36, 'Como ler: faixas largas no meio de uma palavra podem ser hesitação ou parada para olhar o modelo. Mas pessoas idosas ou com dificuldade também levantam mais a caneta: conclua junto com as outras medidas.']];
 const AIR_END = 36;
 function drawAIR(cv, T) {
@@ -3945,6 +3993,161 @@ function drawCOL(cv, T) {
 /* registro dos cartões novos no tutorial */
 Object.assign(TPOSTER, { sinais: 36, formas: 21, media: 20, varpu: 20, estab: 16, areat: 17, coleta: 4.5 });
 { const _rt = renderTut; renderTut = function () { if (!tutBuilt) { tcRegister('sinais', SIN_STEPS, SIN_END, drawSIN); tcRegister('formas', FOR_STEPS, FOR_END, drawFOR); tcRegister('media', MED_STEPS, MED_END, drawMED); tcRegister('varpu', VPU_STEPS, VPU_END, drawVPU); tcRegister('estab', EST_STEPS, EST_END, drawEST); tcRegister('areat', ART_STEPS, ART_END, drawART); tcRegister('coleta', COL_STEPS, COL_END, drawCOL); } return _rt.apply(this, arguments); }; }
+
+/* ---------- cartões do tutorial: momento gráfico e traço, potência inercial, fluência, pressão por momento gráfico, faixa de ruído ---------- */
+const t3mj = u => (u <= 0 ? 0 : u >= 1 ? 1 : 10 * u ** 3 - 15 * u ** 4 + 6 * u ** 5), t3v = u => (u <= 0 || u >= 1 ? 0 : 30 * u * u * (1 - u) ** 2), t3a = u => (u <= 0 || u >= 1 ? 0 : 60 * u * (1 - u) * (1 - 2 * u));
+const t3U = Array.from({ length: 241 }, (_, i) => i / 240);
+function t3ax(c, P, sans, R, xr, yr, title) {
+  t2frame(c, P, R.x, R.y, R.w, R.h); if (title) { c.fillStyle = P.fg; c.font = '600 12px ' + sans; c.textAlign = 'left'; c.fillText(title, R.x, R.y - 6); }
+  return { X: v => R.x + (v - xr[0]) / (xr[1] - xr[0]) * R.w, Y: v => R.y + R.h - (v - yr[0]) / (yr[1] - yr[0]) * R.h };
+}
+function t3line(c, xs, ys, A, col, lw = 1.8, prog = 1, dash) {
+  const n = Math.max(1, Math.floor((xs.length - 1) * Math.max(0, Math.min(1, prog)))); if (prog <= 0) return;
+  c.strokeStyle = col; c.lineWidth = lw; c.setLineDash(dash || []); c.beginPath(); for (let i = 0; i <= n; i++) i ? c.lineTo(A.X(xs[i]), A.Y(ys[i])) : c.moveTo(A.X(xs[i]), A.Y(ys[i])); c.stroke(); c.setLineDash([]);
+}
+function t3zero(c, P, A, R, v = 0) { c.strokeStyle = P.mut; c.lineWidth = 1; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(R.x, A.Y(v)); c.lineTo(R.x + R.w, A.Y(v)); c.stroke(); c.setLineDash([]); }
+function t3band(c, xs, lo, hi, A, col, a = 0.25) { c.save(); c.globalAlpha = a; c.fillStyle = col; c.beginPath(); xs.forEach((x, i) => (i ? c.lineTo(A.X(x), A.Y(hi[i])) : c.moveTo(A.X(x), A.Y(hi[i])))); for (let i = xs.length - 1; i >= 0; i--) c.lineTo(A.X(xs[i]), A.Y(lo[i])); c.fill(); c.restore(); }
+// dois quadros lado a lado (ou um sobre o outro em tela estreita)
+function t3two(w, h, top = 26, bot = 26) { const nar = w < 560; if (!nar) { const pw = (w - 90) / 2; return [{ x: 40, y: top, w: pw, h: h - top - bot }, { x: 60 + pw, y: top, w: pw, h: h - top - bot }]; } const ph2 = (h - top - bot - 26) / 2; return [{ x: 36, y: top, w: w - 52, h: ph2 }, { x: 36, y: top + ph2 + 26, w: w - 52, h: ph2 }]; }
+// traço guiado: três subimpulsos sobrepostos (o que a mão faz para conduzir a forma)
+const T3SUB = [[0, 0.4, 0.3], [0.3, 0.4, 0.35], [0.6, 0.4, 0.35]];
+const t3gv = u => T3SUB.reduce((s, [a, d, k]) => s + k / d * t3v((u - a) / d), 0), t3ga = u => T3SUB.reduce((s, [a, d, k]) => s + k / d / d * t3a((u - a) / d), 0);
+function t3perfil(fv, fa) { let p = t3U.map(u => fv(u) * fa(u)); for (let r = 0; r < 3; r++) p = p.map((_, i) => { let s = 0, n = 0; for (let j = Math.max(0, i - 4); j <= Math.min(p.length - 1, i + 4); j++) { s += p[j]; n++; } return s / n; }); const m = Math.max(...p.map(Math.abs)); return p.map(v => v / m); }
+function t3resumo(p) { let w = 0, w1 = 0; const k3 = Math.floor(p.length / 3); p.forEach((v, i) => { if (v > 0) { w += v; if (i < k3) w1 += v; } }); let pk = 0; for (let i = 1; i < p.length - 1; i++) if (p[i] > 0.05 && p[i] > p[i - 1] && p[i] >= p[i + 1]) pk++; return { fr: 100 * w1 / w, ri: Math.max(0, pk - 1) }; }
+
+/* ---------- momento gráfico e traço ---------- */
+const MGT_STEPS = [
+  [0, 5, 'Um "M" escrito sem levantar a caneta, do toque ao levantamento.'],
+  [5, 10, 'Ao lado, a velocidade: quatro picos, separados por três freadas, onde a caneta quase para para mudar de direção.'],
+  [10, 14, 'Cada trecho entre duas freadas é um traço. Aqui são quatro traços, cada um com uma cor, no desenho e na velocidade.'],
+  [14, 19, 'Tudo junto é um só momento gráfico: a caneta não saiu do papel. O momento gráfico termina quando o instrumento é levantado.']];
+const MGT_END = 19;
+function drawMGT(cv, T) {
+  const k = tStep(MGT_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const cols = k >= 2 ? [P.acc, P.amb, P.grn, P.red] : [P.acc, P.acc, P.acc, P.acc], PT = [[0, 0], [8, 40], [16, 8], [24, 40], [32, 0]];
+  const R1 = nar ? { x: 30, y: 26, w: w - 60, h: (h - 90) * 0.45 } : { x: 30, y: 26, w: Math.min(260, w * 0.3), h: h - 60 };
+  const R2 = nar ? { x: 30, y: R1.y + R1.h + 34, w: w - 60, h: (h - 90) * 0.55 - 10 } : { x: R1.x + R1.w + 50, y: 26, w: w - R1.w - 110, h: h - 70 };
+  const g0 = k === 0 ? ph(T, 0.3, 4.5) : 1, A = t3ax(c, P, sans, R1, [-4, 36], [-6, 46], 'Desenho');
+  for (let s = 0; s < 4; s++) { const a = s / 4, b = (s + 1) / 4; if (g0 <= a) break; const fr = Math.min(1, (g0 - a) / (b - a)), xs = [], ys = [];
+    for (let j = 0; j <= 40 * fr; j++) { const f = t3mj(j / 40); xs.push(PT[s][0] + (PT[s + 1][0] - PT[s][0]) * f); ys.push(PT[s][1] + (PT[s + 1][1] - PT[s][1]) * f); }
+    c.strokeStyle = cols[s]; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); xs.forEach((x, i) => (i ? c.lineTo(A.X(x), A.Y(ys[i])) : c.moveTo(A.X(x), A.Y(ys[i])))); c.stroke(); c.lineCap = 'butt';
+    if (k >= 2) { const mx = (PT[s][0] + PT[s + 1][0]) / 2, my = (PT[s][1] + PT[s + 1][1]) / 2; c.textAlign = s % 2 ? 'left' : 'right'; halo('traço ' + (s + 1), A.X(mx) + (s % 2 ? 9 : -9), A.Y(my) + (s === 1 ? -24 : s === 2 ? 28 : 0), cols[s], 'bold 12px ' + sans); } }
+  c.fillStyle = P.fg; c.beginPath(); c.arc(A.X(0), A.Y(0), 4, 0, 7); c.fill(); c.textAlign = 'left'; halo('toque', A.X(0) + 7, A.Y(0) + 14, P.mut, '11px ' + sans);
+  if (g0 >= 1) { c.beginPath(); c.arc(A.X(32), A.Y(0), 4, 0, 7); c.fill(); c.textAlign = 'right'; halo('levanta', A.X(32) - 7, A.Y(0) + 14, P.mut, '11px ' + sans); }
+  if (k >= 1) { const B = t3ax(c, P, sans, R2, [0, 4], [0, 2.3], 'Velocidade'), gv = k === 1 ? ph(T, 5.3, 9) : 1;
+    for (let s = 0; s < 4; s++) { const xs = [], ys = []; for (let j = 0; j <= 40; j++) { xs.push(s + j / 40); ys.push(t3v(j / 40) + 0.06); } t3line(c, xs, ys, B, cols[s], 2.2, Math.min(1, gv * 4 - s));
+      if (s && gv * 4 >= s) { c.strokeStyle = P.mut; c.setLineDash([2, 3]); c.lineWidth = 1; c.beginPath(); c.moveTo(B.X(s), R2.y); c.lineTo(B.X(s), R2.y + R2.h); c.stroke(); c.setLineDash([]); c.textAlign = 'center'; halo('freada', B.X(s), R2.y + R2.h + 13, P.mut, '11px ' + sans); } }
+    c.textAlign = 'center'; if (!nar) halo('tempo →', R2.x + R2.w / 2, R2.y + R2.h + 28, P.mut, '11px ' + sans);
+    if (k >= 3) { const g = ph(T, 14.2, 15.5); c.globalAlpha = g; c.fillStyle = P.acc; c.globalAlpha = 0.1 * g; c.fillRect(R2.x, R2.y, R2.w, 24); c.globalAlpha = g; c.textAlign = 'center'; halo('◀ ─── 1 momento gráfico (caneta no papel) ─── ▶', R2.x + R2.w / 2, R2.y + 16, P.acc, 'bold 12px ' + sans); c.globalAlpha = 1; } }
+}
+
+/* ---------- potência inercial: ao longo do tempo e por traço ---------- */
+const POT_STEPS = [
+  [0, 6, 'Um traço lançado: a velocidade sobe e desce uma vez só, em forma de sino.'],
+  [6, 12, 'A potência inercial (a·v) mostra o que a mão faz: acima de zero, coloca energia no movimento; perto de zero, o movimento segue pelo impulso já adquirido; abaixo, freia. No traço lançado: um impulso, depois a frenagem.'],
+  [12, 19, 'Um traço guiado: a velocidade oscila, mas não chega a frear de verdade, por isso continua sendo um traço só. A mão reacelera e freia várias vezes para conduzir a forma: são os reimpulsos.'],
+  [19, 25, 'Na vista "por traço", cada traço é esticado de 0 a 100% e dividido pelo seu maior valor: compara-se só a forma, não o tamanho.'],
+  [25, 31, 'A faixa cinza é a dos padrões. O canto do gráfico resume: energia injetada no 1º terço, reimpulsos por traço e pico típico (W/kg, com massa = 1).']];
+const POT_END = 31;
+function drawPOT(cv, T) {
+  const k = tStep(POT_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), nar = w < 560;
+  const pl = t3perfil(t3v, t3a), pg = t3perfil(t3gv, t3ga), vg = t3U.map(t3gv), vm = Math.max(...vg), vgn = vg.map(v => v / vm * 1.875);
+  if (k <= 2) {
+    const [L, Rr] = t3two(w, h, 22, 22), half = R => [{ x: R.x, y: R.y, w: R.w, h: R.h * 0.42 }, { x: R.x, y: R.y + R.h * 0.42 + 26, w: R.w, h: R.h * 0.58 - 26 }];
+    const col = (R, vv, pp, nome, g1, g2, lab) => { const [a, b] = half(R), A = t3ax(c, P, sans, a, [0, 1], [0, 2.1], nome + ' · velocidade'); t3line(c, t3U, vv, A, P.band, 1.8, g1);
+      if (g2 > 0) { const B = t3ax(c, P, sans, b, [0, 1], [-1.2, 1.25], 'potência inercial (a·v)'); t3zero(c, P, B, b); t3line(c, t3U, pp, B, P.acc, 2, g2); if (g2 >= 1) lab(B); } };
+    const labL = B => { c.textAlign = 'center'; halo('injeta energia', B.X(0.22), B.Y(1.08), P.grn, 'bold 11.5px ' + sans); halo('freia', B.X(0.78), B.Y(-1.08), P.red, 'bold 11.5px ' + sans); };
+    const labG = B => { c.textAlign = 'center'; [[0.1, 'impulso'], [0.42, 'reimpulso'], [0.74, 'reimpulso']].forEach(([u, t]) => { let i = Math.round(u * 240); for (let j = i - 20; j <= i + 20; j++) if (pg[j] > pg[i]) i = j; halo(t, B.X(i / 240), B.Y(Math.min(1.1, pg[i] + 0.16)), P.grn, 'bold 11.5px ' + sans); }); };
+    col(L, t3U.map(t3v), pl, 'Traço lançado', k === 0 ? ph(T, 0.3, 5) : 1, k === 0 ? 0 : k === 1 ? ph(T, 6.3, 10) : 1, labL);
+    if (k === 2) col(Rr, vgn, pg, 'Traço guiado', ph(T, 12.3, 15), ph(T, 14.5, 18), labG);
+    return; }
+  const R = { x: nar ? 36 : 50, y: 30, w: w - (nar ? 52 : 80), h: h - 66 }, X100 = t3U.map(u => u * 100), A = t3ax(c, P, sans, R, [0, 100], [-1.15, 1.45], 'Por traço: a·v ÷ maior valor do traço');
+  t3zero(c, P, A, R); c.textAlign = 'center'; halo('% do traço (início → fim)', R.x + R.w / 2, R.y + R.h + 16, P.mut, '11px ' + sans);
+  if (k >= 4) { const g = ph(T, 25.2, 26.5), lo = pl.map((v, i) => v - 0.16 - 0.06 * Math.sin(i / 30)), hi = pl.map((v, i) => v + 0.16 + 0.06 * Math.cos(i / 25)); c.globalAlpha = g; t3band(c, X100, lo, hi, A, P.band); t3line(c, X100, pl, A, P.band, 1.2); c.globalAlpha = 1; }
+  const g3 = k === 3 ? ph(T, 19.3, 22) : 1; t3line(c, X100, pl, A, P.acc, 2.4, g3); t3line(c, X100, pg, A, P.red, 2.4, k === 3 ? ph(T, 21, 23.5) : 1);
+  c.textAlign = 'left'; halo('— lançado', R.x + 8, R.y + R.h - 26, P.acc, 'bold 12px ' + sans); if (k > 3 || T > 23.5) halo('— guiado', R.x + 8, R.y + R.h - 10, P.red, 'bold 12px ' + sans); if (k >= 4) halo('▬ padrões', R.x + 90, R.y + R.h - 10, P.band, 'bold 12px ' + sans);
+  if (k >= 4 && T > 26.5) { const a = t3resumo(pl), b = t3resumo(pg); c.textAlign = 'right';
+    halo(`energia no 1º terço: lançado ${br(a.fr, 0)}% · guiado ${br(b.fr, 0)}%`, R.x + R.w - 6, R.y + 16, P.fg, 'bold 12px ' + sans);
+    halo(`reimpulsos por traço: lançado ${a.ri} · guiado ${b.ri}`, R.x + R.w - 6, R.y + 32, P.fg, 'bold 12px ' + sans); }
+}
+
+/* ---------- fluência: jerk normalizado e SPARC ---------- */
+const FLU_STEPS = [
+  [0, 6, 'Um momento gráfico fluido: um só impulso, a velocidade em sino. O jerk normalizado dá 19, o menor valor possível.'],
+  [6, 12, 'Um momento gráfico hesitante: vários impulsos e pequenos trancos. O jerk normalizado sobe muito.'],
+  [12, 17, 'O SPARC mede o mesmo pela velocidade vista em frequências: o movimento mais suave fica perto de −1,4; quanto mais negativo, menos fluido. Os valores foram calculados para estas duas curvas.'],
+  [17, 23, 'No painel, cada momento gráfico vira um ponto, comparado com a faixa dos padrões. Aqui o momento gráfico 4 da questionada sai da faixa: menos fluido que o normal da pessoa.']];
+const FLU_END = 23;
+const T3FSUB = [[0, 0.3, 0.3], [0.22, 0.3, 0.25], [0.45, 0.25, 0.2], [0.64, 0.36, 0.25]], t3fh = u => T3FSUB.reduce((s, [a, d, k]) => s + k / d * t3v((u - a) / d), 0) * (1 + 0.04 * Math.sin(60 * u));
+let T3FV = null;
+function t3fluVals() { if (T3FV) return T3FV; const NJ = vf => { const n = 3000, dt = 1 / n, v = Array.from({ length: n + 1 }, (_, i) => vf(i / n)); let L = 0, J = 0; for (let i = 0; i < n; i++) L += v[i] * dt; for (let i = 1; i < n; i++) { const j = (v[i + 1] - 2 * v[i] + v[i - 1]) / dt / dt; J += j * j * dt; } return Math.sqrt(0.5 * J / (L * L)); };
+  const SP = vf => TH.sparc(Float64Array.from({ length: 301 }, (_, i) => vf(i / 300))); return (T3FV = { n1: NJ(t3v), n2: NJ(t3fh), s1: SP(t3v), s2: SP(t3fh) }); }
+function drawFLU(cv, T) {
+  const k = tStep(FLU_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), V = t3fluVals();
+  if (k <= 2) { const [L, Rr] = t3two(w, h, 22, 24), mx = Math.max(...t3U.map(t3fh));
+    const A = t3ax(c, P, sans, L, [0, 1], [0, 2.75], 'Fluido: um só impulso'); t3line(c, t3U, t3U.map(t3v), A, P.acc, 2.2, k === 0 ? ph(T, 0.3, 4) : 1);
+    if (k > 0 || T > 4) { c.textAlign = 'center'; halo(`jerk normalizado ${br(V.n1, 1)}`, L.x + L.w / 2, L.y + 16, P.grn, 'bold 12px ' + sans); if (k >= 2) halo(`SPARC ${br(V.s1, 2)}`, L.x + L.w / 2, L.y + 32, P.grn, 'bold 12px ' + sans); }
+    if (k >= 1) { const B = t3ax(c, P, sans, Rr, [0, 1], [0, 2.75 * mx / 1.875], 'Hesitante: vários impulsos e trancos'); t3line(c, t3U, t3U.map(t3fh), B, P.red, 2.2, k === 1 ? ph(T, 6.3, 10) : 1);
+      if (k > 1 || T > 10) { c.textAlign = 'center'; halo(`jerk normalizado ${br(V.n2, 0)}`, Rr.x + Rr.w / 2, Rr.y + 16, P.red, 'bold 12px ' + sans); if (k >= 2) halo(`SPARC ${br(V.s2, 2)}`, Rr.x + Rr.w / 2, Rr.y + 32, P.red, 'bold 12px ' + sans); } }
+    return; }
+  const R = { x: 50, y: 30, w: w - 80, h: h - 66 }, mu = [24, 27, 22, 26, 25, 23], sd = [3, 3.5, 2.5, 3, 3.2, 2.8], q = [25, 29, 21, 58, 27, 24], A = t3ax(c, P, sans, R, [0.4, 6.6], [0, 70], 'Fluência por momento gráfico (jerk normalizado)'), bw = R.w / 6 * 0.5;
+  mu.forEach((m, i) => { c.fillStyle = P.band; c.globalAlpha = 0.25; c.fillRect(A.X(i + 1) - bw / 2, A.Y(m + 2 * sd[i]), bw, A.Y(m - 2 * sd[i]) - A.Y(m + 2 * sd[i])); c.globalAlpha = 1; c.strokeStyle = P.band; c.lineWidth = 2; c.beginPath(); c.moveTo(A.X(i + 1) - bw / 2, A.Y(m)); c.lineTo(A.X(i + 1) + bw / 2, A.Y(m)); c.stroke(); c.textAlign = 'center'; halo(String(i + 1), A.X(i + 1), R.y + R.h + 14, P.mut, '11px ' + sans); });
+  c.strokeStyle = P.grn; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(R.x, A.Y(19)); c.lineTo(R.x + R.w, A.Y(19)); c.stroke(); c.setLineDash([]); c.textAlign = 'left'; halo('19 = o mais fluido possível', R.x + 6, A.Y(19) + 14, P.grn, '11px ' + sans);
+  const g = ph(T, 17.3, 20); q.forEach((v, i) => { if (i / 6 > g) return; c.fillStyle = i === 3 ? P.red : P.acc; c.beginPath(); c.arc(A.X(i + 1), A.Y(v), 5, 0, 7); c.fill(); });
+  if (g >= 1) { c.textAlign = 'right'; halo('momento gráfico 4: fora da faixa', A.X(4) - 10, A.Y(58) + 4, P.red, 'bold 12px ' + sans); }
+  c.textAlign = 'center'; halo('momento gráfico', R.x + R.w / 2, R.y + R.h + 28, P.mut, '11px ' + sans);
+}
+
+/* ---------- pressão por momento gráfico ---------- */
+const PMG_STEPS = [
+  [0, 5, 'A pressão ao longo de um momento gráfico, do toque ao levantamento.'],
+  [5, 10, 'O trecho é esticado de 0 a 100% e dividido pela própria média: acima de 1, mais firme que a média do trecho; abaixo, mais leve. Assim um trecho apertado e outro leve ficam na mesma escala.'],
+  [10, 15, 'Entra a faixa dos padrões. Esta questionada começa firme e alivia no fim, como os padrões: fica dentro da faixa.'],
+  [15, 21, 'Outra questionada, conduzida: a pressão não alivia no fim e sai da faixa. O canto do gráfico resume do 1º ao último terço.']];
+const PMG_END = 21;
+function drawPMG(cv, T) {
+  const k = tStep(PMG_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans);
+  const G = Array.from({ length: 101 }, (_, j) => j), lanc = G.map(x => { const u = x / 100; return (u < 0.06 ? 0.55 + u / 0.06 * 0.75 : 1.32 - 0.62 * u) - (u > 0.94 ? (u - 0.94) / 0.06 * 0.45 : 0); });
+  const cond = G.map(x => { const u = x / 100; return (u < 0.06 ? 0.6 + u / 0.06 * 0.38 : 0.98 + 0.06 * u) - (u > 0.96 ? (u - 0.96) / 0.04 * 0.35 : 0); });
+  const R = { x: 56, y: 30, w: w - 86, h: h - 66 };
+  if (k === 0) { const A = t3ax(c, P, sans, R, [0, 0.62], [0, 200], 'Pressão (gf) ao longo do tempo · um momento gráfico'); t3line(c, G.map(x => x / 100 * 0.62), lanc.map(v => v * 120), A, P.acc, 2.2, ph(T, 0.3, 4));
+    c.textAlign = 'center'; halo('tempo (s)', R.x + R.w / 2, R.y + R.h + 16, P.mut, '11px ' + sans); c.textAlign = 'right'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); [0, 100, 200].forEach(v => c.fillText(v + ' gf', R.x - 4, A.Y(v) + 3)); return; }
+  const A = t3ax(c, P, sans, R, [0, 100], [0, 1.6], 'Pressão ÷ média do momento gráfico'); t3zero(c, P, A, R, 1);
+  c.textAlign = 'center'; halo('% do momento gráfico (toque → levantamento)', R.x + R.w / 2, R.y + R.h + 16, P.mut, '11px ' + sans); c.textAlign = 'right'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); [0, 0.5, 1, 1.5].forEach(v => c.fillText(br(v, 1), R.x - 4, A.Y(v) + 3));
+  [33.3, 66.6].forEach(x => { c.strokeStyle = P.line; c.setLineDash([2, 4]); c.beginPath(); c.moveTo(A.X(x), R.y); c.lineTo(A.X(x), R.y + R.h); c.stroke(); c.setLineDash([]); });
+  if (k >= 2) { const g = ph(T, 10.2, 11.5); c.globalAlpha = g; t3band(c, G, lanc.map(v => v - 0.13), lanc.map(v => v + 0.13), A, P.band); c.globalAlpha = 1; }
+  t3line(c, G, lanc, A, P.acc, 2.4, k === 1 ? ph(T, 5.3, 8) : 1);
+  if (k >= 2 && T > 12) { c.textAlign = 'left'; halo('lançada: do 1º ao último terço, a pressão cai 38%', R.x + 8, R.y + 16, P.acc, 'bold 12px ' + sans); }
+  if (k >= 3) { t3line(c, G, cond, A, P.red, 2.4, ph(T, 15.3, 18)); if (T > 18) { c.textAlign = 'left'; halo('conduzida: a pressão sobe 5% · fora da faixa', R.x + 8, R.y + 34, P.red, 'bold 12px ' + sans); } }
+}
+
+/* ---------- faixa de ruído ---------- */
+const RUI_STEPS = [
+  [0, 5, 'Caneta parada na mesa: mesmo assim, a posição lida oscila um pouquinho. É o ruído da mesa.'],
+  [5, 10, 'Cada derivada amplia esse ruído: na velocidade ele quase não aparece; na 5ª derivada pode ficar maior que o próprio movimento.'],
+  [10, 15, 'Medido com a caneta parada e passado pelo mesmo filtro, o ruído define a faixa ±2σ (pontilhado laranja). Dentro dela, não se separa ruído de movimento.'],
+  [15, 21, 'O que sai da faixa é movimento da pessoa: hesitações, retomadas, microcorreções. Mesmo só com ruído, cerca de 5% dos pontos saem da faixa por acaso: um pico pequeno e isolado não basta.']];
+const RUI_END = 21;
+function drawRUI(cv, T) {
+  const k = tStep(RUI_STEPS, T), P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), halo = tHalo(c, P, sans), r = t2rng(11), R = { x: 56, y: 30, w: w - 86, h: h - 66 };
+  if (k === 0) { const n = 300, xs = Array.from({ length: n }, (_, i) => i / n * 3), ys = xs.map(() => Math.round(t2gauss(r) * 1.2) * 5), A = t3ax(c, P, sans, R, [0, 3], [-20, 20], 'Posição em X com a caneta parada (µm)');
+    t3zero(c, P, A, R); t3line(c, xs, ys, A, P.acc, 1.2, ph(T, 0.3, 4)); c.textAlign = 'right'; c.fillStyle = P.mut; c.font = '10px ' + css('--mono'); [-20, 0, 20].forEach(v => c.fillText(v + ' µm', R.x - 4, A.Y(v) + 3));
+    c.textAlign = 'center'; halo('tempo (s)', R.x + R.w / 2, R.y + R.h + 16, P.mut, '11px ' + sans); return; }
+  if (k === 1) { const L = ['velocidade', 'aceleração', 'jerk', '4ª derivada', '5ª derivada'], V = [0.03, 0.15, 0.45, 1.6, 4], bw = R.w / 5 * 0.5, A = t3ax(c, P, sans, R, [0.4, 5.6], [0, 4.4], 'Quanto o ruído pesa diante do movimento (esquema, sem escala)');
+    L.forEach((t, i) => { const g = Math.min(1, Math.max(0, ph(T, 5.3, 9) * 5 - i)); c.fillStyle = i >= 3 ? P.amb : P.band; c.fillRect(A.X(i + 1) - bw / 2, A.Y(V[i] * g), bw, A.Y(0) - A.Y(V[i] * g)); c.textAlign = 'center'; halo(t, A.X(i + 1), R.y + R.h + 14, P.mut, '11px ' + sans); });
+    c.strokeStyle = P.fg; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(R.x, A.Y(1)); c.lineTo(R.x + R.w, A.Y(1)); c.stroke(); c.setLineDash([]); c.textAlign = 'left'; halo('ruído do tamanho do movimento', R.x + 6, A.Y(1) - 6, P.fg, '11px ' + sans); return; }
+  const N = 600, xs = Array.from({ length: N }, (_, i) => i / N * 4), ys = xs.map(() => 0.5 * t2gauss(r));
+  [[1.2, 3.2], [2.55, -2.8], [3.3, 2.6]].forEach(([t0, a]) => xs.forEach((x, i) => { ys[i] += a * Math.exp(-(((x - t0) / 0.025) ** 2)) * Math.cos((x - t0) * 120); }));
+  const A = t3ax(c, P, sans, R, [0, 4], [-4, 4], '5ª derivada de uma assinatura'); t3zero(c, P, A, R);
+  const gb = k === 2 ? ph(T, 10.3, 12) : 1; c.globalAlpha = gb; c.fillStyle = P.amb; c.globalAlpha = 0.12 * gb; c.fillRect(R.x, A.Y(1), R.w, A.Y(-1) - A.Y(1)); c.globalAlpha = gb;
+  c.strokeStyle = P.amb; c.lineWidth = 1.4; c.setLineDash([3, 3]); [1, -1].forEach(v => { c.beginPath(); c.moveTo(R.x, A.Y(v)); c.lineTo(R.x + R.w, A.Y(v)); c.stroke(); }); c.setLineDash([]); c.globalAlpha = 1;
+  t3line(c, xs, ys, A, P.acc, 1.1); c.textAlign = 'left'; halo('dentro da faixa: não se separa ruído de movimento', R.x + 6, A.Y(-1) + 16, P.amb, 'bold 12px ' + sans);
+  c.textAlign = 'center'; halo('tempo (s)', R.x + R.w / 2, R.y + R.h + 16, P.mut, '11px ' + sans);
+  if (k >= 3) { const g = ph(T, 15.3, 17); c.globalAlpha = g; [[1.2, 3.4], [2.55, -3.3], [3.3, 2.9]].forEach(([t, y]) => { c.strokeStyle = P.grn; c.lineWidth = 1.8; c.beginPath(); c.arc(A.X(t), A.Y(y > 0 ? y - 0.4 : y + 0.4), 12, 0, 7); c.stroke(); });
+    c.textAlign = 'left'; halo('fora da faixa: movimento da pessoa', A.X(1.38), A.Y(3.45), P.grn, 'bold 12px ' + sans); c.globalAlpha = 1; }
+}
+Object.assign(TPOSTER, { mgt: 18, pot: 17, flu: 11.5, pmg: 20, rui: 19 });
+{ const _rt3 = renderTut; renderTut = function () { if (!tutBuilt) { tcRegister('mgt', MGT_STEPS, MGT_END, drawMGT); tcRegister('pot', POT_STEPS, POT_END, drawPOT); tcRegister('flu', FLU_STEPS, FLU_END, drawFLU); tcRegister('pmg', PMG_STEPS, PMG_END, drawPMG); tcRegister('rui', RUI_STEPS, RUI_END, drawRUI); } return _rt3.apply(this, arguments); }; }
 
 /* ================= captura ao vivo pela mesa (demonstração, sem padrões) =================
    A mesa (Huion H420X, driver com Windows Ink) chega ao navegador como caneta: posição, pressão (0–1, adimensional),
