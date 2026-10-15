@@ -1850,7 +1850,7 @@ function drawFluencia(cv) {
 }
 // progressão da pressão em cada momento gráfico: pressão ÷ média do próprio momento gráfico, do início (0%) ao fim (100%)
 function drawProgPress(cv) {
-  cv._csel = null;
+  cv._csel = null; cv._ab = null; cv._snap = null;
   const prof = (p, sel) => TH.porMomento(p, sel).M.filter(r => r.perfil).map(r => { const mu = TH.mean(Array.from(r.perfil)) || 1; return Array.from(r.perfil, v => v / mu); });
   const avg = A => (A.length ? A[0].map((_, j) => TH.mean(A.map(a => a[j]))) : null), gx = Array.from({ length: 51 }, (_, j) => j * 2);
   const Q = prof(D.Q, V.selq), qm = avg(Q), PM = SOLO() ? [] : D.PP.map((p, k) => avg(prof(p, V.sels[k]))).filter(Boolean);
@@ -1866,7 +1866,7 @@ function drawProgPress(cv) {
 }
 // potência inercial por traço (trecho entre mínimos de velocidade): a·v ÷ maior |a·v| do traço, do início (0%) ao fim (100%)
 function drawPowTraco(cv) {
-  cv._csel = null; const g = S.g, gx = Array.from({ length: 51 }, (_, j) => j * 2), avg = A => (A.length ? A[0].map((_, j) => TH.mean(A.map(a => a[j]))) : null);
+  cv._csel = null; cv._ab = null; cv._snap = null; /* sem eixo de tempo: não recebe a faixa verde da animação */ const g = S.g, gx = Array.from({ length: 51 }, (_, j) => j * 2), avg = A => (A.length ? A[0].map((_, j) => TH.mean(A.map(a => a[j]))) : null);
   const RQ = TH.porTraco(D.Q, V.selq, g), Q = RQ.T.map(r => Array.from(r.perfil)), qm = avg(Q);
   const RP = SOLO() ? [] : D.PP.map((p, k) => TH.porTraco(p, V.sels[k], g)).filter(r => r.T.length), PM = RP.map(r => avg(r.T.map(t => Array.from(t.perfil))));
   const m = PM.length >= 3 ? gx.map((_, j) => TH.mean(PM.map(a => a[j]))) : null, sd = m ? gx.map((_, j) => TH.std(PM.map(a => a[j]))) : null;
