@@ -47,7 +47,7 @@ input[type=range] { accent-color: var(--accent); width: 130px; max-width: 40vw }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 6px }
 .card h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; text-wrap: balance }
 .card h3.var { color: var(--amber) }
-.span2 { grid-column: span 2 } .tvsum { margin: 0 0 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center } .tvsum .mut, .tvdet .mut { color: var(--muted) } .tvsum .btn { margin-left: auto }
+.span2 { grid-column: span 2 } .tvgauge { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; max-width: 760px; margin-left: auto; margin-right: auto; text-align: center } .tvgauge h4 { margin: 0 0 4px } .tvgauge .fine { text-align: left } .tvuma { margin: 0 0 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px } .tvuma select { font-size: 12px; max-width: 260px } .tvsum { margin: 0 0 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center } .tvsum .mut, .tvdet .mut { color: var(--muted) } .tvsum .btn { margin-left: auto }
 .chip-r.big { font-size: 12.5px; padding: 2px 10px }
 .tvgrid { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-start } .tvgrid h4 { margin: 0 0 6px; color: var(--muted) }
 table.tvm { border-collapse: separate; border-spacing: 3px; width: auto !important; table-layout: fixed; font-size: 11px }
@@ -182,7 +182,7 @@ footer.f { color: var(--muted); font-size: 11.5px; text-align: center }
 @media (prefers-reduced-motion: reduce) { #loadbar { transition: none } }
 
 /* ---- captura ao vivo ---- */
-.livebtn { display: flex; align-items: center }
+.livebtn { display: flex; align-items: center; gap: 8px } #btn-open { font: 600 13px var(--sans); color: #f2f5fa; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.26); border-radius: 999px; padding: 7px 14px; cursor: pointer; white-space: nowrap } #btn-open:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.45) }
 #btn-live { font: 600 13px var(--sans); color: #fff; background: linear-gradient(180deg, #3a7bea, #2a63c4); border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 7px 16px 7px 13px; cursor: pointer; box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 4px 14px rgba(47,111,214,.35); display: inline-flex; gap: 7px; align-items: center; transition: transform .15s, box-shadow .15s }
 #btn-live:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,.15) inset, 0 6px 18px rgba(47,111,214,.45) } #btn-live .pen { font-size: 15px; line-height: 1 }
 #live-view { display: none } body.live-on #live-view { display: block } body.live-on .pane, body.live-on nav.tabs, body.live-on .ghost, body.live-on header.dev .r > .sub:last-child { display: none !important }
@@ -339,7 +339,7 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
   <header class="dev">
     <div><h1>THOTH · Painel do perito</h1><div class="sub">Processo 0001234-56.2026.8.26.0100 (simulado) · Perito: Nome do Perito</div></div>
     <div class="r"><div id="h-q"></div><div class="sub" id="h-sig"></div><div id="h-modo" class="modo"><span id="h-modo-t"></span><button type="button" id="btn-reveal" class="lnk" title="Mostra o tipo da questionada simulada. A ação fica no registro de acessos e no relatório.">revelar (fica registrado)</button></div><div class="sub" id="h-pad">Padrões: 20 coletas · mesmo Thoth · calibração CAL-2026-09-30-01 · sentado · mão direita</div></div>
-    <div class="livebtn"><button type="button" id="btn-live" title="Assinar na mesa digitalizadora e ver os gráficos dessa assinatura (demonstração)"><span class="pen">✎</span> Captura ao vivo</button></div>
+    <div class="livebtn"><label class="btn" id="btn-open" for="top-file" title="Abrir uma coleta salva (.json gerado por “salvar coleta”)">⇪ abrir coleta</label><input type="file" id="top-file" accept=".json,application/json" hidden><button type="button" id="btn-live" title="Assinar na mesa digitalizadora e ver os gráficos dessa assinatura (demonstração)"><span class="pen">✎</span> Captura ao vivo</button></div>
     <div class="ghost demo-only"><button type="button" id="btn-mode" title="Alternar a questionada: imitação, verdadeira ou mesma forma com construção diferente">◐</button><button type="button" id="btn-next" title="Próximo nome">seguinte</button></div>
   </header>
   <nav class="tabs" aria-label="Abas do painel">
@@ -650,7 +650,7 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
       <div class="cw tutw tall"><canvas class="tutcv" role="img" aria-label="Animação: como ler a matriz de pares e trios da tabela verdade"></canvas></div>
       <div class="tutctl"><button type="button" class="btn on tut-play">▶ tocar</button><button type="button" class="btn tut-restart">↺ do início</button>
         <span class="tuttrack"><span class="tut-bar"></span></span><span class="fine">etapas</span><span class="tutsteps"></span></div>
-      <div class="tuttxt"><p><b>O que é.</b> A pergunta da elipse ("a questionada combina com a pessoa nessas medidas?") feita para 47 combinações de pares e trios de medidas de uma vez. Cada quadrado ou faixa colorida é uma elipse resumida numa cor.</p><p><b>Como ler.</b> Verde T: típica. Vermelho A: atípica. Laranja I: inconclusiva, sempre com o motivo. O tracinho: tempo e velocidade não se comparam, porque a velocidade é o caminho dividido pelo tempo.</p><p><b>Como usar.</b> Procure onde os A se juntam: numa linha, numa coluna, num grupo de trios. É ali que a assinatura se afasta. Toque num quadrado para ler o motivo; toque de novo para abrir a combinação no gráfico.</p></div>
+      <div class="tuttxt"><p><b>O que é.</b> A pergunta da elipse ("a questionada combina com a pessoa nessas medidas?") feita para todas as combinações de pares e trios de medidas de uma vez. Cada quadrado ou faixa colorida é uma elipse resumida numa cor.</p><p><b>Como ler.</b> Verde T: típica. Vermelho A: atípica. Laranja I: inconclusiva, sempre com o motivo. O tracinho: tempo e velocidade não se comparam, porque a velocidade é o caminho dividido pelo tempo.</p><p><b>Como usar.</b> Procure onde os A se juntam: numa linha, numa coluna, num grupo de trios. É ali que a assinatura se afasta. Toque num quadrado para ler o motivo; toque de novo para abrir a combinação no gráfico.</p></div>
       <div class="tutwarn"><b>Cuidados</b><ul><li>Cada linha é uma análise separada, com o seu resultado. Nenhuma linha decide o caso: o painel não junta os resultados numa conclusão; isso cabe ao perito.</li><li>A tabela é mais exigente que a elipse sozinha (limite da tabela), porque testa muitas combinações; por isso um ponto "fora" na elipse pode aparecer como I na tabela.</li><li>Nenhum número aparece na tabela: os números de cada linha estão nos gráficos e no anexo do relatório.</li></ul></div>
     </article>
     <article class="card tut" id="tut-sinais" data-card="sinais">
@@ -2034,7 +2034,7 @@ function noiseScaleC(k) { // ruído branco de posição → derivada SG padrão 
 /* ---------------- análise de Mahalanobis por combinação (pares e trios) e tabela verdade ----------------
    Cada combinação recebe o SEU resultado (típica / atípica / inconclusiva). O painel não junta as combinações num
    resultado final: a conclusão sobre autoria é do perito. */
-const TV_SIX = ['tempo total (s)', 'pressão média (gf)', 'inclinação média (°)', 'trocas de jerk / traço', 'levantamentos', '% do espectro em 5–8 Hz'];
+const TV_SIX = ['tempo total (s)', 'pressão média (gf)', 'inclinação média (°)', 'trocas de jerk / traço', 'levantamentos', '% do espectro em 5–8 Hz']; // o tamanho (caminho total) fica só em "uma medida só": anda junto com o tempo e só endurecia a correção
 const TV_EXTRA = ['velocidade média (mm/s)', 'aceleração RMS (m/s²)'];
 const TV_SET = [TV_SIX[0], TV_EXTRA[0], TV_EXTRA[1], ...TV_SIX.slice(1)];
 const tvForbidden = ks => ks.includes('tempo total (s)') && ks.includes('velocidade média (mm/s)'); // velocidade = caminho / tempo: a conta, não a pessoa
@@ -2082,10 +2082,51 @@ function tvLinha(ks) {
 const tvRes = ks => { const k = ks.slice().sort().join('|'); V._tv = V._tv || {}; return V._tv[k] || (V._tv[k] = tvLinha(ks)); };
 const vCol = (res, P) => (res === 'ATÍPICA' ? P.red : res === 'TÍPICA' ? P.grn : res === 'INSUFICIENTE' ? P.mut : P.amb);
 let TVROWS = [];
-const TV_AB = { 'tempo total (s)': 'tempo', 'velocidade média (mm/s)': 'veloc.', 'aceleração RMS (m/s²)': 'acel.', 'pressão média (gf)': 'pressão', 'inclinação média (°)': 'inclin.', 'trocas de jerk / traço': 'jerk', 'levantamentos': 'levant.', '% do espectro em 5–8 Hz': '5–8 Hz' };
+const TV_AB = { 'tempo total (s)': 'tempo', 'velocidade média (mm/s)': 'veloc.', 'aceleração RMS (m/s²)': 'acel.', 'pressão média (gf)': 'pressão', 'inclinação média (°)': 'inclin.', 'trocas de jerk / traço': 'jerk', 'levantamentos': 'levant.', '% do espectro em 5–8 Hz': '5–8 Hz', 'caminho total (mm)': 'tamanho' };
 const tvNome = ks => ks.map(k => LBL(k).replace(/ \(.*\)$/, '')).join(' × ');
 const tvCls = r => (r === 'ATÍPICA' ? 'r-at' : r === 'TÍPICA' ? 'r-ty' : r === 'INSUFICIENTE' ? 'r-no' : 'r-in'), tvLet = r => (r === 'ATÍPICA' ? 'A' : r === 'TÍPICA' ? 'T' : r === 'INSUFICIENTE' ? '·' : 'I');
 let TVSEL = -1, TVLIST = false;
+// uma medida só, fora da tabela: a questionada contra a faixa de predição dos padrões nessa medida (t de Student, sem correção: é um teste só)
+function tvUma(k) {
+  const a = V.M.map(m => m[k]).filter(Number.isFinite), q = V.MQ[k], n = a.length; if (n < N_VER || !Number.isFinite(q)) return null;
+  const mu = TH.mean(a), sd = TH.std(a, 1); if (!(sd > 1e-12)) return { k, n, mu, sd, q, semVar: true };
+  const z = (q - mu) / sd, d2 = z * z, l95 = TH.hotLim(0.95, n, 1), l99 = TH.hotLim(0.99, n, 1), h95 = Math.sqrt(l95) * sd;
+  return { k, n, mu, sd, q, z, lo: mu - h95, hi: mu + h95, res: d2 <= l95 ? 'TÍPICA' : d2 > l99 ? 'ATÍPICA' : 'INCONCLUSIVA' };
+}
+function tvUmaHTML() {
+  const ks = KEYS.filter(k => !SEMDADO(k) && V.M.some(m => Number.isFinite(m[k])) && TH.std(V.M.map(m => m[k]).filter(Number.isFinite), 1) > 1e-12);
+  if (!ks.includes(S.uma)) S.uma = ks.includes('tempo total (s)') ? 'tempo total (s)' : ks[0];
+  const r = tvUma(S.uma), d = DEC(S.uma), un0 = (LBL(S.uma).match(/\(([^)]*)\)$/) || [])[1] || '', un = /^adim|^%$/.test(un0) ? (un0 === '%' ? '%' : '') : un0, u = v => br(v, d) + (un ? ' ' + un : '');
+  const opt = ks.map(k => `<option value="${k}"${k === S.uma ? ' selected' : ''}>${LBL(k)}</option>`).join('');
+  let t = '<span class="mut">padrões insuficientes para esta medida</span>';
+  if (r && r.semVar) t = '<span class="mut">a medida não varia nos padrões</span>';
+  else if (r) { const pc = r.mu ? 100 * r.q / r.mu : NaN;
+    t = `questionada <b>${u(r.q)}</b> · padrões ${u(r.mu)} ± ${br(r.sd, d)} (${r.n}) · ${Number.isFinite(pc) ? `<b>${br(pc, 0)}%</b> da média (${r.q >= r.mu ? '+' : '−'}${u(Math.abs(r.q - r.mu))}) · ` : ''}<b>${br(Math.abs(r.z), 1)} desvios</b> ${r.z >= 0 ? 'acima' : 'abaixo'} · faixa de 95% da pessoa: ${br(r.lo, d)} a ${u(r.hi)} <span class="chip-r ${tvCls(r.res)}">${r.res}</span>`; }
+  return `<div class="tvuma"><b>Uma medida só</b> <select id="tv-uma" aria-label="Medida para comparar sozinha">${opt}</select> <span>${t}</span>
+    <p class="fine" style="margin:4px 0 0">Fora da tabela e sem correção: é um teste só. TÍPICA dentro da faixa de 95% da pessoa; ATÍPICA além da de 99%; entre as duas, INCONCLUSIVA. Vale para a medida escolhida <b>antes</b> de olhar os resultados: escolher depois a que mais destoa deixa o resultado otimista.</p></div>`;
+}
+// medidor: quantas combinações a questionada tem fora da faixa de 95%, contra o que as assinaturas da própria pessoa têm.
+// Calibração pela própria pessoa: cada padrão é testado contra os outros, nas mesmas combinações (as combinações dividem
+// medidas e não são independentes, por isso não se usa uma conta binomial).
+const TV_ESP = '% do espectro em 5–8 Hz';
+function tvFora(A, q, n, ks) { if (ks.includes(TV_ESP) && TH.mean(V.M.map(m => m['tempo total (s)'])) < 1.0) return null; const r = mahaPlain(A, q); if (!(r.d2 >= 0)) return null; return r.d2 > TH.hotLim(0.95, n, ks.length); }
+function tvCalib() {
+  if (V._cal) return V._cal; const C = tvCombos(), n = V.M.length, cnt = [];
+  for (let j = 0; j < n; j++) { const rest = V.M.filter((_, i) => i !== j); let c = 0; for (const { ks } of C) if (tvFora(rest.map(m => ks.map(k => m[k])), ks.map(k => V.M[j][k]), n - 1, ks)) c++; cnt.push(c); }
+  let q = 0, k = 0; for (const { ks } of C) { const f = tvFora(V.M.map(m => ks.map(k2 => m[k2])), ks.map(k2 => V.MQ[k2]), n, ks); if (f === null) continue; k++; if (f) q++; }
+  const st = cnt.slice().sort((a, b) => a - b), p90 = st[Math.max(0, Math.ceil(0.9 * n) - 1)], mx = st[n - 1], med = st[(n - 1) >> 1];
+  return (V._cal = { cnt, q, k, K: C.length, p90, mx, med, mn: st[0] });
+}
+function drawGauge(cv) {
+  const G = tvCalib(), P = pal(), { c, w, h } = setup(cv, 190), sans = css('--sans'), cx = w / 2, cy = h - 34, R = Math.min(w / 2 - 20, h - 50), th = R * 0.24, K = Math.max(1, G.K);
+  const ang = v => Math.PI + Math.PI * Math.max(0, Math.min(1, v / K)), arc = (a, b, col) => { if (b <= a) return; c.beginPath(); c.arc(cx, cy, R, ang(a), ang(b)); c.arc(cx, cy, R - th, ang(b), ang(a), true); c.closePath(); c.fillStyle = col; c.fill(); };
+  const g1 = Math.min(K, G.p90 + 0.5), g2 = Math.min(K, Math.max(g1, G.mx + 0.5)); arc(0, g1, P.grn); arc(g1, g2, P.amb); arc(g2, K, P.red);
+  c.fillStyle = P.mut; c.font = '11px ' + sans; c.textAlign = 'center'; c.fillText('0', cx - R + th / 2, cy + 16); c.fillText(String(K), cx + R - th / 2, cy + 16);
+  const a = ang(G.q), L = R - th - 8; c.strokeStyle = P.fg; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + L * Math.cos(a), cy + L * Math.sin(a)); c.stroke(); c.lineCap = 'butt';
+  c.beginPath(); c.arc(cx, cy, 9, 0, 7); c.fillStyle = P.fg; c.fill(); c.beginPath(); c.arc(cx, cy, 3.5, 0, 7); c.fillStyle = P.panel; c.fill();
+  const zona = G.q <= G.p90 ? ['comum para a pessoa', P.grn] : G.q <= G.mx ? ['alta, mas já vista nos padrões', P.amb] : ['mais alta que em qualquer padrão', P.red];
+  c.textAlign = 'center'; c.fillStyle = zona[1]; c.font = '700 15px ' + sans; c.fillText(`${G.q} de ${G.k} fora da faixa · ${zona[0]}`, cx, cy + 30);
+}
 function renderTV() {
   if (SOLO()) { TVROWS = []; return; }
   TVROWS = tvCombos().map(c => ({ ...c, L: tvRes(c.ks) }));
@@ -2113,11 +2154,16 @@ function renderTV() {
     const trios = TVROWS.map((r, i) => [r, i]).filter(([r]) => !r.main && r.ks.length === 3)
       .map(([r, i]) => `<button type="button" data-tv="${i}" class="pill ${tvCls(r.L.res)}${i === TVSEL ? ' sel' : ''}" title="${tvNome(r.ks)}: ${r.L.res} — ${r.L.why}"><b>${tvLet(r.L.res)}</b> ${r.ks.map(k => TV_AB[k]).join(' · ')}</button>`).join('');
     const sel = TVROWS[TVSEL];
-    h += `<div class="tvgrid"><div><h4>Pares</h4>${mx}</div><div><h4>Trios das ${REAL() ? 5 : 6} medidas</h4><div class="pills">${trios}</div></div></div>
+    h += `<div class="tvgrid"><div><h4>Pares</h4>${mx}</div><div><h4>Trios das ${TV_SIX.filter(k => !SEMDADO(k)).length} medidas</h4><div class="pills">${trios}</div></div></div>
       <div class="tvdet" aria-live="polite">${sel && !sel.main ? `<span class="chip-r ${tvCls(sel.L.res)}">${sel.L.res}</span> <b>${tvNome(sel.ks)}</b> — ${sel.L.why}. <button type="button" class="btn" id="tv-open">abrir no gráfico ↗</button>` : '<span class="mut">Toque ou passe o mouse num quadrado ou num trio para ver o motivo.</span>'}</div>
       <p class="fine tvleg"><span class="chip-r r-ty">T</span> típica · <span class="chip-r r-at">A</span> atípica · <span class="chip-r r-in">I</span> inconclusiva · — não se compara</p>`;
   }
-  $('#tv').innerHTML = h;
+  let gz = '';
+  if (NP() >= N_VER) { const G = tvCalib();
+    gz = `<div class="tvgauge"><h4>Quantidade de combinações fora da faixa, comparada com a da própria pessoa</h4><canvas id="cv-gauge" style="width:100%;height:190px"></canvas>
+      <p class="fine">Combinações fora da faixa de 95% (inconclusivas e atípicas): questionada <b>${G.q} de ${G.k}</b>. Cada um dos ${NP()} padrões foi testado contra os outros, nas mesmas combinações: ficaram fora de ${G.mn} a ${G.mx} (mediana ${G.med}). Verde: até onde chegam 9 em cada 10 padrões (${G.p90}). Amarelo: até o padrão mais fora (${G.mx}). Vermelho: mais combinações fora do que em qualquer assinatura da própria pessoa. Não é conclusão: mostra se a quantidade de inconclusivas é comum ou não para essa pessoa. Com poucos padrões, os limites das cores ficam imprecisos.</p></div>`; }
+  $('#tv').innerHTML = (NP() >= N_VER ? tvUmaHTML() : '') + h + gz;
+  const gcv = $('#cv-gauge'); if (gcv) requestAnimationFrame(() => drawGauge(gcv));
 }
 function tvShow(i) { const r = TVROWS[i]; if (!r || r.main) return; TVSEL = i; const d = $('#tv .tvdet'); if (!d) return renderTV();
   d.innerHTML = `<span class="chip-r ${tvCls(r.L.res)}">${r.L.res}</span> <b>${tvNome(r.ks)}</b> — ${r.L.why}. <button type="button" class="btn" id="tv-open">abrir no gráfico ↗</button>`;
@@ -3024,6 +3070,7 @@ function bind() {
     const el = e.target.closest('[data-tv]'); if (!el) return; const i = +el.dataset.tv;
     if (TVLIST || TVROWS[i].main) tvOpen(i); else if (TVSEL === i) tvOpen(i); else tvShow(i);
   });
+  $('#tv').addEventListener('change', e => { if (e.target.id === 'tv-uma') { S.uma = e.target.value; log('tabela verdade: uma medida só', LBL(S.uma)); renderTV(); } });
   $('#tv').addEventListener('mouseover', e => { const el = e.target.closest('[data-tv]'); if (el && !TVLIST && e.pointerType !== 'touch') tvShow(+el.dataset.tv); });
   $('#tv').addEventListener('focusin', e => { const el = e.target.closest('[data-tv]'); if (el && !TVLIST) tvShow(+el.dataset.tv); });
   $('#tv').addEventListener('keydown', e => { const el = e.target.closest('[data-tv]'); if (el && (e.key === 'Enter' || e.key === ' ') && el.tagName !== 'BUTTON') { e.preventDefault(); tvOpen(+el.dataset.tv); } });
@@ -3586,7 +3633,7 @@ const TVT_STEPS = [
   [20, 26, 'Os trios fazem o mesmo com três medidas ao mesmo tempo, como no 3D.'],
   [26, 33, 'Toque num quadrado: aparece o motivo, em palavras. Toque de novo: o painel abre essa combinação no gráfico (elipse ou 3D).'],
   [33, 42, 'INCONCLUSIVA sempre vem com o motivo: na borda; régua instável (padrões da própria pessoa também saem); só a relação entre as medidas destoa; medida que não varia; medidas que dizem a mesma coisa; trecho curto para o tremor.'],
-  [42, 50, 'São 47 combinações. Quem testa muita coisa acaba achando algum "fora" por acaso. Por isso, na tabela, ATÍPICA exige passar da linha mais larga, o limite da tabela.'],
+  [42, 50, 'São dezenas de combinações. Quem testa muita coisa acaba achando algum "fora" por acaso. Por isso, na tabela, ATÍPICA exige passar da linha mais larga, o limite da tabela.'],
   [50, 58, 'Nenhuma linha decide o caso: cada uma é uma análise separada, e o painel não junta os resultados numa conclusão. A tabela mostra onde a assinatura se afasta. Aqui, quase todo A está na linha e na coluna da pressão: a diferença está na pressão.']];
 const TVT_END = 58;
 const TVT_M = ['tempo', 'veloc.', 'acel.', 'pressão', 'inclin.', 'jerk', 'levant.', '5–8 Hz'];
@@ -4666,6 +4713,8 @@ function openCapMenu() {
   });
   $('#capm-resume').addEventListener('click', () => { COL = colLoad(); if (!COL) return; close(); if (COL.Q) COL.refImg = refImage(COL.Q.s); if (COL.novaMatriz && COL.novaMatriz.modelo) mxGet(COL.novaMatriz.modelo.id).then(m => { if (m) { COL.modeloImg = refImage(m.ref.s, 680, 260); colUI(); } }); log('coleta: retomou', `${COL.signatario} · ${nP()} padrões`); liveOpen(COL.Q || COL.gt ? 'p' : 'q'); });
   $('#capm-file').addEventListener('change', e => { const f = e.target.files[0]; if (f) colAbrirArquivo(f); });
+  // atalho no topo: abre a mesma coleta salva sem passar pela captura; erros aparecem na janela da captura
+  $('#top-file').addEventListener('change', e => { const f = e.target.files[0]; e.target.value = ''; if (!f) return; $('#capm-st').textContent = 'abrindo ' + f.name + '…'; $('#capm-st').className = 'fine'; $('#capm').hidden = false; colAbrirArquivo(f); });
   document.addEventListener('click', e => { if (e.target.id === 'lc-som') { LIVE.mute = !LIVE.mute; try { localStorage.setItem('thoth-som', LIVE.mute ? '0' : '1'); } catch (_) {} somUI(); return; } const sl = e.target.closest && e.target.closest('#lc-gal [data-slot]'); if (sl && LIVE.mode === 'p' && !(COL && COL.gt)) { LIVE.disc = null; waitStop(); LIVE.gate = 'fechado'; LIVE._clear(); LIVE.selIdx = +sl.dataset.slot; LIVE.editIdx = null; colUI(); return; }
     const mb = e.target.closest && e.target.closest('#lc-msg [data-act]'); if (mb) colSlotAcao(mb.dataset.act); });
   /* ---------- matrizes: uma questionada salva com nome; os padrões são coletados em cada caso ---------- */
