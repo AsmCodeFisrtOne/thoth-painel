@@ -121,6 +121,7 @@ canvas { width: 100%; display: block; touch-action: pan-y }
 .cw.l { min-height: 220px } .cw.m { min-height: 430px } .cw.sig { min-height: 220px }
 .ch-s { height: 120px }
 #cv-sig { touch-action: none; cursor: crosshair } #cv-vel, #cv-acc, #cv-pow, #cv-d4, #cv-d5, #cv-big { cursor: col-resize }
+.card h3 .vsel { font-weight: 400 } .card h3 .vsel .btn { font-size: 10.5px; padding: 1px 6px }
 .shift { display: flex; gap: 4px; align-items: center; justify-content: flex-end; font: 11px var(--mono); color: var(--accent) }
 .shift button { border: 1px solid var(--accent); background: none; color: var(--accent); border-radius: 4px; font-size: 10px; padding: 0 5px; cursor: pointer }
 table { border-collapse: collapse; width: 100% }
@@ -381,13 +382,13 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
       <div class="card c-full" id="card-sig"><div class="sigwait" aria-live="polite">aguardando captura</div><h3><span id="t-sig">Desenho</span><span class="grp anim"><label for="an-sel" class="sr">Assinatura a animar</label><select id="an-sel"></select><label for="an-ms" class="fine" style="margin:0">tempo</label><input type="range" id="an-ms" min="100" max="20000" step="100" value="2000"><button type="button" class="btn" id="an-play">▶ animar</button></span></h3><p class="fine" id="an-ms-o" style="margin:0"></p><canvas id="cv-sig" aria-label="Desenho das assinaturas; arraste para selecionar um trecho"></canvas><p class="fine"><span class="nsolo">Cinza: <span class="np">20</span> padrões · azul: questionada · </span><span class="osolo">Azul: a assinatura · </span>pontilhado: caneta no ar. Arraste sobre o desenho para escolher um trecho. A animação reproduz só a construção do traçado: os números marcam a ordem dos momentos gráficos (trechos sem levantar o instrumento); I (verde) = início, T (vermelho) = término e ‖ (âmbar) = parada, com a duração (caneta parada no papel por 0,1 s ou mais); ^ (roxo) = micro-levantamento: a caneta sai do papel e volta a menos de 1 mm, com o tempo no ar; o ponto vermelho é a caneta no papel e o vazado, no ar. Não serve para avaliar ritmo, pausas ou pressão: isso se lê nos gráficos e nas medidas. Nos gráficos, a faixa verde é só um localizador: mostra onde, no eixo de cada gráfico, fica o trecho já desenhado.</p></div>
       <div class="card c-full" id="card-zoom" hidden><h3 id="t-zoom">Trecho em zoom</h3><canvas id="cv-zoom" class="ch-l"></canvas></div>
       <div class="card"><h3 class="var" id="t-hist">Histograma</h3><canvas id="cv-hist" class="ch"></canvas><p class="fine cap1">Quanto tempo a caneta passou em cada velocidade: <span class="nsolo">cinza = padrões, azul = questionada.</span><span class="osolo">azul = a assinatura.</span></p></div>
-      <div class="card needpress"><h3>Pressão (pelo caminho percorrido)</h3><canvas id="cv-pres" class="ch"></canvas><p class="fine cap1">Pressão ao longo do caminho da caneta, não do tempo: <span class="nsolo">faixa cinza = pessoa, azul = questionada.</span><span class="osolo">azul = a assinatura.</span></p><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card needpress"><h3><span id="t-pres">Pressão (pelo caminho percorrido)</span><span class="grp vsel" data-vk="presv"><button type="button" class="btn on" data-v="cam">pelo caminho</button><button type="button" class="btn" data-v="mg">por momento gráfico</button></span></h3><canvas id="cv-pres" class="ch"></canvas><p class="fine cap1" data-vc="presv:cam">Pressão ao longo do caminho da caneta, não do tempo: <span class="nsolo">faixa cinza = pessoa, azul = questionada.</span><span class="osolo">azul = a assinatura.</span></p><p class="fine cap1" data-vc="presv:mg" hidden>Como a pressão evolui dentro de cada momento gráfico (trecho sem levantar o instrumento), do toque (0%) ao levantamento (100%), dividida pela média do próprio trecho: acima de 1, mais firme que a média do trecho; abaixo, mais leve. Cada linha azul fina é um momento gráfico (0,2 s ou mais); a grossa é a média. <span class="nsolo">Faixa cinza = padrões (média ± 2 desvios).</span> Exploratório: não entra nas elipses nem na tabela verdade.</p><div class="shift" data-k="pres">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card needpress"><h3>Pressão acumulada por momento gráfico (∫ pressão dt)</h3><canvas id="cv-imp" class="ch"></canvas><p class="fine cap1">Pressão somada no tempo em cada momento gráfico (trecho lançado sem levantar o instrumento): <span class="nsolo">cinza = média dos padrões (± 2 desvios), azul = questionada.</span><span class="osolo">azul = a assinatura.</span></p></div>
       <div class="card rows3"><h3 id="t-meas">Medidas globais</h3><div id="measures"></div></div>
       <div class="card"><h3>Curva de deformação: tempo × caminho</h3><canvas id="cv-def" class="ch"></canvas><p class="fine cap1">Tempo gasto até cada ponto do caminho: onde a curva sobe mais, a escrita foi mais lenta.</p><div class="shift" data-k="def">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-vel">Velocidade</h3><canvas id="cv-vel" class="ch"></canvas><p class="fine cap1">Velocidade da caneta ao longo da assinatura: <span class="nsolo">cinza = padrões, azul = questionada.</span><span class="osolo">azul = a assinatura.</span></p><div class="shift" data-k="vel">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-acc">Aceleração</h3><canvas id="cv-acc" class="ch"></canvas><p class="fine cap1">Quanto a velocidade muda a cada instante: picos são arrancadas e freadas.</p><div class="shift" data-k="acc">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
-      <div class="card"><h3 class="var" id="t-pow">Potência inercial</h3><canvas id="cv-pow" class="ch"></canvas><p class="fine cap1">Esforço do movimento: acima de zero acelerando, abaixo freando.</p><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
+      <div class="card"><h3 class="var"><span id="t-pow">Potência inercial</span><span class="grp vsel" data-vk="powv"><button type="button" class="btn on" data-v="t">ao longo do tempo</button><button type="button" class="btn" data-v="tr">por traço</button></span></h3><canvas id="cv-pow" class="ch"></canvas><p class="fine cap1" data-vc="powv:t">Esforço do movimento: acima de zero acelerando, abaixo freando.</p><p class="fine cap1" data-vc="powv:tr" hidden>Cada traço (trecho entre duas freadas, dentro do momento gráfico) do início (0%) ao fim (100%), dividido pelo seu maior valor: acima de zero a mão injeta energia no movimento, perto de zero o movimento segue pelo impulso adquirido, abaixo freia. Traço lançado: um impulso no início. Traço guiado: vários reimpulsos ao longo dele. Linhas azuis finas = traços; grossa = média. <span class="nsolo">Faixa cinza = padrões (média ± 2 desvios).</span> Exploratório: não entra nas elipses nem na tabela verdade.</p><div class="shift" data-k="pow">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card"><h3 class="var" id="t-en">Energias</h3><canvas id="cv-en" class="ch"></canvas><p class="fine cap1">Energia total gasta acelerando (+) e freando (−): <span class="nsolo">cinza = padrões (± 2 desvios), azul = questionada.</span><span class="osolo">azul = a assinatura.</span></p></div>
       <div class="card"><h3>Bússola da caneta</h3><canvas id="cv-comp" class="ch-l"></canvas><p class="fine cap1">Inclinação e direção da caneta ao escrever; precisa do clip.</p></div>
       <div class="card span2 needp"><h3 class="var" id="t-area">Área sob a velocidade e tempo</h3><canvas id="cv-area" class="ch"></canvas><p class="fine cap1">Barra: distância que a caneta percorreu (escuro no papel, claro no ar) · losango: tempo gasto · faixas: variação da pessoa.</p></div>
@@ -395,7 +396,7 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
       <div class="card span2"><h3 class="var" id="t-d4">4ª derivada</h3><canvas id="cv-d4" class="ch"></canvas><p class="fine cap1">Mudanças bruscas no movimento: picos marcam hesitações e retomadas.</p><div class="shift" data-k="d4">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div></div>
       <div class="card span2"><h3 class="var" id="t-d5">5ª derivada</h3><canvas id="cv-d5" class="ch"></canvas><p class="fine cap1">Variações ainda mais finas: picos marcam microcorreções do traço.</p><div class="shift" data-k="d5">padrões <button type="button" data-s="-0.5">◀</button><b>+0,0%</b><button type="button" data-s="0.5">▶</button></div><p class="fine">Pontilhado laranja: ruído ±2σ medido com a caneta parada, pelo mesmo filtro.</p></div>
       <div class="card span2"><h3>Fluência por momento gráfico · jerk normalizado <span class="fine">exploratório</span></h3><canvas id="cv-flu" class="ch"></canvas><p class="fine cap1">Quão fluido foi cada momento gráfico (trecho sem levantar o instrumento): quanto menor, mais contínuo; 19 é o movimento mais suave possível. Hesitações, trancos e microcorreções aumentam o valor. <span class="nsolo">Cinza = padrões (média ± 2 desvios), azul = questionada.</span><span class="osolo">Azul = a assinatura.</span> Ponto cinza = momento gráfico curto demais para medir (menos de 0,3 s). Não entra nas elipses nem na tabela verdade.</p></div>
-      <div class="card span2 needpress"><h3>Progressão da pressão por momento gráfico · Lei de Pelat <span class="fine">exploratório</span></h3><canvas id="cv-pel" class="ch"></canvas><p class="fine cap1">Segunda Lei do Grafismo (Pelat, em Del Picchia): a pressão é maior onde há esforço, nos inícios, e menor nas extremidades. Cada linha azul fina é um momento gráfico, do início (0%) ao fim (100%), dividido pela própria média; a linha grossa é a média. <span class="nsolo">Faixa cinza = padrões (média ± 2 desvios).</span> Não entra nas elipses nem na tabela verdade.</p></div>
+      
       <div class="card needp" id="card-estab" style="grid-column: 1 / -1"><h3><span>Estabilidade da coleta · cada medida ao longo dos padrões</span><span class="fine">azul: abaixo da média da pessoa · vermelho: acima · cor forte: mais de 2 desvios</span></h3><div id="estab"></div><p class="fine">Cada quadrado é um padrão (na ordem em que foi coletado) numa medida. Coluna com muitas cores fortes = padrão fora do comum. Linha que vai do azul ao vermelho (ou o contrário) = tendência ao longo da coleta, como aquecimento no início ou cansaço no fim. Padrões fora do comum e tendências alargam a faixa da pessoa e tornam as comparações menos sensíveis.</p></div>
       <div class="card span2 c-left needp"><h3><span id="t-maha">Distância à pessoa</span><span class="grp">eixo X <select id="mh-x" aria-label="Medida no eixo X"></select> eixo Y <select id="mh-y" aria-label="Medida no eixo Y"></select><button type="button" class="btn" id="btn-anim">▶ animar</button><button type="button" class="btn" id="mh-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><canvas id="cv-maha" class="ch-m"></canvas><p class="fine">Elipses de 95% e 99%: até onde a própria pessoa costuma variar nesse par, pelos <span class="np">20</span> padrões. A inclinação mostra a ligação entre as duas medidas (por exemplo: quando escreve mais devagar, aperta mais). Linha cinza traço-ponto ("limite da tabela") = limite corrigido que a tabela verdade usa para afirmar ATÍPICA, porque ela testa <span class="nkc">47</span> combinações; acima da faixa de 95% e abaixo dessa linha a combinação fica "na borda". O título "Este par" e a cor do ponto da questionada mostram o resultado da análise só deste par, pela mesma regra da tabela verdade: verde típica, âmbar inconclusiva, vermelho atípica. O painel não junta medidas num resultado final: a conclusão é do perito. Só aparecem medidas que dizem coisas diferentes; tempo e velocidade nunca juntos.</p></div>
       <div class="card span2 c-right needp"><h3><span>Distância à pessoa em 3D · três medidas</span><span class="grp">X <select id="m3-x" aria-label="Medida no eixo X"></select> Y <select id="m3-y" aria-label="Medida no eixo Y"></select> Z <select id="m3-z" aria-label="Medida no eixo Z"></select><button type="button" class="btn" id="m3-spin">❚❚ parar</button><button type="button" class="btn" id="m3-anim">▶ animar</button><button type="button" class="btn" id="m3-real" title="Abre os eixos até a questionada: posições verdadeiras">⤢ escala real</button></span></h3><p id="m3-warn" class="m3warn" hidden>⚠ Rotação no eixo: dimensão ainda não validada em bancada e não utilizada na classificação principal.</p><canvas id="cv-m3" class="ch-m" aria-label="Elipsoide de Mahalanobis com três medidas; arraste para girar"></canvas><p class="fine">Cada medida é padronizada pelos <span class="np">20</span> padrões. Superfície azul = até onde a própria pessoa costuma variar nessas três medidas (95%); contorno tracejado = 95%, pontilhado = 99%, cinza traço-ponto = limite corrigido da tabela verdade (entre os dois, "na borda"). O alongamento e a inclinação mostram a ligação entre as três medidas; as linhas tracejadas internas são as direções em que a pessoa mais e menos varia. As sombras no chão e a haste da questionada ajudam a ler a profundidade. Arraste para girar; ⤢ amplia. O título e a cor mostram o resultado da análise só deste trio, pela mesma regra da tabela verdade. Uso exploratório: o trio inicial é escolhido só pelos padrões (as três medidas mais correlacionadas entre si), sem olhar a questionada; toda troca de trio vai para o registro de acessos e para o relatório.</p></div>
@@ -480,7 +481,7 @@ body.nopress [data-fm="1"] { opacity: .4; pointer-events: none }
 <tr><td>As irregularidades se concentram em letras ou trechos difíceis de imitar?</td><td>Posição no traçado</td><td>4ª e 5ª derivadas: onde a linha azul sai da faixa cinza</td></tr>
 <tr><td>A pressão é aplicada nos mesmos pontos da letra?</td><td>Qualquer (sempre por posição)</td><td>Gráfico de pressão</td></tr>
 <tr><td>O tempo gasto em cada parte da letra é distribuído como na pessoa?</td><td>Qualquer (sempre por posição)</td><td>Curva de deformação: inclinação diferente = trecho mais lento; degrau = pausa</td></tr>
-<tr><td>Início e fim de cada momento gráfico: entra e sai do papel com a mesma força?</td><td>Qualquer</td><td>Progressão da pressão por momento gráfico (Lei de Pelat); pressão acumulada por momento gráfico</td></tr>
+<tr><td>Início e fim de cada momento gráfico: entra e sai do papel com a mesma força?</td><td>Qualquer</td><td>Pressão por momento gráfico (card Pressão); pressão acumulada por momento gráfico</td></tr>
 <tr><td>Cada momento gráfico foi lançado com fluência ou com hesitações e retoques?</td><td>Qualquer</td><td>Fluência por momento gráfico (jerk normalizado); medidas de fluência</td></tr>
 </tbody></table></div>
 <h4>E. Não dependem do modo</h4><div class="tw"><table class="tq"><thead><tr><th>Pergunta</th><th>Modo</th><th>Onde olhar</th></tr></thead><tbody>
@@ -1118,7 +1119,7 @@ function sparc(v) {
   return -s;
 }
 function momentosGraficos(p, sel) { const o = []; let st = -1; for (let i = 0; i <= p.t.length; i++) { const c = i < p.t.length && p.C[i] && sel[i]; if (c && st < 0) st = i; else if (!c && st >= 0) { o.push([st, i]); st = -1; } } return o; }
-// por momento gráfico: duração, jerk normalizado, SPARC e progressão da pressão (Segunda Lei de Pelat: maior no início, menor nas extremidades)
+// por momento gráfico: duração, jerk normalizado, SPARC e progressão da pressão (início firme, final mais leve)
 function porMomento(p, sel) {
   const med = a => { const b = a.filter(Number.isFinite).sort((u, v) => u - v); return b.length ? (b.length % 2 ? b[b.length >> 1] : (b[b.length / 2 - 1] + b[b.length / 2]) / 2) : NaN; };
   const M = momentosGraficos(p, sel).map(([a, b]) => {
@@ -1129,6 +1130,19 @@ function porMomento(p, sel) {
     return r; });
   const tr = []; for (const { a, b } of M) { const cut = [a, ...p.mins.filter(m => m > a && m < b - 1), b]; for (let k = 0; k < cut.length - 1; k++) if ((cut[k + 1] - cut[k]) / FS >= NJ_MIN_TRACO_S) tr.push(jerkNorm(p, cut[k], cut[k + 1])); }
   return { M, njM: med(M.map(r => r.nj)), njT: med(tr), sp: med(M.map(r => r.sp)), queda: med(M.map(r => r.queda)) };
+}
+// potência inercial (a·v) por traço: traço = trecho entre mínimos de velocidade dentro de um momento gráfico (≥ 0,1 s).
+// perfil: a·v ÷ maior |a·v| do traço, do início (0%) ao fim (100%); fr = % do trabalho positivo (energia injetada) no 1º terço;
+// ri = reimpulsos (picos positivos além do primeiro, proeminência ≥ 10% do máximo); pk = maior |a·v| do traço (W/kg, massa = 1)
+function porTraco(p, sel, g = 'r') {
+  const pw = power(p, g), T = [], med = a => { const b = a.filter(Number.isFinite).sort((u, v) => u - v); return b.length ? (b.length % 2 ? b[b.length >> 1] : (b[b.length / 2 - 1] + b[b.length / 2]) / 2) : NaN; };
+  for (const [a, b] of momentosGraficos(p, sel)) { const cut = [a, ...p.mins.filter(m => m > a && m < b - 1), b];
+    for (let k = 0; k < cut.length - 1; k++) { const i0 = cut[k], i1 = cut[k + 1]; if ((i1 - i0) / FS < NJ_MIN_TRACO_S) continue;
+      const seg = pw.subarray(i0, i1); let m = 0; for (const v of seg) m = Math.max(m, Math.abs(v)); if (!(m > 0)) continue;
+      const n = seg.length, perfil = Float64Array.from({ length: 51 }, (_, j) => { const x = j / 50 * (n - 1), q = Math.floor(x), f = x - q; return (q + 1 < n ? seg[q] * (1 - f) + seg[q + 1] * f : seg[q]) / m; });
+      let w = 0, w1 = 0; const k3 = Math.floor(n / 3); for (let i = 0; i < n; i++) if (seg[i] > 0) { w += seg[i]; if (i < k3) w1 += seg[i]; }
+      T.push({ a: i0, b: i1, perfil, pk: m, fr: w > 0 ? 100 * w1 / w : NaN, ri: Math.max(0, findPeaks(Array.from(seg), { height: 0.05 * m, prominence: 0.1 * m }).length - 1) }); } }
+  return { T, fr: med(T.map(r => r.fr)), ri: T.length ? mean(T.map(r => r.ri)) : NaN, pk: med(T.map(r => r.pk)) };
 }
 function measures(p, NF, sel) {
   const n = p.t.length; let a0 = -1, a1 = -1; for (let i = 0; i < n; i++) if (sel[i]) { if (a0 < 0) a0 = i; a1 = i; }
@@ -1429,7 +1443,7 @@ async function montarCaso(nome, modo, base, DADOS, prog = () => {}) {
   return { name: nome, mode: modo, RR: abertos.slice(1).map(o => o.r), RQ: abertos[0].r, PP, Q, NF: noiseFloor(cal), A, REG: register(PP, A.W, Q, A.WQ), packs, tim, ri: A.ri, cal, calSha };
 }
 
-return { SGWK, DERIV_VER, sgNoiseRatio, porMomento, jerkNorm, sparc, FS, NU, SGW, SGO, NOISE, RES, rngOf, hashStr, interp, mean, std, median, savgol, sg, findPeaks, spectrum, Fsf, Fppf, hotLim, hotP, capture, process, comp, power,
+return { SGWK, DERIV_VER, sgNoiseRatio, porMomento, porTraco, jerkNorm, sparc, FS, NU, SGW, SGO, NOISE, RES, rngOf, hashStr, interp, mean, std, median, savgol, sg, findPeaks, spectrum, Fsf, Fppf, hotLim, hotP, capture, process, comp, power,
          noiseFloor, measures, KEYS, MAHA, alignAll, uOf, maha, register, dtwPath, edges, nivelParaGf, canonJSON, cabecalho, registroBytes, lerRegistro, montarPacote, abrirPacote, assinar, verificar, sha256hex, sha256regCal, nonceDe, montagem, hexOf, cpfFicticio, montarCaso, montarCasoReal, recorte, registroDeAmostras };
 })();
 
@@ -1464,7 +1478,7 @@ const MODE0 = n => (n.startsWith('Bruna') || n.startsWith('Isis') ? 'verdadeira'
 const MODE_NOME = { 'não informado': 'tipo não informado na coleta', 'imitação': 'imitação por outra pessoa', verdadeira: 'assinatura verdadeira da pessoa', 'construção': 'mesma forma, construção diferente (ordem e sentido dos traços trocados), ritmo da pessoa' };
 const DADOS_ = null;
 // o painel sempre parte da vista padrão: tempo real, assinatura inteira, sem suavização e sem deslocamento
-const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'tempo', g: 'r', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['velocidade média (mm/s)', 'aceleração RMS (m/s²)', 'pressão média (gf)'],
+const S = { name: NAMES[4], mode: MODE0(NAMES[4]), tab: 'analise', eixo: 'tempo', g: 'r', powv: 't', presv: 'cam', trecho: null, shifts: {}, mx: 'velocidade média (mm/s)', my: 'pressão média (gf)', m3: ['velocidade média (mm/s)', 'aceleração RMS (m/s²)', 'pressão média (gf)'],
   crus: { qm: 0, qc: 0, sel: 12, pm: 0, pc: -1 }, hip: { h: '', c: '', grau: '' }, log: [], logPrev: null, printing: false,
   obs: null, firstAdj: null, vistas: [], blind: true, revealed: null };
 let D = null, V = null, REALCASE = null;
@@ -1523,7 +1537,7 @@ function pal() {
   if (S.printing) Object.assign(p, { fg: '#1b2230', mut: '#5d6878', grid: '#e7eaf0', line: '#d9dee7', acc: '#2f6fd6', band: '#8a919c', red: '#c8372d', amb: '#c47a0a', grn: '#1f7a35', sel: '#f5c542', panel: '#ffffff', noise: '#c47a0a' });
   return p;
 }
-const STAMP_IDS = new Set(['cv-flu', 'cv-pel', 'cv-sig', 'cv-zoom', 'cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5', 'cv-maha', 'cv-m3', 'cv-big']), BAND_H = 16;
+const STAMP_IDS = new Set(['cv-flu', 'cv-sig', 'cv-zoom', 'cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5', 'cv-maha', 'cv-m3', 'cv-big']), BAND_H = 16;
 function setup(cv, h) {
   const r = S.printing ? 2 : (window.devicePixelRatio || 1), w = cv.clientWidth || 600; h = h || cv.clientHeight || 200;
   cv.width = Math.round(w * r); cv.height = Math.round(h * r); cv._stamped = false; const c = cv.getContext('2d'); c.setTransform(r, 0, 0, r, 0, 0);
@@ -1834,8 +1848,9 @@ function drawFluencia(cv) {
   }
   F.done(); c.fillStyle = P.grn; c.font = '10px ' + css('--sans'); c.textAlign = 'left'; c.fillText('tracejado verde: 19 = o mais fluido possível', F.m.l + 6, F.m.t + 12);
 }
-// progressão da pressão em cada momento gráfico (Segunda Lei de Pelat): pressão ÷ média do próprio momento gráfico, do início (0%) ao fim (100%)
-function drawPelat(cv) {
+// progressão da pressão em cada momento gráfico: pressão ÷ média do próprio momento gráfico, do início (0%) ao fim (100%)
+function drawProgPress(cv) {
+  cv._csel = null;
   const prof = (p, sel) => TH.porMomento(p, sel).M.filter(r => r.perfil).map(r => { const mu = TH.mean(Array.from(r.perfil)) || 1; return Array.from(r.perfil, v => v / mu); });
   const avg = A => (A.length ? A[0].map((_, j) => TH.mean(A.map(a => a[j]))) : null), gx = Array.from({ length: 51 }, (_, j) => j * 2);
   const Q = prof(D.Q, V.selq), qm = avg(Q), PM = SOLO() ? [] : D.PP.map((p, k) => avg(prof(p, V.sels[k]))).filter(Boolean);
@@ -1847,7 +1862,25 @@ function drawPelat(cv) {
   c.save(); c.globalAlpha = 0.3; Q.forEach(a => polyline(F, gx, a, P.acc, 0.8)); c.restore(); if (qm) polyline(F, gx, qm, P.acc, 2);
   F.done();
   const qd = TH.porMomento(D.Q, V.selq).queda; c.fillStyle = P.acc; c.font = '600 10.5px ' + css('--sans'); c.textAlign = 'right';
-  c.fillText(Number.isFinite(qd) ? `do primeiro ao último terço, a pressão ${Math.abs(qd) < 0.5 ? 'fica igual' : qd > 0 ? 'cai ' + br(qd, 0) + '%' : 'sobe ' + br(-qd, 0) + '%'} (mediana dos momentos gráficos)` : 'momentos gráficos curtos demais', F.w - F.m.r - 4, F.m.t + 12);
+  { const t = Number.isFinite(qd) ? `do 1º ao último terço, a pressão ${Math.abs(qd) < 0.5 ? 'fica igual' : qd > 0 ? 'cai ' + br(qd, 0) + '%' : 'sobe ' + br(-qd, 0) + '%'} (mediana)` : 'momentos gráficos curtos demais', wmax = F.w - F.m.l - F.m.r - 8; let fs = 10.5; while (fs > 7.5 && c.measureText(t).width > wmax) { fs -= 0.5; c.font = `600 ${fs}px ${css('--sans')}`; } c.fillText(t, F.w - F.m.r - 4, F.m.t + 12); }
+}
+// potência inercial por traço (trecho entre mínimos de velocidade): a·v ÷ maior |a·v| do traço, do início (0%) ao fim (100%)
+function drawPowTraco(cv) {
+  cv._csel = null; const g = S.g, gx = Array.from({ length: 51 }, (_, j) => j * 2), avg = A => (A.length ? A[0].map((_, j) => TH.mean(A.map(a => a[j]))) : null);
+  const RQ = TH.porTraco(D.Q, V.selq, g), Q = RQ.T.map(r => Array.from(r.perfil)), qm = avg(Q);
+  const RP = SOLO() ? [] : D.PP.map((p, k) => TH.porTraco(p, V.sels[k], g)).filter(r => r.T.length), PM = RP.map(r => avg(r.T.map(t => Array.from(t.perfil))));
+  const m = PM.length >= 3 ? gx.map((_, j) => TH.mean(PM.map(a => a[j]))) : null, sd = m ? gx.map((_, j) => TH.std(PM.map(a => a[j]))) : null;
+  const F = frame(cv, [0, 100], [-1.08, 1.75], { xlabel: '% do traço (início → fim)', ylabel: 'a·v ÷ máximo do traço' }), { c, X, Y, P } = F;
+  if (m) { bandFill(F, gx, m.map((v, j) => v - 2 * sd[j]), m.map((v, j) => v + 2 * sd[j]), P.band); polyline(F, gx, m, P.band, 1.2); }
+  c.strokeStyle = P.mut; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(X(0), Y(0)); c.lineTo(X(100), Y(0)); c.stroke(); c.setLineDash([]);
+  c.save(); c.globalAlpha = 0.3; Q.forEach(a => polyline(F, gx, a, P.acc, 0.8)); c.restore(); if (qm) polyline(F, gx, qm, P.acc, 2);
+  F.done();
+  const fx = (v, d) => (Number.isFinite(v) ? br(v, d) : '—'), faixa = (k, d) => { const v = RP.map(r => r[k]).filter(Number.isFinite); if (v.length < 3) return ''; const mu = TH.mean(v), s2 = 2 * TH.std(v); return ` (padrões ${br(Math.max(0, mu - s2), d)}–${br(mu + s2, d)})`; };
+  c.fillStyle = P.acc; c.font = '600 10.5px ' + css('--sans'); c.textAlign = 'right';
+  if (!Q.length) { c.fillText('nenhum traço com 0,1 s ou mais', F.w - F.m.r - 4, F.m.t + 12); return; }
+  const L3 = [`${Q.length} traços · energia no 1º terço: ${fx(RQ.fr, 0)}%${faixa('fr', 0)}`, `reimpulsos por traço: ${fx(RQ.ri, 1)}${faixa('ri', 1)}`, `pico típico: ${fx(RQ.pk, 3)} W/kg${faixa('pk', 3)}`];
+  const wmax = F.w - F.m.l - F.m.r - 8; let fs = 10.5; c.font = `600 ${fs}px ${css('--sans')}`; while (fs > 7.5 && Math.max(...L3.map(t => c.measureText(t).width)) > wmax) { fs -= 0.5; c.font = `600 ${fs}px ${css('--sans')}`; }
+  L3.forEach((t, i) => c.fillText(t, F.w - F.m.r - 4, F.m.t + 12 + i * (fs + 3)));
 }
 // área sob a velocidade = distância percorrida (mm) em cada uma das 21 assinaturas: parte com a caneta no papel e parte no ar
 function velArea(p, sel, g) {
@@ -2399,35 +2432,43 @@ function renderAnalise() {
   const sv = suavN() ? ` · suavizado ${suavN()}/10` : '';
   const T = { vel: `Velocidade · ${v}${zc}${sv}`, area: `Área sob a velocidade (distância) e tempo · ${v}${z}`, hist: `Histograma da velocidade · ${v}${z}`, acc: `Aceleração · ${a}${zc}${sv}`, pow: `Potência inercial · ${pw} (massa = 1)${zc}${sv}`, en: `Energias de aceleração e frenagem · ${nm}${z}`, fft: `FFT da velocidade · ${v}${z}${S.trecho ? ' (resolução menor)' : ''}`, d4: `4ª derivada · hesitações e retomadas · ${nm}${zc}${sv}`, d5: `5ª derivada · microcorreções · ${nm}${zc}${sv}` };
   for (const k in T) $('#t-' + k).textContent = T[k];
+  if (S.powv === 'tr') $('#t-pow').textContent = `Potência inercial por traço · ${pw}${z}`;
+  $('#t-pres').textContent = S.presv === 'mg' ? `Pressão por momento gráfico${z}` : 'Pressão (pelo caminho percorrido)'; vselUI();
   $('#t-meas').textContent = S.trecho ? `Medidas do trecho ${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% (exploratório)` : 'Medidas globais';
   $('#t-maha').textContent = `Distância à pessoa${z} · par de medidas`;
   $$('.shift b').forEach(el => (el.textContent = (S.shifts[el.parentNode.dataset.k] >= 0 ? '+' : '') + br(S.shifts[el.parentNode.dataset.k] || 0, 1) + '%'));
   renderMeasures(); if (!SOLO()) renderTV(); noteVista(); vistaUI();
   DRAW = {
     'cv-sig': cv => drawSignature(cv), 'cv-zoom': cv => drawZoom(cv), 'cv-comp': cv => drawCompass(cv), 'cv-hist': cv => drawHist(cv),
-    'cv-pres': cv => drawPressure(cv), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
+    'cv-pres': cv => (S.presv === 'mg' ? drawProgPress(cv) : drawPressure(cv)), 'cv-imp': cv => drawImpulse(cv), 'cv-def': cv => drawDeform(cv),
     'cv-vel': cv => drawCurve(cv, p => compV(p, g, 1), 'vel', 'mm/s', D.NF[1] * noiseScale(1)), 'cv-area': cv => drawArea(cv),
     'cv-acc': cv => drawCurve(cv, p => compV(p, g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3),
-    'cv-pow': cv => drawCurve(cv, p => powerV(p, g), 'pow', 'W/kg'),
-    'cv-en': cv => drawEnergy(cv), 'cv-fft': cv => drawFFT(cv), 'cv-flu': cv => drawFluencia(cv), 'cv-pel': cv => drawPelat(cv),
+    'cv-pow': cv => (S.powv === 'tr' ? drawPowTraco(cv) : drawCurve(cv, p => powerV(p, g), 'pow', 'W/kg')),
+    'cv-en': cv => drawEnergy(cv), 'cv-fft': cv => drawFFT(cv), 'cv-flu': cv => drawFluencia(cv),
     'cv-d4': cv => drawCurve(cv, p => compV(p, g, 4), 'd4', '×10⁶ mm/s⁴', D.NF[4] * noiseScale(4), 1e-6),
     'cv-d5': cv => drawCurve(cv, p => compV(p, g, 5), 'd5', '×10⁸ mm/s⁵', D.NF[5] * noiseScale(5), 1e-8),
     'cv-maha': cv => drawMaha(cv, 1), 'cv-m3': cv => { drawM3(cv, M3.tAnim); m3Kick(); },
   };
   requestAnimationFrame(() => {
     animUI(); drawSignature($('#cv-sig')); if (ZR()) drawZoom($("#cv-zoom"));
-    for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5', 'cv-flu', 'cv-pel']) if (!(SOLO() && id === 'cv-area')) DRAW[id]($('#' + id));
+    for (const id of ['cv-comp', 'cv-hist', 'cv-pres', 'cv-imp', 'cv-def', 'cv-vel', 'cv-area', 'cv-acc', 'cv-pow', 'cv-en', 'cv-fft', 'cv-d4', 'cv-d5', 'cv-flu']) if (!(SOLO() && id === 'cv-area')) DRAW[id]($('#' + id));
     if (!SOLO()) { playMaha(false);
     m3Selects(); { const k3 = [D.name, D.mode, S.trecho].join('|'); if (k3 !== M3.key) { M3.key = k3; if (!S.m3user) { S.m3 = m3Best(); } m3Selects(); m3Record(S.m3user ? 'perito (mantido)' : 'auto'); m3Play(); } else m3Kick(); } }
     if (BIG) DRAW[BIG]($('#cv-big'));
   });
 }
 
+// seletores de vista dentro do card (potência: tempo/traço; pressão: caminho/momento gráfico)
+function vselUI() {
+  $$('.vsel').forEach(gp => gp.querySelectorAll('[data-v]').forEach(b => b.classList.toggle('on', b.dataset.v === S[gp.dataset.vk])));
+  $$('[data-vc]').forEach(el => { const [k, v] = el.dataset.vc.split(':'); el.hidden = S[k] !== v; });
+  const sp = $('.shift[data-k="pow"]'), sr = $('.shift[data-k="pres"]'); if (sp) sp.hidden = S.powv === 'tr'; if (sr) sr.hidden = S.presv === 'mg';
+}
 /* ---------------- ampliar um gráfico (botão ⤢ no canto do gráfico) ---------------- */
 let DRAW = {}, BIG = null;
 function openBig(id) {
   if (!DRAW[id]) return;
-  BIG = id; const zz = ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(id); $('#cv-big').style.cursor = zz ? 'col-resize' : 'default'; $('#big-hint').textContent = 'Esc ou ✕ para fechar' + (zz ? ' · arraste na curva para dar zoom' : ''); const card = $('#' + id).closest('.card'), h = card.querySelector('h3');
+  BIG = id; const zz = ['cv-vel', 'cv-acc', 'cv-pow', 'cv-d4', 'cv-d5'].includes(id) && !(id === 'cv-pow' && S.powv === 'tr'); $('#cv-big').style.cursor = zz ? 'col-resize' : 'default'; $('#big-hint').textContent = 'Esc ou ✕ para fechar' + (zz ? ' · arraste na curva para dar zoom' : ''); const card = $('#' + id).closest('.card'), h = card.querySelector('h3');
   $('#big-title').textContent = (h ? (h.querySelector('span') || h).textContent : '').replace('⤢ ampliar', '').replace(/eixo X.*$/, '').trim();
   $('#bigview').hidden = false; document.body.style.overflow = 'hidden';
   log('ampliou gráfico', $('#big-title').textContent);
@@ -2545,7 +2586,7 @@ function integrity() {
 function params() {
   return [['Derivadas (versão 2: dois caminhos)', `Savitzky-Golay grau ${TH.SGO}, todas a partir da posição · caminho A: velocidade e aceleração janela ${TH.SGWK[1]} (103 ms), jerk janela ${TH.SGWK[3]} (137 ms) · caminho B: 4ª e 5ª derivada janela ${TH.SGWK[4]} (70 ms)`],
     ['Fluência (exploratória)', 'jerk normalizado √(½·∫jerk²dt·T⁵/L²) por momento gráfico (≥ 0,3 s) e por traço entre mínimos de velocidade (≥ 0,1 s, como no MovAlyzeR); SPARC da velocidade por momento gráfico (corte 10 Hz, limiar 0,05); fora das elipses e da tabela verdade'],
-    ['Progressão da pressão (exploratória)', 'Segunda Lei de Pelat: pressão média do primeiro terço contra a do último terço de cada momento gráfico (≥ 0,2 s); queda em % (positivo = cai do início ao fim)'], ['Ruído (caneta parada)', `σ velocidade ${br(D.NF[1])} mm/s · σ 5ª derivada ${br(D.NF[5] / 1e7, 1)}×10⁷ mm/s⁵`],
+    ['Progressão da pressão (exploratória)', 'pressão média do primeiro terço contra a do último terço de cada momento gráfico (≥ 0,2 s); queda em % (positivo = cai do início ao fim)'], ['Potência inercial por traço (exploratória)', 'traço = trecho entre mínimos de velocidade dentro do momento gráfico (≥ 0,1 s); a·v ÷ maior |a·v| do traço; energia injetada no 1º terço (% do trabalho positivo), reimpulsos (picos positivos além do primeiro, ≥ 10% do máximo) e pico típico (W/kg, massa = 1)'], ['Ruído (caneta parada)', `σ velocidade ${br(D.NF[1])} mm/s · σ 5ª derivada ${br(D.NF[5] / 1e7, 1)}×10⁷ mm/s⁵`],
     ['Alinhamento', 'marcos (levantamentos casados primeiro) + DTW limitado, banda de 10%'], ['Padrão médio', SOLO() ? 'não se aplica (sem padrões)' : `DBA dos ${NP()} padrões · referência P${String(D.ri + 1).padStart(2, '0')}`],
     ['Mahalanobis', SOLO() ? 'não se aplica (sem padrões)' : `por combinação: ${TV_K()} pares e trios, cada um com o seu resultado; sem resultado final`], ['Covariância', SOLO() ? 'não se aplica (sem padrões)' : `amostral dos ${NP()} padrões · limites de Hotelling (n = ${NP()}): 95% e corrigido para ${TV_K()} comparações`],
     ['Trecho', S.trecho ? `${br(S.trecho[0], 0)}–${br(S.trecho[1], 0)}% da assinatura (análise exploratória)` : 'assinatura inteira'], ['Zoom visual dos gráficos', S.zoom ? `${br(S.zoom[0], 0)}–${br(S.zoom[1], 0)}% (só visual)` : 'nenhum'], ['Grandeza', SYM[S.g][3]], ['Comparação das curvas (normalização do tempo)', { alinhado: 'traço a traço (marcos + DTW limitado)', tempo: 'tempo real (sem normalização)', caminho: 'posição no traçado (normalização pelo caminho percorrido)' }[S.eixo]],
@@ -2628,13 +2669,13 @@ async function makePDF() {
     [`Velocidade · ${SYM[S.g][0]}`, cv => drawCurve(cv, p => compV(p, S.g, 1), 'vel', 'mm/s', D.NF[1] * noiseScale(1)), 174, 50],
     [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => compV(p, S.g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3), 174, 50],
     ['Pressão (pelo caminho percorrido)', cv => drawPressure(cv), 174, 50], [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50],
-    ['Fluência por momento gráfico · jerk normalizado (exploratório)', cv => drawFluencia(cv), 174, 50], ['Progressão da pressão por momento gráfico · Lei de Pelat (exploratório)', cv => drawPelat(cv), 174, 50]] : [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52],
+    ['Fluência por momento gráfico · jerk normalizado (exploratório)', cv => drawFluencia(cv), 174, 50], ['Progressão da pressão por momento gráfico (exploratório)', cv => drawProgPress(cv), 174, 50], [`Potência inercial por traço · ${SYM[S.g][2] || ''} (exploratório)`, cv => drawPowTraco(cv), 174, 50]] : [['Desenho (padrões em cinza, questionada em azul)', (cv, w, h) => { cv.style.height = h + 'px'; drawSignature(cv); }, 174, 52],
     ['Bússola da caneta · raio: inclinação · ângulo: rotação no eixo (a validar) · x: média dos padrões · linha azul: questionada', cv => drawCompass(cv), 120, 90], ['Mahalanobis', (cv) => drawMaha(cv), 174, 95],
     [`Velocidade · ${SYM[S.g][0]}`, cv => drawCurve(cv, p => compV(p, S.g, 1), 'vel', 'mm/s', D.NF[1] * noiseScale(1)), 174, 50],
     [`Aceleração · ${SYM[S.g][1]}`, cv => drawCurve(cv, p => compV(p, S.g, 2), 'acc', 'm/s²', D.NF[2] * noiseScale(2), 1e-3), 174, 50], [`5ª derivada · ${SYM[S.g][3]}`, cv => drawCurve(cv, p => compV(p, S.g, 5), 'd5', 'x10^8 mm/s^5', D.NF[5] * noiseScale(5), 1e-8), 174, 50],
-    [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50], ['Fluência por momento gráfico · jerk normalizado (exploratório)', cv => drawFluencia(cv), 174, 50], ['Progressão da pressão por momento gráfico · Lei de Pelat (exploratório)', cv => drawPelat(cv), 174, 50], ['Mahalanobis 3D (exploratório)', cv => drawM3(cv, 1), 174, 95]];
+    [`FFT da velocidade · ${SYM[S.g][0]}`, cv => drawFFT(cv), 174, 50], ['Fluência por momento gráfico · jerk normalizado (exploratório)', cv => drawFluencia(cv), 174, 50], ['Progressão da pressão por momento gráfico (exploratório)', cv => drawProgPress(cv), 174, 50], ['Potência inercial por traço (exploratório)', cv => drawPowTraco(cv), 174, 50], ['Mahalanobis 3D (exploratório)', cv => drawM3(cv, 1), 174, 95]];
   const putImgs = async (list, code) => { for (const [cap, fn, wmm, hmm] of list) { need(hmm + 8); y = T(`${cap} · vista ${code}`, L, y, { b: true, s: 8.5 }); const url = await chartImg(fn, wmm * 4, hmm * 4); doc.addImage(url, 'PNG', L, y, wmm, hmm); y += hmm + 3; } };
-  const semP = cap => NOPRESS() && /Pressão|Pelat/.test(cap), IMGS0 = IMGS; await putImgs(IMGS0().filter(([cap]) => !semP(cap)), codePad);
+  const semP = cap => NOPRESS() && /^Pressão|Progressão da pressão/.test(cap), IMGS0 = IMGS; await putImgs(IMGS0().filter(([cap]) => !semP(cap)), codePad);
   if (H3.length && !SOLO()) { y = T('Trios do Mahalanobis 3D consultados (todos, na ordem; exploratórios)', L, y, { b: true, s: 8.5 });
     table([['Hora', 'Caso', 'Origem', 'X · Y · Z', 'D² / limite 99%']].concat(H3.map(h => [h.ts, h.caso, h.origem === 'auto' ? 'automático (só padrões)' : h.origem, h.ks.map(LBL).join(' · '), `${br(h.d2, h.d2 > 100 ? 0 : 1)} / ${br(h.l99, 1)}`])), [16, 34, 30, 70, 24], { head: true, s: 7 }); }
   if (TVROWS.length) { need(20); y = T('Tabela verdade (cada combinação com o seu resultado; o sistema não as junta numa conclusão; números no Anexo A)', L, y, { b: true, s: 8.5 });
@@ -2660,7 +2701,7 @@ async function makePDF() {
     Object.assign(S, saved); view();
     H2('Anexo B. Vista ajustada no momento do relatório (exploratória)');
     y = T(`Ajustes ativos: ${adjNow.join(' · ')}. Código da vista ${codeNow}. Estas figuras levam a marca "VISTA AJUSTADA" e não substituem as da seção 3. Os números e os resultados são os da assinatura inteira, na seção 2.${S.trecho ? ` As medidas do trecho ${S.trecho[0]}–${S.trecho[1]}% são exploratórias.` : ''}`, L, y, { s: 8.5, gap: 2 });
-    await putImgs(IMGS().filter(([cap]) => !(NOPRESS() && /Pressão|Pelat/.test(cap))), codeNow);
+    await putImgs(IMGS().filter(([cap]) => !(NOPRESS() && /^Pressão|Progressão da pressão/.test(cap))), codeNow);
     resetPadrao(); view();
   }
   const n = doc.getNumberOfPages();
@@ -2830,6 +2871,7 @@ function watermark() {
 function bind() {
   $$('.tab').forEach(t => t.addEventListener('click', () => { S.tab = t.dataset.tab; log('mudou de aba', t.textContent.trim()); render(); }));
   $$('[data-eixo]').forEach(b => b.addEventListener('click', () => { S.eixo = b.dataset.eixo; log('comparar as curvas por', b.textContent); renderAnalise(); }));
+  $$('.vsel [data-v]').forEach(b => b.addEventListener('click', () => { const k = b.closest('.vsel').dataset.vk; if (S[k] === b.dataset.v) return; S[k] = b.dataset.v; log('mudou vista do gráfico', `${k === 'powv' ? 'potência inercial' : 'pressão'}: ${b.textContent}`); renderAnalise(); }));
   $$('[data-g]').forEach(b => b.addEventListener('click', () => { S.g = b.dataset.g; log('mudou grandeza', SYM[S.g][3]); renderAnalise(); }));
   $('#btn-inteira').addEventListener('click', () => { if (!ZR()) return; S.trecho = null; S.zoom = null; view(); log('voltou à assinatura inteira', '—'); renderAnalise(); });
   $('#btn-anal').addEventListener('click', () => { // pede confirmação com explicação antes de recalcular no pedaço
