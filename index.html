@@ -49,7 +49,7 @@ input[type=range] { accent-color: var(--accent); width: 130px; max-width: 40vw }
 .card h3.var { color: var(--amber) }
 .span2 { grid-column: span 2 } body:not(.gaugeon) .tvgauge { display: none !important } #gk { position: fixed; left: 0; bottom: 0; width: 28px; height: 28px; z-index: 50; background: transparent; border: 0; padding: 0; cursor: default; opacity: 0 } #gk-box { position: fixed; left: 8px; bottom: 8px; z-index: 51; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px; box-shadow: 0 4px 16px rgba(0,0,0,.15) } #gk-box input { width: 110px; font: 13px var(--mono) } .tvgauge { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px } .tvg2 { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-start } .tvg2 canvas { width: 444px; max-width: 100%; height: 190px } .tvgauge .fine { max-width: 902px } .tvuma { margin: 0 0 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px } .tvuma select { font-size: 12px; max-width: 260px } .tvsum { margin: 0 0 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center } .tvsum .mut, .tvdet .mut { color: var(--muted) } .tvsum .btn { margin-left: auto }
 .chip-r.big { font-size: 12.5px; padding: 2px 10px }
-.tvgrid { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-start } .tvgrid h4 { margin: 0 0 6px; color: var(--muted) }
+.tvgrid { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-start } .tvgrid h4 { margin: 0 0 6px; color: var(--muted) } .pills1 { grid-template-columns: minmax(0, max-content) } .pill.sel { box-shadow: 0 0 0 2px var(--ink) }
 table.tvm { border-collapse: separate; border-spacing: 3px; width: auto !important; table-layout: fixed; font-size: 11px }
 table.tvm td { width: 34px; min-width: 34px; max-width: 34px; height: 26px; text-align: center; font-weight: 700; border-radius: 5px; color: var(--panel); cursor: pointer; padding: 0 }
 table.tvm td.r-at { background: var(--red) } table.tvm td.r-ty { background: var(--green) } table.tvm td.r-in { background: var(--amber) }
@@ -2102,6 +2102,7 @@ function tvUma(k) {
   const z = (q - mu) / sd, d2 = z * z, l95 = TH.hotLim(0.95, n, 1), l99 = TH.hotLim(0.99, n, 1), h95 = Math.sqrt(l95) * sd;
   return { k, n, mu, sd, q, z, lo: mu - h95, hi: mu + h95, res: d2 <= l95 ? 'TÍPICA' : d2 > l99 ? 'ATÍPICA' : 'INCONCLUSIVA' };
 }
+const tvUmaKeys = () => KEYS.filter(k => !SEMDADO(k) && V.M.some(m => Number.isFinite(m[k])) && TH.std(V.M.map(m => m[k]).filter(Number.isFinite), 1) > 1e-12);
 function tvUmaHTML() {
   const ks = KEYS.filter(k => !SEMDADO(k) && V.M.some(m => Number.isFinite(m[k])) && TH.std(V.M.map(m => m[k]).filter(Number.isFinite), 1) > 1e-12);
   if (!ks.includes(S.uma)) S.uma = ks.includes('tempo total (s)') ? 'tempo total (s)' : ks[0];
@@ -2174,6 +2175,7 @@ function renderTV() {
     h += '<div class="tw"><table class="tv"><thead><tr><th>Combinação</th><th>Resultado</th><th>Motivo</th></tr></thead><tbody>';
     let g = ''; TVROWS.forEach((r, i) => { if (r.grp !== g) { g = r.grp; h += `<tr class="g"><td colspan="3">${g}</td></tr>`; }
       h += `<tr data-tv="${i}" class="${r.main ? 'main' : ''}${i === TVSEL ? ' sel' : ''}" tabindex="0"><td>${tvNome(r.ks)}</td><td><span class="chip-r ${tvCls(r.L.res)}">${r.L.res}</span></td><td>${r.L.why}</td></tr>`; });
+    h += `<tr class="g"><td colspan="3">Uma medida só (fora da contagem, sem correção)</td></tr>` + tvUmaKeys().map(k => { const r = tvUma(k); if (!r || r.semVar) return ''; return `<tr><td>${LBL(k)}</td><td><span class="chip-r ${tvCls(r.res)}">${r.res}</span></td><td>${br(Math.abs(r.z), 1)} desvios ${r.z >= 0 ? 'acima' : 'abaixo'} da média da pessoa</td></tr>`; }).join('');
     h += '</tbody></table></div>';
   } else {
     const idx = {}; TVROWS.forEach((r, i) => { if (!r.main) idx[r.ks.slice().sort().join('|')] = i; });
@@ -2191,7 +2193,7 @@ function renderTV() {
     const trios = TVROWS.map((r, i) => [r, i]).filter(([r]) => !r.main && r.ks.length === 3)
       .map(([r, i]) => `<button type="button" data-tv="${i}" class="pill ${tvCls(r.L.res)}${i === TVSEL ? ' sel' : ''}" title="${tvNome(r.ks)}: ${r.L.res} — ${r.L.why}"><b>${tvLet(r.L.res)}</b> ${r.ks.map(k => TV_AB[k]).join(' · ')}</button>`).join('');
     const sel = TVROWS[TVSEL];
-    h += `<div class="tvgrid"><div><h4>Pares</h4>${mx}</div><div><h4>Trios das ${TV_SIX.filter(k => !SEMDADO(k)).length} medidas</h4><div class="pills">${trios}</div></div></div>
+    h += `<div class="tvgrid"><div><h4>Pares</h4>${mx}</div><div><h4>Trios das ${TV_SIX.filter(k => !SEMDADO(k)).length} medidas</h4><div class="pills">${trios}</div></div><div><h4>Uma medida só</h4><div class="pills pills1">${tvUmaKeys().map(k => { const r = tvUma(k); if (!r || r.semVar) return ''; return `<button type="button" data-uma="${k}" class="pill ${tvCls(r.res)}${k === S.uma ? ' sel' : ''}" title="${LBL(k)}: ${r.res} — ${br(Math.abs(r.z), 1)} desvios ${r.z >= 0 ? 'acima' : 'abaixo'} da média da pessoa"><b>${tvLet(r.res)}</b> ${k.startsWith('fluência') ? LBL(k).replace('fluência por ', 'fluência ').replace('jerk normalizado, Teulings', 'jerk norm.').replace('jerk normalizado', 'jerk norm.') : LBL(k).replace(/ \(.*\)$/, '')} · ${r.z >= 0 ? '+' : '−'}${br(Math.abs(r.z), 1)}</button>`; }).join('')}</div><p class="fine" style="margin:4px 0 0;max-width:300px">Cada medida sozinha, fora da contagem da tabela e sem correção (o número é em desvios da pessoa). Com ${tvUmaKeys().length} medidas, alguma pode sair da faixa de 95% por acaso.</p></div></div>
       <div class="tvdet" aria-live="polite">${sel && !sel.main ? `<span class="chip-r ${tvCls(sel.L.res)}">${sel.L.res}</span> <b>${tvNome(sel.ks)}</b> — ${sel.L.why}. <button type="button" class="btn" id="tv-open">abrir no gráfico ↗</button>` : '<span class="mut">Toque ou passe o mouse num quadrado ou num trio para ver o motivo.</span>'}</div>
       <p class="fine tvleg"><span class="chip-r r-ty">T</span> típica · <span class="chip-r r-at">A</span> atípica · <span class="chip-r r-in">I</span> inconclusiva · — não se compara</p>`;
   }
@@ -3118,6 +3120,7 @@ function bind() {
     const el = e.target.closest('[data-tv]'); if (!el) return; const i = +el.dataset.tv;
     if (TVLIST || TVROWS[i].main) tvOpen(i); else if (TVSEL === i) tvOpen(i); else tvShow(i);
   });
+  $('#tv').addEventListener('click', e => { const el = e.target.closest('[data-uma]'); if (!el) return; S.uma = el.dataset.uma; log('tabela verdade: uma medida só', LBL(S.uma)); renderTV(); });
   $('#tv').addEventListener('change', e => { if (e.target.id === 'tv-uma') { S.uma = e.target.value; log('tabela verdade: uma medida só', LBL(S.uma)); renderTV(); } });
   $('#tv').addEventListener('mouseover', e => { const el = e.target.closest('[data-tv]'); if (el && !TVLIST && e.pointerType !== 'touch') tvShow(+el.dataset.tv); });
   $('#tv').addEventListener('focusin', e => { const el = e.target.closest('[data-tv]'); if (el && !TVLIST) tvShow(+el.dataset.tv); });
