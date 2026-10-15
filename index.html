@@ -47,7 +47,7 @@ input[type=range] { accent-color: var(--accent); width: 130px; max-width: 40vw }
 .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; min-width: 0; display: flex; flex-direction: column; gap: 6px }
 .card h3 { margin: 0; font-size: 12.5px; font-weight: 600; display: flex; gap: 8px; align-items: baseline; justify-content: space-between; flex-wrap: wrap; text-wrap: balance }
 .card h3.var { color: var(--amber) }
-.span2 { grid-column: span 2 } .tvgauge { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; max-width: 760px; margin-left: auto; margin-right: auto; text-align: center } .tvgauge h4 { margin: 0 0 4px } .tvgauge .fine { text-align: left } .tvuma { margin: 0 0 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px } .tvuma select { font-size: 12px; max-width: 260px } .tvsum { margin: 0 0 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center } .tvsum .mut, .tvdet .mut { color: var(--muted) } .tvsum .btn { margin-left: auto }
+.span2 { grid-column: span 2 } .tvgauge { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px } .tvg2 { display: flex; flex-wrap: wrap; gap: 14px; justify-content: flex-start } .tvg2 canvas { width: 444px; max-width: 100%; height: 190px } .tvgauge .fine { max-width: 902px } .tvuma { margin: 0 0 10px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 8px; font-size: 13px } .tvuma select { font-size: 12px; max-width: 260px } .tvsum { margin: 0 0 8px; font-size: 13px; display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center } .tvsum .mut, .tvdet .mut { color: var(--muted) } .tvsum .btn { margin-left: auto }
 .chip-r.big { font-size: 12.5px; padding: 2px 10px }
 .tvgrid { display: flex; flex-wrap: wrap; gap: 14px 28px; align-items: flex-start } .tvgrid h4 { margin: 0 0 6px; color: var(--muted) }
 table.tvm { border-collapse: separate; border-spacing: 3px; width: auto !important; table-layout: fixed; font-size: 11px }
@@ -2114,18 +2114,45 @@ function tvCalib() {
   if (V._cal) return V._cal; const C = tvCombos(), n = V.M.length, cnt = [];
   for (let j = 0; j < n; j++) { const rest = V.M.filter((_, i) => i !== j); let c = 0; for (const { ks } of C) if (tvFora(rest.map(m => ks.map(k => m[k])), ks.map(k => V.M[j][k]), n - 1, ks)) c++; cnt.push(c); }
   let q = 0, k = 0; for (const { ks } of C) { const f = tvFora(V.M.map(m => ks.map(k2 => m[k2])), ks.map(k2 => V.MQ[k2]), n, ks); if (f === null) continue; k++; if (f) q++; }
+  const at = TVROWS.filter(r => r.L.res === 'ATÍPICA').length;
   const st = cnt.slice().sort((a, b) => a - b), p90 = st[Math.max(0, Math.ceil(0.9 * n) - 1)], mx = st[n - 1], med = st[(n - 1) >> 1];
-  return (V._cal = { cnt, q, k, K: C.length, p90, mx, med, mn: st[0] });
+  return (V._cal = { cnt, q, k, K: C.length, p90, mx, med, mn: st[0], at });
+}
+// medidor genérico (meia-lua): zonas verde/amarela/vermelha, ponteiro, escala e os padrões da pessoa como bolinhas em volta
+function drawGaugeG(cv, g) {
+  const P = pal(), { c, w, h } = setup(cv), sans = css('--sans'), s = h / 300, K = Math.max(1e-9, g.K);
+  const R = Math.min(w / 2 - 46 * s, h - 150 * s), th = Math.max(10, R * 0.17), cx = w / 2, cy = 52 * s + R;
+  const ang = v => Math.PI + Math.PI * Math.max(0, Math.min(1, v / K)), pt = (v, r) => [cx + r * Math.cos(ang(v)), cy + r * Math.sin(ang(v))];
+  const seg = (a, b, col, gap = 0.012) => { if (b <= a) return; const A = ang(a) + (a > 0 ? gap : 0), B = ang(b) - (b < K ? gap : 0); if (B <= A) return; c.beginPath(); c.arc(cx, cy, R, A, B); c.arc(cx, cy, R - th, B, A, true); c.closePath(); c.fillStyle = col; c.fill(); };
+  c.textAlign = 'center'; c.fillStyle = P.fg; c.font = `600 ${Math.round(14 * s + 3)}px ${sans}`; c.fillText(g.title, cx, 16 * s + 6);
+  const g1 = Math.min(K, g.z1), g2 = Math.min(K, Math.max(g1, g.z2)); seg(0, g1, P.grn); seg(g1, g2, P.amb); seg(g2, K, P.red);
+  c.strokeStyle = P.mut; c.lineWidth = 1; c.fillStyle = P.mut; c.font = `${Math.round(10.5 * s + 2)}px ${css('--mono')}`;
+  for (let v = 0; v <= K + 1e-9; v += g.tick) { const big = Math.abs(v / g.tickBig - Math.round(v / g.tickBig)) < 1e-6 || v === 0; const [x1, y1] = pt(v, R - th - 3), [x2, y2] = pt(v, R - th - (big ? 9 : 5) * s - 2); c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke();
+    if (big && Math.abs(v - g.q) > K * 0.06) { const [tx, ty] = pt(v, R - th - 21 * s - 4); c.fillText(g.fmt(v), tx, ty + 4); } }
+  const rep = {}; g.cnt.forEach(v => { const k = g.grp(v); rep[k] = (rep[k] || 0) + 1; });
+  for (const v in rep) { const [x, y] = pt(+v, R + 9 * s + 2); c.beginPath(); c.arc(x, y, 4.5 * s + 1, 0, 7); c.fillStyle = P.band; c.fill(); c.strokeStyle = P.panel; c.lineWidth = 1.2; c.stroke();
+    if (rep[v] > 1) { const [tx, ty] = pt(+v, R + 23 * s + 4); c.fillStyle = P.mut; c.font = `600 ${Math.round(10 * s + 2)}px ${sans}`; c.fillText('×' + rep[v], tx, ty + 3); } }
+  const a = ang(g.q), L = R - th * 0.35, bw = 7 * s + 1, nx = Math.cos(a), ny = Math.sin(a);
+  c.save(); c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 3; c.shadowOffsetY = 1; c.fillStyle = P.fg; c.beginPath(); c.moveTo(cx + L * nx, cy + L * ny); c.lineTo(cx - bw * ny, cy + bw * nx); c.lineTo(cx - 14 * s * nx, cy - 14 * s * ny); c.lineTo(cx + bw * ny, cy - bw * nx); c.closePath(); c.fill(); c.restore();
+  c.beginPath(); c.arc(cx, cy, 11 * s + 1, 0, 7); c.fillStyle = P.fg; c.fill(); c.beginPath(); c.arc(cx, cy, 4.5 * s, 0, 7); c.fillStyle = P.panel; c.fill();
+  const col = g.zone === 0 ? P.grn : g.zone === 1 ? P.amb : P.red;
+  c.fillStyle = P.fg; c.font = `700 ${Math.round(22 * s + 4)}px ${sans}`; c.fillText(g.big, cx, cy + 38 * s + 6);
+  c.fillStyle = col; c.font = `700 ${Math.round(13 * s + 3)}px ${sans}`; c.fillText(g.phrase, cx, cy + 57 * s + 9);
+  c.fillStyle = P.mut; c.font = `${Math.round(11.5 * s + 2.5)}px ${sans}`; c.fillText(g.sub, cx, cy + 75 * s + 12);
 }
 function drawGauge(cv) {
-  const G = tvCalib(), P = pal(), { c, w, h } = setup(cv, 190), sans = css('--sans'), cx = w / 2, cy = h - 34, R = Math.min(w / 2 - 20, h - 50), th = R * 0.24, K = Math.max(1, G.K);
-  const ang = v => Math.PI + Math.PI * Math.max(0, Math.min(1, v / K)), arc = (a, b, col) => { if (b <= a) return; c.beginPath(); c.arc(cx, cy, R, ang(a), ang(b)); c.arc(cx, cy, R - th, ang(b), ang(a), true); c.closePath(); c.fillStyle = col; c.fill(); };
-  const g1 = Math.min(K, G.p90 + 0.5), g2 = Math.min(K, Math.max(g1, G.mx + 0.5)); arc(0, g1, P.grn); arc(g1, g2, P.amb); arc(g2, K, P.red);
-  c.fillStyle = P.mut; c.font = '11px ' + sans; c.textAlign = 'center'; c.fillText('0', cx - R + th / 2, cy + 16); c.fillText(String(K), cx + R - th / 2, cy + 16);
-  const a = ang(G.q), L = R - th - 8; c.strokeStyle = P.fg; c.lineWidth = 4; c.lineCap = 'round'; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + L * Math.cos(a), cy + L * Math.sin(a)); c.stroke(); c.lineCap = 'butt';
-  c.beginPath(); c.arc(cx, cy, 9, 0, 7); c.fillStyle = P.fg; c.fill(); c.beginPath(); c.arc(cx, cy, 3.5, 0, 7); c.fillStyle = P.panel; c.fill();
-  const zona = G.q <= G.p90 ? ['comum para a pessoa', P.grn] : G.q <= G.mx ? ['alta, mas já vista nos padrões', P.amb] : ['mais alta que em qualquer padrão', P.red];
-  c.textAlign = 'center'; c.fillStyle = zona[1]; c.font = '700 15px ' + sans; c.fillText(`${G.q} de ${G.k} fora da faixa · ${zona[0]}`, cx, cy + 30);
+  const G = tvCalib(), K = Math.max(1, G.K);
+  drawGaugeG(cv, { title: 'Combinações fora da faixa', K, q: G.q, cnt: G.cnt, grp: v => v, z1: G.p90 + 0.5, z2: G.mx + 0.5, tick: K > 40 ? 5 : 1, tickBig: 10, fmt: v => String(Math.round(v)),
+    zone: G.q <= G.p90 ? 0 : G.q <= G.mx ? 1 : 2, big: `${G.q} de ${G.k}`, phrase: G.q <= G.p90 ? 'comum para a pessoa' : G.q <= G.mx ? 'alta, mas já vista nos padrões' : 'acima de qualquer padrão da pessoa',
+    sub: `${G.at} atípica${G.at === 1 ? '' : 's'} + ${G.q - G.at} inconclusiva${G.q - G.at === 1 ? '' : 's'} · ● padrões (${G.mn} a ${G.mx})` });
+}
+function drawGauge1(cv) {
+  const r = tvUma(S.uma); if (!r || r.semVar) { const { c, w, h } = setup(cv); c.fillStyle = pal().mut; c.font = '12px ' + css('--sans'); c.textAlign = 'center'; c.fillText('uma medida só: sem dados suficientes', w / 2, h / 2); return; }
+  const n = V.M.length, vals = V.M.map(m => m[S.uma]), loo = vals.map((x, j) => { const o = vals.filter((_, i) => i !== j).filter(Number.isFinite); const mu = TH.mean(o), sd = TH.std(o, 1); return sd > 0 && Number.isFinite(x) ? Math.abs((x - mu) / sd) : NaN; }).filter(Number.isFinite);
+  const az = Math.abs(r.z), z1 = Math.sqrt(TH.hotLim(0.95, r.n, 1)), z2 = Math.sqrt(TH.hotLim(0.99, r.n, 1)), K = Math.max(6, Math.ceil(Math.max(az, ...loo) + 0.5));
+  drawGaugeG(cv, { title: `Uma medida só: ${LBL(S.uma).replace(/ \(.*\)$/, '')}`, K, q: az, cnt: loo, grp: v => Math.round(v * 5) / 5, z1, z2, tick: 0.5, tickBig: K > 10 ? 5 : 2, fmt: v => br(v, 0),
+    zone: r.res === 'TÍPICA' ? 0 : r.res === 'INCONCLUSIVA' ? 1 : 2, big: `${br(az, 1)} desvios`, phrase: `${r.z >= 0 ? 'acima' : 'abaixo'} da média · ${r.res}`,
+    sub: `verde até ${br(z1, 1)} (95%) · amarelo até ${br(z2, 1)} (99%) · ● padrões, cada um contra os outros` });
 }
 function renderTV() {
   if (SOLO()) { TVROWS = []; return; }
@@ -2160,10 +2187,10 @@ function renderTV() {
   }
   let gz = '';
   if (NP() >= N_VER) { const G = tvCalib();
-    gz = `<div class="tvgauge"><h4>Quantidade de combinações fora da faixa, comparada com a da própria pessoa</h4><canvas id="cv-gauge" style="width:100%;height:190px"></canvas>
-      <p class="fine">Combinações fora da faixa de 95% (inconclusivas e atípicas): questionada <b>${G.q} de ${G.k}</b>. Cada um dos ${NP()} padrões foi testado contra os outros, nas mesmas combinações: ficaram fora de ${G.mn} a ${G.mx} (mediana ${G.med}). Verde: até onde chegam 9 em cada 10 padrões (${G.p90}). Amarelo: até o padrão mais fora (${G.mx}). Vermelho: mais combinações fora do que em qualquer assinatura da própria pessoa. Não é conclusão: mostra se a quantidade de inconclusivas é comum ou não para essa pessoa. Com poucos padrões, os limites das cores ficam imprecisos.</p></div>`; }
+    gz = `<div class="tvgauge"><div class="tvg2"><canvas id="cv-gauge"></canvas><canvas id="cv-gauge1"></canvas></div>
+      <p class="fine">Esquerda: combinações da tabela fora da faixa de 95% da pessoa, atípicas e inconclusivas juntas (questionada ${G.q} de ${G.k}; ${G.at} atípicas). Cada um dos ${NP()} padrões foi testado contra os outros nas mesmas combinações: ficaram fora de ${G.mn} a ${G.mx} (mediana ${G.med}). Verde: até onde chegam 9 em cada 10 padrões (${G.p90}); amarelo: até o padrão mais fora (${G.mx}); vermelho: mais do que qualquer assinatura da própria pessoa. Direita: a medida escolhida em “uma medida só”, em desvios da média da pessoa; verde até a faixa de 95%, amarelo até a de 99%, vermelho além. Nenhum dos dois é conclusão; com poucos padrões, os limites das cores ficam imprecisos.</p></div>`; }
   $('#tv').innerHTML = (NP() >= N_VER ? tvUmaHTML() : '') + h + gz;
-  const gcv = $('#cv-gauge'); if (gcv) requestAnimationFrame(() => drawGauge(gcv));
+  const gcv = $('#cv-gauge'), gcv1 = $('#cv-gauge1'); if (gcv) requestAnimationFrame(() => { drawGauge(gcv); if (gcv1) drawGauge1(gcv1); });
 }
 function tvShow(i) { const r = TVROWS[i]; if (!r || r.main) return; TVSEL = i; const d = $('#tv .tvdet'); if (!d) return renderTV();
   d.innerHTML = `<span class="chip-r ${tvCls(r.L.res)}">${r.L.res}</span> <b>${tvNome(r.ks)}</b> — ${r.L.why}. <button type="button" class="btn" id="tv-open">abrir no gráfico ↗</button>`;
